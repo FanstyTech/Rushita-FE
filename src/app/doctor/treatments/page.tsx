@@ -5,6 +5,7 @@ import PageLayout from '@/components/layouts/PageLayout';
 import { Table } from '@/components/common/Table';
 import { Eye, MoreVertical, Plus, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface Treatment {
   id: number;
@@ -86,18 +87,21 @@ export default function TreatmentsPage() {
 
   // Filter treatments based on search query and status
   const filteredTreatments = useMemo(() => {
-    return mockTreatments.filter(treatment => {
-      const matchesSearch = 
-        treatment.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    return mockTreatments.filter((treatment) => {
+      const matchesSearch =
+        treatment.patientName
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
         treatment.diagnosis.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesStatus = statusFilter === 'all' || treatment.status === statusFilter;
-      
+
+      const matchesStatus =
+        statusFilter === 'all' || treatment.status === statusFilter;
+
       const startDate = new Date(treatment.startDate);
       const startRange = dateRange.start ? new Date(dateRange.start) : null;
       const endRange = dateRange.end ? new Date(dateRange.end) : null;
-      const matchesDateRange = 
-        (!startRange || startDate >= startRange) && 
+      const matchesDateRange =
+        (!startRange || startDate >= startRange) &&
         (!endRange || startDate <= endRange);
 
       return matchesSearch && matchesStatus && matchesDateRange;
@@ -110,14 +114,15 @@ export default function TreatmentsPage() {
       accessor: 'patientName' as keyof Treatment,
       className: 'font-medium text-gray-900',
     },
-    
+
     {
       header: 'Treatment Plan',
       accessor: 'treatmentPlan' as keyof Treatment,
     },
     {
       header: 'Start Date',
-      accessor: (treatment: Treatment) => new Date(treatment.startDate).toLocaleDateString('en-SA'),
+      accessor: (treatment: Treatment) =>
+        new Date(treatment.startDate).toLocaleDateString('en-SA'),
     },
     {
       header: 'Status',
@@ -135,10 +140,11 @@ export default function TreatmentsPage() {
         </span>
       ),
     },
-   
+
     {
       header: 'Cost (SAR)',
-      accessor: (treatment: Treatment) => `${treatment.cost.toLocaleString()} SAR`,
+      accessor: (treatment: Treatment) =>
+        `${treatment.cost.toLocaleString()} SAR`,
       className: 'text-right',
     },
     {
@@ -160,121 +166,159 @@ export default function TreatmentsPage() {
   return (
     <PageLayout>
       {/* Filter Section */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-medium text-gray-900"></h2>
-          <button
-            onClick={() => router.push('/doctor/treatments/add')}
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-md shadow-sm transition"
-          >
-            <Plus className="w-4 h-4" />
-            New Treatment
-          </button>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        {/* Header */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Treatments
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">
+                Manage and track patient treatments
+              </p>
+            </div>
+            <Link
+              href="/doctor/treatments/add"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+            >
+              <Plus className="w-4 h-4" />
+              New Treatment
+            </Link>
+          </div>
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Search Input */}
-            <div>
-              <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
-                Search Treatments
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="search"
-                  placeholder="Search by patient name or diagnosis..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full px-4 py-2 text-gray-700 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
+        {/* Filters */}
+        <div className="p-4 sm:p-6">
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="space-y-4 sm:space-y-6"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
+              {/* Search Input */}
+              <div className="lg:col-span-5">
+                <label
+                  htmlFor="search"
+                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                >
+                  Search
+                </label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="h-5 w-5 text-gray-400 group-hover:text-gray-500" />
+                  </div>
+                  <input
+                    type="text"
+                    id="search"
+                    placeholder="Search by patient name or diagnosis..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="block w-full pl-10 pr-4 py-2.5 text-gray-900 placeholder:text-gray-400 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors sm:text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Status Filter */}
+              <div className="lg:col-span-3">
+                <label
+                  htmlFor="status"
+                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                >
+                  Status
+                </label>
+                <select
+                  id="status"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="block w-full px-4 py-2.5 text-gray-900 rounded-xl border border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors sm:text-sm"
+                >
+                  <option value="all">All Status</option>
+                  <option value="Completed">Completed</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Scheduled">Scheduled</option>
+                </select>
+              </div>
+
+              {/* Date Range Filter */}
+              <div className="lg:col-span-4">
+                <label
+                  htmlFor="dateRange"
+                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                >
+                  Date Range
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="relative">
+                    <input
+                      type="date"
+                      id="startDate"
+                      value={dateRange.start}
+                      onChange={(e) =>
+                        setDateRange((prev) => ({
+                          ...prev,
+                          start: e.target.value,
+                        }))
+                      }
+                      className="block w-full px-3 py-2.5 text-gray-900 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors sm:text-sm"
+                    />
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      id="endDate"
+                      value={dateRange.end}
+                      onChange={(e) =>
+                        setDateRange((prev) => ({
+                          ...prev,
+                          end: e.target.value,
+                        }))
+                      }
+                      className="block w-full px-3 py-2.5 text-gray-900 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors sm:text-sm"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Status Filter */}
-            <div>
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
-                Status
-              </label>
-              <select
-                id="status"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="block w-full px-4 py-2 text-gray-700 rounded-md border border-gray-300 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            {/* Filter Actions */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setStatusFilter('all');
+                  setDateRange({ start: '', end: '' });
+                }}
+                className="px-6 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                <option value="all">All Status</option>
-                <option value="Completed">Completed</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Scheduled">Scheduled</option>
-              </select>
+                Clear
+              </button>
+              <button
+                type="submit"
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Apply Filters
+              </button>
             </div>
-
-            {/* Date Range Filter */}
-            <div>
-              <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">
-                Start Date
-              </label>
-              <input
-                type="date"
-                id="startDate"
-                value={dateRange.start}
-                onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
-                className="block w-full px-4 py-2 text-gray-700 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">
-                End Date
-              </label>
-              <input
-                type="date"
-                id="endDate"
-                value={dateRange.end}
-                onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
-                className="block w-full px-4 py-2 text-gray-700 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Filter Actions */}
-          <div className="mt-6 flex items-center justify-end space-x-3">
-            <button
-              type="button"
-              onClick={() => {
-                setSearchQuery('');
-                setStatusFilter('all');
-                setDateRange({ start: '', end: '' });
-              }}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Clear
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Apply Filters
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
 
-      <Table<Treatment>
-        data={filteredTreatments}
-        columns={columns}
-        currentPage={currentPage}
-        totalPages={Math.ceil(filteredTreatments.length / itemsPerPage)}
-        onPageChange={setCurrentPage}
-        itemsPerPage={itemsPerPage}
-        totalItems={filteredTreatments.length}
-        noDataMessage={{
-          title: 'No treatments found',
-          subtitle: 'No treatment plans match your search criteria.',
-        }}
-      />
+      <div className="mt-6">
+        <Table<Treatment>
+          data={filteredTreatments}
+          columns={columns}
+          currentPage={currentPage}
+          totalPages={Math.ceil(filteredTreatments.length / itemsPerPage)}
+          onPageChange={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={filteredTreatments.length}
+          noDataMessage={{
+            title: 'No treatments found',
+            subtitle: 'No treatment plans match your search criteria.',
+          }}
+        />
+      </div>
     </PageLayout>
   );
 }

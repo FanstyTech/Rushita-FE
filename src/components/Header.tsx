@@ -1,8 +1,12 @@
-"use client";
+'use client';
 
 import { Fragment, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
-import { BellIcon, GlobeAltIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import {
+  BellIcon,
+  GlobeAltIcon,
+  Cog6ToothIcon,
+} from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BsGrid } from 'react-icons/bs';
@@ -20,12 +24,12 @@ export default function Header() {
   if (!mounted) return null;
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
+    <header className=" bg-white shadow-sm border-b border-gray-200">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Left Section: Branding */}
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-gray-900">Clinic AI</h1>
+            <h1 className="text-xl font-bold text-gray-900">Rushita</h1>
           </div>
           {/* Right Section: Icons */}
           <div className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -59,10 +63,14 @@ export default function Header() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className={classNames(
-                  'absolute z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none',
-                  direction === 'rtl' ? 'left-0 right-auto origin-top-left' : 'right-0 left-auto origin-top-right'
-                )}>
+                <Menu.Items
+                  className={classNames(
+                    'absolute z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none',
+                    direction === 'rtl'
+                      ? 'left-0 right-auto origin-top-left'
+                      : 'right-0 left-auto origin-top-right'
+                  )}
+                >
                   <Menu.Item>
                     {({ active }) => (
                       <button
@@ -113,10 +121,14 @@ export default function Header() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className={classNames(
-                  'absolute z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none',
-                  direction === 'rtl' ? 'left-0 right-auto origin-top-left' : 'right-0 left-auto origin-top-right'
-                )}>
+                <Menu.Items
+                  className={classNames(
+                    'absolute z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none',
+                    direction === 'rtl'
+                      ? 'left-0 right-auto origin-top-left'
+                      : 'right-0 left-auto origin-top-right'
+                  )}
+                >
                   <Menu.Item>
                     {({ active }) => (
                       <a
@@ -151,4 +163,4 @@ export default function Header() {
       </div>
     </header>
   );
-} 
+}

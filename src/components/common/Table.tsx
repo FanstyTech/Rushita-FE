@@ -33,16 +33,21 @@ export function Table<T>({
   itemsPerPage = 5,
   totalItems,
   noDataMessage = {
-    title: "No data found",
-    subtitle: "No records to display"
-  }
+    title: 'No data found',
+    subtitle: 'No records to display',
+  },
 }: TableProps<T>) {
   const LoadingSkeleton = () => (
     <>
       {[...Array(itemsPerPage)].map((_, i) => (
         <tr key={i}>
           {columns.map((column, j) => (
-            <td key={j} className={`px-6 py-4 whitespace-nowrap ${column.className || ''}`}>
+            <td
+              key={j}
+              className={`px-6 py-4 whitespace-nowrap ${
+                column.className || ''
+              }`}
+            >
               <div className="animate-pulse">
                 <div className="h-4 bg-gray-200 rounded w-full max-w-[150px]" />
               </div>
@@ -59,9 +64,10 @@ export function Table<T>({
       onClick={() => onPageChange(page)}
       className={`
         inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded
-        ${isCurrentPage 
-          ? 'bg-indigo-600 text-white' 
-          : 'text-gray-700 hover:bg-gray-100'
+        ${
+          isCurrentPage
+            ? 'bg-indigo-600 text-white'
+            : 'text-gray-700 hover:bg-gray-100'
         }
       `}
     >
@@ -70,14 +76,18 @@ export function Table<T>({
   );
 
   return (
-    <div className="bg-white shadow-sm rounded-xl border border-gray-200">
+    <div className=" bg-white shadow-sm rounded-xl border border-gray-200">
       <div className="overflow-x-auto relative">
         {data.length === 0 && !isLoading && (
-          <div className='absolute inset-0 bg-black/5 backdrop-blur-[1px] flex justify-center items-center z-10'>
+          <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] flex justify-center items-center z-10">
             <div className="  px-8 py-4">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">{noDataMessage.title}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
+                {noDataMessage.title}
+              </h3>
               {noDataMessage.subtitle && (
-                <p className="text-sm text-gray-500 text-center">{noDataMessage.subtitle}</p>
+                <p className="text-sm text-gray-500 text-center">
+                  {noDataMessage.subtitle}
+                </p>
               )}
             </div>
           </div>
@@ -89,7 +99,9 @@ export function Table<T>({
                 <th
                   key={index}
                   scope="col"
-                  className={`px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-gray-50 ${column.className || ''}`}
+                  className={`px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-gray-50 ${
+                    column.className || ''
+                  }`}
                 >
                   {column.header}
                 </th>
@@ -105,15 +117,17 @@ export function Table<T>({
               </tr>
             ) : (
               data.map((item, rowIndex) => (
-                <tr 
-                  key={rowIndex} 
+                <tr
+                  key={rowIndex}
                   className="hover:bg-gray-50 cursor-pointer"
                   style={{ transition: 'background-color .3s, box-shadow .3s' }}
                 >
                   {columns.map((column, colIndex) => (
                     <td
                       key={colIndex}
-                      className={`px-6 py-4 whitespace-nowrap text-sm text-gray-600 ${column.className || ''}`}
+                      className={`px-6 py-4 whitespace-nowrap text-sm text-gray-600 ${
+                        column.className || ''
+                      }`}
                     >
                       {typeof column.accessor === 'function'
                         ? column.accessor(item)
@@ -133,9 +147,10 @@ export function Table<T>({
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
               className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
-                ${currentPage === 1
-                  ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                  : 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300'
+                ${
+                  currentPage === 1
+                    ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                    : 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300'
                 }`}
             >
               Previous
@@ -144,9 +159,10 @@ export function Table<T>({
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
-                ${currentPage === totalPages
-                  ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                  : 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300'
+                ${
+                  currentPage === totalPages
+                    ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                    : 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300'
                 }`}
             >
               Next
@@ -156,20 +172,20 @@ export function Table<T>({
             <div>
               <p className="text-sm text-gray-700">
                 Showing{' '}
-                <span className="font-medium">{((currentPage - 1) * itemsPerPage) + 1}</span>
-                {' '}-{' '}
+                <span className="font-medium">
+                  {(currentPage - 1) * itemsPerPage + 1}
+                </span>{' '}
+                -{' '}
                 <span className="font-medium">
                   {Math.min(currentPage * itemsPerPage, totalItems || 0)}
-                </span>
-                {' '}of{' '}
-                <span className="font-medium">{totalItems}</span>
-                {' '}results
+                </span>{' '}
+                of <span className="font-medium">{totalItems}</span> results
               </p>
             </div>
             <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) =>
                 renderPaginationButton(page, page === currentPage)
-              ))}
+              )}
             </div>
           </div>
         </div>

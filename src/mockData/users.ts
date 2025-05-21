@@ -24,21 +24,30 @@ const organizationalUnits = [
   '../Sales/SMBClients',
   '../Operations/SupplyChain',
   '../Operations/Management',
-  '../Legal/Compliance'
+  '../Legal/Compliance',
 ];
 
 const userSources = ['Local', 'Azure AD', 'Google Workspace', 'Okta'];
 const roles = ['Admin', 'User', 'Manager', 'Analyst'] as const;
-const statuses = ['Active', 'Inactive', 'Suspended', 'Seated', 'Unseated'] as const;
+const statuses = [
+  'Active',
+  'Inactive',
+  'Suspended',
+  'Seated',
+  'Unseated',
+] as const;
 
 const generateMockUser = (id: number): User => {
-  const getRandomItem = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+  const getRandomItem = <T>(arr: T[]): T =>
+    arr[Math.floor(Math.random() * arr.length)];
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    }).replace(/\//g, '/');
+    return date
+      .toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
+      .replace(/\//g, '/');
   };
 
   // Generate a random date within the last 30 days
@@ -65,7 +74,7 @@ const generateMockUser = (id: number): User => {
       'Elizabeth Garcia',
       'Charles Rodriguez',
       'Margaret Lee',
-      'Thomas Moore'
+      'Thomas Moore',
     ]),
     email: `user${id}@example.com`,
     role: getRandomItem(roles),
@@ -78,7 +87,9 @@ const generateMockUser = (id: number): User => {
 };
 
 export const generateMockUsers = (count: number = 50): User[] => {
-  return Array.from({ length: count }, (_, index) => generateMockUser(index + 1));
+  return Array.from({ length: count }, (_, index) =>
+    generateMockUser(index + 1)
+  );
 };
 
 // Generate 100 mock users instead of 50

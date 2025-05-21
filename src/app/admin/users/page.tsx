@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import PageLayout from '@/components/layouts/PageLayout';
 import SectionTitle from '@/components/common/SectionTitle';
@@ -7,6 +7,27 @@ import { useState, useEffect } from 'react';
 import type { User } from '@/mockData/users';
 import { Table } from '@/components/common/Table';
 import { PermissionsModal } from '@/components/modals/PermissionsModal';
+
+// Import constants from mock data
+const organizationalUnits = [
+  '../Finance/AccountsReceivable',
+  '../Finance/AccountsPayable',
+  '../HR/Recruitment',
+  '../HR/EmployeeRelations',
+  '../IT/Infrastructure',
+  '../IT/SupportServices',
+  '../Marketing/ContentCreation',
+  '../Marketing/DigitalAdvertising',
+  '../Sales/CorporateClients',
+  '../Sales/SMBClients',
+  '../Operations/SupplyChain',
+  '../Operations/Management',
+  '../Legal/Compliance',
+];
+
+const userSources = ['Local', 'Azure AD', 'Google Workspace', 'Okta'];
+const roles = ['Admin', 'User', 'Manager', 'Analyst'];
+const statuses = ['Active', 'Inactive', 'Suspended', 'Seated', 'Unseated'];
 
 interface Permission {
   id: string;
@@ -18,17 +39,59 @@ interface Permission {
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState<{ id: number; name: string } | null>(null);
+  const [selectedUser, setSelectedUser] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
   const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    search: '',
+    role: '',
+    status: '',
+    source: '',
+    unit: '',
+  });
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const itemsPerPage = 5;
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [filters.search]);
+
+  // Update filters when debounced search changes
+  useEffect(() => {
+    fetchUsers(1); // Reset to first page when search changes
+  }, [debouncedSearch]);
+
+  const handleFilterChange = (key: keyof typeof filters, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    if (key !== 'search') {
+      // Don't reset page for search as it's debounced
+      setCurrentPage(1);
+      fetchUsers(1);
+    }
+  };
+
   const fetchUsers = async (page: number) => {
-    setDataLoading(true); // Show loading state
+    setDataLoading(true);
     try {
-      const response = await fetch(`/api/users?page=${page}&limit=${itemsPerPage}`);
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: itemsPerPage.toString(),
+        ...filters,
+        search: debouncedSearch, // Use debounced search value
+      });
+      const response = await fetch(`/api/users?${queryParams}`);
       const data = await response.json();
       setUsers(data.users);
       setTotalPages(Math.ceil(data.total / itemsPerPage));
@@ -36,12 +99,9 @@ export default function UsersPage() {
     } catch (error) {
       console.error('Error fetching users:', error);
     } finally {
-      setDataLoading(false); // Hide loading state
+      setDataLoading(false);
     }
   };
-  useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage]);
 
   const columns = [
     {
@@ -69,41 +129,43 @@ export default function UsersPage() {
           </div>
         </div>
       ),
-      className: ''
+      className: '',
     },
     {
       header: 'Role',
       accessor: (user: User) => user.role,
-      className: 'text-gray-500'
+      className: 'text-gray-500',
     },
     {
       header: 'Status',
       accessor: (user: User) => (
-        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+        <span
+          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
           ${user.status === 'Active' ? 'bg-green-100 text-green-800' : ''}
           ${user.status === 'Inactive' ? 'bg-red-100 text-red-800' : ''}
           ${user.status === 'Suspended' ? 'bg-yellow-100 text-yellow-800' : ''}
           ${user.status === 'Seated' ? 'bg-blue-100 text-blue-800' : ''}
           ${user.status === 'Unseated' ? 'bg-gray-100 text-gray-800' : ''}
-        `}>
+        `}
+        >
           {user.status}
         </span>
-      )
+      ),
     },
     {
       header: 'Organizational Unit',
       accessor: (user: User) => user.organizationalUnit || '-',
-      className: 'text-gray-500'
+      className: 'text-gray-500',
     },
     {
       header: 'User Source',
       accessor: (user: User) => user.userSource || '-',
-      className: 'text-gray-500'
+      className: 'text-gray-500',
     },
     {
       header: 'Updated At',
       accessor: (user: User) => user.updatedAt,
-      className: 'text-gray-500'
+      className: 'text-gray-500',
     },
     {
       header: 'Actions',
@@ -119,8 +181,8 @@ export default function UsersPage() {
             <svg
               className="h-5 w-5"
               fill="none"
-              stroke="currentColor"
               viewBox="0 0 24 24"
+              stroke="currentColor"
             >
               <path
                 strokeLinecap="round"
@@ -139,7 +201,7 @@ export default function UsersPage() {
 
           {openDropdownId === user.id && (
             <>
-              <div 
+              <div
                 className="fixed inset-0 z-30"
                 onClick={() => setOpenDropdownId(null)}
               />
@@ -155,17 +217,17 @@ export default function UsersPage() {
                     setOpenDropdownId(null);
                   }}
                 >
-                  <svg 
-                    className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" 
-                    fill="none" 
-                    stroke="currentColor" 
+                  <svg
+                    className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
+                    fill="none"
                     viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth="2" 
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" 
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                     />
                   </svg>
                   Edit
@@ -178,17 +240,17 @@ export default function UsersPage() {
                     setOpenDropdownId(null);
                   }}
                 >
-                  <svg 
-                    className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" 
-                    fill="none" 
-                    stroke="currentColor" 
+                  <svg
+                    className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
+                    fill="none"
                     viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth="2" 
-                      d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" 
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
                     />
                   </svg>
                   Permissions
@@ -198,59 +260,203 @@ export default function UsersPage() {
           )}
         </div>
       ),
-      className: 'w-16 pr-4'
-    }
+      className: 'w-16 pr-4',
+    },
   ];
+
+  useEffect(() => {
+    fetchUsers(currentPage);
+  }, [currentPage]); // Remove filters dependency as we handle it in handleFilterChange
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    setOpenDropdownId(null); 
+    setOpenDropdownId(null);
   };
 
   return (
-    <PageLayout title="Users Management" description="Manage user accounts, roles, and permissions">
+    <PageLayout>
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-          <button className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Add User
-          </button>
+        <div className="flex flex-col gap-4">
+          {/* Actions Row */}
+          <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between bg-white p-4 rounded-lg shadow-sm">
+            <div className="flex items-center gap-4">
+              <button className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Add User
+              </button>
 
-          <div className="flex flex-1 sm:flex-none flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
+              <button
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors"
+              >
+                <svg
+                  className="w-4 h-4 text-gray-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414v6.586a1 1 0 01-.293.707l-2 2A1 1 0 0111 23v-9.586l-6.414-6.414A1 1 0 014 6.586V4z"
+                  />
+                </svg>
+                Filters
+                {Object.values(filters).some(Boolean) && (
+                  <span className="ml-1 inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+                    {Object.values(filters).filter(Boolean).length}
+                  </span>
+                )}
+              </button>
+            </div>
+
             <div className="relative">
               <input
                 type="text"
+                value={filters.search}
+                onChange={(e) => handleFilterChange('search', e.target.value)}
                 placeholder="Search users..."
                 className="block w-full rounded-lg border-0 py-2.5 pl-10 pr-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg
+                  className="h-5 w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </div>
             </div>
-
-            <select
-              className="block w-full rounded-lg border-0 py-2.5 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            >
-              <option value="">All Roles</option>
-              <option value="admin">Admin</option>
-              <option value="doctor">Doctor</option>
-              <option value="receptionist">Receptionist</option>
-              <option value="nurse">Nurse</option>
-            </select>
-
-            <select
-              className="block w-full rounded-lg border-0 py-2.5 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            >
-              <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
-            </select>
           </div>
+
+          {/* Filters Panel */}
+          {isFilterOpen && (
+            <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Role Filter */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Role
+                  </label>
+                  <select
+                    value={filters.role}
+                    onChange={(e) => handleFilterChange('role', e.target.value)}
+                    className="block w-full rounded-lg border-0 py-2.5 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  >
+                    <option value="">All Roles</option>
+                    {roles.map((role) => (
+                      <option key={role} value={role}>
+                        {role}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Status Filter */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Status
+                  </label>
+                  <select
+                    value={filters.status}
+                    onChange={(e) =>
+                      handleFilterChange('status', e.target.value)
+                    }
+                    className="block w-full rounded-lg border-0 py-2.5 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  >
+                    <option value="">All Status</option>
+                    {statuses.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Source Filter */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Source
+                  </label>
+                  <select
+                    value={filters.source}
+                    onChange={(e) =>
+                      handleFilterChange('source', e.target.value)
+                    }
+                    className="block w-full rounded-lg border-0 py-2.5 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  >
+                    <option value="">All Sources</option>
+                    {userSources.map((source) => (
+                      <option key={source} value={source}>
+                        {source}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Organizational Unit Filter */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Unit
+                  </label>
+                  <select
+                    value={filters.unit}
+                    onChange={(e) => handleFilterChange('unit', e.target.value)}
+                    className="block w-full rounded-lg border-0 py-2.5 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  >
+                    <option value="">All Units</option>
+                    {organizationalUnits.map((unit) => (
+                      <option key={unit} value={unit}>
+                        {unit}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Clear Filters Button */}
+              {Object.values(filters).some(Boolean) && (
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => {
+                      setFilters({
+                        search: '',
+                        role: '',
+                        status: '',
+                        source: '',
+                        unit: '',
+                      });
+                      setCurrentPage(1);
+                      fetchUsers(1);
+                    }}
+                    className="text-sm font-medium text-gray-700 hover:text-gray-900"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <Table
@@ -263,8 +469,8 @@ export default function UsersPage() {
           itemsPerPage={itemsPerPage}
           totalItems={totalItems}
           noDataMessage={{
-            title: "No users found",
-            subtitle: "Start by adding a new user to the system"
+            title: 'No users found',
+            subtitle: 'Start by adding a new user to the system',
           }}
         />
       </div>

@@ -1,12 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar } from '@/components/appointments/Calendar';
+import { Calendar } from '@/components/clinic/appointments/Calendar';
 import { Appointment, appointmentAPI } from '@/mockData/appointments';
 import { format } from 'date-fns';
 import { Patient, patientAPI } from '@/mockData/patients';
 import Modal from '@/components/common/Modal';
-import { CalendarIcon, ClockIcon, UserIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+  CalendarIcon,
+  ClockIcon,
+  UserIcon,
+  PencilIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageLayout from '@/components/layouts/PageLayout';
 
@@ -15,7 +21,8 @@ export default function AppointmentsPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showNewAppointment, setShowNewAppointment] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -25,7 +32,7 @@ export default function AppointmentsPage() {
     type: 'checkup' as 'checkup' | 'followup' | 'emergency' | 'dental',
     startTime: '09:00',
     endTime: '09:30',
-    notes: ''
+    notes: '',
   });
 
   // Load appointments
@@ -73,7 +80,7 @@ export default function AppointmentsPage() {
         endTime: newAppointment.endTime,
         type: newAppointment.type,
         status: 'scheduled',
-        notes: newAppointment.notes
+        notes: newAppointment.notes,
       };
 
       await appointmentAPI.createAppointment(appointment);
@@ -94,9 +101,9 @@ export default function AppointmentsPage() {
       type: appointment.type,
       startTime: appointment.startTime,
       endTime: appointment.endTime,
-      notes: appointment.notes || ''
+      notes: appointment.notes || '',
     });
-    
+
     // Get and set the patient for the appointment
     try {
       const patient = await patientAPI.getPatientById(appointment.patientId);
@@ -106,7 +113,7 @@ export default function AppointmentsPage() {
     } catch (error) {
       console.error('Failed to load patient:', error);
     }
-    
+
     setShowNewAppointment(true);
   };
 
@@ -135,7 +142,7 @@ export default function AppointmentsPage() {
       type: 'checkup' as 'checkup' | 'followup' | 'emergency' | 'dental',
       startTime: '09:00',
       endTime: '09:30',
-      notes: ''
+      notes: '',
     });
   };
 
@@ -169,14 +176,20 @@ export default function AppointmentsPage() {
             <h3 className="text-lg font-medium leading-6 text-gray-900">
               Schedule for {format(selectedDate, 'MMMM d, yyyy')}
             </h3>
-            
           </div>
           <div className="border-t border-gray-200">
             <ul className="divide-y divide-gray-200">
               {appointments
-                .filter(apt => format(new Date(apt.date), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd'))
+                .filter(
+                  (apt) =>
+                    format(new Date(apt.date), 'yyyy-MM-dd') ===
+                    format(selectedDate, 'yyyy-MM-dd')
+                )
                 .map((appointment) => (
-                  <li key={appointment.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
+                  <li
+                    key={appointment.id}
+                    className="px-4 py-4 sm:px-6 hover:bg-gray-50"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -187,7 +200,8 @@ export default function AppointmentsPage() {
                             {appointment.startTime} - {appointment.endTime}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1)}
+                            {appointment.type.charAt(0).toUpperCase() +
+                              appointment.type.slice(1)}
                           </div>
                         </div>
                       </div>
@@ -214,16 +228,22 @@ export default function AppointmentsPage() {
                   </li>
                 ))}
             </ul>
-            {appointments.filter(apt => 
-              format(new Date(apt.date), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')
+            {appointments.filter(
+              (apt) =>
+                format(new Date(apt.date), 'yyyy-MM-dd') ===
+                format(selectedDate, 'yyyy-MM-dd')
             ).length === 0 && (
               <div className="px-4 py-12 text-center">
                 <div className="flex flex-col items-center">
                   <div className="rounded-full bg-gray-100 p-3 mb-4">
                     <CalendarIcon className="h-6 w-6 text-gray-400" />
                   </div>
-                  <h3 className="text-sm font-medium text-gray-900 mb-1">No appointments</h3>
-                  <p className="text-sm text-gray-500">There are no appointments scheduled for this day.</p>
+                  <h3 className="text-sm font-medium text-gray-900 mb-1">
+                    No appointments
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    There are no appointments scheduled for this day.
+                  </p>
                 </div>
               </div>
             )}
@@ -239,7 +259,8 @@ export default function AppointmentsPage() {
       >
         <div className="space-y-4">
           <p className="text-sm text-gray-500">
-            Are you sure you want to delete this appointment? This action cannot be undone.
+            Are you sure you want to delete this appointment? This action cannot
+            be undone.
           </p>
           <div className="mt-5 flex justify-end space-x-3">
             <button
@@ -258,7 +279,7 @@ export default function AppointmentsPage() {
             >
               {isSubmitting ? (
                 <>
-                  <LoadingSpinner size="sm"  />
+                  <LoadingSpinner size="sm" />
                   Deleting...
                 </>
               ) : (
@@ -274,7 +295,7 @@ export default function AppointmentsPage() {
         isOpen={showNewAppointment}
         onClose={() => !isSubmitting && setShowNewAppointment(false)}
         title="Schedule New Appointment"
-        footer= {
+        footer={
           <div className=" flex justify-end space-x-4 border-gray-200 ">
             <button
               type="button"
@@ -305,7 +326,9 @@ export default function AppointmentsPage() {
         <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
           {/* Patient Selection */}
           <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Patient Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Patient Information
+            </h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Patient Name
@@ -317,7 +340,9 @@ export default function AppointmentsPage() {
                       <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                         <UserIcon className="h-5 w-5 text-blue-600" />
                       </div>
-                      <span className="ml-3 text-sm font-medium text-gray-900">{selectedPatient.name}</span>
+                      <span className="ml-3 text-sm font-medium text-gray-900">
+                        {selectedPatient.name}
+                      </span>
                     </div>
                     <button
                       type="button"
@@ -331,7 +356,10 @@ export default function AppointmentsPage() {
                   <div className="relative">
                     <div className="relative rounded-md shadow-sm">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <UserIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        <UserIcon
+                          className="h-5 w-5 text-gray-400"
+                          aria-hidden="true"
+                        />
                       </div>
                       <input
                         type="text"
@@ -376,7 +404,9 @@ export default function AppointmentsPage() {
 
           {/* Appointment Details */}
           <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Appointment Details</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Appointment Details
+            </h3>
             <div className="space-y-6">
               {/* Appointment Type */}
               <div>
@@ -386,7 +416,12 @@ export default function AppointmentsPage() {
                 <div className="relative rounded-md shadow-sm">
                   <select
                     value={newAppointment.type}
-                    onChange={(e) => setNewAppointment({ ...newAppointment, type: e.target.value as any })}
+                    onChange={(e) =>
+                      setNewAppointment({
+                        ...newAppointment,
+                        type: e.target.value as any,
+                      })
+                    }
                     className="block w-full rounded-md border-0 py-3 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                   >
                     <option value="checkup">Check-up</option>
@@ -405,12 +440,20 @@ export default function AppointmentsPage() {
                   </label>
                   <div className="relative rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <ClockIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      <ClockIcon
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
                     </div>
                     <input
                       type="time"
                       value={newAppointment.startTime}
-                      onChange={(e) => setNewAppointment({ ...newAppointment, startTime: e.target.value })}
+                      onChange={(e) =>
+                        setNewAppointment({
+                          ...newAppointment,
+                          startTime: e.target.value,
+                        })
+                      }
                       className="block w-full rounded-md border-0 py-3 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                     />
                   </div>
@@ -421,12 +464,20 @@ export default function AppointmentsPage() {
                   </label>
                   <div className="relative rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <ClockIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      <ClockIcon
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
                     </div>
                     <input
                       type="time"
                       value={newAppointment.endTime}
-                      onChange={(e) => setNewAppointment({ ...newAppointment, endTime: e.target.value })}
+                      onChange={(e) =>
+                        setNewAppointment({
+                          ...newAppointment,
+                          endTime: e.target.value,
+                        })
+                      }
                       className="block w-full rounded-md border-0 py-3 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                     />
                   </div>
@@ -440,7 +491,12 @@ export default function AppointmentsPage() {
                 </label>
                 <textarea
                   value={newAppointment.notes}
-                  onChange={(e) => setNewAppointment({ ...newAppointment, notes: e.target.value })}
+                  onChange={(e) =>
+                    setNewAppointment({
+                      ...newAppointment,
+                      notes: e.target.value,
+                    })
+                  }
                   rows={3}
                   className="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 resize-none"
                   placeholder="Add any additional notes about the appointment..."
@@ -448,7 +504,6 @@ export default function AppointmentsPage() {
               </div>
             </div>
           </div>
-
         </form>
       </Modal>
     </PageLayout>

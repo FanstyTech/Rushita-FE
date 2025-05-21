@@ -8,9 +8,13 @@ interface PageLayoutProps {
   description?: string;
 }
 
-export default function PageLayout({ children, title, description }: PageLayoutProps) {
+export default function PageLayout({
+  children,
+  title,
+  description,
+}: PageLayoutProps) {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ">
       <main className="flex-1">
         <div className="py-8">
           <div className="max-w-10xl mx-auto ">
