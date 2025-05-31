@@ -13,11 +13,17 @@ import {
   Mail,
   Phone,
   Calendar,
+  Clock,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FiPlus, FiSearch, FiFilter, FiChevronDown } from 'react-icons/fi';
 import DoctorCardSkeleton from '@/components/skeletons/DoctorCardSkeleton';
+import Modal from '@/components/common/Modal';
+import { Input, Select } from '@/components/common/form';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 // Mock data
 const specialties = [
@@ -42,7 +48,37 @@ interface Doctor {
   patients: number;
   experience: string;
   avatar: string;
+  workingHours?: {
+    [key: string]: {
+      start: string;
+      end: string;
+      isOff: boolean;
+    };
+  };
 }
+
+const workingTimeSchema = z.object({
+  schedule: z.record(
+    z.string(),
+    z.object({
+      start: z.string().min(1, 'Start time is required'),
+      end: z.string().min(1, 'End time is required'),
+      isOff: z.boolean(),
+    })
+  ),
+});
+
+type WorkingTimeFormData = z.infer<typeof workingTimeSchema>;
+
+const daysOfWeek = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+] as const;
 
 const generateMockDoctors = (count: number): Doctor[] => {
   return Array.from({ length: count }, (_, i) => {
@@ -88,6 +124,32 @@ export default function DoctorsPage() {
   const [activeFilter, setActiveFilter] = useState<
     'specialty' | 'experience' | 'status' | null
   >(null);
+  const [isWorkingTimeModalOpen, setIsWorkingTimeModalOpen] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+  } = useForm<WorkingTimeFormData>({
+    resolver: zodResolver(workingTimeSchema),
+    defaultValues: {
+      schedule: daysOfWeek.reduce(
+        (acc, day) => ({
+          ...acc,
+          [day]: {
+            start: '09:00',
+            end: '17:00',
+            isOff: false,
+          },
+        }),
+        {}
+      ),
+    },
+  });
 
   useEffect(() => {
     const loadDoctors = async () => {
@@ -130,6 +192,34 @@ export default function DoctorsPage() {
       matchesSearch && matchesSpecialty && matchesExperience && matchesStatus
     );
   });
+
+  const handleWorkingTime = (doctor: Doctor) => {
+    setSelectedDoctor(doctor);
+    if (doctor.workingHours) {
+      Object.entries(doctor.workingHours).forEach(([day, hours]) => {
+        setValue(`schedule.${day}`, hours);
+      });
+    }
+    setIsWorkingTimeModalOpen(true);
+  };
+
+  const onSubmitWorkingTime = async (data: WorkingTimeFormData) => {
+    if (selectedDoctor) {
+      setDoctors((prev) =>
+        prev.map((doc) =>
+          doc.id === selectedDoctor.id
+            ? {
+                ...doc,
+                workingHours: data.schedule,
+              }
+            : doc
+        )
+      );
+      setIsWorkingTimeModalOpen(false);
+      setSelectedDoctor(null);
+      reset();
+    }
+  };
 
   if (isLoading) {
     return (
@@ -301,58 +391,65 @@ export default function DoctorsPage() {
           {filteredDoctors.map((doctor) => (
             <div
               key={doctor.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200"
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6"
             >
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Image
-                      src={doctor.avatar}
-                      alt={doctor.name}
-                      width={48}
-                      height={48}
-                      className="rounded-full"
-                    />
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
-                        {doctor.name}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {doctor.specialty}
-                      </p>
-                    </div>
-                  </div>
-                  <span
-                    className={`text-xs font-medium px-2 py-1 rounded-full ${
-                      doctor.status === 'Active'
-                        ? 'bg-green-50 text-green-700'
-                        : 'bg-gray-50 text-gray-600'
-                    }`}
-                  >
-                    {doctor.status}
-                  </span>
-                </div>
-
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Mail className="w-4 h-4" />
-                    <span>{doctor.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Phone className="w-4 h-4" />
-                    <span>{doctor.phone}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <UserRound className="w-4 h-4" />
-                    <span>{doctor.patients} patients</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Calendar className="w-4 h-4" />
-                    <span>{doctor.experience} experience</span>
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <Image
+                    src={doctor.avatar}
+                    alt={doctor.name}
+                    width={48}
+                    height={48}
+                    className="rounded-full"
+                  />
+                  <div>
+                    <h3 className="font-semibold text-gray-900">
+                      {doctor.name}
+                    </h3>
+                    <p className="text-sm text-gray-500">{doctor.specialty}</p>
                   </div>
                 </div>
+                <span
+                  className={`text-xs font-medium px-2 py-1 rounded-full ${
+                    doctor.status === 'Active'
+                      ? 'bg-green-50 text-green-700'
+                      : 'bg-gray-50 text-gray-600'
+                  }`}
+                >
+                  {doctor.status}
+                </span>
+              </div>
 
-                <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end gap-3">
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Mail className="w-4 h-4" />
+                  <span>{doctor.email}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Phone className="w-4 h-4" />
+                  <span>{doctor.phone}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <UserRound className="w-4 h-4" />
+                  <span>{doctor.patients} patients</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Calendar className="w-4 h-4" />
+                  <span>{doctor.experience} experience</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => handleWorkingTime(doctor)}
+                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
+                >
+                  <Clock className="w-4 h-4" />
+                  {doctor.workingHours
+                    ? `Working Hours Set`
+                    : 'Set Working Hours'}
+                </button>
+                <div className="flex items-center gap-2">
                   <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
                     <Edit2 className="w-4 h-4" />
                   </button>
@@ -365,6 +462,81 @@ export default function DoctorsPage() {
           ))}
         </div>
       </div>
+
+      {/* Working Time Modal */}
+      <Modal
+        isOpen={isWorkingTimeModalOpen}
+        onClose={() => {
+          setIsWorkingTimeModalOpen(false);
+          setSelectedDoctor(null);
+          reset();
+        }}
+        title={`Set Working Hours for ${selectedDoctor?.name}`}
+        maxWidth="4xl"
+        footer={
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setIsWorkingTimeModalOpen(false);
+                setSelectedDoctor(null);
+                reset();
+              }}
+              className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit(onSubmitWorkingTime)}
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow-md"
+            >
+              Save Changes
+            </button>
+          </div>
+        }
+      >
+        <form className="space-y-6">
+          <div className="grid gap-6">
+            {daysOfWeek.map((day) => (
+              <div
+                key={day}
+                className="flex items-start gap-4 p-4 rounded-xl bg-gray-50"
+              >
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium text-gray-900">{day}</h3>
+                    <label className="flex items-center gap-2 text-sm text-gray-600">
+                      <input
+                        type="checkbox"
+                        {...register(`schedule.${day}.isOff`)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      Day Off
+                    </label>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      type="time"
+                      label="Start Time"
+                      {...register(`schedule.${day}.start`)}
+                      error={errors.schedule?.[day]?.start?.message}
+                      disabled={watch(`schedule.${day}.isOff`)}
+                    />
+                    <Input
+                      type="time"
+                      label="End Time"
+                      {...register(`schedule.${day}.end`)}
+                      error={errors.schedule?.[day]?.end?.message}
+                      disabled={watch(`schedule.${day}.isOff`)}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </form>
+      </Modal>
     </PageLayout>
   );
 }

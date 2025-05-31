@@ -2,24 +2,26 @@
 
 import React from 'react';
 
-interface Column<T> {
+export interface Column<T> {
   header: string;
-  accessor: keyof T | ((item: T) => React.ReactNode);
+  accessor: keyof T;
+  cell?: (props: { row: { original: T } }) => React.ReactNode;
   className?: string;
 }
 
-interface TableProps<T> {
+export interface TableProps<T> {
   data: T[];
   columns: Column<T>[];
   isLoading?: boolean;
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  itemsPerPage?: number;
-  totalItems?: number;
+  pagination?: {
+    pageSize: number;
+    pageIndex: number;
+    pageCount: number;
+    onPageChange: (page: number) => void;
+  };
   noDataMessage?: {
     title: string;
-    subtitle?: string;
+    subtitle: string;
   };
 }
 
@@ -27,11 +29,7 @@ export function Table<T>({
   data,
   columns,
   isLoading = false,
-  currentPage,
-  totalPages,
-  onPageChange,
-  itemsPerPage = 5,
-  totalItems,
+  pagination,
   noDataMessage = {
     title: 'No data found',
     subtitle: 'No records to display',
@@ -39,7 +37,7 @@ export function Table<T>({
 }: TableProps<T>) {
   const LoadingSkeleton = () => (
     <>
-      {[...Array(itemsPerPage)].map((_, i) => (
+      {[...Array(pagination?.pageSize || 5)].map((_, i) => (
         <tr key={i}>
           {columns.map((column, j) => (
             <td
@@ -61,7 +59,7 @@ export function Table<T>({
   const renderPaginationButton = (page: number, isCurrentPage: boolean) => (
     <button
       key={page}
-      onClick={() => onPageChange(page)}
+      onClick={() => pagination?.onPageChange(page)}
       className={`
         inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded
         ${
@@ -71,7 +69,7 @@ export function Table<T>({
         }
       `}
     >
-      {page}
+      {page + 1}
     </button>
   );
 
@@ -129,9 +127,9 @@ export function Table<T>({
                         column.className || ''
                       }`}
                     >
-                      {typeof column.accessor === 'function'
-                        ? column.accessor(item)
-                        : (item[column.accessor] as React.ReactNode)}
+                      {column.cell
+                        ? column.cell({ row: { original: item } })
+                        : String(item[column.accessor])}
                     </td>
                   ))}
                 </tr>
@@ -140,15 +138,15 @@ export function Table<T>({
           </tbody>
         </table>
       </div>
-      {data.length > 0 && totalPages > 1 && (
+      {data.length > 0 && pagination && pagination.pageCount > 1 && (
         <div className="flex items-center justify-between px-6 py-4 bg-gray-50 border-t border-gray-200">
           <div className="flex-1 flex justify-between sm:hidden">
             <button
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
+              onClick={() => pagination.onPageChange(pagination.pageIndex - 1)}
+              disabled={pagination.pageIndex === 0}
               className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
                 ${
-                  currentPage === 1
+                  pagination.pageIndex === 0
                     ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
                     : 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300'
                 }`}
@@ -156,11 +154,11 @@ export function Table<T>({
               Previous
             </button>
             <button
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              onClick={() => pagination.onPageChange(pagination.pageIndex + 1)}
+              disabled={pagination.pageIndex === pagination.pageCount - 1}
               className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
                 ${
-                  currentPage === totalPages
+                  pagination.pageIndex === pagination.pageCount - 1
                     ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
                     : 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300'
                 }`}
@@ -173,18 +171,22 @@ export function Table<T>({
               <p className="text-sm text-gray-700">
                 Showing{' '}
                 <span className="font-medium">
-                  {(currentPage - 1) * itemsPerPage + 1}
+                  {pagination.pageIndex * pagination.pageSize + 1}
                 </span>{' '}
                 -{' '}
                 <span className="font-medium">
-                  {Math.min(currentPage * itemsPerPage, totalItems || 0)}
+                  {Math.min(
+                    (pagination.pageIndex + 1) * pagination.pageSize,
+                    data.length
+                  )}
                 </span>{' '}
-                of <span className="font-medium">{totalItems}</span> results
+                of <span className="font-medium">{data.length}</span> results
               </p>
             </div>
             <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) =>
-                renderPaginationButton(page, page === currentPage)
+              {Array.from({ length: pagination.pageCount }, (_, i) => i).map(
+                (page) =>
+                  renderPaginationButton(page, page === pagination.pageIndex)
               )}
             </div>
           </div>

@@ -13,6 +13,10 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   Cog6ToothIcon,
+  BuildingOfficeIcon,
+  GlobeAltIcon,
+  MapPinIcon,
+  ListBulletIcon,
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from 'react-i18next';
@@ -79,7 +83,20 @@ export const adminNav = [
       },
     ],
   },
-  { name: 'Lookups', href: '/admin/lookups', icon: ChartBarIcon },
+  {
+    name: 'Lookups',
+    icon: ListBulletIcon,
+    children: [
+      { name: 'Specialty', href: '/admin/lookups/specialty', icon: UserIcon },
+      { name: 'Country', href: '/admin/lookups/country', icon: GlobeAltIcon },
+      { name: 'City', href: '/admin/lookups/city', icon: MapPinIcon },
+      {
+        name: 'Clinic Type',
+        href: '/admin/lookups/clinic-type',
+        icon: BuildingOfficeIcon,
+      },
+    ],
+  },
   { name: 'Users', href: '/admin/users', icon: UserGroupIcon },
 ];
 

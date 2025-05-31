@@ -1,0 +1,469 @@
+
+You are a senior .NET developer tasked with creating a robust and scalable backend system with multi-language support. Please help me create a complete backend solution with the following specifications:
+
+Project Requirements:
+1. Create a RESTful API using .NET Core 9
+2. Implement:
+   - Clean Architecture principles
+   - Repository pattern
+   - CQRS with MediatR (optional)
+   - Dependency Injection
+3. Multi-language Support:
+   - Implement localization using Resource files (.resx)
+   - Support for Arabic and English (with easy addition of other languages)
+   - Localized API responses and error messages
+   - Culture middleware for language switching
+   - Right-to-Left (RTL) content handling
+4. Database:
+   - SQL Server with Entity Framework Core
+   - Support for localized content in database design
+   - Multi-language content storage strategy
+5. Core Features:
+   - User authentication using Identity
+   - JWT token authentication
+   - Role-based authorization
+   - CRUD operations with localized content
+   - File handling with localized metadata
+   - Logging with Serilog
+   - API documentation using Swagger (multi-language support)
+   - Soft Delete Support
+   - Full Audit Support
+   - Multi-tenancy Support (for clinics)
+   - 
+
+
+Technical Requirements:
+1. Follow best practices for:
+   - Clean Architecture (Domain, Application, Infrastructure, API layers)
+   - Security (input validation, data protection)
+   - Performance optimization
+   - API versioning
+2. Include:
+   - Localization-aware configurations
+   - Culture-specific routing
+   - Language selection middleware
+   - Localized model validation
+   - Unit tests supporting multiple cultures
+   - Docker support
+   - Global exception handling with localized messages
+   - AutoMapper for DTOs with localization support
+   - Generic Response model
+   - Generic Response model with pagination and sorting support
+
+
+Please provide:
+1. Solution structure with localization support
+2. Required NuGet packages
+3. Implementation of core features
+4. API endpoints documentation
+5. Setup and deployment instructions
+6. Language configuration guide
+
+Additional Localization Requirements:
+1. Default fallback language configuration
+2. Language switching mechanism
+3. Culture-specific date and number formatting
+4. Localized email templates
+5. Support for language-specific content versioning
+
+The code should be production-ready, well-documented, and follow modern .NET development standards with comprehensive localization support.
+
+
+GET /api/v1/admin/users
+- Query Parameters:
+  - search (string)
+  - role (string)
+  - status (string)
+  - source (string)
+  - unit (string)
+  - page (int)
+  - pageSize (int)
+
+POST /api/v1/admin/users
+- Create new user
+- Body: {
+  name: string
+  email: string
+  role: string
+  status: string
+  source: string
+  organizationalUnit: string
+}
+
+GET /api/v1/admin/users/{id}
+- Get user details
+
+PUT /api/v1/admin/users/{id}
+- Update user details
+
+DELETE /api/v1/admin/users/{id}
+- Delete/deactivate user
+
+GET /api/v1/admin/users/permissions/{userId}
+- Get user permissions
+
+PUT /api/v1/admin/users/permissions/{userId}
+- Update user permissions
+
+GET /api/v1/admin/lookup/users
+- Get lookup data:
+  - roles
+  - statuses
+  - sources
+  - organizationalUnits
+
+
+
+GET /api/v1/admin/lookups
+- Get all lookup types
+
+Cities:
+GET /api/v1/admin/lookups/cities
+POST /api/v1/admin/lookups/cities
+PUT /api/v1/admin/lookups/cities/{id}
+DELETE /api/v1/admin/lookups/cities/{id}
+
+Clinic Types:
+GET /api/v1/admin/lookups/clinic-types
+POST /api/v1/admin/lookups/clinic-types
+PUT /api/v1/admin/lookups/clinic-types/{id}
+DELETE /api/v1/admin/lookups/clinic-types/{id}
+
+Countries:
+GET /api/v1/admin/lookups/countries
+POST /api/v1/admin/lookups/countries
+PUT /api/v1/admin/lookups/countries/{id}
+DELETE /api/v1/admin/lookups/countries/{id}
+
+Specialties:
+GET /api/v1/admin/lookups/specialties
+POST /api/v1/admin/lookups/specialties
+PUT /api/v1/admin/lookups/specialties/{id}
+DELETE /api/v1/admin/lookups/specialties/{id}
+
+GET /api/v1/admin/dashboard/stats
+- Returns: {
+  totalClinics: number
+  activeUsers: number
+  totalAppointments: number
+  clinicsChange: number
+  usersChange: number
+  appointmentsChange: number
+}
+
+GET /api/v1/admin/dashboard/charts
+- Query Parameters:
+  - timeRange: string (weekly, monthly, yearly)
+- Returns: {
+  labels: string[]
+  patients: number[]
+  appointments: number[]
+}
+
+GET /api/v1/admin/dashboard/activity
+- Get recent activity feed
+- Query Parameters:
+  - page (int)
+  - pageSize (int)
+- Returns: Array of {
+  id: number
+  type: string
+  clinic?: string
+  name?: string
+  role?: string
+  count?: number
+  version?: string
+  time: string
+}
+
+
+GET /api/v1/admin/clinics
+- Query Parameters: 
+  - search (string)
+  - city (string)
+  - status (string)
+  - page (int)
+  - pageSize (int)
+  - sortBy (string)
+  - sortDirection (string)
+
+POST /api/v1/admin/clinics
+- Create new clinic
+- Body: {
+  name: string
+  city: string
+  description: string
+  workingHours: {
+    weekdays: string
+    weekends: string
+  }
+  logo: file
+  status: string
+}
+
+GET /api/v1/admin/clinics/{id}
+- Get clinic details
+
+PUT /api/v1/admin/clinics/{id}
+- Update clinic details
+
+DELETE /api/v1/admin/clinics/{id}
+- Delete/deactivate clinic
+
+GET /api/v1/admin/clinics/lookup
+- Get lookup data for clinics:
+  - cities
+  - specialties
+  - facilities
+
+
+
+
+# 1. Clinic Appointments
+
+GET /api/v1/clinic/appointments
+- Query Parameters:
+  - startDate (string, YYYY-MM-DD)
+  - endDate (string, YYYY-MM-DD)
+  - doctorId (string, optional)
+  - status (string, optional)
+  - page (int)
+  - pageSize (int)
+
+POST /api/v1/clinic/appointments
+- Body: {
+  patientId: string
+  doctorId: string
+  date: string (YYYY-MM-DD)
+  startTime: string (HH:mm)
+  endTime: string (HH:mm)
+  type: string (checkup|followup|emergency|dental)
+  notes: string
+  status: string
+}
+
+GET /api/v1/clinic/appointments/{id}
+PUT /api/v1/clinic/appointments/{id}
+DELETE /api/v1/clinic/appointments/{id}
+
+# 2. Clinic Doctors
+
+GET /api/v1/clinic/doctors
+- Query Parameters:
+  - search (string)
+  - specialty (string)
+  - status (string)
+  - experience (string)
+  - page (int)
+  - pageSize (int)
+
+POST /api/v1/clinic/doctors
+- Body: {
+  name: string
+  specialty: string
+  email: string
+  phone: string
+  experience: string
+  avatar: file
+  workingHours: {
+    [day: string]: {
+      start: string
+      end: string
+      isOff: boolean
+    }
+  }
+  status: string
+}
+
+GET /api/v1/clinic/doctors/{id}
+PUT /api/v1/clinic/doctors/{id}
+DELETE /api/v1/clinic/doctors/{id}
+
+GET /api/v1/clinic/doctors/{id}/schedule
+- Get doctor's schedule with appointments
+
+# 3. Clinic Patients (for appointment booking)
+
+GET /api/v1/clinic/patients/search
+- Query Parameters:
+  - query (string)
+  - page (int)
+  - pageSize (int)
+
+# 4. Clinic Lookup Data
+
+GET /api/v1/clinic/lookup/appointment-types
+GET /api/v1/clinic/lookup/specialties
+GET /api/v1/clinic/lookup/doctor-statuses
+GET /api/v1/clinic/lookup/working-hours-template
+
+# 5. Clinic Profile
+
+GET /api/v1/clinic/profile
+PUT /api/v1/clinic/profile
+- Update clinic profile information
+
+# 6. Clinic Settings
+
+GET /api/v1/clinic/settings
+PUT /api/v1/clinic/settings
+- Body: {
+  workingHours: object
+  appointmentDuration: number
+  allowOnlineBooking: boolean
+  notificationSettings: object
+}
+
+# 7. Clinic Reports
+
+GET /api/v1/clinic/reports/appointments
+- Query Parameters:
+  - startDate (string)
+  - endDate (string)
+  - type (daily|weekly|monthly)
+
+GET /api/v1/clinic/reports/doctors
+- Performance and scheduling reports
+
+GET /api/v1/clinic/reports/patients
+- Patient statistics and visit history
+
+
+# 1. Doctor Dashboard
+
+GET /api/v1/doctor/dashboard/stats
+- Returns: {
+  todayPatients: number
+  upcomingAppointments: number
+  completedTreatments: number
+  averageRating: number
+}
+
+GET /api/v1/doctor/dashboard/appointments
+- Query Parameters:
+  - date (string, YYYY-MM-DD)
+  - status (scheduled|in-progress|completed)
+- Returns: List of today's appointments
+
+GET /api/v1/doctor/dashboard/charts
+- Query Parameters:
+  - timeRange: string (daily|weekly|monthly)
+  - type: string (patients|appointments|treatments)
+
+# 2. Doctor Patients
+
+GET /api/v1/doctor/patients
+- Query Parameters:
+  - search (string)
+  - status (active|inactive)
+  - sortBy (name|lastVisit|age)
+  - page (int)
+  - pageSize (int)
+
+GET /api/v1/doctor/patients/{id}
+- Get detailed patient information
+
+POST /api/v1/doctor/patients
+- Add new patient
+- Body: {
+  name: string
+  age: number
+  gender: string
+  phone: string
+  email: string
+  medicalHistory: string
+  allergies: string[]
+}
+
+PUT /api/v1/doctor/patients/{id}
+- Update patient information
+
+# 3. Doctor Treatments
+
+GET /api/v1/doctor/treatments
+- Query Parameters:
+  - search (string)
+  - status (completed|in-progress|scheduled)
+  - startDate (string)
+  - endDate (string)
+  - page (int)
+  - pageSize (int)
+
+POST /api/v1/doctor/treatments
+- Create new treatment
+- Body: {
+  patientId: string
+  diagnosis: string
+  treatmentPlan: string
+  startDate: string
+  status: string
+  nextAppointment: string
+  cost: number
+  notes: string
+}
+
+GET /api/v1/doctor/treatments/{id}
+PUT /api/v1/doctor/treatments/{id}
+DELETE /api/v1/doctor/treatments/{id}
+
+# 4. Doctor Leaves/Time Off
+
+GET /api/v1/doctor/leaves
+- Query Parameters:
+  - year (int)
+  - month (int)
+  - status (pending|approved|rejected)
+
+POST /api/v1/doctor/leaves
+- Request time off
+- Body: {
+  startDate: string
+  endDate: string
+  type: string (vacation|sick|other)
+  reason: string
+}
+
+GET /api/v1/doctor/leaves/{id}
+PUT /api/v1/doctor/leaves/{id}
+DELETE /api/v1/doctor/leaves/{id}
+
+# 5. Doctor Profile
+
+GET /api/v1/doctor/profile
+PUT /api/v1/doctor/profile
+- Update profile information
+- Body: {
+  name: string
+  specialty: string
+  qualifications: string[]
+  experience: string
+  bio: string
+  avatar: file
+  contactInfo: {
+    email: string
+    phone: string
+    address: string
+  }
+}
+
+# 6. Doctor Schedule
+
+GET /api/v1/doctor/schedule
+- Query Parameters:
+  - startDate (string)
+  - endDate (string)
+- Returns: {
+  appointments: array
+  leaves: array
+  workingHours: object
+}
+
+PUT /api/v1/doctor/schedule/working-hours
+- Update working hours
+- Body: {
+  [day: string]: {
+    start: string
+    end: string
+    isOff: boolean
+  }
+}

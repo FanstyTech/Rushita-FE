@@ -3,7 +3,15 @@
 import { useState, useMemo } from 'react';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Table } from '@/components/common/Table';
-import { Eye, MoreVertical, Plus, Search } from 'lucide-react';
+import {
+  Eye,
+  MoreVertical,
+  Plus,
+  Search as FiSearch,
+  Calendar,
+  AlertCircle,
+  ChevronDown as FiChevronDown,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -77,11 +85,18 @@ interface DateRange {
   end: string;
 }
 
+const treatmentStatuses = ['Completed', 'In Progress', 'Scheduled'];
+
 export default function TreatmentsPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [dateRange, setDateRange] = useState<DateRange>({ start: '', end: '' });
+  const [filters, setFilters] = useState({
+    search: '',
+    status: '',
+    dateRange: { start: '', end: '' },
+  });
+  const [activeFilter, setActiveFilter] = useState<'status' | 'date' | null>(
+    null
+  );
   const itemsPerPage = 5;
   const router = useRouter();
 
@@ -91,22 +106,51 @@ export default function TreatmentsPage() {
       const matchesSearch =
         treatment.patientName
           .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        treatment.diagnosis.toLowerCase().includes(searchQuery.toLowerCase());
+          .includes(filters.search.toLowerCase()) ||
+        treatment.diagnosis
+          .toLowerCase()
+          .includes(filters.search.toLowerCase());
 
       const matchesStatus =
-        statusFilter === 'all' || treatment.status === statusFilter;
+        !filters.status || treatment.status === filters.status;
 
       const startDate = new Date(treatment.startDate);
-      const startRange = dateRange.start ? new Date(dateRange.start) : null;
-      const endRange = dateRange.end ? new Date(dateRange.end) : null;
+      const startRange = filters.dateRange.start
+        ? new Date(filters.dateRange.start)
+        : null;
+      const endRange = filters.dateRange.end
+        ? new Date(filters.dateRange.end)
+        : null;
       const matchesDateRange =
         (!startRange || startDate >= startRange) &&
         (!endRange || startDate <= endRange);
 
       return matchesSearch && matchesStatus && matchesDateRange;
     });
-  }, [searchQuery, statusFilter, dateRange]);
+  }, [filters]);
+
+  const handleFilterChange = (
+    key: string,
+    value: string | DateRange | undefined
+  ) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+    setActiveFilter(null);
+  };
+
+  const toggleFilter = (filter: 'status' | 'date') => {
+    setActiveFilter((current) => (current === filter ? null : filter));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      search: '',
+      status: '',
+      dateRange: { start: '', end: '' },
+    });
+  };
 
   const columns = [
     {
@@ -165,145 +209,144 @@ export default function TreatmentsPage() {
 
   return (
     <PageLayout>
-      {/* Filter Section */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Treatments
-              </h2>
-              <p className="mt-1 text-sm text-gray-500">
-                Manage and track patient treatments
-              </p>
+      {/* Search and Filter Bar */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-1.5">
+        <div className="flex items-center gap-2">
+          {/* Search */}
+          <div className="flex-1 relative">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <FiSearch className="text-gray-400 w-4 h-4" />
             </div>
-            <Link
-              href="/doctor/treatments/add"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
-            >
-              <Plus className="w-4 h-4" />
-              New Treatment
-            </Link>
+            <input
+              type="text"
+              placeholder="Search treatments..."
+              value={filters.search}
+              onChange={(e) => handleFilterChange('search', e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-transparent focus:outline-none text-sm"
+            />
           </div>
-        </div>
 
-        {/* Filters */}
-        <div className="p-4 sm:p-6">
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="space-y-4 sm:space-y-6"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
-              {/* Search Input */}
-              <div className="lg:col-span-5">
-                <label
-                  htmlFor="search"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
-                >
-                  Search
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                  </div>
-                  <input
-                    type="text"
-                    id="search"
-                    placeholder="Search by patient name or diagnosis..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="block w-full pl-10 pr-4 py-2.5 text-gray-900 placeholder:text-gray-400 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors sm:text-sm"
-                  />
+          {/* Divider */}
+          <div className="h-8 w-px bg-gray-200"></div>
+
+          {/* Status Filter */}
+          <div className="relative">
+            <button
+              onClick={() => toggleFilter('status')}
+              className="px-4 py-2.5 text-sm text-gray-600 hover:text-gray-900 flex items-center gap-2 hover:text-primary transition-colors"
+            >
+              <AlertCircle className="w-4 h-4" />
+              {filters.status ? filters.status : 'Status'}
+              <FiChevronDown
+                className={`w-4 h-4 transition-transform ${
+                  activeFilter === 'status' ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+            {activeFilter === 'status' && (
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 p-4 animate-fadeIn z-50">
+                <div className="space-y-2">
+                  {treatmentStatuses.map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => handleFilterChange('status', status)}
+                      className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      {status}
+                    </button>
+                  ))}
                 </div>
               </div>
+            )}
+          </div>
 
-              {/* Status Filter */}
-              <div className="lg:col-span-3">
-                <label
-                  htmlFor="status"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
-                >
-                  Status
-                </label>
-                <select
-                  id="status"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="block w-full px-4 py-2.5 text-gray-900 rounded-xl border border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors sm:text-sm"
-                >
-                  <option value="all">All Status</option>
-                  <option value="Completed">Completed</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Scheduled">Scheduled</option>
-                </select>
-              </div>
-
-              {/* Date Range Filter */}
-              <div className="lg:col-span-4">
-                <label
-                  htmlFor="dateRange"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
-                >
-                  Date Range
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="relative">
+          {/* Date Filter */}
+          <div className="relative">
+            <button
+              onClick={() => toggleFilter('date')}
+              className="px-4 py-2.5 text-sm text-gray-600 hover:text-gray-900 flex items-center gap-2 hover:text-primary transition-colors"
+            >
+              <Calendar className="w-4 h-4" />
+              {filters.dateRange.start
+                ? `${filters.dateRange.start} - ${
+                    filters.dateRange.end || 'Now'
+                  }`
+                : 'Date Range'}
+              <FiChevronDown
+                className={`w-4 h-4 transition-transform ${
+                  activeFilter === 'date' ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+            {activeFilter === 'date' && (
+              <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 p-4 animate-fadeIn z-50">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Start Date
+                    </label>
                     <input
                       type="date"
-                      id="startDate"
-                      value={dateRange.start}
+                      value={filters.dateRange.start}
                       onChange={(e) =>
-                        setDateRange((prev) => ({
-                          ...prev,
+                        handleFilterChange('dateRange', {
+                          ...filters.dateRange,
                           start: e.target.value,
-                        }))
+                        })
                       }
-                      className="block w-full px-3 py-2.5 text-gray-900 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors sm:text-sm"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
                     />
                   </div>
-                  <div className="relative">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      End Date
+                    </label>
                     <input
                       type="date"
-                      id="endDate"
-                      value={dateRange.end}
+                      value={filters.dateRange.end}
                       onChange={(e) =>
-                        setDateRange((prev) => ({
-                          ...prev,
+                        handleFilterChange('dateRange', {
+                          ...filters.dateRange,
                           end: e.target.value,
-                        }))
+                        })
                       }
-                      className="block w-full px-3 py-2.5 text-gray-900 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-colors sm:text-sm"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
               </div>
-            </div>
+            )}
+          </div>
 
-            {/* Filter Actions */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 pt-2">
+          {/* Clear Filters */}
+          {(filters.search ||
+            filters.status ||
+            filters.dateRange.start ||
+            filters.dateRange.end) && (
+            <>
+              {/* Divider */}
+              <div className="h-8 w-px bg-gray-200"></div>
               <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery('');
-                  setStatusFilter('all');
-                  setDateRange({ start: '', end: '' });
-                }}
-                className="px-6 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                onClick={clearFilters}
+                className="px-4 py-2.5 text-sm text-gray-600 hover:text-primary transition-colors"
               >
-                Clear
+                Clear Filters
               </button>
-              <button
-                type="submit"
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Apply Filters
-              </button>
-            </div>
-          </form>
+            </>
+          )}
+
+          {/* Add Treatment Button */}
+          <Link
+            href="/doctor/treatments/add"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow-md"
+          >
+            <Plus className="w-4 h-4" />
+            Add Treatment
+          </Link>
         </div>
       </div>
 
+      {/* Table */}
       <div className="mt-6">
         <Table<Treatment>
           data={filteredTreatments}

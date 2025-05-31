@@ -6,7 +6,7 @@ import { AiOutlineMenu } from 'react-icons/ai';
 import { IoChevronBackOutline } from 'react-icons/io5';
 import { adminNav, clinicNav, doctorNav } from './Sidebar';
 
-export default function QuickMenu({ userRole = 'doctor' }) {
+export default function QuickMenu({ userRole = 'admin' }) {
   const [isOpen, setIsOpen] = useState(false);
   const [navigationStack, setNavigationStack] = useState<any[]>([]);
 

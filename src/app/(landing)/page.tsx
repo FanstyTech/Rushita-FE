@@ -345,7 +345,7 @@ export default function Home() {
                   Get Started
                 </Link>
                 <Link
-                  href="/login"
+                  href="/auth/login"
                   className="px-8 py-3 bg-white text-gray-700 rounded-xl text-lg font-medium border border-gray-200 hover:bg-gray-50 transition-all duration-300 inline-flex items-center gap-2"
                 >
                   <LogIn className="w-5 h-5" />
@@ -619,7 +619,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <Link
-                href="/login"
+                href="/auth/login"
                 className="inline-flex items-center gap-2 px-8 py-3 bg-white text-blue-600 rounded-xl text-lg font-medium hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md"
               >
                 <LogIn className="w-5 h-5" />
