@@ -1,6 +1,6 @@
 import { API_BASE_URL } from './config';
 import Cookies from 'js-cookie';
-import { ApiError, type ApiErrorResponse } from './utils/error';
+import { ApiError, type ApiErrorResponse } from '../../utils/error';
 import { toast } from '@/components/ui/Toast';
 
 interface RequestConfig extends RequestInit {

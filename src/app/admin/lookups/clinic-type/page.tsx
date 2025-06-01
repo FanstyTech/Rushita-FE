@@ -1,410 +1,272 @@
 'use client';
 
 import { useState } from 'react';
-import PageLayout from '@/components/layouts/PageLayout';
-import { Table } from '@/components/common/Table';
-import Modal from '@/components/common/Modal';
-import { Input, Select, Textarea } from '@/components/common/form';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Search as FiSearch,
-  Trash2 as FiTrash2,
-  Edit as FiEdit,
-  Plus as FiPlus,
+  Pencil,
+  Trash2,
+  PlusIcon,
+  List as FiList,
 } from 'lucide-react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-
-const clinicTypeSchema = z.object({
-  name: z
-    .string()
-    .min(2, 'Name must be at least 2 characters')
-    .max(50, 'Name cannot exceed 50 characters')
-    .regex(
-      /^[a-zA-Z\s-]+$/,
-      'Name can only contain letters, spaces, and hyphens'
-    ),
-  description: z
-    .string()
-    .min(10, 'Description must be at least 10 characters')
-    .max(500, 'Description cannot exceed 500 characters'),
-  status: z.enum(['active', 'inactive']),
-});
-
-type ClinicTypeFormData = z.infer<typeof clinicTypeSchema>;
-
-interface ClinicType {
-  id: string;
-  name: string;
-  description: string;
-  status: 'active' | 'inactive';
-  createdAt: string;
-}
-
-const mockClinicTypes: ClinicType[] = [
-  {
-    id: '1',
-    name: 'General Practice',
-    description: 'Primary healthcare clinic for general medical services',
-    status: 'active',
-    createdAt: '2023-01-01',
-  },
-  {
-    id: '2',
-    name: 'Dental Clinic',
-    description: 'Specialized clinic for dental and oral health services',
-    status: 'active',
-    createdAt: '2023-01-02',
-  },
-  {
-    id: '3',
-    name: 'Eye Care Center',
-    description: 'Specialized clinic for vision and eye health services',
-    status: 'active',
-    createdAt: '2023-01-03',
-  },
-];
+import PageLayout from '@/components/layouts/PageLayout';
+import { Input, Select } from '@/components/common/form';
+import Dropdown from '@/components/common/Dropdown';
+import { Column, Table } from '@/components/common/Table';
+import Button from '@/components/common/Button';
+import Modal from '@/components/common/Modal';
+import { ConfirmationModal } from '@/components/common';
+import { useClinicType } from '@/lib/api/hooks/useClinicType';
+import type {
+  ClinicTypeListDto,
+  ClinicTypeFilterDto,
+} from '@/lib/api/types/clinic-type';
+import {
+  clinicTypeSchema,
+  ClinicTypeFormData,
+  ParsedClinicTypeData,
+} from './validation';
+import FilterBar, { FilterState } from '@/components/common/FilterBar';
 
 export default function ClinicTypePage() {
-  const [clinicTypes, setClinicTypes] = useState<ClinicType[]>(mockClinicTypes);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedClinicType, setSelectedClinicType] =
-    useState<ClinicType | null>(null);
-  const [filters, setFilters] = useState({
-    search: '',
-    status: '',
+
+  // States
+  const [filter, setFilter] = useState<FilterState>({
+    pageNumber: 1,
+    pageSize: 5,
+    sortColumn: '',
+    sortDirection: '',
+    searchValue: '',
+    isActive: undefined,
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedClinicType, setSelectedClinicType] =
+    useState<ClinicTypeListDto | null>(null);
+
+  // Hooks
+  const {
+    getClinicTypes,
+    createClinicType,
+    updateClinicType,
+    deleteClinicType,
+  } = useClinicType();
+  const { data: clinicTypesData, isLoading } = getClinicTypes(filter);
+
+  // Form
   const {
     register,
     handleSubmit,
-    formState: { errors },
     reset,
-    setValue,
+    formState: { errors },
   } = useForm<ClinicTypeFormData>({
     resolver: zodResolver(clinicTypeSchema),
-    mode: 'onChange',
     defaultValues: {
-      name: '',
-      description: '',
-      status: 'active',
+      nameL: '',
+      nameF: '',
+      isActive: 'true' as const,
     },
   });
 
-  const onSubmit = async (data: ClinicTypeFormData) => {
+  // Handlers
+  const onSubmit: SubmitHandler<ClinicTypeFormData> = async (formData) => {
+    const payload: ParsedClinicTypeData = {
+      nameL: formData.nameL,
+      nameF: formData.nameF,
+      isActive: formData.isActive === 'true',
+      ...(selectedClinicType && { id: selectedClinicType.id }),
+    };
+
     if (selectedClinicType) {
-      // Edit mode
-      setClinicTypes((prev) =>
-        prev.map((type) =>
-          type.id === selectedClinicType.id
-            ? {
-                ...type,
-                ...data,
-              }
-            : type
-        )
-      );
-      setIsEditModalOpen(false);
+      await updateClinicType.mutate(payload);
     } else {
-      // Add mode
-      const newClinicType: ClinicType = {
-        id: `type-${Date.now()}`,
-        createdAt: new Date().toISOString().split('T')[0],
-        ...data,
-      };
-      setClinicTypes((prev) => [newClinicType, ...prev]);
-      setIsAddModalOpen(false);
+      await createClinicType.mutate(payload);
     }
+    handleCloseModal();
+  };
 
-    reset();
+  const handleAddClick = () => {
+    reset({
+      nameL: '',
+      nameF: '',
+      isActive: 'true',
+    });
     setSelectedClinicType(null);
+    setIsModalOpen(true);
   };
 
-  const handleEdit = (type: ClinicType) => {
-    setSelectedClinicType(type);
-    setValue('name', type.name);
-    setValue('description', type.description);
-    setValue('status', type.status);
-    setIsEditModalOpen(true);
+  const clearFilters = () => {
+    setFilter({
+      pageNumber: 1,
+      pageSize: 5,
+      sortColumn: '',
+      sortDirection: '',
+      searchValue: '',
+      isActive: undefined,
+    });
   };
 
-  const handleDelete = (type: ClinicType) => {
-    setSelectedClinicType(type);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedClinicType(null);
+    reset();
+  };
+
+  const handleEdit = (clinicType: ClinicTypeListDto) => {
+    setSelectedClinicType(clinicType);
+    reset({
+      nameL: clinicType.nameL,
+      nameF: clinicType.nameF,
+      isActive: clinicType.isActive ? 'true' : 'false',
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (clinicType: ClinicTypeListDto) => {
+    setSelectedClinicType(clinicType);
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (selectedClinicType) {
-      setClinicTypes((prev) =>
-        prev.filter((type) => type.id !== selectedClinicType.id)
-      );
+      await deleteClinicType.mutateAsync(selectedClinicType.id);
       setIsDeleteModalOpen(false);
       setSelectedClinicType(null);
     }
   };
 
-  const handleFilterChange = (key: string, value: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      search: '',
-      status: '',
-    });
-  };
-
-  const filteredClinicTypes = clinicTypes.filter((type) => {
-    const matchesSearch =
-      type.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-      type.description.toLowerCase().includes(filters.search.toLowerCase());
-    const matchesStatus = filters.status
-      ? type.status === filters.status
-      : true;
-    return matchesSearch && matchesStatus;
-  });
-
-  const columns = [
+  // Table columns
+  const columns: Column<ClinicTypeListDto>[] = [
     {
-      header: 'Name',
-      accessor: (row: ClinicType) => (
-        <span className="font-medium">{row.name}</span>
-      ),
+      header: 'Local Name',
+      accessor: 'nameL',
     },
     {
-      header: 'Description',
-      accessor: (row: ClinicType) => (
-        <span className="text-gray-600">{row.description}</span>
-      ),
+      header: 'Foreign Name',
+      accessor: 'nameF',
     },
     {
       header: 'Status',
-      accessor: (row: ClinicType) => (
+      accessor: 'isActive',
+      cell: ({ row }) => (
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
-            row.status === 'active'
+          className={`px-2 py-1 rounded-full text-xs ${
+            row.original.isActive
               ? 'bg-green-100 text-green-800'
-              : 'bg-gray-100 text-gray-800'
+              : 'bg-red-100 text-red-800'
           }`}
         >
-          {row.status}
+          {row.original.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
     },
     {
-      header: 'Created At',
-      accessor: (row: ClinicType) => (
-        <span className="text-gray-600">{row.createdAt}</span>
-      ),
-    },
-    {
       header: 'Actions',
-      accessor: (row: ClinicType) => (
-        <div className="flex items-center gap-2">
+      accessor: 'id',
+      cell: ({ row }) => (
+        <div className="flex gap-2">
           <button
-            onClick={() => handleEdit(row)}
-            className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+            onClick={() => handleEdit(row.original)}
+            className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
           >
-            <FiEdit className="w-4 h-4" />
+            <Pencil className="w-4 h-4" />
           </button>
           <button
-            onClick={() => handleDelete(row)}
-            className="p-2 text-gray-600 hover:text-red-600 transition-colors"
+            onClick={() => handleDelete(row.original)}
+            className="p-1 text-red-600 hover:text-red-800 transition-colors"
           >
-            <FiTrash2 className="w-4 h-4" />
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       ),
     },
   ];
 
-  const itemsPerPage = 10;
-
   return (
     <PageLayout>
       <div className="space-y-6">
         {/* Search and Filter Bar */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-1.5">
-          <div className="flex items-center gap-2">
-            {/* Search */}
-            <div className="flex-1 relative">
-              <Input
-                hasBorder={false}
-                placeholder="Search clinic types..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                startIcon={<FiSearch className="w-4 h-4 text-gray-400" />}
-                className="bg-transparent"
-              />
-            </div>
-
-            {/* Divider */}
-            <div className="h-8 w-px bg-gray-200"></div>
-
-            {/* Status Filter */}
-            <div>
-              <Select
-                value={filters.status}
-                hasBorder={false}
-                onChange={(e) => handleFilterChange('status', e.target.value)}
-                options={[
-                  { value: '', label: 'All Status' },
-                  { value: 'active', label: 'Active' },
-                  { value: 'inactive', label: 'Inactive' },
-                ]}
-                className="appearance-none px-4 py-2.5 text-sm text-gray-600 bg-transparent focus:outline-none cursor-pointer pr-10"
-              />
-            </div>
-
-            {/* Clear Filters */}
-            {(filters.search || filters.status) && (
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
-              >
-                Clear Filters
-              </button>
-            )}
-
-            {/* Add Clinic Type Button */}
-            <button
-              onClick={() => {
-                reset();
-                setIsAddModalOpen(true);
-              }}
-              className="ml-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center gap-2"
-            >
-              <FiPlus className="w-4 h-4" />
-              Add Clinic Type
-            </button>
-          </div>
-        </div>
+        <FilterBar
+          filter={filter}
+          onFilterChange={(newFilter) => {
+            setFilter((prev) => ({
+              ...prev,
+              ...newFilter,
+              pageNumber: newFilter.pageNumber ?? prev.pageNumber,
+              pageSize: newFilter.pageSize ?? prev.pageSize,
+              sortColumn: newFilter.sortColumn ?? prev.sortColumn,
+              sortDirection: newFilter.sortDirection ?? prev.sortDirection,
+            }));
+          }}
+          onAddNew={handleAddClick}
+        />
 
         {/* Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
-          <Table<ClinicType>
-            data={filteredClinicTypes}
-            columns={columns}
-            currentPage={1}
-            totalPages={Math.ceil(filteredClinicTypes.length / itemsPerPage)}
-            onPageChange={() => {}}
-            itemsPerPage={itemsPerPage}
-            totalItems={filteredClinicTypes.length}
-            noDataMessage={{
-              title: 'No clinic types found',
-              subtitle: 'Try adjusting your search or filters',
-            }}
-          />
-        </div>
-      </div>
+        <Table<ClinicTypeListDto>
+          data={clinicTypesData?.items ?? []}
+          columns={columns}
+          isLoading={isLoading}
+          pagination={{
+            pageSize: filter.pageSize,
+            pageIndex: filter.pageNumber - 1,
+            pageCount: clinicTypesData?.totalPages || 0,
+            onPageChange: (page: number) =>
+              setFilter((prev) => ({ ...prev, pageNumber: page + 1 })),
+          }}
+        />
 
-      {/* Add/Edit Modal */}
-      <Modal
-        isOpen={isAddModalOpen || isEditModalOpen}
-        onClose={() => {
-          setIsAddModalOpen(false);
-          setIsEditModalOpen(false);
-          setSelectedClinicType(null);
-          reset();
-        }}
-        footer={
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => {
-                setIsAddModalOpen(false);
-                setIsEditModalOpen(false);
-                setSelectedClinicType(null);
-                reset();
-              }}
-              className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmit(onSubmit)}
-              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow-md"
-            >
-              {selectedClinicType ? 'Save Changes' : 'Add Clinic Type'}
-            </button>
-          </div>
-        }
-        title={`${selectedClinicType ? 'Edit' : 'Add'} Clinic Type`}
-        maxWidth="2xl"
-      >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
+        {/* Add/Edit Modal */}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          title={`${selectedClinicType ? 'Edit' : 'Add'} Clinic Type`}
+        >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Input
-              label="Name"
-              {...register('name')}
-              error={errors.name?.message}
-              helperText="Enter clinic type name (letters, spaces, and hyphens only)"
-              placeholder="Enter clinic type name"
+              label="Local Name"
+              {...register('nameL')}
+              error={errors.nameL?.message}
             />
-
-            <Textarea
-              label="Description"
-              {...register('description')}
-              error={errors.description?.message}
-              helperText="Enter clinic type description"
-              placeholder="Enter clinic type description"
-              rows={4}
+            <Input
+              label="Foreign Name"
+              {...register('nameF')}
+              error={errors.nameF?.message}
             />
-
             <Select
               label="Status"
-              {...register('status')}
-              error={errors.status?.message}
+              {...register('isActive')}
+              error={errors.isActive?.message}
               options={[
-                { value: 'active', label: 'Active' },
-                { value: 'inactive', label: 'Inactive' },
+                { value: 'true', label: 'Active' },
+                { value: 'false', label: 'Inactive' },
               ]}
             />
-          </div>
-        </form>
-      </Modal>
+            <div className="flex justify-end gap-2">
+              <Button variant="secondary" onClick={handleCloseModal}>
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit">
+                {selectedClinicType ? 'Update' : 'Create'}
+              </Button>
+            </div>
+          </form>
+        </Modal>
 
-      {/* Delete Confirmation Modal */}
-      <Modal
-        isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setSelectedClinicType(null);
-        }}
-        title="Delete Clinic Type"
-        maxWidth="2xl"
-        footer={
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => {
-                setIsDeleteModalOpen(false);
-                setSelectedClinicType(null);
-              }}
-              className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={confirmDelete}
-              className="px-6 py-2.5 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-all"
-            >
-              Delete
-            </button>
-          </div>
-        }
-      >
-        <div className="space-y-4">
-          <p className="text-gray-600">
-            Are you sure you want to delete this clinic type? This action cannot
-            be undone.
-          </p>
-        </div>
-      </Modal>
+        {/* Delete Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={confirmDelete}
+          title="Delete Item"
+          message="Are you sure you want to delete this item?"
+          secondaryMessage="This action cannot be undone."
+          variant="error"
+          confirmText="Delete"
+          isLoading={deleteClinicType.isPending}
+        />
+      </div>
     </PageLayout>
   );
 }

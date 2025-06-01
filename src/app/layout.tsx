@@ -6,9 +6,9 @@ import Sidebar from '@/components/Sidebar';
 import QuickMenu from '@/components/QuickMenu';
 import QuickActions from '@/components/QuickActions';
 import { usePathname } from 'next/navigation';
-import Loading from '@/components/Loading';
+import Loading from '@/components/Splash';
 import Header from '@/components/Header';
-import { Providers } from '@/providers/providers';
+import { Providers } from '@/providers/Providers';
 
 const inter = Inter({ subsets: ['latin'] });
 

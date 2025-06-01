@@ -74,7 +74,7 @@ export function Table<T>({
   );
 
   return (
-    <div className=" bg-white shadow-sm rounded-xl border border-gray-200">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="overflow-x-auto relative">
         {data.length === 0 && !isLoading && (
           <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] flex justify-center items-center z-10">
@@ -129,6 +129,8 @@ export function Table<T>({
                     >
                       {column.cell
                         ? column.cell({ row: { original: item } })
+                        : (item[column.accessor] ?? '') === '' // null, undefined, or ''
+                        ? '-'
                         : String(item[column.accessor])}
                     </td>
                   ))}

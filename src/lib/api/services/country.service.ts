@@ -4,22 +4,12 @@ import {
   CountryListDto,
   CountryFilterDto,
 } from '../types/country';
+import type { SelectOption } from '../types/select-option';
 import type { PaginationResponse } from '../types/pagination';
 import type { ApiResponse } from '../types/api';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-
-const convertFilterToParams = (
-  filter: CountryFilterDto
-): Record<string, string> => {
-  const params: Record<string, string> = {};
-  Object.entries(filter).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      params[key] = String(value);
-    }
-  });
-  return params;
-};
+import { convertFilterToParams } from '../../../utils/filter';
 
 export const countryService = {
   async getAll(
@@ -34,6 +24,11 @@ export const countryService = {
     return apiClient.get(API_ENDPOINTS.country.GET_ONE.replace(':id', id));
   },
 
+  async getCountryForDropdown(): Promise<ApiResponse<SelectOption<string>[]>> {
+    // Assuming there's an endpoint for fetching countries for dropdown
+    return apiClient.get(API_ENDPOINTS.country.GET_COUNTRY_FOR_DROPDOWN);
+  },
+
   async create(data: CreateUpdateCountryDto): Promise<ApiResponse<CountryDto>> {
     return apiClient.post(API_ENDPOINTS.country.CREATE_OR_UPDATE, data);
   },
@@ -44,7 +39,7 @@ export const countryService = {
 
   async delete(id: string): Promise<ApiResponse<void>> {
     return apiClient.delete(API_ENDPOINTS.country.DELETE, {
-      params: { id },
+      id,
     });
   },
 };

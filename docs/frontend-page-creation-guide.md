@@ -1,4 +1,38 @@
-# Frontend Page Creation Guide
+# Rushita Frontend Page Creation Guide
+
+## Overview
+
+This guide explains how to create a new lookup page in the Rushita Frontend application. It follows a standardized approach for consistency and maintainability.
+
+## Prerequisites
+
+- Node.js and npm installed
+- Access to the Rushita-FE repository
+- Basic understanding of React, TypeScript, and Tailwind CSS
+
+## Project Structure
+
+```
+src/
+├── app/
+│   └── admin/
+│       └── lookups/
+│           └── [feature]/
+│               ├── page.tsx
+│               └── validation.ts
+├── lib/
+│   └── api/
+│       ├── types/
+│       │   └── [feature].ts
+│       ├── services/
+│       │   └── [feature].service.ts
+│       └── hooks/
+│           └── use[Feature].ts
+└── components/
+    └── Sidebar.tsx
+```
+
+## Step-by-Step Guide
 
 ## Table of Contents
 
@@ -226,36 +260,310 @@ export function useEntity() {
 
 ## 5. Page Component Creation
 
-Create a new file in `src/app/admin/[module]/[entity]/page.tsx`:
+Create a new file in `src/app/admin/lookups/[feature]/page.tsx`. Follow this template which includes all common patterns:
 
 ```typescript
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus } from 'lucide-react';
-import { Table, Button, Modal, Input, Select } from '@/components/common';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { FiSearch } from 'react-icons/fi';
+import {
+  Table,
+  Button,
+  Modal,
+  Input,
+  Select,
+  Badge,
+  IconButton,
+  ConfirmationModal,
+} from '@/components/common';
 import { useEntity } from '@/lib/api/hooks/useEntity';
 import { entitySchema } from './validation';
-import type { EntityListDto, EntityFilterDto } from '@/lib/api/types/entity';
+import type {
+  EntityDto,
+  EntityListDto,
+  EntityFilterDto,
+  EntityFormData,
+} from '@/lib/api/types/entity';
 
 export default function EntityPage() {
-  // State
+  // States
   const [filter, setFilter] = useState<EntityFilterDto>({
     pageNumber: 1,
-    pageSize: 10,
+    pageSize: 5,
+    searchValue: '',
+    isActive: undefined,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEntity, setSelectedEntity] = useState<EntityListDto | null>(
-    null
-  );
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedEntity, setSelectedEntity] = useState<EntityListDto | null>(null);
 
   // Hooks
-  const { getEntities, createEntity, updateEntity, deleteEntity } = useEntity();
+  const {
+    getEntities,
+    createEntity,
+    updateEntity,
+    deleteEntity,
+  } = useEntity();
 
-  const { data: entitiesData, isLoading } = getEntities(filter);
+  const { data: entities, isLoading } = getEntities(filter);
 
-  // Form
   const form = useForm({
+    resolver: zodResolver(entitySchema),
+    defaultValues: {
+      nameL: '',
+      nameF: '',
+      description: '',
+      isActive: 'true',
+    },
+  });
+
+  // Handlers
+  const handleAdd = () => {
+    form.reset({
+      nameL: '',
+      nameF: '',
+      description: '',
+      isActive: 'true',
+    });
+    setSelectedEntity(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (entity: EntityListDto) => {
+    form.reset({
+      nameL: entity.nameL,
+      nameF: entity.nameF,
+      description: entity.description ?? '',
+      isActive: entity.isActive ? 'true' : 'false',
+    });
+    setSelectedEntity(entity);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedEntity(null);
+    form.reset();
+  };
+
+  const handleDeleteClick = (entity: EntityListDto) => {
+    setSelectedEntity(entity);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedEntity) return;
+
+    try {
+      await deleteEntity.mutateAsync(selectedEntity.id);
+      setIsDeleteModalOpen(false);
+      setSelectedEntity(null);
+    } catch (error) {
+      console.error('Failed to delete entity:', error);
+    }
+  };
+
+  const onSubmit = async (formData: any) => {
+    const payload = {
+      nameL: formData.nameL,
+      nameF: formData.nameF,
+      description: formData.description,
+      isActive: formData.isActive === 'true',
+    };
+
+    try {
+      if (selectedEntity) {
+        await updateEntity.mutateAsync({
+          id: selectedEntity.id,
+          ...payload,
+        });
+      } else {
+        await createEntity.mutateAsync(payload);
+      }
+      handleCloseModal();
+    } catch (error) {
+      console.error('Failed to save entity:', error);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Entities</h1>
+        <Button onClick={handleAdd} leftIcon={<Plus className="h-4 w-4" />}>
+          Add New
+        </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Search..."
+            value={filter.searchValue}
+            onChange={(e) =>
+              setFilter((prev) => ({
+                ...prev,
+                searchValue: e.target.value,
+              }))
+            }
+            leftIcon={<FiSearch className="h-4 w-4 text-gray-400" />}
+          />
+          <Select
+            value={filter.isActive?.toString() ?? ''}
+            onChange={(e) =>
+              setFilter((prev) => ({
+                ...prev,
+                isActive:
+                  e.target.value === ''
+                    ? undefined
+                    : e.target.value === 'true',
+              }))
+            }
+            options={[
+              { value: '', label: 'All Status' },
+              { value: 'true', label: 'Active' },
+              { value: 'false', label: 'Inactive' },
+            ]}
+          />
+        </div>
+
+        {/* Clear Filters */}
+        {(filter.searchValue || filter.isActive !== undefined) && (
+          <>
+            {/* Divider */}
+            <div className="h-8 w-px bg-gray-200"></div>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                setFilter((prev) => ({
+                  ...prev,
+                  searchValue: '',
+                  isActive: undefined,
+                }))
+              }
+            >
+              Clear Filters
+            </Button>
+          </>
+        )}
+      </div>
+
+      {/* Add/Edit Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        title={selectedEntity ? 'Edit Entity' : 'Add New Entity'}
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Cancel
+            </Button>
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              isLoading={updateEntity.isPending || createEntity.isPending}
+            >
+              {selectedEntity ? 'Save Changes' : 'Add Entity'}
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <Input
+            label="Local Name"
+            {...form.register('nameL')}
+            error={form.formState.errors.nameL?.message}
+          />
+          <Input
+            label="Foreign Name"
+            {...form.register('nameF')}
+            error={form.formState.errors.nameF?.message}
+          />
+          <Input
+            label="Description"
+            {...form.register('description')}
+            error={form.formState.errors.description?.message}
+          />
+          <Select
+            label="Status"
+            {...form.register('isActive')}
+            error={form.formState.errors.isActive?.message}
+            options={[
+              { value: 'true', label: 'Active' },
+              { value: 'false', label: 'Inactive' },
+            ]}
+          />
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Entity"
+        message="Are you sure you want to delete this entity? This action cannot be undone."
+        isLoading={deleteEntity.isPending}
+      />
+
+      {/* Table */}
+      <div className="mt-6 rounded-md border">
+        <Table
+          data={entities?.items ?? []}
+          columns={[
+            {
+              header: 'Local Name',
+              accessor: 'nameL',
+            },
+            {
+              header: 'Foreign Name',
+              accessor: 'nameF',
+            },
+            {
+              header: 'Status',
+              accessor: 'isActive',
+              cell: ({ row }) => (
+                <Badge
+                  variant={row.original.isActive ? 'success' : 'error'}
+                >
+                  {row.original.isActive ? 'Active' : 'Inactive'}
+                </Badge>
+              ),
+            },
+            {
+              header: 'Actions',
+              cell: ({ row }) => (
+                <div className="flex items-center gap-2">
+                  <IconButton
+                    onClick={() => handleEdit(row.original)}
+                    icon={<Pencil className="h-4 w-4" />}
+                    variant="ghost"
+                  />
+                  <IconButton
+                    onClick={() => handleDeleteClick(row.original)}
+                    icon={<Trash2 className="h-4 w-4" />}
+                    variant="ghost"
+                  />
+                </div>
+              ),
+            },
+          ]}
+          pagination={{
+            pageSize: filter.pageSize,
+            pageNumber: filter.pageNumber,
+            totalItems: entities?.totalItems ?? 0,
+            onPageChange: (page) =>
+              setFilter((prev) => ({ ...prev, pageNumber: page })),
+          }}
+          isLoading={isLoading}
+        />
+      </div>
+    </div>
+  );
+}
     resolver: zodResolver(entitySchema),
     defaultValues: {
       nameL: '',
@@ -364,38 +672,115 @@ export default function EntityPage() {
         />
       </div>
 
+      {/* Add/Edit Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title={selectedEntity ? 'Edit Entity' : 'Add Entity'}
+        title={selectedEntity ? 'Edit Entity' : 'Add New Entity'}
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Cancel
+            </Button>
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              isLoading={updateEntity.isPending || createEntity.isPending}
+            >
+              {selectedEntity ? 'Save Changes' : 'Add Entity'}
+            </Button>
+          </div>
+        }
       >
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="space-y-4">
-            <Input
-              label="Local Name"
-              {...form.register('nameL')}
-              error={form.formState.errors.nameL?.message}
-            />
-            <Input
-              label="Foreign Name"
-              {...form.register('nameF')}
-              error={form.formState.errors.nameF?.message}
-            />
-            <Input
-              label="Description"
-              {...form.register('description')}
-              error={form.formState.errors.description?.message}
-            />
-            <Select
-              label="Status"
-              {...form.register('isActive')}
-              error={form.formState.errors.isActive?.message}
-              options={[
-                { value: 'true', label: 'Active' },
-                { value: 'false', label: 'Inactive' },
-              ]}
-            />
-            <div className="flex justify-end gap-2">
+        <div className="space-y-4">
+          <Input
+            label="Local Name"
+            {...form.register('nameL')}
+            error={form.formState.errors.nameL?.message}
+          />
+          <Input
+            label="Foreign Name"
+            {...form.register('nameF')}
+            error={form.formState.errors.nameF?.message}
+          />
+          <Input
+            label="Description"
+            {...form.register('description')}
+            error={form.formState.errors.description?.message}
+          />
+          <Select
+            label="Status"
+            {...form.register('isActive')}
+            error={form.formState.errors.isActive?.message}
+            options={[
+              { value: 'true', label: 'Active' },
+              { value: 'false', label: 'Inactive' },
+            ]}
+          />
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Entity"
+        message="Are you sure you want to delete this entity? This action cannot be undone."
+        isLoading={deleteEntity.isPending}
+      />
+
+      {/* Table */}
+      <div className="mt-6 rounded-md border">
+        <Table
+          data={entities?.items ?? []}
+          columns={[
+            {
+              header: 'Local Name',
+              accessor: 'nameL',
+            },
+            {
+              header: 'Foreign Name',
+              accessor: 'nameF',
+            },
+            {
+              header: 'Status',
+              accessor: 'isActive',
+              cell: ({ row }) => (
+                <Badge
+                  variant={row.original.isActive ? 'success' : 'error'}
+                >
+                  {row.original.isActive ? 'Active' : 'Inactive'}
+                </Badge>
+              ),
+            },
+            {
+              header: 'Actions',
+              cell: ({ row }) => (
+                <div className="flex items-center gap-2">
+                  <IconButton
+                    onClick={() => handleEdit(row.original)}
+                    icon={<Pencil className="h-4 w-4" />}
+                    variant="ghost"
+                  />
+                  <IconButton
+                    onClick={() => handleDeleteClick(row.original)}
+                    icon={<Trash2 className="h-4 w-4" />}
+                    variant="ghost"
+                  />
+                </div>
+              ),
+            },
+          ]}
+          pagination={{
+            pageSize: filter.pageSize,
+            pageNumber: filter.pageNumber,
+            totalItems: entities?.totalItems ?? 0,
+            onPageChange: (page) =>
+              setFilter((prev) => ({ ...prev, pageNumber: page })),
+          }}
+          isLoading={isLoading}
+        />
+      </div>
               <Button
                 variant="secondary"
                 onClick={handleCloseModal}

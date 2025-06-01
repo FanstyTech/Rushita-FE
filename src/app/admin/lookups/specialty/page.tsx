@@ -12,7 +12,8 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import type { SpecialtyListDto } from '@/lib/api/types/specialty';
-
+import { ConfirmationModal } from '@/components/common';
+import FilterBar, { FilterState } from '@/components/common/FilterBar';
 const specialtySchema = z.object({
   nameL: z
     .string()
@@ -40,7 +41,7 @@ export default function SpecialtyPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSpecialty, setSelectedSpecialty] =
     useState<SpecialtyListDto | null>(null);
-  const [filter, setFilter] = useState({
+  const [filter, setFilter] = useState<FilterState>({
     pageNumber: 1,
     pageSize: 5,
     sortColumn: '',
@@ -203,95 +204,34 @@ export default function SpecialtyPage() {
     <PageLayout>
       <div className="space-y-6">
         {/* Search and Filter Bar */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-1.5">
-          <div className="flex items-center gap-2">
-            {/* Search */}
-            <div className="flex-1 relative">
-              <Input
-                hasBorder={false}
-                placeholder="Search specialties"
-                value={filter.searchValue}
-                onChange={(e) =>
-                  setFilter((prev) => ({
-                    ...prev,
-                    searchValue: e.target.value,
-                  }))
-                }
-                startIcon={<FiSearch className="w-4 h-4 text-gray-400" />}
-                className="bg-transparent"
-              />
-            </div>
-
-            {/* Divider */}
-            <div className="h-8 w-px bg-gray-200"></div>
-
-            {/* Status Filter */}
-            <div>
-              <Select
-                value={
-                  filter.isActive === undefined
-                    ? ''
-                    : filter.isActive.toString()
-                }
-                hasBorder={false}
-                onChange={(e) =>
-                  setFilter((prev) => ({
-                    ...prev,
-                    isActive:
-                      e.target.value === ''
-                        ? undefined
-                        : e.target.value === 'true',
-                  }))
-                }
-                options={[
-                  { value: '', label: 'All Status' },
-                  { value: 'true', label: 'Active' },
-                  { value: 'false', label: 'Inactive' },
-                ]}
-                className="appearance-none px-4 py-2.5 text-sm text-gray-600 bg-transparent focus:outline-none cursor-pointer pr-10"
-              />
-            </div>
-
-            {/* Clear Filters */}
-            {(filter.searchValue || filter.isActive !== undefined) && (
-              <>
-                {/* Divider */}
-                <div className="h-8 w-px bg-gray-200"></div>
-                <button
-                  onClick={clearFilters}
-                  className="px-4 py-2.5 text-sm text-gray-600 hover:text-primary transition-colors"
-                >
-                  Clear Filters
-                </button>
-              </>
-            )}
-
-            {/* Add Specialty Button */}
-            <Button
-              onClick={handleAddClick}
-              leftIcon={<Plus className="w-4 h-4" />}
-              className="ml-2"
-            >
-              Add Specialty
-            </Button>
-          </div>
-        </div>
+        <FilterBar
+          filter={filter}
+          onFilterChange={(newFilter) => {
+            setFilter((prev) => ({
+              ...prev,
+              ...newFilter,
+              pageNumber: newFilter.pageNumber ?? prev.pageNumber,
+              pageSize: newFilter.pageSize ?? prev.pageSize,
+              sortColumn: newFilter.sortColumn ?? prev.sortColumn,
+              sortDirection: newFilter.sortDirection ?? prev.sortDirection,
+            }));
+          }}
+          onAddNew={handleAddClick}
+        />
 
         {/* Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <Table<SpecialtyListDto>
-            data={specialtiesData?.items || []}
-            columns={columns}
-            isLoading={isLoading}
-            pagination={{
-              pageSize: filter.pageSize,
-              pageIndex: filter.pageNumber - 1,
-              pageCount: specialtiesData?.totalPages || 0,
-              onPageChange: (page: number) =>
-                setFilter((prev) => ({ ...prev, pageNumber: page + 1 })),
-            }}
-          />
-        </div>
+        <Table<SpecialtyListDto>
+          data={specialtiesData?.items || []}
+          columns={columns}
+          isLoading={isLoading}
+          pagination={{
+            pageSize: filter.pageSize,
+            pageIndex: filter.pageNumber - 1,
+            pageCount: specialtiesData?.totalPages || 0,
+            onPageChange: (page: number) =>
+              setFilter((prev) => ({ ...prev, pageNumber: page + 1 })),
+          }}
+        />
       </div>
       {/* Add/Edit Modal */}
       <Modal
@@ -346,42 +286,17 @@ export default function SpecialtyPage() {
         </form>
       </Modal>
       {/* Delete Confirmation Modal */}
-      <Modal
+      <ConfirmationModal
         isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setSelectedSpecialty(null);
-        }}
-        footer={
-          <div className="flex justify-end gap-3">
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setIsDeleteModalOpen(false);
-                setSelectedSpecialty(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              onClick={confirmDelete}
-              isLoading={deleteSpecialty.isPending}
-            >
-              Delete
-            </Button>
-          </div>
-        }
-        title="Delete Specialty"
-        maxWidth="2xl"
-      >
-        <div className="space-y-4">
-          <p className="text-gray-600">
-            Are you sure you want to delete the specialty "
-            {selectedSpecialty?.nameL}"? This action cannot be undone.
-          </p>
-        </div>
-      </Modal>
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Delete Item"
+        message="Are you sure you want to delete this item?"
+        secondaryMessage="This action cannot be undone."
+        variant="error"
+        confirmText="Delete"
+        isLoading={deleteSpecialty.isPending}
+      />
     </PageLayout>
   );
 }

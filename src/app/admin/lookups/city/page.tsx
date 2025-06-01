@@ -1,226 +1,174 @@
 'use client';
 
-import { useState } from 'react';
-import PageLayout from '@/components/layouts/PageLayout';
-import { Table } from '@/components/common/Table';
-import { Plus, Search as FiSearch, Pencil, Trash2 } from 'lucide-react';
-import Modal from '@/components/common/Modal';
-import { Input, Select } from '@/components/common/form';
-import { FiChevronDown } from 'react-icons/fi';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { useState, type ChangeEvent } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { FiList, FiSearch } from 'react-icons/fi';
 
-const citySchema = z.object({
-  name: z
-    .string()
-    .min(2, 'City name must be at least 2 characters')
-    .max(50, 'City name cannot exceed 50 characters')
-    .regex(
-      /^[a-zA-Z\s-]+$/,
-      'City name can only contain letters, spaces, and hyphens'
-    ),
-  countryId: z.string().min(1, 'Please select a country'),
-  status: z.enum(['active', 'inactive']),
-});
+import Button from '@/components/common/Button';
+import { Input, Select } from '@/components/common/form';
+import { Table, type Column } from '@/components/common/Table';
+import Modal from '@/components/common/Modal';
+import PageLayout from '@/components/layouts/PageLayout';
 
-type CityFormData = z.infer<typeof citySchema>;
+import { useCity } from '@/lib/api/hooks/useCity';
+import { useCountry } from '@/lib/api/hooks/useCountry';
+import { citySchema, type CityFormData } from './validation';
+import { type CityListDto } from '@/lib/api/types/city';
+import { type SelectOption } from '@/lib/api/types/select-option';
+import FilterBar, { FilterState } from '@/components/common/FilterBar';
 
-interface City {
-  id: string;
-  name: string;
-  countryId: string;
-  countryName: string;
-  status: 'active' | 'inactive';
-  createdAt: string;
-}
-
-const mockCities: City[] = [
-  {
-    id: '1',
-    name: 'New York',
-    countryId: '1',
-    countryName: 'United States',
-    status: 'active',
-    createdAt: '2025-05-01',
-  },
-  {
-    id: '2',
-    name: 'London',
-    countryId: '2',
-    countryName: 'United Kingdom',
-    status: 'active',
-    createdAt: '2025-05-02',
-  },
-  {
-    id: '3',
-    name: 'Toronto',
-    countryId: '3',
-    countryName: 'Canada',
-    status: 'active',
-    createdAt: '2025-05-03',
-  },
-];
-
-// Mock countries for the dropdown
-const mockCountries = [
-  { id: '1', name: 'United States' },
-  { id: '2', name: 'United Kingdom' },
-  { id: '3', name: 'Canada' },
-];
+type ParsedCityData = Omit<CityFormData, 'isActive'> & {
+  isActive: boolean;
+  id?: string;
+};
 
 export default function CityPage() {
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState<City | null>(null);
-  const [cities, setCities] = useState<City[]>(mockCities);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState({
-    search: '',
-    status: '',
-    countryId: '',
+  const [selectedCity, setSelectedCity] = useState<CityListDto | null>(null);
+
+  // States
+  const [filter, setFilter] = useState<FilterState>({
+    pageNumber: 1,
+    pageSize: 5,
+    sortColumn: '',
+    sortDirection: '',
+    searchValue: '',
+    isActive: undefined as boolean | undefined,
+    countryId: undefined as string | undefined,
   });
 
+  // Hooks
+  const { getCities, createCity, updateCity, deleteCity } = useCity();
+  const { getCountryForDropdown } = useCountry();
+
+  const { data: citiesResponse, isLoading } = getCities(filter);
+
+  const { data: countriesResponse } = getCountryForDropdown();
+
+  // Form
   const {
     register,
     handleSubmit,
-    formState: { errors },
     reset,
-    setValue,
+    formState: { errors },
   } = useForm<CityFormData>({
     resolver: zodResolver(citySchema),
-    mode: 'onChange',
     defaultValues: {
-      name: '',
+      nameL: '',
+      nameF: '',
       countryId: '',
-      status: 'active',
+      isActive: 'true',
     },
   });
 
-  const onSubmit = async (data: CityFormData) => {
-    const selectedCountry = mockCountries.find(
-      (country) => country.id === data.countryId
-    );
+  // Handlers
+  const onSubmit: SubmitHandler<CityFormData> = async (formData) => {
+    const payload: ParsedCityData = {
+      nameL: formData.nameL,
+      nameF: formData.nameF,
+      countryId: formData.countryId,
+      isActive: formData.isActive === 'true',
+      ...(selectedCity && { id: selectedCity.id }),
+    };
 
-    if (selectedCity) {
-      // Edit mode
-      setCities((prev) =>
-        prev.map((city) =>
-          city.id === selectedCity.id
-            ? {
-                ...city,
-                ...data,
-                countryName: selectedCountry?.name || '',
-              }
-            : city
-        )
-      );
-      setIsEditModalOpen(false);
-    } else {
-      // Add mode
-      const newCity: City = {
-        id: `city-${Date.now()}`,
-        createdAt: new Date().toISOString().split('T')[0],
-        ...data,
-        countryName: selectedCountry?.name || '',
-      };
-      setCities((prev) => [newCity, ...prev]);
-      setIsAddModalOpen(false);
+    try {
+      if (selectedCity) {
+        await updateCity.mutateAsync(payload);
+      } else {
+        await createCity.mutateAsync(payload);
+      }
+      handleCloseModal();
+    } catch (error) {
+      console.error('Error submitting form:', error);
     }
+  };
 
-    reset();
+  const handleAddClick = () => {
+    reset({
+      nameL: '',
+      nameF: '',
+      countryId: '',
+      isActive: 'true',
+    });
     setSelectedCity(null);
+    setIsModalOpen(true);
   };
 
-  const handleEdit = (city: City) => {
+  const handleEdit = (city: CityListDto) => {
     setSelectedCity(city);
-    setValue('name', city.name);
-    setValue('countryId', city.countryId);
-    setValue('status', city.status);
-    setIsEditModalOpen(true);
+    reset({
+      nameL: city.nameL,
+      nameF: city.nameF,
+      countryId: city.countryId,
+      isActive: city.isActive ? 'true' : 'false',
+    });
+    setIsModalOpen(true);
   };
 
-  const handleDelete = (city: City) => {
+  const handleDelete = async (city: CityListDto) => {
     setSelectedCity(city);
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (selectedCity) {
-      setCities((prev) => prev.filter((city) => city.id !== selectedCity.id));
+      await deleteCity.mutateAsync(selectedCity.id);
       setIsDeleteModalOpen(false);
       setSelectedCity(null);
     }
   };
 
-  const handleFilterChange = (key: string, value: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedCity(null);
+    reset();
   };
 
-  const clearFilters = () => {
-    setFilters({
-      search: '',
-      status: '',
-      countryId: '',
-    });
-  };
-
-  const itemsPerPage = 10;
-
-  const filteredCities = cities.filter((city) => {
-    const matchesSearch =
-      city.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-      city.countryName.toLowerCase().includes(filters.search.toLowerCase());
-    const matchesStatus = !filters.status || city.status === filters.status;
-    const matchesCountry =
-      !filters.countryId || city.countryId === filters.countryId;
-    return matchesSearch && matchesStatus && matchesCountry;
-  });
-
-  const columns = [
+  // Table columns
+  const columns: Column<CityListDto>[] = [
     {
-      header: 'Name',
-      accessor: 'name' as keyof City,
-      className: 'font-medium text-gray-900',
+      header: 'Local Name',
+      accessor: 'nameL',
+    },
+    {
+      header: 'Foreign Name',
+      accessor: 'nameF',
     },
     {
       header: 'Country',
-      accessor: 'countryName' as keyof City,
+      accessor: 'countryName',
     },
     {
       header: 'Status',
-      accessor: (city: City) => (
+      accessor: 'isActive',
+      cell: ({ row }: { row: { original: CityListDto } }) => (
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
-            city.status === 'active'
+          className={`px-2 py-1 rounded-full text-xs ${
+            row.original.isActive
               ? 'bg-green-100 text-green-800'
               : 'bg-red-100 text-red-800'
           }`}
         >
-          {city.status}
+          {row.original.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
     },
     {
-      header: 'Created At',
-      accessor: 'createdAt' as keyof City,
-    },
-    {
       header: 'Actions',
-      accessor: (city: City) => (
-        <div className="flex items-center gap-2">
+      accessor: 'id',
+      cell: ({ row }: { row: { original: CityListDto } }) => (
+        <div className="flex gap-2">
           <button
-            onClick={() => handleEdit(city)}
+            onClick={() => handleEdit(row.original)}
             className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
           >
             <Pencil className="w-4 h-4" />
           </button>
           <button
-            onClick={() => handleDelete(city)}
+            onClick={() => handleDelete(row.original)}
             className="p-1 text-red-600 hover:text-red-800 transition-colors"
           >
             <Trash2 className="w-4 h-4" />
@@ -234,205 +182,143 @@ export default function CityPage() {
     <PageLayout>
       <div className="space-y-6">
         {/* Search and Filter Bar */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-1.5">
-          <div className="flex items-center gap-2">
-            {/* Search */}
-            <div className="flex-1 relative">
-              <Input
-                hasBorder={false}
-                placeholder="Search cities..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                startIcon={<FiSearch className="w-4 h-4 text-gray-400" />}
-                className="bg-transparent"
-              />
-            </div>
-            {/* Divider */}
-            <div className="h-8 w-px bg-gray-200"></div>
 
-            {/* Status Filter */}
-            <div>
-              <Select
-                value={filters.status}
-                hasBorder={false}
-                onChange={(e) => handleFilterChange('status', e.target.value)}
-                options={[
-                  { value: '', label: 'All Status' },
-                  { value: 'active', label: 'Active' },
-                  { value: 'inactive', label: 'Inactive' },
-                ]}
-                className="appearance-none px-4 py-2.5 text-sm text-gray-600 bg-transparent focus:outline-none cursor-pointer pr-10"
-              />
-            </div>
+        <FilterBar
+          filter={filter}
+          onFilterChange={(newFilter) => {
+            setFilter((prev) => ({
+              ...prev,
+              ...newFilter,
+              pageNumber: newFilter.pageNumber ?? prev.pageNumber,
+              pageSize: newFilter.pageSize ?? prev.pageSize,
+              sortColumn: newFilter.sortColumn ?? prev.sortColumn,
+              sortDirection: newFilter.sortDirection ?? prev.sortDirection,
+            }));
+          }}
+          onAddNew={handleAddClick}
+          additionalFilters={[
+            {
+              icon: <FiList className="w-4 h-4" />,
+              label: 'Country',
+              options: [
+                { value: '', label: 'All Countries' },
+                ...(countriesResponse?.map((country: SelectOption<string>) => ({
+                  value: country.value,
+                  label: country.label || '',
+                })) || []),
+              ],
+              value: filter.countryId || '',
+              onChange: (value) =>
+                setFilter((prev) => ({
+                  ...prev,
+                  countryId: value,
+                })),
+            },
+          ]}
+        />
+        <Table<CityListDto>
+          data={citiesResponse?.items || []}
+          columns={columns}
+          isLoading={isLoading}
+          pagination={{
+            pageSize: filter.pageSize,
+            pageIndex: filter.pageNumber - 1,
+            pageCount: citiesResponse?.totalPages || 0,
 
-            {/* Country Filter */}
-            <div className="relative">
-              <Select
-                value={filters.countryId}
-                onChange={(e) =>
-                  handleFilterChange('countryId', e.target.value)
-                }
-                hasBorder={false}
-                options={mockCountries.map((country) => ({
-                  value: country.id,
-                  label: country.name,
-                }))}
-                className="appearance-none px-4 py-2.5 text-sm text-gray-600 bg-transparent focus:outline-none cursor-pointer pr-10"
-              />
-            </div>
-
-            {/* Clear Filters */}
-            {(filters.search || filters.status || filters.countryId) && (
-              <>
-                {/* Divider */}
-                <div className="h-8 w-px bg-gray-200"></div>
-                <button
-                  onClick={clearFilters}
-                  className="px-4 py-2.5 text-sm text-gray-600 hover:text-primary transition-colors"
-                >
-                  Clear Filters
-                </button>
-              </>
-            )}
-
-            {/* Add City Button */}
-            <button
-              onClick={() => {
-                reset();
-                setIsAddModalOpen(true);
-              }}
-              className="ml-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Add City
-            </button>
-          </div>
-        </div>
-
-        {/* Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <Table<City>
-            data={filteredCities}
-            columns={columns}
-            currentPage={currentPage}
-            totalPages={Math.ceil(filteredCities.length / itemsPerPage)}
-            onPageChange={setCurrentPage}
-            itemsPerPage={itemsPerPage}
-            totalItems={filteredCities.length}
-            noDataMessage={{
-              title: 'No cities found',
-              subtitle: 'No cities match your search criteria.',
-            }}
-          />
-        </div>
+            onPageChange: (pageIndex: number) =>
+              setFilter((prev) => ({ ...prev, pageNumber: pageIndex + 1 })),
+          }}
+        />
       </div>
 
       {/* Add/Edit Modal */}
       <Modal
-        isOpen={isAddModalOpen || isEditModalOpen}
-        onClose={() => {
-          setIsAddModalOpen(false);
-          setIsEditModalOpen(false);
-          setSelectedCity(null);
-          reset();
-        }}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
         footer={
           <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                setIsAddModalOpen(false);
-                setIsEditModalOpen(false);
-                setSelectedCity(null);
-                reset();
-              }}
-              className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all"
-            >
+            <Button variant="secondary" onClick={handleCloseModal}>
               Cancel
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
               onClick={handleSubmit(onSubmit)}
-              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow-md"
+              isLoading={updateCity.isPending || createCity.isPending}
             >
-              {selectedCity ? 'Save Changes' : 'Add City'}
-            </button>
+              {selectedCity ? 'Save Changes' : 'Add Country'}
+            </Button>
           </div>
         }
         title={`${selectedCity ? 'Edit' : 'Add'} City`}
         maxWidth="2xl"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
-            <Input
-              label="Name"
-              {...register('name')}
-              error={errors.name?.message}
-              helperText="Enter city name (letters, spaces, and hyphens only)"
-              placeholder="Enter city name"
-            />
-
-            <Select
-              label="Country"
-              {...register('countryId')}
-              error={errors.countryId?.message}
-              options={[
-                { value: '', label: 'Select a country' },
-                ...mockCountries.map((country) => ({
-                  value: country.id,
-                  label: country.name,
-                })),
-              ]}
-            />
-
-            <Select
-              label="Status"
-              {...register('status')}
-              error={errors.status?.message}
-              options={[
-                { value: 'active', label: 'Active' },
-                { value: 'inactive', label: 'Inactive' },
-              ]}
-            />
-          </div>
+        <form className="space-y-4">
+          <Input
+            label="Local Name"
+            error={errors.nameL?.message}
+            {...register('nameL')}
+          />
+          <Input
+            label="Foreign Name"
+            error={errors.nameF?.message}
+            {...register('nameF')}
+          />
+          <Select
+            label="Country"
+            error={errors.countryId?.message}
+            {...register('countryId')}
+            options={[
+              { value: '', label: 'Select Country' },
+              ...(countriesResponse || []).map(
+                (country: SelectOption<string>) => ({
+                  value: country.value,
+                  label: country.label || '', // Provide empty string as fallback
+                })
+              ),
+            ]}
+          />
+          <Select
+            label="Status"
+            error={errors.isActive?.message}
+            {...register('isActive')}
+            options={[
+              { value: 'true', label: 'Active' },
+              { value: 'false', label: 'Inactive' },
+            ]}
+          />
         </form>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       <Modal
         isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setSelectedCity(null);
-        }}
+        title="Delete City"
+        onClose={() => setIsDeleteModalOpen(false)}
         footer={
           <div className="flex justify-end gap-3">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => {
                 setIsDeleteModalOpen(false);
                 setSelectedCity(null);
               }}
-              className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all"
             >
               Cancel
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="danger"
               onClick={confirmDelete}
-              className="px-6 py-2.5 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-all"
+              isLoading={deleteCity.isPending}
             >
               Delete
-            </button>
+            </Button>
           </div>
         }
-        title="Delete City"
-        maxWidth="2xl"
       >
         <div className="space-y-4">
           <p className="text-gray-600">
-            Are you sure you want to delete this city? This action cannot be
-            undone.
+            Are you sure you want to delete{' '}
+            <span className="font-medium">{selectedCity?.nameL}</span>? This
+            action cannot be undone.
           </p>
         </div>
       </Modal>

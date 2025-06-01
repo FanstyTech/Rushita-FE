@@ -1,9 +1,9 @@
 'use client';
 import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-
+import PageLayout from '@/components/layouts/PageLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus } from 'lucide-react';
+import { Plus, Search as FiSearch, Pencil, Trash2 } from 'lucide-react';
 import { Input, Select } from '@/components/common/form';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
@@ -15,13 +15,14 @@ import {
   ParsedCountryData,
 } from './validation';
 import type { CountryListDto } from '@/lib/api/types/country';
-import { set } from 'date-fns';
+import { ConfirmationModal } from '@/components/common';
+import FilterBar, { FilterState } from '@/components/common/FilterBar';
 
 export default function CountryPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // States
-  const [filter, setFilter] = useState({
+  const [filter, setFilter] = useState<FilterState>({
     pageNumber: 1,
     pageSize: 5,
     sortColumn: '',
@@ -73,6 +74,17 @@ export default function CountryPage() {
     }
     handleCloseModal();
   };
+  const handleAddClick = () => {
+    reset({
+      nameL: '',
+      nameF: '',
+      phoneCode: '',
+      code: '',
+      isActive: 'true',
+    });
+    setSelectedCountry(null);
+    setIsModalOpen(true);
+  };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -82,8 +94,16 @@ export default function CountryPage() {
 
   const handleEdit = (country: CountryListDto) => {
     setSelectedCountry(country);
+    reset({
+      nameL: country.nameL,
+      nameF: country.nameF,
+      phoneCode: country.phoneCode || '',
+      code: country.code || '',
+      isActive: country.isActive ? 'true' : 'false',
+    });
     setIsModalOpen(true);
   };
+
   const handleDelete = async (specialty: CountryListDto) => {
     setSelectedCountry(specialty);
     setIsDeleteModalOpen(true);
@@ -120,7 +140,11 @@ export default function CountryPage() {
       accessor: 'isActive',
       cell: ({ row }) => (
         <span
-          className={row.original.isActive ? 'text-green-600' : 'text-red-600'}
+          className={`px-2 py-1 rounded-full text-xs ${
+            row.original.isActive
+              ? 'bg-green-100 text-green-800'
+              : 'bg-red-100 text-red-800'
+          }`}
         >
           {row.original.isActive ? 'Active' : 'Inactive'}
         </span>
@@ -131,30 +155,43 @@ export default function CountryPage() {
       accessor: 'id',
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => handleEdit(row.original)}>
-            Edit
-          </Button>
-          <Button variant="danger" onClick={() => handleDelete(row.original)}>
-            Delete
-          </Button>
+          <button
+            onClick={() => handleEdit(row.original)}
+            className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => handleDelete(row.original)}
+            className="p-1 text-red-600 hover:text-red-800 transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
       ),
     },
   ];
 
   return (
-    <div>
-      <div className="flex justify-between mb-4">
-        <h1 className="text-2xl font-semibold">Country Management</h1>
-        <Button
-          onClick={() => setIsModalOpen(true)}
-          leftIcon={<Plus className="w-4 h-4" />}
-        >
-          Add Country
-        </Button>
-      </div>
+    <PageLayout>
+      <div className="space-y-6">
+        {/* Search and Filter Bar */}
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <FilterBar
+          filter={filter}
+          onFilterChange={(newFilter) => {
+            setFilter((prev) => ({
+              ...prev,
+              ...newFilter,
+              pageNumber: newFilter.pageNumber ?? prev.pageNumber,
+              pageSize: newFilter.pageSize ?? prev.pageSize,
+              sortColumn: newFilter.sortColumn ?? prev.sortColumn,
+              sortDirection: newFilter.sortDirection ?? prev.sortDirection,
+            }));
+          }}
+          onAddNew={handleAddClick}
+        />
+        {/* Table */}
         <Table<CountryListDto>
           data={countriesData?.items || []}
           columns={columns}
@@ -168,6 +205,7 @@ export default function CountryPage() {
           }}
         />
       </div>
+
       {/* Add/Edit Modal */}
       <Modal
         isOpen={isModalOpen}
@@ -185,7 +223,7 @@ export default function CountryPage() {
             </Button>
           </div>
         }
-        title={selectedCountry ? 'Edit Country' : 'Add Country'}
+        title={`${selectedCountry ? 'Edit' : 'Add'} Country`}
         maxWidth="2xl"
       >
         <form className="space-y-6">
@@ -222,43 +260,19 @@ export default function CountryPage() {
           </div>
         </form>
       </Modal>
+
       {/* Delete Confirmation Modal */}
-      <Modal
+      <ConfirmationModal
         isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setSelectedCountry(null);
-        }}
-        footer={
-          <div className="flex justify-end gap-3">
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setIsDeleteModalOpen(false);
-                setSelectedCountry(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              onClick={confirmDelete}
-              isLoading={deleteCountry.isPending}
-            >
-              Delete
-            </Button>
-          </div>
-        }
-        title="Delete country"
-        maxWidth="2xl"
-      >
-        <div className="space-y-4">
-          <p className="text-gray-600">
-            Are you sure you want to delete the country "
-            {selectedCountry?.nameL}"? This action cannot be undone.
-          </p>
-        </div>
-      </Modal>
-    </div>
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Delete Item"
+        message="Are you sure you want to delete this item?"
+        secondaryMessage="This action cannot be undone."
+        variant="error"
+        confirmText="Delete"
+        isLoading={deleteCountry.isPending}
+      />
+    </PageLayout>
   );
 }

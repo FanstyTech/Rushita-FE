@@ -1,4 +1,4 @@
-import { PaginationRequest, PaginationResponse } from '../types/pagination';
+import { PaginationRequest } from '../types/pagination';
 
 export interface SpecialtyDto {
   id: string;

@@ -17,6 +17,19 @@ import {
   GlobeAltIcon,
   MapPinIcon,
   ListBulletIcon,
+  BeakerIcon,
+  HeartIcon,
+  ArchiveBoxIcon,
+  BookmarkIcon,
+  DocumentTextIcon,
+  ShieldCheckIcon,
+  BoltIcon,
+  PuzzlePieceIcon,
+  IdentificationIcon,
+  ClipboardDocumentCheckIcon,
+  AcademicCapIcon,
+  BriefcaseIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from 'react-i18next';
@@ -87,13 +100,58 @@ export const adminNav = [
     name: 'Lookups',
     icon: ListBulletIcon,
     children: [
-      { name: 'Specialty', href: '/admin/lookups/specialty', icon: UserIcon },
+      { name: 'Specialty', href: '/admin/lookups/specialty', icon: AcademicCapIcon },
       { name: 'Country', href: '/admin/lookups/country', icon: GlobeAltIcon },
       { name: 'City', href: '/admin/lookups/city', icon: MapPinIcon },
       {
         name: 'Clinic Type',
         href: '/admin/lookups/clinic-type',
         icon: BuildingOfficeIcon,
+      },
+      {
+        name: 'Radiology Test Category',
+        href: '/admin/lookups/radiology-test-category',
+        icon: ArchiveBoxIcon,
+      },
+      {
+        name: 'Radiology Test',
+        href: '/admin/lookups/radiology-test',
+        icon: BoltIcon,
+      },
+      {
+        name: 'Medication Type',
+        href: '/admin/lookups/medication-type',
+        icon: BookmarkIcon,
+      },
+      {
+        name: 'Medicine',
+        href: '/admin/lookups/medicine',
+        icon: HeartIcon,
+      },
+      {
+        name: 'Lab Test Category',
+        href: '/admin/lookups/lab-test-category',
+        icon: PuzzlePieceIcon,
+      },
+      {
+        name: 'Lab Test',
+        href: '/admin/lookups/lab-test',
+        icon: ShieldCheckIcon,
+      },
+      {
+        name: 'Diagnosis Category',
+        href: '/admin/lookups/diagnosis-category',
+        icon: DocumentTextIcon,
+      },
+      {
+        name: 'Diagnosis',
+        href: '/admin/lookups/diagnosis',
+        icon: ClipboardDocumentCheckIcon,
+      },
+      {
+        name: 'Dental Procedure',
+        href: '/admin/lookups/dental-procedure',
+        icon: SparklesIcon,
       },
     ],
   },

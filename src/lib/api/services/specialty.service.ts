@@ -8,18 +8,8 @@ import type { PaginationResponse } from '../types/pagination';
 import type { ApiResponse } from '../types/api';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-
-const convertFilterToParams = (
-  filter: SpecialtyFilterDto
-): Record<string, string> => {
-  const params: Record<string, string> = {};
-  Object.entries(filter).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      params[key] = String(value);
-    }
-  });
-  return params;
-};
+import { convertFilterToParams } from '../../../utils/filter';
+import { SelectOption } from '../types/select-option';
 
 export const specialtyService = {
   async getAll(
@@ -34,6 +24,14 @@ export const specialtyService = {
   async getById(id: string): Promise<ApiResponse<SpecialtyDto>> {
     return apiClient.get<ApiResponse<SpecialtyDto>>(
       API_ENDPOINTS.specialty.GET_ONE.replace(':id', id)
+    );
+  },
+
+  async getRadiologyTestsForDropdown(): Promise<
+    ApiResponse<SelectOption<string>[]>
+  > {
+    return apiClient.get<ApiResponse<SelectOption<string>[]>>(
+      API_ENDPOINTS.specialty.GET_FOR_DROPDOWN
     );
   },
 

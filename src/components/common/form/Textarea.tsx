@@ -3,7 +3,7 @@
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-interface TextareaProps
+interface TextAreaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
@@ -12,7 +12,7 @@ interface TextareaProps
   hasBorder?: boolean;
 }
 
-const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   (
     {
       label,
@@ -58,6 +58,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   }
 );
 
-Textarea.displayName = 'Textarea';
+TextArea.displayName = 'TextArea';
 
-export default Textarea;
+export default TextArea;

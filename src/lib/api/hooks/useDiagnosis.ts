@@ -1,0 +1,95 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import {
+  CreateUpdateDiagnosisDto,
+  DiagnosisFilterDto,
+} from '../types/diagnosis';
+import { diagnosisService } from '../services/diagnosis.service';
+
+export const useDiagnosis = () => {
+  const queryClient = useQueryClient();
+
+  const getDiagnoses = (filter: DiagnosisFilterDto) =>
+    useQuery({
+      queryKey: ['diagnoses', filter],
+      queryFn: async () => {
+        const response = await diagnosisService.getAll(filter);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+    });
+
+  const getDiagnosis = (id: string) =>
+    useQuery({
+      queryKey: ['diagnosis', id],
+      queryFn: async () => {
+        const response = await diagnosisService.getOne(id);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+      enabled: !!id,
+    });
+
+  const createDiagnosis = useMutation({
+    mutationFn: async (data: CreateUpdateDiagnosisDto) => {
+      const response = await diagnosisService.create(data);
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      return response.result;
+    },
+    onSuccess: () => {
+      toast.success('Diagnosis created successfully');
+      queryClient.invalidateQueries({ queryKey: ['diagnoses'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const updateDiagnosis = useMutation({
+    mutationFn: async (data: CreateUpdateDiagnosisDto) => {
+      const response = await diagnosisService.update(data);
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      return response.result;
+    },
+    onSuccess: () => {
+      toast.success('Diagnosis updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['diagnoses'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const deleteDiagnosis = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await diagnosisService.delete(id);
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      return response.result;
+    },
+    onSuccess: () => {
+      toast.success('Diagnosis deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ['diagnoses'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+  return {
+    getDiagnoses,
+    getDiagnosis,
+    createDiagnosis,
+    updateDiagnosis,
+    deleteDiagnosis,
+  };
+};

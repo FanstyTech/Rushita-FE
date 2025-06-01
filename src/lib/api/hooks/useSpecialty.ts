@@ -34,6 +34,17 @@ export function useSpecialty() {
       },
       enabled: !!id,
     });
+  const getSpecialtiesForDropdown = () =>
+    useQuery({
+      queryKey: ['specialtiesDropdown'],
+      queryFn: async () => {
+        const response = await specialtyService.getRadiologyTestsForDropdown();
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+    });
 
   const createSpecialty = useMutation({
     mutationFn: async (data: CreateUpdateSpecialtyDto) => {
@@ -89,6 +100,7 @@ export function useSpecialty() {
   return {
     getSpecialties,
     getSpecialty,
+    getSpecialtiesForDropdown,
     createSpecialty,
     updateSpecialty,
     deleteSpecialty,

@@ -34,6 +34,18 @@ export function useCountry() {
       },
     });
 
+  const getCountryForDropdown = () =>
+    useQuery({
+      queryKey: ['country', 'dropdown'],
+      queryFn: async () => {
+        const response = await countryService.getCountryForDropdown();
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+    });
+
   const createCountry = useMutation({
     mutationFn: async (data: CreateUpdateCountryDto) => {
       const response = await countryService.create(data);
@@ -44,7 +56,7 @@ export function useCountry() {
     },
     onSuccess: () => {
       toast.success('Country created successfully');
-      queryClient.invalidateQueries(['countries']);
+      queryClient.invalidateQueries({ queryKey: ['countries'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -61,7 +73,7 @@ export function useCountry() {
     },
     onSuccess: () => {
       toast.success('Country updated successfully');
-      queryClient.invalidateQueries(['countries']);
+      queryClient.invalidateQueries({ queryKey: ['countries'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -78,7 +90,7 @@ export function useCountry() {
     },
     onSuccess: () => {
       toast.success('Country deleted successfully');
-      queryClient.invalidateQueries(['countries']);
+      queryClient.invalidateQueries({ queryKey: ['countries'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -88,6 +100,7 @@ export function useCountry() {
   return {
     getCountries,
     getCountry,
+    getCountryForDropdown,
     createCountry,
     updateCountry,
     deleteCountry,
