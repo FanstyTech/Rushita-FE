@@ -9,6 +9,7 @@ import type {
 } from '../types/city';
 import type { PaginationResponse } from '../types/pagination';
 import type { ApiResponse } from '../types/api';
+import { SelectOption } from '../types/select-option';
 
 export const cityService = {
   async getAll(
@@ -21,6 +22,9 @@ export const cityService = {
 
   async getById(id: string): Promise<ApiResponse<CityDto>> {
     return apiClient.get(API_ENDPOINTS.city.GET_ONE.replace(':id', id));
+  },
+  async getCitiesForDropdown(): Promise<ApiResponse<SelectOption<string>[]>> {
+    return apiClient.get(API_ENDPOINTS.city.GET_FOR_DROPDOWN);
   },
 
   async create(city: CreateUpdateCityDto): Promise<ApiResponse<CityDto>> {

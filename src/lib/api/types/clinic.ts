@@ -12,7 +12,10 @@ export interface ClinicDto {
   id: string;
   nameL: string;
   nameF: string;
-  address: string;
+  name: string;
+  bio?: string;
+  email?: string;
+  address?: string;
   phoneNumber: string;
   cityId?: string;
   clinicTypeId?: string;
@@ -24,9 +27,12 @@ export interface CreateUpdateClinicDto {
   nameL: string;
   nameF: string;
   phoneNumber: string;
+  bio?: string;
+  email?: string;
   cityId?: string;
+  countryId?: string;
   clinicTypeId?: string;
-  address: string;
+  address?: string;
   latitude?: number;
   longitude?: number;
   specialtyIds: string[];

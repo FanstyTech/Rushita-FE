@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Image from 'next/image';
+
 import {
   Search as FiSearch,
   Pencil,
@@ -18,10 +20,7 @@ import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import { ConfirmationModal } from '@/components/common';
 import { useClinicType } from '@/lib/api/hooks/useClinicType';
-import type {
-  ClinicTypeListDto,
-  ClinicTypeFilterDto,
-} from '@/lib/api/types/clinic-type';
+import type { ClinicTypeListDto } from '@/lib/api/types/clinic-type';
 import {
   clinicTypeSchema,
   ClinicTypeFormData,
@@ -39,7 +38,7 @@ export default function ClinicTypePage() {
     sortColumn: '',
     sortDirection: '',
     searchValue: '',
-    isActive: undefined,
+    isActive: undefined as boolean | undefined,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -187,7 +186,6 @@ export default function ClinicTypePage() {
   return (
     <PageLayout>
       <div className="space-y-6">
-        {/* Search and Filter Bar */}
         <FilterBar
           filter={filter}
           onFilterChange={(newFilter) => {
@@ -209,7 +207,7 @@ export default function ClinicTypePage() {
           columns={columns}
           isLoading={isLoading}
           pagination={{
-            pageSize: filter.pageSize,
+            pageSize: filter.pageSize || 5,
             pageIndex: filter.pageNumber - 1,
             pageCount: clinicTypesData?.totalPages || 0,
             onPageChange: (page: number) =>

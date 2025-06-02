@@ -9,16 +9,15 @@ import type {
 import type { PaginationResponse } from '../types/pagination';
 import type { SelectOption } from '../types/select-option';
 import type { ApiResponse } from '../types/api';
+import { convertFilterToParams } from '@/utils/filter';
 
 class ClinicService {
-  async getList(
+  async getAll(
     filter: ClinicFilterDto
-  ): Promise<PaginationResponse<ClinicListDto>> {
-    const response = await apiClient.post<PaginationResponse<ClinicListDto>>(
-      API_ENDPOINTS.CLINIC.LIST,
-      filter
-    );
-    return response;
+  ): Promise<ApiResponse<PaginationResponse<ClinicListDto>>> {
+    return apiClient.get(API_ENDPOINTS.CLINIC.LIST, {
+      params: convertFilterToParams(filter),
+    });
   }
 
   async createOrUpdate(
@@ -31,8 +30,10 @@ class ClinicService {
     return response;
   }
 
-  async delete(id: string): Promise<void> {
-    await apiClient.delete(`${API_ENDPOINTS.CLINIC.DELETE}/${id}`);
+  async delete(id: string): Promise<ApiResponse<void>> {
+    return apiClient.delete(API_ENDPOINTS.CLINIC.DELETE, {
+      id,
+    });
   }
 
   async getOne(id: string): Promise<ClinicDto> {

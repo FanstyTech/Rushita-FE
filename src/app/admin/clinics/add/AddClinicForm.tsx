@@ -8,8 +8,6 @@ import * as z from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import {
-  FiMapPin,
-  FiPhone,
   FiMail,
   FiGlobe,
   FiClock,
@@ -25,9 +23,15 @@ import {
   FiYoutube,
   FiX,
 } from 'react-icons/fi';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { states, type State, type City } from '@/mockData/locations';
 import Link from 'next/link';
+import { Input, Select, TextArea } from '@/components/common/form';
+import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
+import { useCity } from '@/lib/api/hooks/useCity';
+import { useCountry } from '@/lib/api/hooks/useCountry';
+import { useClinic } from '@/lib/api/hooks/useClinic';
+import { SelectOption } from '@/lib/api/types/select-option';
+import { CreateUpdateClinicDto } from '@/lib/api/types/clinic';
 
 const formSteps = [
   { id: 'basic', title: 'Basic Info', icon: FiUser },
@@ -48,13 +52,15 @@ const days = [
 ];
 
 interface ClinicFormData {
-  name: string;
+  nameL: string;
+  nameF: string;
   email: string;
   phone: string;
-  description: string;
-  address: string;
-  city: string;
-  state: string;
+  bio: string;
+  address?: string;
+  cityId?: string;
+  countryId?: string;
+  state?: string;
   hours: {
     day: string;
     isOpen: boolean;
@@ -73,13 +79,16 @@ interface ClinicFormData {
 }
 
 const clinicSchema = z.object({
-  name: z.string().min(3, 'Name must be at least 3 characters'),
+  nameL: z.string().min(3, 'NameL must be at least 3 characters'),
+  nameF: z.string().min(3, 'NameF must be at least 3 characters'),
   email: z.string().email('Invalid email address'),
   phone: z.string().min(10, 'Phone number must be at least 10 digits'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
-  address: z.string().min(5, 'Address must be at least 5 characters'),
-  city: z.string().min(2, 'City must be at least 2 characters'),
-  state: z.string().min(2, 'State must be at least 2 characters'),
+  bio: z.string().min(10, 'Bio must be at least 10 characters'),
+
+  address: z.string().optional(),
+  cityId: z.string().optional(),
+  countryId: z.string().optional(),
+  state: z.string().optional(),
   hours: z.array(
     z.object({
       day: z.string(),
@@ -99,27 +108,22 @@ const clinicSchema = z.object({
   }),
 });
 
-const specialtyOptions = [
-  'General Practice',
-  'Pediatrics',
-  'Cardiology',
-  'Dermatology',
-  'Orthopedics',
-  'Neurology',
-  'Dentistry',
-  'Ophthalmology',
-  'ENT',
-  'Gynecology',
-];
-
 export default function AddClinicForm() {
   const [currentStep, setCurrentStep] = useState<string>('basic');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedState, setSelectedState] = useState<State | null>(null);
   const [availableCities, setAvailableCities] = useState<City[]>([]);
-  const router = useRouter();
 
+  const { createOrUpdateClinic } = useClinic();
+
+  const { getSpecialtiesForDropdown } = useSpecialty();
+  const { data: specialties } = getSpecialtiesForDropdown();
+
+  const { getCitiesForDropdown } = useCity();
+  const { data: cities } = getCitiesForDropdown();
+
+  const { getCountryForDropdown } = useCountry();
+  const { data: countries } = getCountryForDropdown();
   const {
     register,
     handleSubmit,
@@ -127,7 +131,6 @@ export default function AddClinicForm() {
     watch,
     trigger,
     setValue,
-    getValues,
   } = useForm<ClinicFormData>({
     resolver: zodResolver(clinicSchema),
     mode: 'onChange',
@@ -155,9 +158,9 @@ export default function AddClinicForm() {
   ): (keyof ClinicFormData | `social.${keyof ClinicFormData['social']}`)[] => {
     switch (step) {
       case 'basic':
-        return ['name', 'email', 'phone', 'description'];
+        return ['nameL', 'nameF', 'email', 'phone', 'bio'];
       case 'location':
-        return ['address', 'city', 'state'];
+        return ['address', 'cityId', 'state'];
       case 'hours':
         return ['hours'];
       case 'social':
@@ -175,54 +178,30 @@ export default function AddClinicForm() {
         return [];
     }
   };
+  const router = useRouter();
 
   const onSubmit = async (data: ClinicFormData) => {
-    if (isSubmitting) return;
-
     try {
-      setIsSubmitting(true);
-      await fetch('/api/clinics', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      toast.success('Clinic added successfully!', {
-        icon: '✅',
-        style: {
-          background: 'rgba(240, 253, 244, 0.95)',
-          backdropFilter: 'blur(8px)',
-          border: '1px solid #dcfce7',
-          color: '#166534',
-          padding: '12px 16px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-          fontSize: '14px',
-          fontWeight: 500,
-        },
-      });
-
+      const payload: CreateUpdateClinicDto = {
+        nameL: data.nameL,
+        nameF: data.nameF,
+        email: data.email,
+        phoneNumber: data.phone,
+        bio: data.bio,
+        address: data.address,
+        cityId: data.cityId || undefined,
+        countryId: data.countryId || undefined,
+        //hours: data.hours,
+        // social: data.social,
+        specialtyIds: data.specialties,
+      };
+      await createOrUpdateClinic.mutateAsync(payload);
       router.push('/admin/clinics');
     } catch (error) {
-      toast.error('Failed to add clinic. Please try again.', {
-        icon: '❌',
-        style: {
-          background: 'rgba(254, 242, 242, 0.95)',
-          backdropFilter: 'blur(8px)',
-          border: '1px solid #fee2e2',
-          color: '#991b1b',
-          padding: '12px 16px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-          fontSize: '14px',
-          fontWeight: 500,
-        },
-      });
-    } finally {
-      setIsSubmitting(false);
+      console.error('Error submitting form:', error);
     }
+    console.log('data', data);
+    return;
   };
 
   const handleStepChange = async (stepId: string) => {
@@ -255,17 +234,10 @@ export default function AddClinicForm() {
     }
   };
 
-  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const stateId = e.target.value;
-    const state = states.find((s) => s.id === stateId) || null;
-    setSelectedState(state);
-    setValue('state', state?.name || '');
-  };
-
   useEffect(() => {
     if (selectedState) {
       setAvailableCities(selectedState.cities);
-      setValue('city', '');
+      setValue('cityId', '');
     } else {
       setAvailableCities([]);
     }
@@ -335,7 +307,7 @@ export default function AddClinicForm() {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className=" mx-auto">
+      <form className=" mx-auto">
         <AnimatePresence mode="wait">
           {currentStep === 'basic' && (
             <motion.div
@@ -372,100 +344,47 @@ export default function AddClinicForm() {
                   </div>
                 </div>
                 <div className="flex-1 space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Clinic Name
-                    </label>
-                    <input
-                      type="text"
-                      {...register('name')}
-                      className="block w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                      placeholder="Enter clinic name"
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      label="Local Name"
+                      error={errors.nameL?.message}
+                      {...register('nameL')}
                     />
-                    {errors.name && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Description
-                    </label>
-                    <textarea
-                      {...register('description')}
-                      rows={3}
-                      className="block w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                      placeholder="Describe your clinic"
+                    <Input
+                      label="Foreign Name"
+                      error={errors.nameF?.message}
+                      {...register('nameF')}
                     />
-                    {errors.description && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.description.message}
-                      </p>
-                    )}
                   </div>
+
+                  <TextArea
+                    label="Bio"
+                    error={errors.bio?.message}
+                    {...register('bio')}
+                    rows={3}
+                  />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Email Address
-                  </label>
-                  <div className="mt-1 relative">
-                    <div
-                      className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${
-                        errors.email ? 'text-red-500' : 'text-gray-400'
-                      }`}
-                    >
-                      <FiMail className="h-5 w-5" />
-                    </div>
-                    <input
-                      type="email"
-                      {...register('email')}
-                      className={`block w-full pl-10 px-4 py-3 rounded-xl border-2 ${
-                        errors.email
-                          ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                          : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
-                      } focus:outline-none`}
-                      placeholder="clinic@example.com"
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
+                  <Input
+                    label="Email Address"
+                    error={errors.email?.message}
+                    {...register('email')}
+                    startIcon={<FiMail className="h-5 w-5 text-gray-500" />}
+                    placeholder="clinic@example.com"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Phone Number
-                  </label>
-                  <div className="mt-1 relative">
-                    <div
-                      className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${
-                        errors.phone ? 'text-red-500' : 'text-gray-400'
-                      }`}
-                    >
-                      <FiPhone className="h-5 w-5" />
-                    </div>
-                    <input
-                      type="tel"
-                      {...register('phone')}
-                      className={`block w-full pl-10 px-4 py-3 rounded-xl border-2 ${
-                        errors.phone
-                          ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                          : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
-                      } focus:outline-none`}
-                      placeholder="+1 (555) 000-0000"
-                    />
-                    {errors.phone && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.phone.message}
-                      </p>
-                    )}
-                  </div>
+                  <Input
+                    label="Phone Number"
+                    error={errors.phone?.message}
+                    {...register('phone')}
+                    startIcon={<FiMail className="h-5 w-5 text-gray-500" />}
+                    placeholder="+1 (555) 000-0000"
+                  />
                 </div>
               </div>
             </motion.div>
@@ -502,61 +421,32 @@ export default function AddClinicForm() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      State
-                    </label>
-                    <select
-                      className={`block w-full px-4 py-3 rounded-xl border-2 ${
-                        errors.state
-                          ? 'border-red-300 text-red-900 focus:border-red-500'
-                          : 'border-gray-100 text-gray-900 focus:border-blue-500'
-                      } focus:outline-none bg-white`}
-                      onChange={handleStateChange}
-                      value={selectedState?.id || ''}
-                    >
-                      <option value="">Select a state</option>
-                      {states.map((state) => (
-                        <option key={state.id} value={state.id}>
-                          {state.name}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.state && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.state.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      City
-                    </label>
-                    <select
-                      {...register('city')}
-                      className={`block w-full px-4 py-3 rounded-xl border-2 ${
-                        errors.city
-                          ? 'border-red-300 text-red-900 focus:border-red-500'
-                          : 'border-gray-100 text-gray-900 focus:border-blue-500'
-                      } focus:outline-none bg-white ${
-                        !selectedState ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
-                      disabled={!selectedState}
-                    >
-                      <option value="">Select a city</option>
-                      {availableCities.map((city) => (
-                        <option key={city.id} value={city.name}>
-                          {city.name}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.city && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.city.message}
-                      </p>
-                    )}
-                  </div>
+                  <Select
+                    label="Country"
+                    error={errors.countryId?.message}
+                    {...register('countryId')}
+                    options={[
+                      { value: '', label: 'Select Country' },
+                      ...(countries || []).map(
+                        (country: SelectOption<string>) => ({
+                          value: country.value,
+                          label: country.label || '',
+                        })
+                      ),
+                    ]}
+                  />
+                  <Select
+                    label="City"
+                    error={errors.cityId?.message}
+                    {...register('cityId')}
+                    options={[
+                      { value: '', label: 'Select City' },
+                      ...(cities || []).map((city: SelectOption<string>) => ({
+                        value: city.value,
+                        label: city.label || '',
+                      })),
+                    ]}
+                  />
                 </div>
               </div>
             </motion.div>
@@ -829,19 +719,19 @@ export default function AddClinicForm() {
                   Select Specialties
                 </label>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {specialtyOptions.map((specialty) => (
+                  {specialties?.map((specialty) => (
                     <label
-                      key={specialty}
+                      key={specialty.value}
                       className="relative flex items-center p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-blue-50 transition-colors"
                     >
                       <input
                         type="checkbox"
-                        value={specialty}
+                        value={specialty.value}
                         {...register('specialties')}
                         className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
                       <span className="ml-3 text-sm text-gray-700">
-                        {specialty}
+                        {specialty.label}
                       </span>
                     </label>
                   ))}
@@ -889,12 +779,14 @@ export default function AddClinicForm() {
             <button
               type="button"
               onClick={handleSubmit(onSubmit)}
-              disabled={isSubmitting}
+              disabled={createOrUpdateClinic.isPending}
               className={`px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 ${
-                isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                createOrUpdateClinic.isPending
+                  ? 'opacity-50 cursor-not-allowed'
+                  : ''
               }`}
             >
-              {isSubmitting ? 'Saving...' : 'Save Clinic'}
+              {createOrUpdateClinic.isPending ? 'Saving...' : 'Save Clinic'}
             </button>
           ) : (
             <button

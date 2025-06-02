@@ -1,52 +1,46 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from '@/components/ui/Toast';
 import { clinicService } from '../services/clinic.service';
 import type { ClinicFilterDto, CreateUpdateClinicDto } from '../types/clinic';
-import { toast } from 'sonner';
 
-export function useClinicList(filter: ClinicFilterDto) {
-  return useQuery({
-    queryKey: ['clinics', filter],
-    queryFn: () => clinicService.getList(filter),
-  });
-}
-
-export function useClinicDropdown() {
-  return useQuery({
-    queryKey: ['clinics-dropdown'],
-    queryFn: () => clinicService.getForDropdown(),
-  });
-}
-
-export function useClinic(id: string) {
-  return useQuery({
-    queryKey: ['clinic', id],
-    queryFn: () => clinicService.getOne(id),
-    enabled: !!id,
-  });
-}
-
-export function useCreateUpdateClinic() {
+export const useClinic = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const getClinics = (filters: ClinicFilterDto) =>
+    useQuery({
+      queryKey: ['clinics', filters],
+      retry: false,
+      queryFn: async () => {
+        const response = await clinicService.getAll(filters);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+    });
+
+  const getClinic = (id: string) =>
+    useQuery({
+      queryKey: ['clinics', id],
+      queryFn: () => clinicService.getOne(id),
+      enabled: !!id,
+    });
+
+  const createOrUpdateClinic = useMutation({
     mutationFn: (data: CreateUpdateClinicDto & { id?: string }) =>
       clinicService.createOrUpdate(data),
     onSuccess: (_, data) => {
       queryClient.invalidateQueries({ queryKey: ['clinics'] });
       toast.success(
-        'Clinic has been successfully ' + (data.id ? 'updated' : 'created')
+        `Clinic has been successfully ${data.id ? 'updated' : 'created'}`
       );
     },
-    onError: (_, data) => {
-      toast.error('Failed to ' + (data.id ? 'update' : 'create') + ' clinic');
+    onError: () => {
+      toast.error('Failed to save clinic');
     },
   });
-}
 
-export function useDeleteClinic() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  const deleteClinic = useMutation({
     mutationFn: (id: string) => clinicService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clinics'] });
@@ -56,21 +50,8 @@ export function useDeleteClinic() {
       toast.error('Failed to delete clinic');
     },
   });
-}
 
-export function useUploadClinicImage() {
-  return useMutation({
-    mutationFn: (file: File) => clinicService.uploadImage(file),
-    onError: () => {
-      toast.error('Failed to upload clinic image');
-    },
-  });
-}
-
-export function useUpdateClinicStatus() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  const updateClinicStatus = useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
       clinicService.updateStatus(id, isActive),
     onSuccess: () => {
@@ -81,43 +62,12 @@ export function useUpdateClinicStatus() {
       toast.error('Failed to update clinic status');
     },
   });
-}
 
-export function useUpdateClinicLocation() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
-      id,
-      latitude,
-      longitude,
-    }: {
-      id: string;
-      latitude: number;
-      longitude: number;
-    }) => clinicService.updateLocation(id, latitude, longitude),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clinics'] });
-      toast.success('Clinic location has been updated');
-    },
-    onError: () => {
-      toast.error('Failed to update clinic location');
-    },
-  });
-}
-
-// export function useClinicDoctors(clinicId: string) {
-//   return useQuery({
-//     queryKey: ['clinic-doctors', clinicId],
-//     queryFn: () => clinicService.getDoctors(clinicId),
-//     enabled: !!clinicId,
-//   });
-// }
-
-// export function useClinicPatients(clinicId: string) {
-//   return useQuery({
-//     queryKey: ['clinic-patients', clinicId],
-//     queryFn: () => clinicService.getPatients(clinicId),
-//     enabled: !!clinicId,
-//   });
-// }
+  return {
+    getClinics,
+    getClinic,
+    createOrUpdateClinic,
+    deleteClinic,
+    updateClinicStatus,
+  };
+};

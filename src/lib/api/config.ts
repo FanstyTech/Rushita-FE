@@ -93,6 +93,7 @@ export const API_ENDPOINTS = {
     CREATE_OR_UPDATE: '/city/CreateOrUpdate',
     DELETE: '/city/Delete',
     GET_ONE: '/city/:id',
+    GET_FOR_DROPDOWN: '/city/getCitiesForDropdown',
   },
   radiologyTestCategory: {
     LIST: '/radiologyTestCategory/getAll',
@@ -117,11 +118,11 @@ export const API_ENDPOINTS = {
     GET_FOR_DROPDOWN: '/clinicType/getClinicTypesForDropdown',
   },
   CLINIC: {
-    LIST: '/clinic/list',
+    LIST: '/clinic/getAll',
     CREATE_OR_UPDATE: '/clinic/createOrUpdate',
     DELETE: '/clinic/delete',
     GET_ONE: '/clinic',
-    GET_FOR_DROPDOWN: '/clinic/getForDropdown',
+    GET_FOR_DROPDOWN: '/clinic/GetClinicsForDropdown',
     UPLOAD_IMAGE: '/clinic/uploadImage',
     UPDATE_STATUS: '/clinic/updateStatus',
     UPDATE_LOCATION: '/clinic/updateLocation',

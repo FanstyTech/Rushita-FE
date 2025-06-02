@@ -2,6 +2,8 @@
  * Collection of text utility functions for common text operations
  */
 
+import { ClinicStatus } from '@/lib/api/types/clinic';
+
 /**
  * Generates initials from a name string.
  * Takes the first letter of each word and joins them.
@@ -127,4 +129,23 @@ export const formatPhoneNumber = (
     result = result.replace('X', digits[i]);
   }
   return result.includes('X') ? digits : result;
+};
+
+/**
+ * Returns a human-readable label for a clinic status.
+ * @param status - The clinic status to convert
+ * @returns Human-readable label for the status
+ * @example
+ * getStatusLabel(ClinicStatus.Active) // returns "Active"
+ */
+export const getStatusLabel = (status: ClinicStatus): string => {
+  const statusMap: Record<ClinicStatus, string> = {
+    [ClinicStatus.Active]: 'Active',
+    [ClinicStatus.Inactive]: 'Inactive',
+    [ClinicStatus.PendingApproval]: 'Pending Approval',
+    [ClinicStatus.Rejected]: 'Rejected',
+    [ClinicStatus.Suspended]: 'Suspended',
+    [ClinicStatus.Closed]: 'Closed',
+  };
+  return statusMap[status] || 'Unknown';
 };

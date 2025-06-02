@@ -25,7 +25,17 @@ export const useCity = () => {
       queryFn: () => cityService.getById(id),
       enabled: !!id,
     });
-
+  const getCitiesForDropdown = () =>
+    useQuery({
+      queryKey: ['citiesForDropdown'],
+      queryFn: async () => {
+        const response = await cityService.getCitiesForDropdown();
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+    });
   const createCity = useMutation({
     mutationFn: (city: CreateUpdateCityDto) => cityService.create(city),
     onSuccess: () => {
@@ -62,6 +72,7 @@ export const useCity = () => {
   return {
     getCities,
     getCity,
+    getCitiesForDropdown,
     createCity,
     updateCity,
     deleteCity,
