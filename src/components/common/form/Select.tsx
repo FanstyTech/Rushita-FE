@@ -44,7 +44,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             {...props}
             className={twMerge(
-              'w-full px-4 py-2.5 rounded-lg text-gray-900 appearance-none',
+              'block w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500',
               hasBorder && 'border border-gray-300',
               error && 'border-red-500',
               'focus:outline-none focus-visible:outline-none focus-visible:ring-0',

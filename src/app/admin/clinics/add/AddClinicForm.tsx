@@ -114,16 +114,6 @@ export default function AddClinicForm() {
   const [selectedState, setSelectedState] = useState<State | null>(null);
   const [availableCities, setAvailableCities] = useState<City[]>([]);
 
-  const { createOrUpdateClinic } = useClinic();
-
-  const { getSpecialtiesForDropdown } = useSpecialty();
-  const { data: specialties } = getSpecialtiesForDropdown();
-
-  const { getCitiesForDropdown } = useCity();
-  const { data: cities } = getCitiesForDropdown();
-
-  const { getCountryForDropdown } = useCountry();
-  const { data: countries } = getCountryForDropdown();
   const {
     register,
     handleSubmit,
@@ -152,6 +142,43 @@ export default function AddClinicForm() {
       },
     },
   });
+
+  const { createOrUpdateClinic } = useClinic();
+
+  const { getSpecialtiesForDropdown } = useSpecialty();
+  const { data: specialties } = getSpecialtiesForDropdown();
+
+  const selectedCountry = watch('countryId');
+
+  const { getCitiesForDropdown } = useCity();
+  const { data: cities, isLoading: citiesLoading } = getCitiesForDropdown({
+    filter: '',
+    countryId: selectedCountry || '',
+  });
+
+  const { getCountryForDropdown } = useCountry();
+  const { data: countries } = getCountryForDropdown();
+
+  useEffect(() => {
+    if (selectedCountry) {
+      setValue('cityId', '');
+      trigger('cityId');
+    }
+  }, [selectedCountry, setValue, trigger]);
+
+  useEffect(() => {
+    if (cities && cities.length > 0) {
+      if (cities.length === 1) {
+        setValue('cityId', cities[0].value);
+      }
+    }
+  }, [cities, setValue]);
+
+  useEffect(() => {
+    if (selectedCountry) {
+      setValue('cityId', '');
+    }
+  }, [selectedCountry, setValue]);
 
   const getFieldsForStep = (
     step: string
@@ -200,7 +227,6 @@ export default function AddClinicForm() {
     } catch (error) {
       console.error('Error submitting form:', error);
     }
-    console.log('data', data);
     return;
   };
 

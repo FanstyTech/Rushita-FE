@@ -1,16 +1,22 @@
-import { useMutation } from '@tanstack/react-query';
-import { type LoginRequest, type LoginResponse } from '../types/auth';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  type LoginRequest,
+  type AuthenticationResult,
+  ApiResponse,
+  LoginResponse,
+} from '../types/auth';
 
 import { authService } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import { toast } from '@/components/ui/Toast';
 
-export function useAuth() {
+export const useAuth = () => {
   const router = useRouter();
+
   const login = useMutation({
     mutationFn: async (data: LoginRequest) => {
       const response = await authService.login(data);
-
       if (!response.success || !response.result) {
         throw new Error(response.message || 'Login failed');
       }
@@ -18,6 +24,8 @@ export function useAuth() {
     },
     retry: false, // Disable retries for login
     onSuccess: (response: LoginResponse, variables) => {
+      toast.success('Login successfully');
+
       // Set the auth token in cookies
       Cookies.set('auth-token', response.accessToken, {
         expires: variables.rememberMe ? 30 : 1,
@@ -30,11 +38,13 @@ export function useAuth() {
         expires: variables.rememberMe ? 30 : 1,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        httpOnly: true,
       });
 
-      // Store user data (optional)
+      // Store user data
       localStorage.setItem('user', JSON.stringify(response.user));
+
+      // Redirect to dashboard or home
+      router.push('/admin/dashboard');
     },
   });
 
@@ -49,11 +59,13 @@ export function useAuth() {
       // Navigate to login page and let the login page component handle cleanup
       router.push('/auth/login');
     },
+    onError: () => {
+      toast.error('Failed to update city');
+    },
   });
 
   return {
     login,
     logout,
-    // Add more auth-related mutations/queries here
   };
-}
+};

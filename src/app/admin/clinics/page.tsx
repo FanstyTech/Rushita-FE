@@ -54,7 +54,11 @@ export default function ClinicsPage() {
   const { getCitiesForDropdown } = useCity();
   const { getSpecialtiesForDropdown } = useSpecialty();
   const { data: specialties } = getSpecialtiesForDropdown();
-  const { data: cities } = getCitiesForDropdown();
+  const { data: cities } = getCitiesForDropdown({
+    filter: '',
+    countryId: '',
+    all: true,
+  });
 
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this clinic?')) {
@@ -62,28 +66,6 @@ export default function ClinicsPage() {
     }
   };
 
-  const handleStatusChange = async (id: string, isActive: boolean) => {
-    await updateClinicStatusMutation.mutateAsync({ id, isActive });
-  };
-  const colors = [
-    '67e8f9',
-    'a5b4fc',
-    'fca5a5',
-    '86efac',
-    'fcd34d',
-    'c084fc',
-    '94a3b8',
-    '60a5fa',
-    '4ade80',
-  ];
-  const getRandomNumber = (min: number, max: number) =>
-    Math.floor(Math.random() * (max - min + 1)) + min;
-
-  const imageUrl = (name: string) =>
-    `https://placehold.co/400x400/${getRandomNumber(
-      0,
-      colors.length - 1
-    )}/ffffff.png?text=${getInitials(name, 3)}&font=roboto`;
   return (
     <PageLayout>
       <div className="space-y-4">
@@ -229,7 +211,9 @@ export default function ClinicsPage() {
                     <h3 className="text-lg font-semibold text-gray-900">
                       {clinic.name}
                     </h3>
-                    <p className="mt-1 text-sm text-gray-500">{clinic.bio}</p>
+                    <p className="mt-1 text-sm text-gray-500 line-clamp-2 h-10">
+                      {clinic.bio}
+                    </p>
                   </div>
 
                   <div className="flex items-center gap-4 text-sm text-gray-600">

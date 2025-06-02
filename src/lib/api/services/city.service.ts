@@ -6,6 +6,7 @@ import type {
   CityFilterDto,
   CityListDto,
   CreateUpdateCityDto,
+  GetCitiesForDropdownInput,
 } from '../types/city';
 import type { PaginationResponse } from '../types/pagination';
 import type { ApiResponse } from '../types/api';
@@ -23,8 +24,12 @@ export const cityService = {
   async getById(id: string): Promise<ApiResponse<CityDto>> {
     return apiClient.get(API_ENDPOINTS.city.GET_ONE.replace(':id', id));
   },
-  async getCitiesForDropdown(): Promise<ApiResponse<SelectOption<string>[]>> {
-    return apiClient.get(API_ENDPOINTS.city.GET_FOR_DROPDOWN);
+  async getCitiesForDropdown(
+    filter: GetCitiesForDropdownInput
+  ): Promise<ApiResponse<SelectOption<string>[]>> {
+    return apiClient.get(API_ENDPOINTS.city.GET_FOR_DROPDOWN, {
+      params: convertFilterToParams(filter),
+    });
   },
 
   async create(city: CreateUpdateCityDto): Promise<ApiResponse<CityDto>> {

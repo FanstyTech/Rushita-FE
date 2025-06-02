@@ -1,6 +1,7 @@
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
 import type {
+  AuthenticationResult,
   LoginRequest,
   LoginResponse,
   RegisterRequest,

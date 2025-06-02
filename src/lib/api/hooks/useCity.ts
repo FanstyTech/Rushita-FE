@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { cityService } from '../services/city.service';
-import type { CityFilterDto, CreateUpdateCityDto } from '../types/city';
+import type {
+  CityFilterDto,
+  CreateUpdateCityDto,
+  GetCitiesForDropdownInput,
+} from '../types/city';
 import { toast } from '@/components/ui/Toast';
 
 export const useCity = () => {
@@ -25,16 +29,17 @@ export const useCity = () => {
       queryFn: () => cityService.getById(id),
       enabled: !!id,
     });
-  const getCitiesForDropdown = () =>
+  const getCitiesForDropdown = (filter: GetCitiesForDropdownInput) =>
     useQuery({
       queryKey: ['citiesForDropdown'],
       queryFn: async () => {
-        const response = await cityService.getCitiesForDropdown();
+        const response = await cityService.getCitiesForDropdown(filter);
         if (!response.success) {
           throw new Error(response.message);
         }
         return response.result;
       },
+      enabled: filter.all || !!filter.countryId || !!filter.filter,
     });
   const createCity = useMutation({
     mutationFn: (city: CreateUpdateCityDto) => cityService.create(city),

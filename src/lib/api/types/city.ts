@@ -35,3 +35,9 @@ export interface CityFilterDto extends PaginationRequest {
   isActive?: boolean;
   countryId?: string;
 }
+
+export interface GetCitiesForDropdownInput {
+  countryId?: string;
+  filter?: string;
+  all?: boolean | true;
+}
