@@ -9,14 +9,14 @@ import type { PaginationResponse } from '../types/pagination';
 import type { ApiResponse } from '../types/api';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { convertFilterToParams } from '../../../utils/filter';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 
 export const countryService = {
   async getAll(
     filter: CountryFilterDto
   ): Promise<ApiResponse<PaginationResponse<CountryListDto>>> {
     return apiClient.get(API_ENDPOINTS.country.LIST, {
-      params: convertFilterToParams(filter),
+      params: convertFilterToParams(filter as FilterParams),
     });
   },
 

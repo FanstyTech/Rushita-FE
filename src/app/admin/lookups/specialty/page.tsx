@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Table, Column } from '@/components/common/Table';
-import { Plus, Search as FiSearch, Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 import { Input, Select } from '@/components/common/form';
 import Button from '@/components/common/Button';
@@ -50,16 +50,12 @@ export default function SpecialtyPage() {
     isActive: undefined as boolean | undefined,
   });
 
-  const clearFilters = () => {
-    setFilter((prev) => ({
-      ...prev,
-      searchValue: '',
-      isActive: undefined,
-    }));
-  };
-
-  const { getSpecialties, createSpecialty, updateSpecialty, deleteSpecialty } =
-    useSpecialty();
+  const {
+    useSpecialtiesList: getSpecialties,
+    createSpecialty,
+    updateSpecialty,
+    deleteSpecialty,
+  } = useSpecialty();
   const { data: specialtiesData, isLoading } = getSpecialties(filter);
 
   const {

@@ -1,10 +1,9 @@
 'use client';
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
-import { FiList, FiSearch } from 'react-icons/fi';
+import { Pencil, Trash2 } from 'lucide-react';
+import { FiList } from 'react-icons/fi';
 
 import Button from '@/components/common/Button';
 import { Input, Select } from '@/components/common/form';
@@ -38,11 +37,11 @@ export default function RadiologyTestCategoryPage() {
 
   // Hooks
   const {
-    getRadiologyTestCategories,
+    useRadiologyTestCategoriesList: getRadiologyTestCategories,
     createRadiologyTestCategory,
     updateRadiologyTestCategory,
     deleteRadiologyTestCategory,
-    getRadiologyTestCategoriesForDropdown,
+    useRadiologyTestCategoriesDropdown: getRadiologyTestCategoriesForDropdown,
   } = useRadiologyTestCategory();
 
   const { data: categoriesResponse, isLoading } =
@@ -129,18 +128,6 @@ export default function RadiologyTestCategoryPage() {
     reset();
   };
 
-  const clearFilters = () => {
-    setFilter({
-      pageNumber: 1,
-      pageSize: 5,
-      sortColumn: '',
-      sortDirection: '',
-      searchValue: '',
-      isActive: undefined,
-      parentCategoryId: undefined,
-    });
-  };
-
   // Table columns
   const columns: Column<RadiologyTestCategoryListDto>[] = [
     {
@@ -216,7 +203,7 @@ export default function RadiologyTestCategoryPage() {
                   value: category.value,
                   label: category.label || '',
                 })) || [],
-              value: filter.parentCategoryId || '',
+              value: String(filter.parentCategoryId || ''),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,

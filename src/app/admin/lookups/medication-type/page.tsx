@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { Input, Select, TextArea } from '@/components/common/form';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
@@ -38,7 +37,7 @@ export default function MedicationTypePage() {
 
   // Hooks
   const {
-    getMedicationTypes,
+    useMedicationTypesList: getMedicationTypes,
     createMedicationType,
     updateMedicationType,
     deleteMedicationType,

@@ -9,7 +9,6 @@ import {
   User2,
   Stethoscope,
   Calendar,
-  ArrowLeft,
   Upload,
 } from 'lucide-react';
 import Image from 'next/image';

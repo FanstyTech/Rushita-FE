@@ -25,7 +25,7 @@ import { useClinic } from '@/lib/api/hooks/useClinic';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { useCity } from '@/lib/api/hooks/useCity';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
-import { getInitials, getStatusLabel } from '@/utils';
+import { getStatusLabel } from '@/utils';
 import Avatar from '@/components/common/Avatar';
 
 export default function ClinicsPage() {
@@ -43,16 +43,13 @@ export default function ClinicsPage() {
   });
 
   const {
-    getClinics: getClinicsQuery,
-    getClinic: getClinicQuery,
-    createOrUpdateClinic: createOrUpdateClinicMutation,
+    useClinicsList: getClinicsQuery,
     deleteClinic: deleteClinicMutation,
-    updateClinicStatus: updateClinicStatusMutation,
   } = useClinic();
 
   const { data: clinics, isLoading } = getClinicsQuery(filters);
-  const { getCitiesForDropdown } = useCity();
-  const { getSpecialtiesForDropdown } = useSpecialty();
+  const { useCitiesDropdown: getCitiesForDropdown } = useCity();
+  const { useSpecialtiesDropdown: getSpecialtiesForDropdown } = useSpecialty();
   const { data: specialties } = getSpecialtiesForDropdown();
   const { data: cities } = getCitiesForDropdown({
     filter: '',
@@ -93,7 +90,7 @@ export default function ClinicsPage() {
                   label: specialty.label || '',
                 })) || []),
               ],
-              value: filters.specialtyId || '',
+              value: String(filters.specialtyId || ''),
               onChange: (value) =>
                 setFilters((prev) => ({
                   ...prev,
@@ -110,7 +107,7 @@ export default function ClinicsPage() {
                   label: city.label || '',
                 })) || []),
               ],
-              value: filters.cityId || '',
+              value: String(filters.cityId || ''),
               onChange: (value) =>
                 setFilters((prev) => ({
                   ...prev,

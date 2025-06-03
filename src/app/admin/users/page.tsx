@@ -1,11 +1,7 @@
 'use client';
 
 import PageLayout from '@/components/layouts/PageLayout';
-import SectionTitle from '@/components/common/SectionTitle';
-import Modal from '@/components/common/Modal';
-import { useState, useEffect } from 'react';
-import type { User } from '@/mockData/users';
-import { Table } from '@/components/common/Table';
+import { useState } from 'react';
 import { PermissionsModal } from '@/components/modals/PermissionsModal';
 
 // Import constants from mock data
@@ -29,25 +25,12 @@ const userSources = ['Local', 'Azure AD', 'Google Workspace', 'Okta'];
 const roles = ['Admin', 'User', 'Manager', 'Analyst'];
 const statuses = ['Active', 'Inactive', 'Suspended', 'Seated', 'Unseated'];
 
-interface Permission {
-  id: string;
-  name: string;
-  checked: boolean;
-  children?: Permission[];
-}
-
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [dataLoading, setDataLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState<{
+  const [selectedUser] = useState<{
     id: number;
     name: string;
   } | null>(null);
   const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
-  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState({
     search: '',
@@ -56,221 +39,9 @@ export default function UsersPage() {
     source: '',
     unit: '',
   });
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-  const itemsPerPage = 5;
-
-  // Debounce search input
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(filters.search);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [filters.search]);
-
-  // Update filters when debounced search changes
-  useEffect(() => {
-    fetchUsers(1); // Reset to first page when search changes
-  }, [debouncedSearch]);
 
   const handleFilterChange = (key: keyof typeof filters, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
-    if (key !== 'search') {
-      // Don't reset page for search as it's debounced
-      setCurrentPage(1);
-      fetchUsers(1);
-    }
-  };
-
-  const fetchUsers = async (page: number) => {
-    setDataLoading(true);
-    try {
-      const queryParams = new URLSearchParams({
-        page: page.toString(),
-        limit: itemsPerPage.toString(),
-        ...filters,
-        search: debouncedSearch, // Use debounced search value
-      });
-      const response = await fetch(`/api/users?${queryParams}`);
-      const data = await response.json();
-      setUsers(data.users);
-      setTotalPages(Math.ceil(data.total / itemsPerPage));
-      setTotalItems(data.total);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    } finally {
-      setDataLoading(false);
-    }
-  };
-
-  const columns = [
-    {
-      header: 'Name',
-      accessor: (user: User) => (
-        <div className="flex items-center">
-          <div className="flex-shrink-0 h-10 w-10">
-            {user.avatar ? (
-              <img
-                className="h-10 w-10 rounded-full"
-                src={user.avatar}
-                alt={user.name}
-              />
-            ) : (
-              <div className="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center">
-                <span className="text-lg font-medium text-white">
-                  {user.name.charAt(0).toUpperCase()}
-                </span>
-              </div>
-            )}
-          </div>
-          <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">{user.name}</div>
-            <div className="text-sm text-gray-500">{user.email}</div>
-          </div>
-        </div>
-      ),
-      className: '',
-    },
-    {
-      header: 'Role',
-      accessor: (user: User) => user.role,
-      className: 'text-gray-500',
-    },
-    {
-      header: 'Status',
-      accessor: (user: User) => (
-        <span
-          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-          ${user.status === 'Active' ? 'bg-green-100 text-green-800' : ''}
-          ${user.status === 'Inactive' ? 'bg-red-100 text-red-800' : ''}
-          ${user.status === 'Suspended' ? 'bg-yellow-100 text-yellow-800' : ''}
-          ${user.status === 'Seated' ? 'bg-blue-100 text-blue-800' : ''}
-          ${user.status === 'Unseated' ? 'bg-gray-100 text-gray-800' : ''}
-        `}
-        >
-          {user.status}
-        </span>
-      ),
-    },
-    {
-      header: 'Organizational Unit',
-      accessor: (user: User) => user.organizationalUnit || '-',
-      className: 'text-gray-500',
-    },
-    {
-      header: 'User Source',
-      accessor: (user: User) => user.userSource || '-',
-      className: 'text-gray-500',
-    },
-    {
-      header: 'Updated At',
-      accessor: (user: User) => user.updatedAt,
-      className: 'text-gray-500',
-    },
-    {
-      header: 'Actions',
-      accessor: (user: User) => (
-        <div className="relative flex justify-end">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenDropdownId(openDropdownId === user.id ? null : user.id);
-            }}
-            className="inline-flex items-center justify-center text-gray-400 hover:text-gray-500 transition-colors duration-200 p-1.5 rounded-full hover:bg-gray-100 focus:outline-none"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-          </button>
-
-          {openDropdownId === user.id && (
-            <>
-              <div
-                className="fixed inset-0 z-30"
-                onClick={() => setOpenDropdownId(null)}
-              />
-              <div
-                className="absolute z-40 right-0 mt-1 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none transform origin-top-right"
-                style={{
-                  top: '100%',
-                }}
-              >
-                <button
-                  className="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  onClick={() => {
-                    setOpenDropdownId(null);
-                  }}
-                >
-                  <svg
-                    className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
-                  Edit
-                </button>
-                <button
-                  className="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  onClick={() => {
-                    setSelectedUser({ id: user.id, name: user.name });
-                    setIsPermissionsModalOpen(true);
-                    setOpenDropdownId(null);
-                  }}
-                >
-                  <svg
-                    className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-                    />
-                  </svg>
-                  Permissions
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      ),
-      className: 'w-16 pr-4',
-    },
-  ];
-
-  useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage]); // Remove filters dependency as we handle it in handleFilterChange
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    setOpenDropdownId(null);
   };
 
   return (
@@ -446,8 +217,6 @@ export default function UsersPage() {
                         source: '',
                         unit: '',
                       });
-                      setCurrentPage(1);
-                      fetchUsers(1);
                     }}
                     className="text-sm font-medium text-gray-700 hover:text-gray-900"
                   >
@@ -459,7 +228,7 @@ export default function UsersPage() {
           )}
         </div>
 
-        <Table
+        {/* <Table<User>
           data={users}
           columns={columns}
           isLoading={dataLoading}
@@ -472,7 +241,7 @@ export default function UsersPage() {
             title: 'No users found',
             subtitle: 'Start by adding a new user to the system',
           }}
-        />
+        /> */}
       </div>
 
       {selectedUser && (

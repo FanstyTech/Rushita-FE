@@ -8,7 +8,7 @@ import {
 } from '../types/dental-procedure';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { convertFilterToParams } from '../../../utils/filter';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 
 export const dentalProcedureService = {
   async getAll(
@@ -17,7 +17,7 @@ export const dentalProcedureService = {
     return apiClient.get<
       ApiResponse<PaginationResponse<DentalProcedureListDto>>
     >(API_ENDPOINTS.dentalProcedure.LIST, {
-      params: convertFilterToParams(filter),
+      params: convertFilterToParams(filter as FilterParams),
     });
   },
 

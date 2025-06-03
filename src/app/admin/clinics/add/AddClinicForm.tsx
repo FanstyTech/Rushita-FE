@@ -1,12 +1,11 @@
 'use client';
-
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'react-hot-toast';
 import {
   FiMail,
   FiGlobe,
@@ -23,7 +22,7 @@ import {
   FiYoutube,
   FiX,
 } from 'react-icons/fi';
-import { states, type State, type City } from '@/mockData/locations';
+import { type State } from '@/mockData/locations';
 import Link from 'next/link';
 import { Input, Select, TextArea } from '@/components/common/form';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
@@ -111,8 +110,7 @@ const clinicSchema = z.object({
 export default function AddClinicForm() {
   const [currentStep, setCurrentStep] = useState<string>('basic');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedState, setSelectedState] = useState<State | null>(null);
-  const [availableCities, setAvailableCities] = useState<City[]>([]);
+  const [selectedState] = useState<State | null>(null);
 
   const {
     register,
@@ -145,18 +143,18 @@ export default function AddClinicForm() {
 
   const { createOrUpdateClinic } = useClinic();
 
-  const { getSpecialtiesForDropdown } = useSpecialty();
+  const { useSpecialtiesDropdown: getSpecialtiesForDropdown } = useSpecialty();
   const { data: specialties } = getSpecialtiesForDropdown();
 
   const selectedCountry = watch('countryId');
 
-  const { getCitiesForDropdown } = useCity();
-  const { data: cities, isLoading: citiesLoading } = getCitiesForDropdown({
+  const { useCitiesDropdown: getCitiesForDropdown } = useCity();
+  const { data: cities } = getCitiesForDropdown({
     filter: '',
     countryId: selectedCountry || '',
   });
 
-  const { getCountryForDropdown } = useCountry();
+  const { useCountryDropdown: getCountryForDropdown } = useCountry();
   const { data: countries } = getCountryForDropdown();
 
   useEffect(() => {
@@ -262,24 +260,31 @@ export default function AddClinicForm() {
 
   useEffect(() => {
     if (selectedState) {
-      setAvailableCities(selectedState.cities);
       setValue('cityId', '');
-    } else {
-      setAvailableCities([]);
     }
   }, [selectedState, setValue]);
 
   const hours = watch('hours');
 
-  const handleHourChange = (
+  function handleHourChange(
+    index: number,
+    field: 'isOpen',
+    value: boolean
+  ): void;
+  function handleHourChange(
+    index: number,
+    field: 'openTime' | 'closeTime',
+    value: string
+  ): void;
+  function handleHourChange(
     index: number,
     field: 'isOpen' | 'openTime' | 'closeTime',
-    value: any
-  ) => {
+    value: boolean | string
+  ) {
     const newHours = [...hours];
     newHours[index] = { ...newHours[index], [field]: value };
     setValue('hours', newHours);
-  };
+  }
 
   return (
     <div className="space-y-8">
@@ -347,7 +352,7 @@ export default function AddClinicForm() {
               <div className="flex items-center space-x-6">
                 <div className="relative h-40 w-40 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50 group">
                   {selectedImage ? (
-                    <img
+                    <Image
                       src={selectedImage}
                       alt="Clinic preview"
                       className="h-full w-full object-cover transition-transform group-hover:scale-105"

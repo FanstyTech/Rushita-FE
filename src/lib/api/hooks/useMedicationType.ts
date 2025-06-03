@@ -9,7 +9,7 @@ import { medicationTypeService } from '../services/medication-type.service';
 export const useMedicationType = () => {
   const queryClient = useQueryClient();
 
-  const getMedicationTypes = (filter: MedicationTypeFilterDto) =>
+  const useMedicationTypesList = (filter: MedicationTypeFilterDto) =>
     useQuery({
       queryKey: ['medicationTypes', filter],
       queryFn: async () => {
@@ -21,7 +21,7 @@ export const useMedicationType = () => {
       },
     });
 
-  const getMedicationType = (id: string) =>
+  const useMedicationTypeDetails = (id: string) =>
     useQuery({
       queryKey: ['medicationType', id],
       queryFn: async () => {
@@ -32,6 +32,19 @@ export const useMedicationType = () => {
         return response.result;
       },
       enabled: !!id,
+    });
+
+  const useMedicationTypesDropdown = () =>
+    useQuery({
+      queryKey: ['medicationTypesDropdown'],
+      queryFn: async () => {
+        const response =
+          await medicationTypeService.getMedicationTypesForDropdown();
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
     });
 
   const createMedicationType = useMutation({
@@ -85,24 +98,12 @@ export const useMedicationType = () => {
     },
   });
 
-  const getMedicationTypesForDropdown = () =>
-    useQuery({
-      queryKey: ['medicationTypesDropdown'],
-      queryFn: async () => {
-        const response = await medicationTypeService.getMedicationTypesForDropdown();
-        if (!response.success) {
-          throw new Error(response.message);
-        }
-        return response.result;
-      },
-    });
-
   return {
-    getMedicationTypes,
-    getMedicationType,
+    useMedicationTypesList,
+    useMedicationTypeDetails,
+    useMedicationTypesDropdown,
     createMedicationType,
     updateMedicationType,
     deleteMedicationType,
-    getMedicationTypesForDropdown,
   };
 };

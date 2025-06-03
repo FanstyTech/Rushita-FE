@@ -9,7 +9,7 @@ import { labTestCategoryService } from '../services/lab-test-category.service';
 export const useLabTestCategory = () => {
   const queryClient = useQueryClient();
 
-  const getLabTestCategories = (filter: LabTestCategoryFilterDto) =>
+  const useLabTestCategoriesList = (filter: LabTestCategoryFilterDto) =>
     useQuery({
       queryKey: ['labTestCategories', filter],
       queryFn: async () => {
@@ -21,7 +21,7 @@ export const useLabTestCategory = () => {
       },
     });
 
-  const getLabTestCategory = (id: string) =>
+  const useLabTestCategoryDetails = (id: string) =>
     useQuery({
       queryKey: ['labTestCategory', id],
       queryFn: async () => {
@@ -34,11 +34,12 @@ export const useLabTestCategory = () => {
       enabled: !!id,
     });
 
-  const getLabTestCategoriesForDropdown = () =>
+  const useLabTestCategoriesDropdown = () =>
     useQuery({
       queryKey: ['labTestCategoriesDropdown'],
       queryFn: async () => {
-        const response = await labTestCategoryService.getLabTestCategoriesForDropdown();
+        const response =
+          await labTestCategoryService.getLabTestCategoriesForDropdown();
         if (!response.success) {
           throw new Error(response.message);
         }
@@ -57,7 +58,9 @@ export const useLabTestCategory = () => {
     onSuccess: () => {
       toast.success('Lab test category created successfully');
       queryClient.invalidateQueries({ queryKey: ['labTestCategories'] });
-      queryClient.invalidateQueries({ queryKey: ['labTestCategoriesDropdown'] });
+      queryClient.invalidateQueries({
+        queryKey: ['labTestCategoriesDropdown'],
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -75,7 +78,9 @@ export const useLabTestCategory = () => {
     onSuccess: () => {
       toast.success('Lab test category updated successfully');
       queryClient.invalidateQueries({ queryKey: ['labTestCategories'] });
-      queryClient.invalidateQueries({ queryKey: ['labTestCategoriesDropdown'] });
+      queryClient.invalidateQueries({
+        queryKey: ['labTestCategoriesDropdown'],
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -93,7 +98,9 @@ export const useLabTestCategory = () => {
     onSuccess: () => {
       toast.success('Lab test category deleted successfully');
       queryClient.invalidateQueries({ queryKey: ['labTestCategories'] });
-      queryClient.invalidateQueries({ queryKey: ['labTestCategoriesDropdown'] });
+      queryClient.invalidateQueries({
+        queryKey: ['labTestCategoriesDropdown'],
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -101,9 +108,9 @@ export const useLabTestCategory = () => {
   });
 
   return {
-    getLabTestCategories,
-    getLabTestCategory,
-    getLabTestCategoriesForDropdown,
+    useLabTestCategoriesList,
+    useLabTestCategoryDetails,
+    useLabTestCategoriesDropdown,
     createLabTestCategory,
     updateLabTestCategory,
     deleteLabTestCategory,

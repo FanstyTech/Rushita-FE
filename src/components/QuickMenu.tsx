@@ -5,23 +5,47 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { IoChevronBackOutline } from 'react-icons/io5';
 import { adminNav, clinicNav, doctorNav } from './Sidebar';
+import { IconType } from 'react-icons';
+import { ForwardRefExoticComponent, SVGProps, RefAttributes } from 'react';
 
-export default function QuickMenu({ userRole = 'admin' }) {
+interface NavItem {
+  name: string;
+  icon:
+    | IconType
+    | ForwardRefExoticComponent<
+        Omit<SVGProps<SVGSVGElement>, 'ref'> & {
+          title?: string;
+          titleId?: string;
+        } & RefAttributes<SVGSVGElement>
+      >;
+  href?: string;
+  description?: string;
+  children?: NavItem[];
+}
+
+type UserRole = 'admin' | 'clinic' | 'doctor';
+
+interface QuickMenuProps {
+  userRole?: UserRole;
+}
+
+export default function QuickMenu({ userRole = 'admin' }: QuickMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [navigationStack, setNavigationStack] = useState<any[]>([]);
+  const [navigationStack, setNavigationStack] = useState<NavItem[]>([]);
 
-  const navItems = {
-    admin: adminNav,
-    clinic: clinicNav,
-    doctor: doctorNav,
-  }[userRole];
+  const navItems: NavItem[] =
+    {
+      admin: adminNav,
+      clinic: clinicNav,
+      doctor: doctorNav,
+    }[userRole] || [];
 
-  const currentItems =
+  const currentItems: NavItem[] =
     navigationStack.length > 0
-      ? navigationStack[navigationStack.length - 1].children
+      ? navigationStack[navigationStack.length - 1].children || []
       : navItems;
 
-  const handleItemClick = (item: any) => {
+  const handleItemClick = (item: NavItem) => {
     if (item.children) {
       setNavigationStack([...navigationStack, item]);
     }
@@ -31,7 +55,7 @@ export default function QuickMenu({ userRole = 'admin' }) {
     setNavigationStack(navigationStack.slice(0, -1));
   };
 
-  const renderItems = (items: any[]) => {
+  const renderItems = (items: NavItem[]) => {
     return items.map((item) => (
       <motion.div
         key={item.name}

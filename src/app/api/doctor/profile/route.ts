@@ -45,14 +45,14 @@ const doctorData = {
 
 export async function GET() {
   // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   try {
     // In a real application, you would fetch this data from your database
     // const doctor = await prisma.doctor.findUnique({ where: { id: doctorId } });
-    
+
     return NextResponse.json(doctorData);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch doctor profile' },
       { status: 500 }

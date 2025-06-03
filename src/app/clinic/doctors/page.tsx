@@ -3,11 +3,8 @@
 import { useState, useEffect } from 'react';
 import PageLayout from '@/components/layouts/PageLayout';
 import {
-  Search,
-  Plus,
   Edit2,
   Trash2,
-  MoreVertical,
   UserRound,
   Stethoscope,
   Mail,
@@ -17,10 +14,10 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FiPlus, FiSearch, FiFilter, FiChevronDown } from 'react-icons/fi';
+import { FiPlus, FiSearch, FiChevronDown } from 'react-icons/fi';
 import DoctorCardSkeleton from '@/components/skeletons/DoctorCardSkeleton';
 import Modal from '@/components/common/Modal';
-import { Input, Select } from '@/components/common/form';
+import { Input } from '@/components/common/form';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

@@ -20,4 +20,6 @@ export interface CreateDoctorDto {
   imageUrl?: string;
 }
 
-export interface UpdateDoctorDto extends Partial<CreateDoctorDto> {}
+export interface UpdateDoctorDto extends Partial<CreateDoctorDto> {
+  specialization: string;
+}

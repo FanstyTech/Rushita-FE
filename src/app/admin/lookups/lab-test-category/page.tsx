@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { Input, Select } from '@/components/common/form';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
@@ -18,7 +17,7 @@ import {
   labTestCategorySchema,
 } from './validation';
 import { Pencil, Trash2 } from 'lucide-react';
-import { FiList, FiSearch } from 'react-icons/fi';
+import { FiList } from 'react-icons/fi';
 import { ConfirmationModal } from '@/components/common';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
 
@@ -41,8 +40,8 @@ export default function LabTestCategoryPage() {
 
   // Hooks
   const {
-    getLabTestCategories,
-    getLabTestCategoriesForDropdown,
+    useLabTestCategoriesList: getLabTestCategories,
+    useLabTestCategoriesDropdown: getLabTestCategoriesForDropdown,
     createLabTestCategory,
     updateLabTestCategory,
     deleteLabTestCategory,
@@ -209,7 +208,7 @@ export default function LabTestCategoryPage() {
                   label: category.label || '',
                 })) || []),
               ],
-              value: filter.parentCategoryId || '',
+              value: String(filter.parentCategoryId || ''),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,

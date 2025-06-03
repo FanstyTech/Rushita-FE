@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import PageLayout from '@/components/layouts/PageLayout';
-import { Table } from '@/components/common/Table';
+import { Table, type Column } from '@/components/common/Table';
 import {
   Eye,
   MoreVertical,
@@ -12,7 +12,6 @@ import {
   AlertCircle,
   ChevronDown as FiChevronDown,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 interface Treatment {
@@ -88,7 +87,6 @@ interface DateRange {
 const treatmentStatuses = ['Completed', 'In Progress', 'Scheduled'];
 
 export default function TreatmentsPage() {
-  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
     search: '',
     status: '',
@@ -97,8 +95,6 @@ export default function TreatmentsPage() {
   const [activeFilter, setActiveFilter] = useState<'status' | 'date' | null>(
     null
   );
-  const itemsPerPage = 5;
-  const router = useRouter();
 
   // Filter treatments based on search query and status
   const filteredTreatments = useMemo(() => {
@@ -151,49 +147,48 @@ export default function TreatmentsPage() {
       dateRange: { start: '', end: '' },
     });
   };
-
-  const columns = [
+  const columns: Column<Treatment>[] = [
     {
       header: 'Patient Name',
-      accessor: 'patientName' as keyof Treatment,
-      className: 'font-medium text-gray-900',
+      accessor: 'patientName',
     },
-
     {
       header: 'Treatment Plan',
-      accessor: 'treatmentPlan' as keyof Treatment,
+      accessor: 'treatmentPlan',
     },
     {
       header: 'Start Date',
-      accessor: (treatment: Treatment) =>
-        new Date(treatment.startDate).toLocaleDateString('en-SA'),
+      accessor: 'startDate',
+      cell: ({ row }) =>
+        new Date(row.original.startDate).toLocaleDateString('en-SA'),
     },
     {
       header: 'Status',
-      accessor: (treatment: Treatment) => (
+      accessor: 'status',
+      cell: ({ row }) => (
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            treatment.status === 'Completed'
+            row.original.status === 'Completed'
               ? 'bg-green-100 text-green-800'
-              : treatment.status === 'In Progress'
+              : row.original.status === 'In Progress'
               ? 'bg-blue-100 text-blue-800'
               : 'bg-yellow-100 text-yellow-800'
           }`}
         >
-          {treatment.status}
+          {row.original.status}
         </span>
       ),
     },
-
     {
       header: 'Cost (SAR)',
-      accessor: (treatment: Treatment) =>
-        `${treatment.cost.toLocaleString()} SAR`,
+      accessor: 'cost',
+      cell: ({ row }) => `${row.original.cost.toLocaleString()} SAR`,
       className: 'text-right',
     },
     {
       header: '',
-      accessor: (treatment: Treatment) => (
+      accessor: 'id',
+      cell: ({}) => (
         <div className="flex items-center justify-end gap-2">
           <button className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
             <Eye className="w-4 h-4 text-gray-600" />
@@ -351,11 +346,6 @@ export default function TreatmentsPage() {
         <Table<Treatment>
           data={filteredTreatments}
           columns={columns}
-          currentPage={currentPage}
-          totalPages={Math.ceil(filteredTreatments.length / itemsPerPage)}
-          onPageChange={setCurrentPage}
-          itemsPerPage={itemsPerPage}
-          totalItems={filteredTreatments.length}
           noDataMessage={{
             title: 'No treatments found',
             subtitle: 'No treatment plans match your search criteria.',

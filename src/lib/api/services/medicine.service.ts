@@ -8,7 +8,7 @@ import {
 } from '../types/medicine';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { convertFilterToParams } from '../../../utils/filter';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 
 export const medicineService = {
   async getAll(
@@ -17,7 +17,7 @@ export const medicineService = {
     return apiClient.get<ApiResponse<PaginationResponse<MedicineListDto>>>(
       API_ENDPOINTS.medicine.LIST,
       {
-        params: convertFilterToParams(filter),
+        params: convertFilterToParams(filter as FilterParams),
       }
     );
   },

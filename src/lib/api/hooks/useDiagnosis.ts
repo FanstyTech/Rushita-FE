@@ -9,7 +9,7 @@ import { diagnosisService } from '../services/diagnosis.service';
 export const useDiagnosis = () => {
   const queryClient = useQueryClient();
 
-  const getDiagnoses = (filter: DiagnosisFilterDto) =>
+  const useDiagnosesList = (filter: DiagnosisFilterDto) =>
     useQuery({
       queryKey: ['diagnoses', filter],
       queryFn: async () => {
@@ -21,7 +21,7 @@ export const useDiagnosis = () => {
       },
     });
 
-  const getDiagnosis = (id: string) =>
+  const useDiagnosisDetails = (id: string) =>
     useQuery({
       queryKey: ['diagnosis', id],
       queryFn: async () => {
@@ -86,8 +86,8 @@ export const useDiagnosis = () => {
   });
 
   return {
-    getDiagnoses,
-    getDiagnosis,
+    useDiagnosesList,
+    useDiagnosisDetails,
     createDiagnosis,
     updateDiagnosis,
     deleteDiagnosis,

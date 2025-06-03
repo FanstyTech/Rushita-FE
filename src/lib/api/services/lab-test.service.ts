@@ -8,7 +8,7 @@ import {
 } from '../types/lab-test';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { convertFilterToParams } from '../../../utils/filter';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 
 export const labTestService = {
   async getAll(
@@ -17,7 +17,7 @@ export const labTestService = {
     return apiClient.get<ApiResponse<PaginationResponse<LabTestListDto>>>(
       API_ENDPOINTS.labTest.LIST,
       {
-        params: convertFilterToParams(filter),
+        params: convertFilterToParams(filter as FilterParams),
       }
     );
   },

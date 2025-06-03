@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from '../config';
 import { apiClient } from '../client';
-import { convertFilterToParams } from '../../../utils/filter';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 import type {
   RadiologyTestCategoryDto,
   RadiologyTestCategoryListDto,
@@ -16,7 +16,7 @@ export const radiologyTestCategoryService = {
     filter: RadiologyTestCategoryFilterDto
   ): Promise<ApiResponse<PaginationResponse<RadiologyTestCategoryListDto>>> {
     return apiClient.get(API_ENDPOINTS.radiologyTestCategory.LIST, {
-      params: convertFilterToParams(filter),
+      params: convertFilterToParams(filter as FilterParams),
     });
   },
 

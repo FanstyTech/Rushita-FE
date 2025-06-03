@@ -1,15 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import {
-  CreateUpdateLabTestDto,
-  LabTestFilterDto,
-} from '../types/lab-test';
+import { CreateUpdateLabTestDto, LabTestFilterDto } from '../types/lab-test';
 import { labTestService } from '../services/lab-test.service';
 
 export const useLabTest = () => {
   const queryClient = useQueryClient();
 
-  const getLabTests = (filter: LabTestFilterDto) =>
+  const useLabTestsList = (filter: LabTestFilterDto) =>
     useQuery({
       queryKey: ['labTests', filter],
       queryFn: async () => {
@@ -21,7 +18,7 @@ export const useLabTest = () => {
       },
     });
 
-  const getLabTest = (id: string) =>
+  const useLabTestDetails = (id: string) =>
     useQuery({
       queryKey: ['labTest', id],
       queryFn: async () => {
@@ -86,8 +83,8 @@ export const useLabTest = () => {
   });
 
   return {
-    getLabTests,
-    getLabTest,
+    useLabTestsList,
+    useLabTestDetails,
     createLabTest,
     updateLabTest,
     deleteLabTest,

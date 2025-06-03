@@ -17,8 +17,6 @@ export interface LoginRequest {
   rememberMe?: boolean;
 }
 
-export interface LoginResponse extends AuthenticationResult {}
-
 export interface RegisterRequest {
   email: string;
   password: string;

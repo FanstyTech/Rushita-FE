@@ -1,15 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import {
-  CreateUpdateMedicineDto,
-  MedicineFilterDto,
-} from '../types/medicine';
+import { CreateUpdateMedicineDto, MedicineFilterDto } from '../types/medicine';
 import { medicineService } from '../services/medicine.service';
 
 export const useMedicine = () => {
   const queryClient = useQueryClient();
 
-  const getMedicines = (filter: MedicineFilterDto) =>
+  const useMedicinesList = (filter: MedicineFilterDto) =>
     useQuery({
       queryKey: ['medicines', filter],
       queryFn: async () => {
@@ -21,7 +18,7 @@ export const useMedicine = () => {
       },
     });
 
-  const getMedicine = (id: string) =>
+  const useMedicineDetails = (id: string) =>
     useQuery({
       queryKey: ['medicine', id],
       queryFn: async () => {
@@ -86,8 +83,8 @@ export const useMedicine = () => {
   });
 
   return {
-    getMedicines,
-    getMedicine,
+    useMedicinesList,
+    useMedicineDetails,
     createMedicine,
     updateMedicine,
     deleteMedicine,

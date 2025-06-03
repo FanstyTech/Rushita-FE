@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 export function useClinicType() {
   const queryClient = useQueryClient();
 
-  const getClinicTypes = (filter: ClinicTypeFilterDto) =>
+  const useClinicTypesList = (filter: ClinicTypeFilterDto) =>
     useQuery({
       queryKey: ['clinic-types', filter],
       queryFn: async () => {
@@ -21,7 +21,7 @@ export function useClinicType() {
       },
     });
 
-  const getClinicTypesForDropdown = () =>
+  const useClinicTypesDropdown = () =>
     useQuery({
       queryKey: ['clinic-types-dropdown'],
       queryFn: async () => {
@@ -69,8 +69,8 @@ export function useClinicType() {
   });
 
   return {
-    getClinicTypes,
-    getClinicTypesForDropdown,
+    useClinicTypesList,
+    useClinicTypesDropdown,
     createClinicType,
     updateClinicType,
     deleteClinicType,

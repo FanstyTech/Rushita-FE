@@ -9,7 +9,7 @@ import { toast } from '@/components/ui/Toast';
 export function useCountry() {
   const queryClient = useQueryClient();
 
-  const getCountries = (filter: CountryFilterDto) =>
+  const useCountriesList = (filter: CountryFilterDto) =>
     useQuery({
       queryKey: ['countries', filter],
       retry: false,
@@ -22,7 +22,7 @@ export function useCountry() {
       },
     });
 
-  const getCountry = (id: string) =>
+  const useCountryDetails = (id: string) =>
     useQuery({
       queryKey: ['country', id],
       queryFn: async () => {
@@ -34,7 +34,7 @@ export function useCountry() {
       },
     });
 
-  const getCountryForDropdown = () =>
+  const useCountryDropdown = () =>
     useQuery({
       queryKey: ['country', 'dropdown'],
       queryFn: async () => {
@@ -98,9 +98,9 @@ export function useCountry() {
   });
 
   return {
-    getCountries,
-    getCountry,
-    getCountryForDropdown,
+    useCountriesList,
+    useCountryDetails,
+    useCountryDropdown,
     createCountry,
     updateCountry,
     deleteCountry,

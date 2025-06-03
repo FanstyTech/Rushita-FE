@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { Input, Select, TextArea } from '@/components/common/form';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
@@ -20,7 +19,7 @@ import {
   labTestSchema,
 } from './validation';
 import { Pencil, Trash2 } from 'lucide-react';
-import { FiList, FiSearch } from 'react-icons/fi';
+import { FiList } from 'react-icons/fi';
 import { ConfirmationModal } from '@/components/common';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
 
@@ -43,13 +42,18 @@ export default function LabTestPage() {
   });
 
   // Hooks
-  const { getLabTests, createLabTest, updateLabTest, deleteLabTest } =
-    useLabTest();
+  const {
+    useLabTestsList: getLabTests,
+    createLabTest,
+    updateLabTest,
+    deleteLabTest,
+  } = useLabTest();
 
-  const { getLabTestCategoriesForDropdown } = useLabTestCategory();
+  const { useLabTestCategoriesDropdown: getLabTestCategoriesForDropdown } =
+    useLabTestCategory();
   const { data: categories } = getLabTestCategoriesForDropdown();
 
-  const { getSpecialtiesForDropdown } = useSpecialty();
+  const { useSpecialtiesDropdown: getSpecialtiesForDropdown } = useSpecialty();
   const { data: specialties } = getSpecialtiesForDropdown();
 
   const { data: labTests, isLoading } = getLabTests(filter);
@@ -249,7 +253,7 @@ export default function LabTestPage() {
                   label: category.label || '',
                 })) || []),
               ],
-              value: filter.labTestCategoryId || '',
+              value: String(filter.labTestCategoryId || ''),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,
@@ -269,7 +273,7 @@ export default function LabTestPage() {
                   label: specialty.label || '',
                 })) || []),
               ],
-              value: filter.specialtyId || '',
+              value: String(filter.specialtyId || ''),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,

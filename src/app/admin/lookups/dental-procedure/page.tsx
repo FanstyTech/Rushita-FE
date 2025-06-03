@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { Input, Select } from '@/components/common/form';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
@@ -17,7 +16,6 @@ import {
   dentalProcedureSchema,
 } from './validation';
 import { Pencil, Trash2 } from 'lucide-react';
-import { FiSearch } from 'react-icons/fi';
 import { formatCurrency } from '@/utils/format';
 import { ConfirmationModal } from '@/components/common';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
@@ -42,7 +40,7 @@ export default function DentalProcedurePage() {
 
   // Hooks
   const {
-    getDentalProcedures,
+    useDentalProceduresList: getDentalProcedures,
     createDentalProcedure,
     updateDentalProcedure,
     deleteDentalProcedure,
@@ -63,7 +61,7 @@ export default function DentalProcedurePage() {
   });
 
   // Handlers
-  const onSubmit = async (formData: any) => {
+  const onSubmit = async (formData: DentalProcedureFormData) => {
     const payload: ParsedDentalProcedureData = {
       nameL: formData.nameL,
       nameF: formData.nameF,
@@ -233,7 +231,7 @@ export default function DentalProcedurePage() {
               Cancel
             </Button>
             <Button
-              onClick={form.handleSubmit(onSubmit as any)}
+              onClick={form.handleSubmit(onSubmit)}
               isLoading={
                 updateDentalProcedure.isPending ||
                 createDentalProcedure.isPending

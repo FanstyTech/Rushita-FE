@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { Input, Select, TextArea } from '@/components/common/form';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
@@ -19,7 +18,7 @@ import {
   medicineSchema,
 } from './validation';
 import { Pencil, Trash2 } from 'lucide-react';
-import { FiList, FiSearch } from 'react-icons/fi';
+import { FiList } from 'react-icons/fi';
 import { ConfirmationModal } from '@/components/common';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
 export default function MedicinePage() {
@@ -41,10 +40,15 @@ export default function MedicinePage() {
   });
 
   // Hooks
-  const { getMedicines, createMedicine, updateMedicine, deleteMedicine } =
-    useMedicine();
+  const {
+    useMedicinesList: getMedicines,
+    createMedicine,
+    updateMedicine,
+    deleteMedicine,
+  } = useMedicine();
 
-  const { getMedicationTypesForDropdown } = useMedicationType();
+  const { useMedicationTypesDropdown: getMedicationTypesForDropdown } =
+    useMedicationType();
   const { data: medicationTypes } = getMedicationTypesForDropdown();
 
   const { data: medicines, isLoading } = getMedicines(filter);
@@ -227,7 +231,7 @@ export default function MedicinePage() {
                   label: type.label || '',
                 })) || []),
               ],
-              value: filter.typeId || '',
+              value: String(filter.typeId || ''),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,

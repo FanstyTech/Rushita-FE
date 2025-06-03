@@ -1,4 +1,4 @@
-import { PaginationRequest, PaginationResponse } from './pagination';
+import { PaginationRequest } from './pagination';
 
 export interface ClinicTypeDto {
   id: string;

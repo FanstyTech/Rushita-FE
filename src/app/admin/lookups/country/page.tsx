@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import PageLayout from '@/components/layouts/PageLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Search as FiSearch, Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { Input, Select } from '@/components/common/form';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
@@ -37,8 +37,12 @@ export default function CountryPage() {
   );
 
   // Hooks
-  const { getCountries, createCountry, updateCountry, deleteCountry } =
-    useCountry();
+  const {
+    useCountriesList: getCountries,
+    createCountry,
+    updateCountry,
+    deleteCountry,
+  } = useCountry();
 
   const { data: countriesData, isLoading } = getCountries(filter);
 

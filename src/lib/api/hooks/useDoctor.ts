@@ -11,14 +11,14 @@ export const doctorKeys = {
   detail: (id: string) => [...doctorKeys.details(), id] as const,
 };
 
-export function useDoctors() {
+export function useDoctorsList() {
   return useQuery({
     queryKey: doctorKeys.lists(),
     queryFn: () => doctorService.getAll(),
   });
 }
 
-export function useDoctor(id: string) {
+export function useDoctorDetails(id: string) {
   return useQuery({
     queryKey: doctorKeys.detail(id),
     queryFn: () => doctorService.getById(id),

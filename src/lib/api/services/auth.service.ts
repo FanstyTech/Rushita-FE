@@ -3,21 +3,22 @@ import { API_ENDPOINTS } from '../config';
 import type {
   AuthenticationResult,
   LoginRequest,
-  LoginResponse,
   RegisterRequest,
 } from '../types/auth';
 import type { ApiResponse } from '../types/api';
 
 export const authService = {
-  async login(data: LoginRequest): Promise<ApiResponse<LoginResponse>> {
-    return apiClient.post<ApiResponse<LoginResponse>>(
+  async login(data: LoginRequest): Promise<ApiResponse<AuthenticationResult>> {
+    return apiClient.post<ApiResponse<AuthenticationResult>>(
       API_ENDPOINTS.auth.login,
       data
     );
   },
 
-  async register(data: RegisterRequest): Promise<ApiResponse<LoginResponse>> {
-    return apiClient.post<ApiResponse<LoginResponse>>(
+  async register(
+    data: RegisterRequest
+  ): Promise<ApiResponse<AuthenticationResult>> {
+    return apiClient.post<ApiResponse<AuthenticationResult>>(
       API_ENDPOINTS.auth.register,
       data
     );

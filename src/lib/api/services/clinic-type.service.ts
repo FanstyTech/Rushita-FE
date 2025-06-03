@@ -6,7 +6,7 @@ import type {
   ClinicTypeFilterDto,
   ClinicTypeListDto,
 } from '../types/clinic-type';
-import { convertFilterToParams } from '@/utils/filter';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 import { SelectOption } from '../types/select-option';
 import { ApiResponse } from '../types/api';
 import { PaginationResponse } from '../types/pagination';
@@ -18,7 +18,7 @@ export const clinicTypeService = {
     return apiClient.get<ApiResponse<PaginationResponse<ClinicTypeListDto>>>(
       API_ENDPOINTS.clinicType.LIST,
       {
-        params: convertFilterToParams(filter),
+        params: convertFilterToParams(filter as FilterParams),
       }
     );
   },

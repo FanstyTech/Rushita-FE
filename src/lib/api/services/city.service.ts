@@ -1,6 +1,6 @@
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { convertFilterToParams } from '../../../utils/filter';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 import type {
   CityDto,
   CityFilterDto,
@@ -17,7 +17,7 @@ export const cityService = {
     filter: CityFilterDto
   ): Promise<ApiResponse<PaginationResponse<CityListDto>>> {
     return apiClient.get(API_ENDPOINTS.city.LIST, {
-      params: convertFilterToParams(filter),
+      params: convertFilterToParams(filter as FilterParams),
     });
   },
 
@@ -28,7 +28,7 @@ export const cityService = {
     filter: GetCitiesForDropdownInput
   ): Promise<ApiResponse<SelectOption<string>[]>> {
     return apiClient.get(API_ENDPOINTS.city.GET_FOR_DROPDOWN, {
-      params: convertFilterToParams(filter),
+      params: convertFilterToParams(filter as FilterParams),
     });
   },
 

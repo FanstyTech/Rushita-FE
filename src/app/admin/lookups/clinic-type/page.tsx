@@ -3,18 +3,10 @@
 import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Image from 'next/image';
 
-import {
-  Search as FiSearch,
-  Pencil,
-  Trash2,
-  PlusIcon,
-  List as FiList,
-} from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Input, Select } from '@/components/common/form';
-import Dropdown from '@/components/common/Dropdown';
 import { Column, Table } from '@/components/common/Table';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
@@ -47,7 +39,7 @@ export default function ClinicTypePage() {
 
   // Hooks
   const {
-    getClinicTypes,
+    useClinicTypesList: getClinicTypes,
     createClinicType,
     updateClinicType,
     deleteClinicType,
@@ -94,17 +86,6 @@ export default function ClinicTypePage() {
     });
     setSelectedClinicType(null);
     setIsModalOpen(true);
-  };
-
-  const clearFilters = () => {
-    setFilter({
-      pageNumber: 1,
-      pageSize: 5,
-      sortColumn: '',
-      sortDirection: '',
-      searchValue: '',
-      isActive: undefined,
-    });
   };
 
   const handleCloseModal = () => {

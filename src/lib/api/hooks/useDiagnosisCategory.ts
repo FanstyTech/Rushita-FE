@@ -9,7 +9,7 @@ import { diagnosisCategoryService } from '../services/diagnosis-category.service
 export const useDiagnosisCategory = () => {
   const queryClient = useQueryClient();
 
-  const getDiagnosisCategories = (filter: DiagnosisCategoryFilterDto) =>
+  const useDiagnosisCategoriesList = (filter: DiagnosisCategoryFilterDto) =>
     useQuery({
       queryKey: ['diagnosisCategories', filter],
       queryFn: async () => {
@@ -21,7 +21,7 @@ export const useDiagnosisCategory = () => {
       },
     });
 
-  const getDiagnosisCategory = (id: string) =>
+  const useDiagnosisCategoryDetails = (id: string) =>
     useQuery({
       queryKey: ['diagnosisCategory', id],
       queryFn: async () => {
@@ -34,11 +34,12 @@ export const useDiagnosisCategory = () => {
       enabled: !!id,
     });
 
-  const getDiagnosisCategoriesForDropdown = () =>
+  const useDiagnosisCategoriesDropdown = () =>
     useQuery({
       queryKey: ['diagnosisCategoriesDropdown'],
       queryFn: async () => {
-        const response = await diagnosisCategoryService.getDiagnosisCategoriesForDropdown();
+        const response =
+          await diagnosisCategoryService.getDiagnosisCategoriesForDropdown();
         if (!response.success) {
           throw new Error(response.message);
         }
@@ -57,7 +58,9 @@ export const useDiagnosisCategory = () => {
     onSuccess: () => {
       toast.success('Diagnosis category created successfully');
       queryClient.invalidateQueries({ queryKey: ['diagnosisCategories'] });
-      queryClient.invalidateQueries({ queryKey: ['diagnosisCategoriesDropdown'] });
+      queryClient.invalidateQueries({
+        queryKey: ['diagnosisCategoriesDropdown'],
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -75,7 +78,9 @@ export const useDiagnosisCategory = () => {
     onSuccess: () => {
       toast.success('Diagnosis category updated successfully');
       queryClient.invalidateQueries({ queryKey: ['diagnosisCategories'] });
-      queryClient.invalidateQueries({ queryKey: ['diagnosisCategoriesDropdown'] });
+      queryClient.invalidateQueries({
+        queryKey: ['diagnosisCategoriesDropdown'],
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -93,7 +98,9 @@ export const useDiagnosisCategory = () => {
     onSuccess: () => {
       toast.success('Diagnosis category deleted successfully');
       queryClient.invalidateQueries({ queryKey: ['diagnosisCategories'] });
-      queryClient.invalidateQueries({ queryKey: ['diagnosisCategoriesDropdown'] });
+      queryClient.invalidateQueries({
+        queryKey: ['diagnosisCategoriesDropdown'],
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -101,9 +108,9 @@ export const useDiagnosisCategory = () => {
   });
 
   return {
-    getDiagnosisCategories,
-    getDiagnosisCategory,
-    getDiagnosisCategoriesForDropdown,
+    useDiagnosisCategoriesList,
+    useDiagnosisCategoryDetails,
+    useDiagnosisCategoriesDropdown,
     createDiagnosisCategory,
     updateDiagnosisCategory,
     deleteDiagnosisCategory,

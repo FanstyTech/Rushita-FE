@@ -8,7 +8,7 @@ import {
 } from '../types/lab-test-category';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { convertFilterToParams } from '../../../utils/filter';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 import { SelectOption } from '../types/select-option';
 
 export const labTestCategoryService = {
@@ -18,7 +18,7 @@ export const labTestCategoryService = {
     return apiClient.get<
       ApiResponse<PaginationResponse<LabTestCategoryListDto>>
     >(API_ENDPOINTS.labTestCategory.LIST, {
-      params: convertFilterToParams(filter),
+      params: convertFilterToParams(filter as FilterParams),
     });
   },
 

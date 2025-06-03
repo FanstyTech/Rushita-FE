@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { Input, Select, TextArea } from '@/components/common/form';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
@@ -20,7 +19,7 @@ import {
   diagnosisSchema,
 } from './validation';
 import { Pencil, Trash2 } from 'lucide-react';
-import { FiList, FiSearch } from 'react-icons/fi';
+import { FiList } from 'react-icons/fi';
 import { ConfirmationModal } from '@/components/common';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
 
@@ -44,13 +43,18 @@ export default function DiagnosisPage() {
   });
 
   // Hooks
-  const { getDiagnoses, createDiagnosis, updateDiagnosis, deleteDiagnosis } =
-    useDiagnosis();
+  const {
+    useDiagnosesList: getDiagnoses,
+    createDiagnosis,
+    updateDiagnosis,
+    deleteDiagnosis,
+  } = useDiagnosis();
 
-  const { getDiagnosisCategoriesForDropdown } = useDiagnosisCategory();
+  const { useDiagnosisCategoriesDropdown: getDiagnosisCategoriesForDropdown } =
+    useDiagnosisCategory();
   const { data: categories } = getDiagnosisCategoriesForDropdown();
 
-  const { getSpecialtiesForDropdown } = useSpecialty();
+  const { useSpecialtiesDropdown: getSpecialtiesForDropdown } = useSpecialty();
   const { data: specialties } = getSpecialtiesForDropdown();
 
   const { data: diagnoses, isLoading } = getDiagnoses(filter);
@@ -246,7 +250,7 @@ export default function DiagnosisPage() {
                   label: specialty.label || '',
                 })) || []),
               ],
-              value: filter.specialtyId || '',
+              value: String(filter.specialtyId || ''),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,
@@ -263,7 +267,7 @@ export default function DiagnosisPage() {
                   label: category.label || '',
                 })) || []),
               ],
-              value: filter.diagnosisCategoryId || '',
+              value: String(filter.diagnosisCategoryId || ''),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,

@@ -9,7 +9,9 @@ import { toast } from '@/components/ui/Toast';
 export const useRadiologyTestCategory = () => {
   const queryClient = useQueryClient();
 
-  const getRadiologyTestCategories = (filter: RadiologyTestCategoryFilterDto) =>
+  const useRadiologyTestCategoriesList = (
+    filter: RadiologyTestCategoryFilterDto
+  ) =>
     useQuery({
       queryKey: ['radiologyTestCategories', filter],
       retry: false,
@@ -22,14 +24,14 @@ export const useRadiologyTestCategory = () => {
       },
     });
 
-  const getRadiologyTestCategory = (id: string) =>
+  const useRadiologyTestCategoryDetails = (id: string) =>
     useQuery({
       queryKey: ['radiologyTestCategories', id],
       queryFn: () => radiologyTestCategoryService.getById(id),
       enabled: !!id,
     });
 
-  const getRadiologyTestCategoriesForDropdown = () =>
+  const useRadiologyTestCategoriesDropdown = () =>
     useQuery({
       queryKey: ['radiologyTestCategoriesDropdown'],
       queryFn: async () => {
@@ -78,9 +80,9 @@ export const useRadiologyTestCategory = () => {
   });
 
   return {
-    getRadiologyTestCategories,
-    getRadiologyTestCategory,
-    getRadiologyTestCategoriesForDropdown,
+    useRadiologyTestCategoriesList,
+    useRadiologyTestCategoryDetails,
+    useRadiologyTestCategoriesDropdown,
     createRadiologyTestCategory,
     updateRadiologyTestCategory,
     deleteRadiologyTestCategory,

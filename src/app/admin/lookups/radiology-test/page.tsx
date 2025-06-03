@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
-import { FiList, FiSearch } from 'react-icons/fi';
+import { Pencil, Trash2 } from 'lucide-react';
+import { FiList } from 'react-icons/fi';
 
 import Button from '@/components/common/Button';
 import { Input, Select, TextArea } from '@/components/common/form';
@@ -45,14 +45,16 @@ export default function RadiologyTestPage() {
 
   // Hooks
   const {
-    getRadiologyTests,
+    useRadiologyTestsList: getRadiologyTests,
     createRadiologyTest,
     updateRadiologyTest,
     deleteRadiologyTest,
   } = useRadiologyTest();
 
-  const { getSpecialtiesForDropdown } = useSpecialty();
-  const { getRadiologyTestCategoriesForDropdown } = useRadiologyTestCategory();
+  const { useSpecialtiesDropdown: getSpecialtiesForDropdown } = useSpecialty();
+  const {
+    useRadiologyTestCategoriesDropdown: getRadiologyTestCategoriesForDropdown,
+  } = useRadiologyTestCategory();
 
   const { data: testsResponse, isLoading } = getRadiologyTests(filter);
   const { data: specialtiesResponse } = getSpecialtiesForDropdown();
@@ -149,20 +151,6 @@ export default function RadiologyTestPage() {
     reset();
   };
 
-  const clearFilters = () => {
-    setFilter({
-      pageNumber: 1,
-      pageSize: 5,
-      sortColumn: '',
-      sortDirection: '',
-      searchValue: '',
-      code: '',
-      isActive: undefined,
-      specialtyId: undefined,
-      radiologyTestCategoryId: undefined,
-    });
-  };
-
   // Table columns
   const columns: Column<RadiologyTestListDto>[] = [
     {
@@ -252,7 +240,7 @@ export default function RadiologyTestPage() {
                   label: category.label || '',
                 })),
               ],
-              value: filter.radiologyTestCategoryId,
+              value: String(filter.radiologyTestCategoryId),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,
@@ -272,7 +260,7 @@ export default function RadiologyTestPage() {
                   label: specialty.label || '',
                 })),
               ],
-              value: filter.specialtyId,
+              value: String(filter.specialtyId),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,

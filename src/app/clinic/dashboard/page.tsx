@@ -21,7 +21,6 @@ import {
   ClockIcon,
   CurrencyDollarIcon,
   CheckCircleIcon,
-  XCircleIcon,
 } from '@heroicons/react/24/outline';
 
 ChartJS.register(

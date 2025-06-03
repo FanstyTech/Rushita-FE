@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Calendar,
   Clock,
@@ -10,11 +10,8 @@ import {
   AlertCircle,
   Plus,
   Search,
-  Filter,
-  ChevronDown,
-  X,
 } from 'lucide-react';
-import { FiSearch, FiFilter, FiChevronDown } from 'react-icons/fi';
+import { FiSearch, FiChevronDown } from 'react-icons/fi';
 import PageLayout from '@/components/layouts/PageLayout';
 import Modal from '@/components/common/Modal';
 

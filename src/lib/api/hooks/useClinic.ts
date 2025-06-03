@@ -6,7 +6,7 @@ import type { ClinicFilterDto, CreateUpdateClinicDto } from '../types/clinic';
 export const useClinic = () => {
   const queryClient = useQueryClient();
 
-  const getClinics = (filters: ClinicFilterDto) =>
+  const useClinicsList = (filters: ClinicFilterDto) =>
     useQuery({
       queryKey: ['clinics', filters],
       retry: false,
@@ -19,7 +19,7 @@ export const useClinic = () => {
       },
     });
 
-  const getClinic = (id: string) =>
+  const useClinicDetails = (id: string) =>
     useQuery({
       queryKey: ['clinics', id],
       queryFn: () => clinicService.getOne(id),
@@ -64,8 +64,8 @@ export const useClinic = () => {
   });
 
   return {
-    getClinics,
-    getClinic,
+    useClinicsList,
+    useClinicDetails,
     createOrUpdateClinic,
     deleteClinic,
     updateClinicStatus,

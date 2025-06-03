@@ -21,12 +21,6 @@ import {
 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 
-interface FloatingImageProps {
-  src: string;
-  className: string;
-  delay?: number;
-}
-
 interface ParallaxProps {
   children: React.ReactNode;
   offset?: number;
@@ -83,34 +77,6 @@ const FloatingIcon = ({
       }}
     >
       <Icon className="w-8 h-8 text-blue-500/30" />
-    </motion.div>
-  );
-};
-
-const FloatingImage = ({ src, className, delay = 0 }: FloatingImageProps) => {
-  const float = {
-    y: [0, -20, 0],
-    rotate: [-2, 2, -2],
-  };
-
-  return (
-    <motion.div
-      className={`absolute ${className}`}
-      animate={float}
-      transition={{
-        duration: 5,
-        repeat: Infinity,
-        delay,
-        ease: 'easeInOut',
-      }}
-    >
-      <Image
-        src={src}
-        alt=""
-        width={100}
-        height={100}
-        className="w-auto h-auto"
-      />
     </motion.div>
   );
 };
@@ -273,7 +239,6 @@ export default function Home() {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
-  const rotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.2]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
@@ -308,7 +273,6 @@ export default function Home() {
           style={{ scale, opacity }}
           className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 transform -skew-y-6"
         />
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <Parallax offset={30} className="relative z-10">
             <div className="text-center relative z-10">
@@ -376,7 +340,7 @@ export default function Home() {
               className="text-gray-600 max-w-2xl mx-auto"
             >
               Discover how our comprehensive suite of tools can transform your
-              clinic's operations and enhance patient care.
+              clinic&apos;s operations and enhance patient care.
             </motion.p>
           </div>
         </Parallax>
@@ -411,7 +375,6 @@ export default function Home() {
           ))}
         </div>
       </div>
-
       {/* Statistics Section */}
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 py-16 lg:py-24">
         <Parallax offset={30}>

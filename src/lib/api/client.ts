@@ -9,6 +9,15 @@ interface RequestConfig extends RequestInit {
   suppressError?: boolean;
 }
 
+type RequestBody = object | FormData | string | null;
+
+interface RetryConfig {
+  method: string;
+  url: string;
+  data?: RequestBody;
+  init?: RequestInit;
+}
+
 class ApiClient {
   private baseUrl: string;
   private isRefreshing = false;
@@ -22,6 +31,18 @@ class ApiClient {
     }
     this.baseUrl = baseUrl || API_BASE_URL || '';
   }
+  private serializeBody(body: RequestBody): BodyInit | null {
+    if (body === null) {
+      return null;
+    }
+    if (body instanceof FormData) {
+      return body;
+    }
+    if (typeof body === 'string') {
+      return body;
+    }
+    return JSON.stringify(body);
+  }
 
   private async handleResponse<T>(
     response: Response,
@@ -30,7 +51,7 @@ class ApiClient {
     retryCount = 0,
     requestInfo?: {
       method: string;
-      body?: any;
+      body?: RequestBody;
     }
   ): Promise<T> {
     if (!response.ok) {
@@ -40,7 +61,7 @@ class ApiClient {
         !endpoint?.includes('/auth') &&
         retryCount === 0
       ) {
-        const newToken = await this.handleTokenRefresh(response);
+        const newToken = await this.handleTokenRefresh();
 
         if (newToken) {
           // Retry the original request with new token
@@ -50,7 +71,9 @@ class ApiClient {
               ...this.getHeaders(),
               Authorization: `Bearer ${newToken}`,
             },
-            body: requestInfo?.body,
+            body: requestInfo?.body
+              ? this.serializeBody(requestInfo.body)
+              : undefined,
           });
 
           // Retry with incremented count to prevent infinite loops
@@ -150,7 +173,7 @@ class ApiClient {
       localStorage.setItem('user', JSON.stringify(user));
 
       return accessToken;
-    } catch (error) {
+    } catch {
       // Clear all auth data on refresh failure
       Cookies.remove('auth-token');
       Cookies.remove('refresh-token');
@@ -159,7 +182,8 @@ class ApiClient {
       return null;
     }
   }
-  private async handleTokenRefresh(error: any): Promise<string | null> {
+
+  private async handleTokenRefresh(): Promise<string | null> {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
 
@@ -182,7 +206,7 @@ class ApiClient {
   }
 
   private async retryRequest<T>(
-    config: { method: string; url: string; data?: any; init?: RequestInit },
+    config: RetryConfig,
     newToken: string
   ): Promise<T> {
     const { method, url, data, init } = config;
@@ -194,7 +218,7 @@ class ApiClient {
     const response = await fetch(url, {
       method,
       headers,
-      body: data ? JSON.stringify(data) : undefined,
+      body: data ? this.serializeBody(data) : undefined,
       ...init,
     });
 
@@ -238,14 +262,14 @@ class ApiClient {
       return this.handleResponse<T>(response, suppressError, endpoint, 0, {
         method: 'GET',
       });
-    } catch (error) {
+    } catch {
       throw new ApiError('Network error', 0);
     }
   }
 
   async post<T>(
     endpoint: string,
-    data?: any,
+    data?: RequestBody,
     config: RequestConfig = {}
   ): Promise<T> {
     const { params, suppressError, ...init } = config;
@@ -255,18 +279,18 @@ class ApiClient {
       const response = await fetch(url, {
         method: 'POST',
         headers: this.getHeaders(),
-        body: JSON.stringify(data),
+        body: data ? this.serializeBody(data) : undefined,
         ...init,
       });
       return this.handleResponse<T>(response, suppressError, endpoint);
-    } catch (error) {
+    } catch {
       throw new ApiError('Network error', 0);
     }
   }
 
   async put<T>(
     endpoint: string,
-    data?: any,
+    data?: RequestBody,
     config: RequestConfig = {}
   ): Promise<T> {
     const { params, suppressError, ...init } = config;
@@ -276,18 +300,18 @@ class ApiClient {
       const response = await fetch(url, {
         method: 'PUT',
         headers: this.getHeaders(),
-        body: JSON.stringify(data),
+        body: data ? this.serializeBody(data) : undefined,
         ...init,
       });
       return this.handleResponse<T>(response, suppressError, endpoint);
-    } catch (error) {
+    } catch {
       throw new ApiError('Network error', 0);
     }
   }
 
   async delete<T>(
     endpoint: string,
-    data?: any,
+    data?: RequestBody,
     config: RequestConfig = {}
   ): Promise<T> {
     const { params, suppressError, ...init } = config;
@@ -297,11 +321,11 @@ class ApiClient {
       const response = await fetch(url, {
         method: 'DELETE',
         headers: this.getHeaders(),
-        body: JSON.stringify(data),
+        body: data ? this.serializeBody(data) : undefined,
         ...init,
       });
       return this.handleResponse<T>(response, suppressError, endpoint);
-    } catch (error) {
+    } catch {
       throw new ApiError('Network error', 0);
     }
   }

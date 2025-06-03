@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, type ChangeEvent } from 'react';
+import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
-import { FiList, FiSearch } from 'react-icons/fi';
+import { Pencil, Trash2 } from 'lucide-react';
+import { FiList } from 'react-icons/fi';
 
 import Button from '@/components/common/Button';
 import { Input, Select } from '@/components/common/form';
@@ -41,8 +41,13 @@ export default function CityPage() {
   });
 
   // Hooks
-  const { getCities, createCity, updateCity, deleteCity } = useCity();
-  const { getCountryForDropdown } = useCountry();
+  const {
+    useCitiesList: getCities,
+    createCity,
+    updateCity,
+    deleteCity,
+  } = useCity();
+  const { useCountryDropdown: getCountryForDropdown } = useCountry();
 
   const { data: citiesResponse, isLoading } = getCities(filter);
 
@@ -207,7 +212,7 @@ export default function CityPage() {
                   label: country.label || '',
                 })) || []),
               ],
-              value: filter.countryId || '',
+              value: String(filter.countryId || ''),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,

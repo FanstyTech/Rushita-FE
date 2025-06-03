@@ -12,12 +12,10 @@ import {
   HomeIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  Cog6ToothIcon,
   BuildingOfficeIcon,
   GlobeAltIcon,
   MapPinIcon,
   ListBulletIcon,
-  BeakerIcon,
   HeartIcon,
   ArchiveBoxIcon,
   BookmarkIcon,
@@ -25,24 +23,19 @@ import {
   ShieldCheckIcon,
   BoltIcon,
   PuzzlePieceIcon,
-  IdentificationIcon,
   ClipboardDocumentCheckIcon,
   AcademicCapIcon,
-  BriefcaseIcon,
-  SparklesIcon
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useTranslation } from 'react-i18next';
+
 import { FiSearch } from 'react-icons/fi';
 import { RiCalendarScheduleLine } from 'react-icons/ri';
 import { RiHospitalLine } from 'react-icons/ri';
+import { IconType } from 'react-icons';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
-
-// Placeholder: Replace with real user role from auth context
-const userRole: 'admin' | 'clinic' | 'doctor' = 'admin'; // Change to test different sidebars
 
 export const doctorNav = [
   { name: 'Dashboard', href: '/doctor/dashboard', icon: ChartBarIcon },
@@ -100,7 +93,11 @@ export const adminNav = [
     name: 'Lookups',
     icon: ListBulletIcon,
     children: [
-      { name: 'Specialty', href: '/admin/lookups/specialty', icon: AcademicCapIcon },
+      {
+        name: 'Specialty',
+        href: '/admin/lookups/specialty',
+        icon: AcademicCapIcon,
+      },
       { name: 'Country', href: '/admin/lookups/country', icon: GlobeAltIcon },
       { name: 'City', href: '/admin/lookups/city', icon: MapPinIcon },
       {
@@ -217,7 +214,7 @@ export const clinicNav = [
 export interface NavItem {
   name: string;
   href?: string;
-  icon: any;
+  icon: IconType;
   children?: NavItem[];
 }
 
@@ -238,13 +235,13 @@ export function NavigationItem({
   const isExpanded = expandedItems.includes(item.name);
   const hasChildren = Boolean(item.children?.length);
   const isActive = pathname === item.href;
-  const isChildActive =
-    hasChildren &&
-    item.children?.some(
-      (child) =>
-        pathname === child.href ||
-        child.children?.some((subChild) => pathname === subChild.href)
-    );
+  // const isChildActive =
+  //   hasChildren &&
+  //   item.children?.some(
+  //     (child) =>
+  //       pathname === child.href ||
+  //       child.children?.some((subChild) => pathname === subChild.href)
+  //   );
 
   if (hasChildren) {
     return (
@@ -374,7 +371,7 @@ function NavigationSection({
   // Update expanded items when pathname changes
   useEffect(() => {
     setExpandedItems(findActiveParent(items));
-  }, [pathname, findActiveParent]);
+  }, [pathname, findActiveParent, items]);
 
   const toggleExpand = (itemName: string) => {
     setExpandedItems((prev) =>
@@ -409,10 +406,6 @@ function NavigationSection({
 export default function Sidebar() {
   const [mounted, setMounted] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const { direction } = useLanguage();
-  const { t } = useTranslation();
-  const isRTL = direction === 'rtl';
-  const pathname = usePathname();
 
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
@@ -454,7 +447,7 @@ export default function Sidebar() {
           {!isCollapsed && (
             <span className="text-xl font-semibold ">Rushita</span>
           )}
-          <img src="/logo.png" alt="Logo" className="h-8 w-8" />
+          {/* <Image src="/logo.png" alt="Logo" className="h-8 w-8" /> */}
         </div>
 
         {/* Search */}

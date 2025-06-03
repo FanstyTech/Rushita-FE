@@ -2,7 +2,16 @@
 
 import React, { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  addMonths,
+  subMonths,
+} from 'date-fns';
 import { Appointment } from '@/mockData/appointments';
 
 interface CalendarProps {
@@ -11,9 +20,13 @@ interface CalendarProps {
   selectedDate?: Date;
 }
 
-export function Calendar({ appointments, onDaySelect, selectedDate }: CalendarProps) {
+export function Calendar({
+  appointments,
+  onDaySelect,
+  selectedDate,
+}: CalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  
+
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
@@ -62,7 +75,7 @@ export function Calendar({ appointments, onDaySelect, selectedDate }: CalendarPr
 
         {/* Calendar days */}
         <div className="grid grid-cols-7 gap-1">
-          {monthDays.map((day, dayIdx) => {
+          {monthDays.map((day) => {
             const dayAppointments = appointments.filter(
               (apt) => apt.date === format(day, 'yyyy-MM-dd')
             );
@@ -85,14 +98,18 @@ export function Calendar({ appointments, onDaySelect, selectedDate }: CalendarPr
                   dateTime={format(day, 'yyyy-MM-dd')}
                   className={`
                     block text-sm
-                    ${isSameMonth(day, currentMonth) ? 'text-gray-900' : 'text-gray-400'}
+                    ${
+                      isSameMonth(day, currentMonth)
+                        ? 'text-gray-900'
+                        : 'text-gray-400'
+                    }
                   `}
                 >
                   {format(day, 'd')}
                 </time>
                 {dayAppointments.length > 0 && (
                   <div className="mt-1">
-                    {dayAppointments.slice(0, 2).map((apt, idx) => (
+                    {dayAppointments.slice(0, 2).map((apt) => (
                       <div
                         key={apt.id}
                         className="text-xs px-1 py-0.5 rounded bg-blue-50 text-blue-700 mb-1 truncate"

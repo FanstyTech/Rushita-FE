@@ -12,7 +12,7 @@ export interface FilterState {
   sortDirection: string;
   searchValue?: string;
   isActive?: boolean;
-  [key: string]: any;
+  [key: string]: string | number | boolean | undefined;
 }
 
 interface FilterBarProps {

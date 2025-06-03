@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import AddClinicForm from './AddClinicForm';
-import { Metadata } from 'next';
 import PageLayout from '@/components/layouts/PageLayout';
 
 export default function AddClinicPage() {

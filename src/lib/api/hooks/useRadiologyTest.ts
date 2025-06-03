@@ -9,7 +9,7 @@ import { toast } from '@/components/ui/Toast';
 export const useRadiologyTest = () => {
   const queryClient = useQueryClient();
 
-  const getRadiologyTests = (filter: RadiologyTestFilterDto) =>
+  const useRadiologyTestsList = (filter: RadiologyTestFilterDto) =>
     useQuery({
       queryKey: ['radiologyTests', filter],
       retry: false,
@@ -22,14 +22,14 @@ export const useRadiologyTest = () => {
       },
     });
 
-  const getRadiologyTest = (id: string) =>
+  const useRadiologyTestDetails = (id: string) =>
     useQuery({
       queryKey: ['radiologyTests', id],
       queryFn: () => radiologyTestService.getById(id),
       enabled: !!id,
     });
 
-  const getRadiologyTestsForDropdown = () =>
+  const useRadiologyTestsDropdown = () =>
     useQuery({
       queryKey: ['radiologyTestsDropdown'],
       queryFn: async () => {
@@ -78,9 +78,9 @@ export const useRadiologyTest = () => {
   });
 
   return {
-    getRadiologyTests,
-    getRadiologyTest,
-    getRadiologyTestsForDropdown,
+    useRadiologyTestsList,
+    useRadiologyTestDetails,
+    useRadiologyTestsDropdown,
     createRadiologyTest,
     updateRadiologyTest,
     deleteRadiologyTest,

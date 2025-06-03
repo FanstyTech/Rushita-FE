@@ -3,14 +3,28 @@
  * @param filter The filter object to convert
  * @returns A record of string key-value pairs suitable for URL parameters
  */
-export const convertFilterToParams = <T extends Record<string, any>>(
-  filter: T
-): Record<string, string> => {
-  const params: Record<string, string> = {};
+export type FilterValue = string | number | boolean | undefined;
+
+export interface FilterParams {
+  [key: string]: FilterValue;
+  pageNumber?: number;
+  pageSize?: number;
+  sortColumn?: string;
+  sortDirection?: string;
+  searchValue?: string;
+}
+
+export function convertFilterToParams(
+  filter: FilterParams | Record<string, FilterValue>
+): Record<string, string> {
+  const result: Record<string, string> = {};
+
+  // Only copy defined values to the result object and convert them to strings
   Object.entries(filter).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      params[key] = String(value);
+    if (value !== undefined) {
+      result[key] = String(value);
     }
   });
-  return params;
-};
+
+  return result;
+}

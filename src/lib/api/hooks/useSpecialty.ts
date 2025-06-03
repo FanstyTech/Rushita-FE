@@ -9,7 +9,7 @@ import { toast } from '@/components/ui/Toast';
 export function useSpecialty() {
   const queryClient = useQueryClient();
 
-  const getSpecialties = (filter: SpecialtyFilterDto) =>
+  const useSpecialtiesList = (filter: SpecialtyFilterDto) =>
     useQuery({
       queryKey: ['specialties', filter],
       retry: false,
@@ -22,7 +22,7 @@ export function useSpecialty() {
       },
     });
 
-  const getSpecialty = (id: string) =>
+  const useSpecialtyDetails = (id: string) =>
     useQuery({
       queryKey: ['specialty', id],
       queryFn: async () => {
@@ -34,7 +34,8 @@ export function useSpecialty() {
       },
       enabled: !!id,
     });
-  const getSpecialtiesForDropdown = () =>
+
+  const useSpecialtiesDropdown = () =>
     useQuery({
       queryKey: ['specialtiesDropdown'],
       queryFn: async () => {
@@ -71,7 +72,7 @@ export function useSpecialty() {
       }
       return response.result;
     },
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       toast.success('Specialty updated successfully');
       queryClient.invalidateQueries({ queryKey: ['specialties'] });
     },
@@ -98,9 +99,9 @@ export function useSpecialty() {
   });
 
   return {
-    getSpecialties,
-    getSpecialty,
-    getSpecialtiesForDropdown,
+    useSpecialtiesList,
+    useSpecialtyDetails,
+    useSpecialtiesDropdown,
     createSpecialty,
     updateSpecialty,
     deleteSpecialty,

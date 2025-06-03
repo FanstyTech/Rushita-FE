@@ -23,7 +23,6 @@ export default function AppointmentsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,14 +40,11 @@ export default function AppointmentsPage() {
   }, []);
 
   const loadAppointments = async () => {
-    setIsLoading(true);
     try {
       const data: Appointment[] = await appointmentAPI.getAppointments();
       setAppointments(data);
     } catch (error) {
       console.error('Failed to load appointments:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -419,7 +415,11 @@ export default function AppointmentsPage() {
                     onChange={(e) =>
                       setNewAppointment({
                         ...newAppointment,
-                        type: e.target.value as any,
+                        type: e.target.value as
+                          | 'checkup'
+                          | 'followup'
+                          | 'emergency'
+                          | 'dental',
                       })
                     }
                     className="block w-full rounded-md border-0 py-3 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"

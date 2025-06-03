@@ -8,7 +8,7 @@ import {
 } from '../types/diagnosis-category';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { convertFilterToParams } from '../../../utils/filter';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 import { SelectOption } from '../types/select-option';
 
 export const diagnosisCategoryService = {
@@ -18,7 +18,7 @@ export const diagnosisCategoryService = {
     return apiClient.get<
       ApiResponse<PaginationResponse<DiagnosisCategoryListDto>>
     >(API_ENDPOINTS.diagnosisCategory.LIST, {
-      params: convertFilterToParams(filter),
+      params: convertFilterToParams(filter as FilterParams),
     });
   },
 

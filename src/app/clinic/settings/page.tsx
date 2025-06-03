@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Bell,
@@ -11,6 +10,7 @@ import {
   CreditCard,
   Users,
   Building2,
+  LucideIcon,
 } from 'lucide-react';
 import PageLayout from '@/components/layouts/PageLayout';
 
@@ -18,7 +18,7 @@ interface SettingsSection {
   id: string;
   title: string;
   description: string;
-  icon: any;
+  icon: LucideIcon; // Lucide icon component
   href: string;
 }
 

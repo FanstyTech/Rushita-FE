@@ -8,7 +8,7 @@ import type { PaginationResponse } from '../types/pagination';
 import type { ApiResponse } from '../types/api';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { convertFilterToParams } from '../../../utils/filter';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 import { SelectOption } from '../types/select-option';
 
 export const specialtyService = {
@@ -17,7 +17,7 @@ export const specialtyService = {
   ): Promise<ApiResponse<PaginationResponse<SpecialtyListDto>>> {
     return apiClient.get<ApiResponse<PaginationResponse<SpecialtyListDto>>>(
       API_ENDPOINTS.specialty.LIST,
-      { params: convertFilterToParams(filter) }
+      { params: convertFilterToParams(filter as FilterParams) }
     );
   },
 

@@ -10,7 +10,7 @@ import { toast } from '@/components/ui/Toast';
 export const useCity = () => {
   const queryClient = useQueryClient();
 
-  const getCities = (filter: CityFilterDto) =>
+  const useCitiesList = (filter: CityFilterDto) =>
     useQuery({
       queryKey: ['cities', filter],
       retry: false,
@@ -23,13 +23,14 @@ export const useCity = () => {
       },
     });
 
-  const getCity = (id: string) =>
+  const useCityDetails = (id: string) =>
     useQuery({
       queryKey: ['cities', id],
       queryFn: () => cityService.getById(id),
       enabled: !!id,
     });
-  const getCitiesForDropdown = (filter: GetCitiesForDropdownInput) =>
+
+  const useCitiesDropdown = (filter: GetCitiesForDropdownInput) =>
     useQuery({
       queryKey: ['citiesForDropdown'],
       queryFn: async () => {
@@ -41,6 +42,7 @@ export const useCity = () => {
       },
       enabled: filter.all || !!filter.countryId || !!filter.filter,
     });
+
   const createCity = useMutation({
     mutationFn: (city: CreateUpdateCityDto) => cityService.create(city),
     onSuccess: () => {
@@ -75,9 +77,9 @@ export const useCity = () => {
   });
 
   return {
-    getCities,
-    getCity,
-    getCitiesForDropdown,
+    useCitiesList,
+    useCityDetails,
+    useCitiesDropdown,
     createCity,
     updateCity,
     deleteCity,

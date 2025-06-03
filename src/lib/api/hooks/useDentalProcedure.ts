@@ -9,7 +9,7 @@ import { dentalProcedureService } from '../services/dental-procedure.service';
 export const useDentalProcedure = () => {
   const queryClient = useQueryClient();
 
-  const getDentalProcedures = (filter: DentalProcedureFilterDto) =>
+  const useDentalProceduresList = (filter: DentalProcedureFilterDto) =>
     useQuery({
       queryKey: ['dentalProcedures', filter],
       queryFn: async () => {
@@ -21,7 +21,7 @@ export const useDentalProcedure = () => {
       },
     });
 
-  const getDentalProcedure = (id: string) =>
+  const useDentalProcedureDetails = (id: string) =>
     useQuery({
       queryKey: ['dentalProcedure', id],
       queryFn: async () => {
@@ -86,8 +86,8 @@ export const useDentalProcedure = () => {
   });
 
   return {
-    getDentalProcedures,
-    getDentalProcedure,
+    useDentalProceduresList,
+    useDentalProcedureDetails,
     createDentalProcedure,
     updateDentalProcedure,
     deleteDentalProcedure,

@@ -7,9 +7,9 @@ import {
 } from '../types/medication-type';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { convertFilterToParams } from '../../../utils/filter';
 import { SelectOption } from '../types/select-option';
 import type { PaginationResponse } from '../types/pagination';
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 
 export const medicationTypeService = {
   async getAll(
@@ -18,7 +18,7 @@ export const medicationTypeService = {
     return apiClient.get<
       ApiResponse<PaginationResponse<MedicationTypeListDto>>
     >(API_ENDPOINTS.medicationType.LIST, {
-      params: convertFilterToParams(filter),
+      params: convertFilterToParams(filter as FilterParams),
     });
   },
 

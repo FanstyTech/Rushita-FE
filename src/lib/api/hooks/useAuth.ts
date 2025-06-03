@@ -1,10 +1,5 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  type LoginRequest,
-  type AuthenticationResult,
-  ApiResponse,
-  LoginResponse,
-} from '../types/auth';
+import { useMutation } from '@tanstack/react-query';
+import { type LoginRequest, AuthenticationResult } from '../types/auth';
 
 import { authService } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
@@ -23,7 +18,7 @@ export const useAuth = () => {
       return response.result;
     },
     retry: false, // Disable retries for login
-    onSuccess: (response: LoginResponse, variables) => {
+    onSuccess: (response: AuthenticationResult, variables) => {
       toast.success('Login successfully');
 
       // Set the auth token in cookies

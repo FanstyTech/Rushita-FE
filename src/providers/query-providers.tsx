@@ -3,12 +3,17 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, type ReactNode } from 'react';
 import { Toaster } from '@/components/ui/Toast';
+import dynamic from 'next/dynamic';
 
-let ReactQueryDevtools: any;
-if (process.env.NODE_ENV === 'development') {
-  ReactQueryDevtools =
-    require('@tanstack/react-query-devtools').ReactQueryDevtools;
-}
+const ReactQueryDevtools = dynamic(
+  () =>
+    import('@tanstack/react-query-devtools').then(
+      (mod) => mod.ReactQueryDevtools
+    ),
+  {
+    ssr: false,
+  }
+);
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -33,7 +38,6 @@ export function Providers({ children }: { children: ReactNode }) {
       {process.env.NODE_ENV === 'development' && (
         <div suppressHydrationWarning>
           {typeof window !== 'undefined' && (
-            // @ts-ignore - DevTools has issues with RSC
             <ReactQueryDevtools initialIsOpen={false} />
           )}
         </div>

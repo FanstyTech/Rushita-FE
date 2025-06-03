@@ -9,11 +9,8 @@ import {
   ScheduleStatus,
 } from '@/mockData/doctorSchedule';
 import { format, startOfWeek, addDays } from 'date-fns';
-import { Calendar } from '@/components/clinic/doctor-schedule/Calendar';
-import { Table } from '@/components/common/Table';
-import Modal from '@/components/common/Modal';
+import { Table, type Column } from '@/components/common/Table';
 import { Doctor, doctorAPI } from '@/mockData/doctors';
-import { CalendarIcon, ClockIcon, UserIcon } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -21,10 +18,7 @@ export default function DoctorSchedulePage() {
   const [schedules, setSchedules] = useState<DoctorSchedule[]>([]);
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [isLoading, setIsLoading] = useState(true);
-  const [showNewSchedule, setShowNewSchedule] = useState(false);
-  const [showLeaveRequest, setShowLeaveRequest] = useState(false);
+  const [selectedDate] = useState<Date>(new Date());
   const [selectedDoctor, setSelectedDoctor] = useState<string>('');
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,7 +38,6 @@ export default function DoctorSchedulePage() {
   }, []);
 
   const loadData = async () => {
-    setIsLoading(true);
     try {
       const [schedulesData, leaveData, doctorsData] = await Promise.all([
         doctorScheduleAPI.getSchedules(),
@@ -56,8 +49,6 @@ export default function DoctorSchedulePage() {
       setDoctors(doctorsData);
     } catch (error) {
       console.error('Failed to load data:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -84,6 +75,109 @@ export default function DoctorSchedulePage() {
     const day = addDays(startOfWeek(selectedDate), i);
     return format(day, 'yyyy-MM-dd');
   });
+  const leaveRequestColumns: Column<LeaveRequest>[] = [
+    {
+      header: 'Doctor',
+      accessor: 'doctorId',
+      cell: ({ row }) =>
+        doctors.find((d) => d.id === row.original.doctorId)?.name || 'Unknown',
+    },
+    {
+      header: 'Type',
+      accessor: 'leaveType',
+      className: 'capitalize',
+    },
+    {
+      header: 'Start Date',
+      accessor: 'startDate',
+      cell: ({ row }) =>
+        format(new Date(row.original.startDate), 'MMM d, yyyy'),
+    },
+    {
+      header: 'End Date',
+      accessor: 'endDate',
+      cell: ({ row }) => format(new Date(row.original.endDate), 'MMM d, yyyy'),
+    },
+    {
+      header: 'Status',
+      accessor: 'status',
+      cell: ({ row }) => {
+        const status = row.original.status;
+        const statusClasses =
+          status === 'approved'
+            ? 'bg-green-100 text-green-800'
+            : status === 'rejected'
+            ? 'bg-red-100 text-red-800'
+            : 'bg-yellow-100 text-yellow-800';
+
+        return (
+          <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusClasses}`}
+          >
+            {status}
+          </span>
+        );
+      },
+    },
+    {
+      header: 'Actions',
+      accessor: 'id',
+      cell: ({ row }) => (
+        <div className="relative">
+          <button
+            onClick={() => setOpenDropdownId(row.original.id)}
+            className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          >
+            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+            </svg>
+          </button>
+
+          {openDropdownId === row.original.id && (
+            <>
+              <div
+                className="fixed inset-0 z-30"
+                onClick={() => setOpenDropdownId(null)}
+              />
+              <div className="absolute z-40 right-0 mt-1 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                {row.original.status === 'pending' && (
+                  <>
+                    <button
+                      className="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => {
+                        handleUpdateLeaveStatus(row.original.id, 'approved');
+                        setOpenDropdownId(null);
+                      }}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => {
+                        handleUpdateLeaveStatus(row.original.id, 'rejected');
+                        setOpenDropdownId(null);
+                      }}
+                    >
+                      Reject
+                    </button>
+                  </>
+                )}
+                <button
+                  className="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  onClick={() => {
+                    // handleViewDetails(row.original)
+                    setOpenDropdownId(null);
+                  }}
+                >
+                  View Details
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   return (
     <PageLayout>
@@ -94,16 +188,10 @@ export default function DoctorSchedulePage() {
             Doctor Schedule Management
           </h1>
           <div className="space-x-4">
-            <button
-              onClick={() => setShowLeaveRequest(true)}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
+            <button className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
               Request Leave
             </button>
-            <button
-              onClick={() => setShowNewSchedule(true)}
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-            >
+            <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
               Add Schedule
             </button>
           </div>
@@ -216,171 +304,18 @@ export default function DoctorSchedulePage() {
           <div className="">
             <Table<LeaveRequest>
               data={paginatedLeaveRequests}
-              columns={[
-                {
-                  header: 'Doctor',
-                  accessor: (request) =>
-                    doctors.find((d) => d.id === request.doctorId)?.name ||
-                    'Unknown',
-                },
-                {
-                  header: 'Type',
-                  accessor: 'leaveType',
-                  className: 'capitalize',
-                },
-                {
-                  header: 'Start Date',
-                  accessor: (request) =>
-                    format(new Date(request.startDate), 'MMM d, yyyy'),
-                },
-                {
-                  header: 'End Date',
-                  accessor: (request) =>
-                    format(new Date(request.endDate), 'MMM d, yyyy'),
-                },
-                {
-                  header: 'Status',
-                  accessor: (request) => (
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                      ${
-                        request.status === 'approved'
-                          ? 'bg-green-100 text-green-800'
-                          : request.status === 'rejected'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {request.status}
-                    </span>
-                  ),
-                },
-                {
-                  header: '',
-                  accessor: (request) => (
-                    <div className="relative">
-                      <button
-                        onClick={() => setOpenDropdownId(request.id)}
-                        className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                      >
-                        <svg
-                          className="h-5 w-5"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                        </svg>
-                      </button>
-
-                      {openDropdownId === request.id && (
-                        <>
-                          <div
-                            className="fixed inset-0 z-30"
-                            onClick={() => setOpenDropdownId(null)}
-                          />
-                          <div className="absolute z-40 right-0 mt-1 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            {request.status === 'pending' && (
-                              <>
-                                <button
-                                  className="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                  onClick={() => {
-                                    handleUpdateLeaveStatus(
-                                      request.id,
-                                      'approved'
-                                    );
-                                    setOpenDropdownId(null);
-                                  }}
-                                >
-                                  <svg
-                                    className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M5 13l4 4L19 7"
-                                    />
-                                  </svg>
-                                  Approve
-                                </button>
-                                <button
-                                  className="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                  onClick={() => {
-                                    handleUpdateLeaveStatus(
-                                      request.id,
-                                      'rejected'
-                                    );
-                                    setOpenDropdownId(null);
-                                  }}
-                                >
-                                  <svg
-                                    className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M6 18L18 6M6 6l12 12"
-                                    />
-                                  </svg>
-                                  Reject
-                                </button>
-                              </>
-                            )}
-                            <button
-                              className="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                              onClick={() => {
-                                // Handle view details
-                                setOpenDropdownId(null);
-                              }}
-                            >
-                              <svg
-                                className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                />
-                              </svg>
-                              View Details
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  ),
-                },
-              ]}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
+              columns={leaveRequestColumns}
+              pagination={{
+                pageSize: 10,
+                pageIndex: currentPage - 1,
+                pageCount: totalPages,
+                onPageChange: (pageIndex: number) =>
+                  setCurrentPage(pageIndex + 1),
+              }}
             />
           </div>
         </div>
       </div>
-
-      {/* Add Schedule Modal */}
-      {/* TODO: Implement Add Schedule Modal */}
-
-      {/* Leave Request Modal */}
-      {/* TODO: Implement Leave Request Modal */}
     </PageLayout>
   );
 }

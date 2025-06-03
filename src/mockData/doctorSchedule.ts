@@ -1,5 +1,3 @@
-import { Doctor } from './doctors';
-
 export type ShiftType = 'morning' | 'evening' | 'night' | 'on-call';
 export type LeaveType = 'sick' | 'vacation' | 'personal' | 'other';
 export type ScheduleStatus = 'approved' | 'pending' | 'rejected';
@@ -102,25 +100,6 @@ const mockLeaveRequests: LeaveRequest[] = [
     createdAt: '2025-05-25T10:00:00Z',
   },
   // Add more mock leave requests as needed
-];
-
-// Mock data for workload metrics
-const mockWorkloadMetrics: WorkloadMetrics[] = [
-  {
-    doctorId: '1',
-    totalPatients: 45,
-    totalHours: 40,
-    onCallHours: 8,
-    weeklyAppointments: 25,
-  },
-  {
-    doctorId: '2',
-    totalPatients: 50,
-    totalHours: 45,
-    onCallHours: 10,
-    weeklyAppointments: 30,
-  },
-  // Add more mock workload data as needed
 ];
 
 // API functions
