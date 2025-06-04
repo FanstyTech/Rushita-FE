@@ -1,7 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/Toast';
 import { clinicService } from '../services/clinic.service';
-import type { ClinicFilterDto, CreateUpdateClinicDto } from '../types/clinic';
+import type {
+  ClinicFilterDto,
+  ClinicStatus,
+  CreateUpdateClinicDto,
+} from '../types/clinic';
 
 export const useClinic = () => {
   const queryClient = useQueryClient();
@@ -26,11 +30,25 @@ export const useClinic = () => {
       enabled: !!id,
     });
 
+  const useClinicForEdit = (id: string) =>
+    useQuery({
+      queryKey: ['clinicForEdit', id],
+      queryFn: async () => {
+        const response = await clinicService.getForEdit(id);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+      enabled: !!id,
+    });
+
   const createOrUpdateClinic = useMutation({
     mutationFn: (data: CreateUpdateClinicDto & { id?: string }) =>
       clinicService.createOrUpdate(data),
     onSuccess: (_, data) => {
       queryClient.invalidateQueries({ queryKey: ['clinics'] });
+      queryClient.invalidateQueries({ queryKey: ['clinicForEdit', data.id] });
       toast.success(
         `Clinic has been successfully ${data.id ? 'updated' : 'created'}`
       );
@@ -52,11 +70,18 @@ export const useClinic = () => {
   });
 
   const updateClinicStatus = useMutation({
-    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
-      clinicService.updateStatus(id, isActive),
+    mutationFn: ({
+      clinicId,
+      status,
+      reason,
+    }: {
+      clinicId: string;
+      status: ClinicStatus;
+      reason?: string;
+    }) => clinicService.updateStatus(clinicId, status, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clinics'] });
-      toast.success('Clinic status has been updated');
+      toast.success('Clinic status has been successfully updated');
     },
     onError: () => {
       toast.error('Failed to update clinic status');
@@ -66,6 +91,7 @@ export const useClinic = () => {
   return {
     useClinicsList,
     useClinicDetails,
+    useClinicForEdit,
     createOrUpdateClinic,
     deleteClinic,
     updateClinicStatus,

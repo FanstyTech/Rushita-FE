@@ -5,6 +5,7 @@ import type {
   ClinicListDto,
   CreateUpdateClinicDto,
   ClinicFilterDto,
+  ClinicStatus,
 } from '../types/clinic';
 import type { PaginationResponse } from '../types/pagination';
 import type { SelectOption } from '../types/select-option';
@@ -43,6 +44,18 @@ class ClinicService {
     return response;
   }
 
+  async getForEdit(id: string): Promise<ApiResponse<CreateUpdateClinicDto>> {
+    const response = await apiClient.get<ApiResponse<CreateUpdateClinicDto>>(
+      `${API_ENDPOINTS.CLINIC.GET_FOR_EDIT}`,
+      {
+        params: {
+          id: id,
+        },
+      }
+    );
+    return response;
+  }
+
   async getForDropdown(): Promise<SelectOption<string>[]> {
     const response = await apiClient.get<SelectOption<string>[]>(
       API_ENDPOINTS.CLINIC.GET_FOR_DROPDOWN
@@ -65,9 +78,15 @@ class ClinicService {
     return response;
   }
 
-  async updateStatus(id: string, isActive: boolean): Promise<void> {
-    await apiClient.put(`${API_ENDPOINTS.CLINIC.UPDATE_STATUS}/${id}`, {
-      isActive,
+  async updateStatus(
+    id: string,
+    status: ClinicStatus,
+    reason?: string
+  ): Promise<void> {
+    await apiClient.put(`${API_ENDPOINTS.CLINIC.UPDATE_STATUS}`, {
+      id,
+      status,
+      reason,
     });
   }
 

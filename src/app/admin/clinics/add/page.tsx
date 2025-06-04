@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import AddClinicForm from './AddClinicForm';
+import AddClinicForm from './ClinicForm';
 import PageLayout from '@/components/layouts/PageLayout';
 
 export default function AddClinicPage() {

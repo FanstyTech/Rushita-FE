@@ -8,9 +8,12 @@ module.exports = {
   theme: {
     extend: {
       gridTemplateColumns: {
-        '16': 'repeat(16, minmax(0, 1fr))',
+        16: 'repeat(16, minmax(0, 1fr))',
+      },
+      fontFamily: {
+        'ibm-plex': ['var(--font-ibm-plex)'],
       },
     },
   },
   plugins: [],
-}; 
+};

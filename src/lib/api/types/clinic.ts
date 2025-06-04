@@ -1,4 +1,5 @@
 import { SelectOption } from './select-option';
+
 export enum ClinicStatus {
   Active = 1,
   Inactive,
@@ -6,6 +7,16 @@ export enum ClinicStatus {
   Rejected,
   Suspended,
   Closed,
+}
+
+export enum DayEnum {
+  Sunday = 1,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday,
 }
 
 export interface ClinicDto {
@@ -23,7 +34,15 @@ export interface ClinicDto {
   longitude?: number;
 }
 
+export interface WorkingHours {
+  day: DayEnum;
+  isOpen: boolean;
+  openTime: string;
+  closeTime: string;
+}
+
 export interface CreateUpdateClinicDto {
+  id?: string;
   nameL: string;
   nameF: string;
   phoneNumber: string;
@@ -35,7 +54,17 @@ export interface CreateUpdateClinicDto {
   address?: string;
   latitude?: number;
   longitude?: number;
+  imageUrl?: string;
   specialtyIds: string[];
+  hours: WorkingHours[];
+  social?: {
+    website?: string;
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    linkedin?: string;
+    youtube?: string;
+  };
 }
 
 export interface ClinicListDto extends ClinicDto {

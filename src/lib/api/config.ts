@@ -121,6 +121,7 @@ export const API_ENDPOINTS = {
   CLINIC: {
     LIST: '/clinic/getAll',
     CREATE_OR_UPDATE: '/clinic/createOrUpdate',
+    GET_FOR_EDIT: '/clinic/GetClinicForEdit',
     DELETE: '/clinic/delete',
     GET_ONE: '/clinic',
     GET_FOR_DROPDOWN: '/clinic/GetClinicsForDropdown',

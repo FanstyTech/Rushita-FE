@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import PageLayout from '@/components/layouts/PageLayout';
 import {
@@ -18,18 +18,30 @@ import ClinicCardSkeleton from '@/components/skeletons/ClinicCardSkeleton';
 import { FiMapPin } from 'react-icons/fi';
 import { LuBriefcaseMedical } from 'react-icons/lu';
 
-import { ClinicStatus } from '@/lib/api/types/clinic';
+import { ClinicStatus, ClinicListDto } from '@/lib/api/types/clinic';
 import { SelectOption } from '@/lib/api/types/select-option';
 import Button from '@/components/common/Button';
+import Modal from '@/components/common/Modal';
 import { useClinic } from '@/lib/api/hooks/useClinic';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { useCity } from '@/lib/api/hooks/useCity';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
-import { getStatusLabel } from '@/utils';
+import { getClinicStatusLabel, getClinicStatusClass } from '@/utils';
 import Avatar from '@/components/common/Avatar';
+import { TextArea } from '@/components/common';
+import { Menu } from '@headlessui/react';
+import { Fragment } from 'react';
 
 export default function ClinicsPage() {
   const router = useRouter();
+  const [selectedClinic, setSelectedClinic] = useState<ClinicListDto | null>(
+    null
+  );
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [statusReason, setStatusReason] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState<ClinicStatus | null>(
+    null
+  );
   const [filters, setFilters] = useState<FilterState>({
     pageNumber: 1,
     pageSize: 5,
@@ -42,9 +54,12 @@ export default function ClinicsPage() {
     status: undefined as ClinicStatus | undefined,
   });
 
+  const [openStatusId, setOpenStatusId] = useState<string | null>(null);
+
   const {
     useClinicsList: getClinicsQuery,
     deleteClinic: deleteClinicMutation,
+    updateClinicStatus: updateClinicStatusMutation,
   } = useClinic();
 
   const { data: clinics, isLoading } = getClinicsQuery(filters);
@@ -62,6 +77,48 @@ export default function ClinicsPage() {
       await deleteClinicMutation.mutateAsync(id);
     }
   };
+
+  const handleStatusChange = (clinic: ClinicListDto) => {
+    setSelectedClinic(clinic);
+    setShowStatusModal(true);
+  };
+
+  const handleStatusConfirm = async () => {
+    if (!selectedClinic || selectedStatus === null) return;
+
+    try {
+      await updateClinicStatusMutation.mutateAsync({
+        clinicId: selectedClinic.id,
+        status: selectedStatus,
+        reason: statusReason.trim() || undefined,
+      });
+      setShowStatusModal(false);
+      setSelectedClinic(null);
+      setStatusReason('');
+      setSelectedStatus(null);
+    } catch (error) {
+      console.error('Failed to update clinic status:', error);
+    }
+  };
+
+  const handleEdit = (clinicId: string) => {
+    router.push(`/admin/clinics/edit/${clinicId}`);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        openStatusId &&
+        !(event.target as Element).closest('.status-dropdown')
+      ) {
+        setOpenStatusId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openStatusId]);
 
   return (
     <PageLayout>
@@ -170,78 +227,137 @@ export default function ClinicsPage() {
             clinics?.items.map((clinic) => (
               <div
                 key={clinic.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300"
+                className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200"
               >
-                <div className="p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Avatar name={clinic.nameF} size="lg" />
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          clinic.status === ClinicStatus.Active
-                            ? 'bg-green-100 text-green-800'
-                            : clinic.status === ClinicStatus.Inactive
-                            ? 'bg-red-100 text-red-800'
-                            : clinic.status === ClinicStatus.PendingApproval
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : clinic.status === ClinicStatus.Rejected
-                            ? 'bg-red-100 text-red-800'
-                            : clinic.status === ClinicStatus.Suspended
-                            ? 'bg-gray-100 text-gray-800'
-                            : clinic.status === ClinicStatus.Closed
-                            ? 'bg-gray-100 text-gray-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
-                        {getStatusLabel(clinic.status || ClinicStatus.Active)}
-                      </span>
-                      <div className="flex items-center gap-1 text-yellow-500">
-                        <Star className="w-4 h-4 fill-current" />
-                        <span className="text-sm font-medium">
-                          {clinic.rating}
-                        </span>
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="relative w-16 h-16">
+                        <Avatar
+                          name={clinic.name}
+                          size="lg"
+                          className="w-16 h-16 rounded-xl border-2 border-gray-100"
+                        />
+                        <div
+                          className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white ${getClinicStatusClass(
+                            clinic.status || ClinicStatus.Active
+                          )}`}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          {clinic.name}
+                        </h3>
+                        <div className="flex items-center gap-2 text-sm">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getClinicStatusClass(
+                              clinic.status || ClinicStatus.Active
+                            )}`}
+                          >
+                            {getClinicStatusLabel(
+                              clinic.status || ClinicStatus.Active
+                            )}
+                          </span>
+                        </div>
                       </div>
                     </div>
+
+                    <div className="flex items-center">
+                      <Menu as="div" className="relative">
+                        <Menu.Button className="p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                          <MoreVertical className="w-5 h-5 text-gray-400" />
+                        </Menu.Button>
+                        <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right bg-white rounded-xl shadow-lg border border-gray-100 focus:outline-none">
+                          <div className="py-2">
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={() => handleStatusChange(clinic)}
+                                  className={`${
+                                    active ? 'bg-gray-50' : ''
+                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
+                                >
+                                  <Star className="w-4 h-4" />
+                                  Change Status
+                                </button>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={() =>
+                                    router.push(
+                                      `/admin/clinics/${clinic.id}/staff`
+                                    )
+                                  }
+                                  className={`${
+                                    active ? 'bg-gray-50' : ''
+                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
+                                >
+                                  <Users className="w-4 h-4" />
+                                  Manage Staff
+                                </button>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={() => handleEdit(clinic.id)}
+                                  className={`${
+                                    active ? 'bg-gray-50' : ''
+                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                  Edit Clinic
+                                </button>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={() => handleDelete(clinic.id)}
+                                  className={`${
+                                    active ? 'bg-gray-50' : ''
+                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600`}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                  Delete Clinic
+                                </button>
+                              )}
+                            </Menu.Item>
+                          </div>
+                        </Menu.Items>
+                      </Menu>
+                    </div>
                   </div>
 
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {clinic.name}
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500 line-clamp-2 h-10">
-                      {clinic.bio}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <div className="inline-flex items-center gap-1.5">
-                      <MapPin className="w-4 h-4" />
-                      {clinic.cityName}
+                  <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                      <MapPin className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <div className="text-xs text-gray-500">Location</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {clinic.cityName}
+                        </div>
+                      </div>
                     </div>
-                    <div className="inline-flex items-center gap-1.5">
-                      <Users className="w-4 h-4" />
-                      {clinic.patientsCount} patients
+                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                      <Users className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <div className="text-xs text-gray-500">Patients</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {clinic.patientsCount}
+                        </div>
+                      </div>
                     </div>
-                    <div className="inline-flex items-center gap-1.5">
-                      <UserRound className="w-4 h-4" />
-                      {clinic.doctorsCount} doctors
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-gray-100">
-                    <div className="flex items-center justify-end gap-3">
-                      <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <Edit2 className="w-4 h-4 text-gray-600" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(clinic.id)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-600" />
-                      </button>
-                      <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <MoreVertical className="w-4 h-4 text-gray-600" />
-                      </button>
+                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                      <UserRound className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <div className="text-xs text-gray-500">Doctors</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {clinic.doctorsCount}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -250,6 +366,101 @@ export default function ClinicsPage() {
           )}
         </div>
       </div>
+
+      <Modal
+        isOpen={showStatusModal}
+        onClose={() => {
+          setShowStatusModal(false);
+          setSelectedClinic(null);
+          setStatusReason('');
+          setSelectedStatus(null);
+        }}
+        title="Update Clinic Status"
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button
+              variant="secondary"
+              onClick={() => setShowStatusModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleStatusConfirm}
+              isLoading={updateClinicStatusMutation.isPending}
+              variant="primary"
+            >
+              Update Status
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-6">
+          <div className="flex items-center gap-3">
+            <Avatar
+              name={selectedClinic?.name || ''}
+              size="lg"
+              className="w-16 h-16 rounded-xl border-2 border-gray-100"
+            />
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {selectedClinic?.name}
+              </h3>
+              <p className="text-sm text-gray-500">
+                Current Status:{' '}
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getClinicStatusClass(
+                    selectedClinic?.status || ClinicStatus.Active
+                  )}`}
+                >
+                  {getClinicStatusLabel(
+                    selectedClinic?.status || ClinicStatus.Active
+                  )}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="block text-sm font-medium text-gray-700">
+              Select New Status
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {Object.entries(ClinicStatus)
+                .filter(([key, value]) => typeof value === 'number')
+                .map(([key, value]) => (
+                  <button
+                    key={value}
+                    onClick={() => setSelectedStatus(value as ClinicStatus)}
+                    className={`relative flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-900 ${
+                      selectedStatus === value
+                        ? 'ring-2 ring-primary-500 ring-offset-2 bg-primary-50'
+                        : 'hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    <div
+                      className={`w-3 h-3 rounded-full ${getClinicStatusClass(
+                        value as ClinicStatus
+                      )}`}
+                    />
+                    {getClinicStatusLabel(value as ClinicStatus)}
+                  </button>
+                ))}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="block text-sm font-medium text-gray-700">
+              Reason for Status Change
+            </label>
+            <TextArea
+              value={statusReason}
+              onChange={(e) => setStatusReason(e.target.value)}
+              placeholder="Enter the reason for changing the status..."
+              className="w-full min-h-[100px]"
+            />
+          </div>
+        </div>
+      </Modal>
     </PageLayout>
   );
 }

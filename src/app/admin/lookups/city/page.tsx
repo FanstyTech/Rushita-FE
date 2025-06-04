@@ -18,6 +18,7 @@ import { citySchema, type CityFormData } from './validation';
 import { type CityListDto } from '@/lib/api/types/city';
 import { type SelectOption } from '@/lib/api/types/select-option';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
+import { ConfirmationModal } from '@/components/common';
 
 type ParsedCityData = Omit<CityFormData, 'isActive'> & {
   isActive: boolean;
@@ -292,41 +293,18 @@ export default function CityPage() {
           />
         </form>
       </Modal>
-
-      {/* Delete Modal */}
-      <Modal
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
         isOpen={isDeleteModalOpen}
-        title="Delete City"
         onClose={() => setIsDeleteModalOpen(false)}
-        footer={
-          <div className="flex justify-end gap-3">
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setIsDeleteModalOpen(false);
-                setSelectedCity(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              onClick={confirmDelete}
-              isLoading={deleteCity.isPending}
-            >
-              Delete
-            </Button>
-          </div>
-        }
-      >
-        <div className="space-y-4">
-          <p className="text-gray-600">
-            Are you sure you want to delete{' '}
-            <span className="font-medium">{selectedCity?.nameL}</span>? This
-            action cannot be undone.
-          </p>
-        </div>
-      </Modal>
+        onConfirm={confirmDelete}
+        title="Delete Item"
+        message="Are you sure you want to delete this item?"
+        secondaryMessage="This action cannot be undone."
+        variant="error"
+        confirmText="Delete"
+        isLoading={deleteCity.isPending}
+      />
     </PageLayout>
   );
 }

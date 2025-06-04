@@ -138,7 +138,7 @@ export const formatPhoneNumber = (
  * @example
  * getStatusLabel(ClinicStatus.Active) // returns "Active"
  */
-export const getStatusLabel = (status: ClinicStatus): string => {
+export const getClinicStatusLabel = (status: ClinicStatus): string => {
   const statusMap: Record<ClinicStatus, string> = {
     [ClinicStatus.Active]: 'Active',
     [ClinicStatus.Inactive]: 'Inactive',
@@ -146,6 +146,18 @@ export const getStatusLabel = (status: ClinicStatus): string => {
     [ClinicStatus.Rejected]: 'Rejected',
     [ClinicStatus.Suspended]: 'Suspended',
     [ClinicStatus.Closed]: 'Closed',
+  };
+  return statusMap[status] || 'Unknown';
+};
+
+export const getClinicStatusClass = (status: ClinicStatus): string => {
+  const statusMap: Record<ClinicStatus, string> = {
+    [ClinicStatus.Active]: 'bg-green-100 text-green-800',
+    [ClinicStatus.Inactive]: 'bg-red-100 text-red-800',
+    [ClinicStatus.PendingApproval]: 'bg-yellow-100 text-yellow-800',
+    [ClinicStatus.Rejected]: 'bg-pink-100 text-pink-800',
+    [ClinicStatus.Suspended]: 'bg-blue-100 text-blue-800',
+    [ClinicStatus.Closed]: 'bg-purple-100 text-purple-800',
   };
   return statusMap[status] || 'Unknown';
 };

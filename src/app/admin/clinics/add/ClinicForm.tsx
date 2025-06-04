@@ -22,7 +22,6 @@ import {
   FiYoutube,
   FiX,
 } from 'react-icons/fi';
-import { type State } from '@/mockData/locations';
 import Link from 'next/link';
 import { Input, Select, TextArea } from '@/components/common/form';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
@@ -30,43 +29,29 @@ import { useCity } from '@/lib/api/hooks/useCity';
 import { useCountry } from '@/lib/api/hooks/useCountry';
 import { useClinic } from '@/lib/api/hooks/useClinic';
 import { SelectOption } from '@/lib/api/types/select-option';
-import { CreateUpdateClinicDto } from '@/lib/api/types/clinic';
+import { CreateUpdateClinicDto, DayEnum } from '@/lib/api/types/clinic';
 
-const formSteps = [
-  { id: 'basic', title: 'Basic Info', icon: FiUser },
-  { id: 'location', title: 'Location', icon: FiLocation },
-  { id: 'hours', title: 'Hours', icon: FiTime },
-  { id: 'social', title: 'Social Media', icon: FiGlobe },
-  { id: 'specialties', title: 'Specialties', icon: FiList },
-];
-
-const days = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-];
+interface ClinicFormProps {
+  initialData?: CreateUpdateClinicDto;
+}
 
 interface ClinicFormData {
   nameL: string;
   nameF: string;
   email: string;
-  phone: string;
+  phoneNumber: string;
   bio: string;
   address?: string;
   cityId?: string;
   countryId?: string;
   state?: string;
   hours: {
-    day: string;
+    day: DayEnum;
     isOpen: boolean;
     openTime: string;
     closeTime: string;
   }[];
-  specialties: string[];
+  specialtyIds: string[];
   social: {
     website?: string;
     facebook?: string;
@@ -81,22 +66,21 @@ const clinicSchema = z.object({
   nameL: z.string().min(3, 'NameL must be at least 3 characters'),
   nameF: z.string().min(3, 'NameF must be at least 3 characters'),
   email: z.string().email('Invalid email address'),
-  phone: z.string().min(10, 'Phone number must be at least 10 digits'),
-  bio: z.string().min(10, 'Bio must be at least 10 characters'),
-
+  phoneNumber: z.string().min(8, 'Phone number must be at least 8 characters'),
+  bio: z.string().min(1, 'Bio is required'),
   address: z.string().optional(),
   cityId: z.string().optional(),
   countryId: z.string().optional(),
   state: z.string().optional(),
   hours: z.array(
     z.object({
-      day: z.string(),
+      day: z.nativeEnum(DayEnum),
       isOpen: z.boolean(),
       openTime: z.string(),
       closeTime: z.string(),
     })
   ),
-  specialties: z.array(z.string()),
+  specialtyIds: z.array(z.string()),
   social: z.object({
     website: z.string().url('Invalid URL').optional().or(z.literal('')),
     facebook: z.string().url('Invalid URL').optional().or(z.literal('')),
@@ -107,11 +91,64 @@ const clinicSchema = z.object({
   }),
 });
 
-export default function AddClinicForm() {
-  const [currentStep, setCurrentStep] = useState<string>('basic');
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedState] = useState<State | null>(null);
+const formSteps = [
+  { id: 'basic', title: 'Basic Info', icon: FiUser },
+  { id: 'location', title: 'Location', icon: FiLocation },
+  { id: 'hours', title: 'Hours', icon: FiTime },
+  { id: 'social', title: 'Social Media', icon: FiGlobe },
+  { id: 'specialties', title: 'Specialties', icon: FiList },
+];
 
+export default function ClinicForm({ initialData }: ClinicFormProps) {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState<string>('basic');
+  const [selectedImage, setSelectedImage] = useState<string | null>(
+    initialData?.imageUrl || null
+  );
+  const defaultHours = [
+    {
+      day: DayEnum.Sunday,
+      isOpen: false,
+      openTime: '09:00',
+      closeTime: '17:00',
+    },
+    {
+      day: DayEnum.Monday,
+      isOpen: false,
+      openTime: '09:00',
+      closeTime: '17:00',
+    },
+    {
+      day: DayEnum.Tuesday,
+      isOpen: false,
+      openTime: '09:00',
+      closeTime: '17:00',
+    },
+    {
+      day: DayEnum.Wednesday,
+      isOpen: false,
+      openTime: '09:00',
+      closeTime: '17:00',
+    },
+    {
+      day: DayEnum.Thursday,
+      isOpen: false,
+      openTime: '09:00',
+      closeTime: '17:00',
+    },
+    {
+      day: DayEnum.Friday,
+      isOpen: false,
+      openTime: '09:00',
+      closeTime: '17:00',
+    },
+    {
+      day: DayEnum.Saturday,
+      isOpen: false,
+      openTime: '09:00',
+      closeTime: '17:00',
+    },
+  ];
   const {
     register,
     handleSubmit,
@@ -123,14 +160,21 @@ export default function AddClinicForm() {
     resolver: zodResolver(clinicSchema),
     mode: 'onChange',
     defaultValues: {
-      specialties: [],
-      hours: days.map((day) => ({
-        day,
-        isOpen: false,
-        openTime: '09:00',
-        closeTime: '17:00',
-      })),
-      social: {
+      nameL: initialData?.nameL || '',
+      nameF: initialData?.nameF || '',
+      email: initialData?.email || '',
+      phoneNumber: initialData?.phoneNumber || '',
+      bio: initialData?.bio || '',
+      address: initialData?.address || '',
+      cityId: initialData?.cityId || '',
+      countryId: initialData?.countryId || '',
+      specialtyIds: initialData?.specialtyIds || [],
+      hours:
+        initialData?.hours && initialData.hours.length > 0
+          ? initialData.hours
+          : defaultHours,
+
+      social: initialData?.social || {
         website: '',
         facebook: '',
         twitter: '',
@@ -158,32 +202,40 @@ export default function AddClinicForm() {
   const { data: countries } = getCountryForDropdown();
 
   useEffect(() => {
-    if (selectedCountry) {
+    const initializeLocationData = async () => {
+      if (initialData?.countryId && initialData?.cityId) {
+        setValue('countryId', initialData.countryId);
+        setValue('cityId', initialData.cityId);
+      }
+    };
+
+    initializeLocationData();
+  }, [initialData, setValue]);
+
+  useEffect(() => {
+    if (!selectedCountry) {
+      setValue('cityId', '');
+      return;
+    }
+
+    if (selectedCountry !== initialData?.countryId) {
       setValue('cityId', '');
       trigger('cityId');
     }
-  }, [selectedCountry, setValue, trigger]);
+  }, [selectedCountry, initialData?.countryId, setValue, trigger]);
 
   useEffect(() => {
-    if (cities && cities.length > 0) {
-      if (cities.length === 1) {
-        setValue('cityId', cities[0].value);
-      }
+    if (cities?.length === 1) {
+      setValue('cityId', cities[0].value);
     }
   }, [cities, setValue]);
-
-  useEffect(() => {
-    if (selectedCountry) {
-      setValue('cityId', '');
-    }
-  }, [selectedCountry, setValue]);
 
   const getFieldsForStep = (
     step: string
   ): (keyof ClinicFormData | `social.${keyof ClinicFormData['social']}`)[] => {
     switch (step) {
       case 'basic':
-        return ['nameL', 'nameF', 'email', 'phone', 'bio'];
+        return ['nameL', 'nameF', 'email', 'phoneNumber', 'bio'];
       case 'location':
         return ['address', 'cityId', 'state'];
       case 'hours':
@@ -198,34 +250,35 @@ export default function AddClinicForm() {
           'social.youtube',
         ] as `social.${keyof ClinicFormData['social']}`[];
       case 'specialties':
-        return ['specialties'];
+        return ['specialtyIds'];
       default:
         return [];
     }
   };
-  const router = useRouter();
 
   const onSubmit = async (data: ClinicFormData) => {
     try {
       const payload: CreateUpdateClinicDto = {
+        id: initialData?.id,
         nameL: data.nameL,
         nameF: data.nameF,
         email: data.email,
-        phoneNumber: data.phone,
+        phoneNumber: data.phoneNumber,
         bio: data.bio,
         address: data.address,
-        cityId: data.cityId || undefined,
-        countryId: data.countryId || undefined,
-        //hours: data.hours,
-        // social: data.social,
-        specialtyIds: data.specialties,
+        cityId: data.cityId,
+        countryId: data.countryId,
+        specialtyIds: data.specialtyIds,
+        imageUrl: selectedImage || undefined,
+        hours: data.hours,
+        social: data.social,
       };
       await createOrUpdateClinic.mutateAsync(payload);
       router.push('/admin/clinics');
+      router.refresh();
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Failed to save clinic:', error);
     }
-    return;
   };
 
   const handleStepChange = async (stepId: string) => {
@@ -257,12 +310,6 @@ export default function AddClinicForm() {
       reader.readAsDataURL(file);
     }
   };
-
-  useEffect(() => {
-    if (selectedState) {
-      setValue('cityId', '');
-    }
-  }, [selectedState, setValue]);
 
   const hours = watch('hours');
 
@@ -411,8 +458,8 @@ export default function AddClinicForm() {
                 <div>
                   <Input
                     label="Phone Number"
-                    error={errors.phone?.message}
-                    {...register('phone')}
+                    error={errors.phoneNumber?.message}
+                    {...register('phoneNumber')}
                     startIcon={<FiMail className="h-5 w-5 text-gray-500" />}
                     placeholder="+1 (555) 000-0000"
                   />
@@ -515,7 +562,7 @@ export default function AddClinicForm() {
                           />
                         </div>
                         <span className="font-medium text-gray-900">
-                          {day.day}
+                          {DayEnum[day.day]}
                         </span>
                       </div>
 
@@ -758,7 +805,7 @@ export default function AddClinicForm() {
                       <input
                         type="checkbox"
                         value={specialty.value}
-                        {...register('specialties')}
+                        {...register('specialtyIds')}
                         className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
                       <span className="ml-3 text-sm text-gray-700">
@@ -767,9 +814,9 @@ export default function AddClinicForm() {
                     </label>
                   ))}
                 </div>
-                {errors.specialties && (
+                {errors.specialtyIds && (
                   <p className="text-sm text-red-600">
-                    {errors.specialties.message}
+                    {errors.specialtyIds.message}
                   </p>
                 )}
               </div>
