@@ -1,4 +1,4 @@
-export default function ClinicCardSkeleton() {
+export default function ClinicStaffCardSkeleton() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       <div className="flex items-center justify-between">
@@ -8,14 +8,11 @@ export default function ClinicCardSkeleton() {
             <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
             <div className="flex items-center gap-2">
               <div className="h-6 w-20 rounded-full bg-gray-200 animate-pulse" />
-              <div className="h-4 w-4 rounded-full bg-gray-200 animate-pulse" />
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gray-200 animate-pulse" />
-          <div className="w-8 h-8 rounded-lg bg-gray-200 animate-pulse" />
-          <div className="w-8 h-8 rounded-lg bg-gray-200 animate-pulse" />
+        <div className="flex items-center">
+          <div className="w-9 h-9 rounded-lg bg-gray-200 animate-pulse" />
         </div>
       </div>
 

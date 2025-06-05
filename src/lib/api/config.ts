@@ -121,13 +121,21 @@ export const API_ENDPOINTS = {
   CLINIC: {
     LIST: '/clinic/getAll',
     CREATE_OR_UPDATE: '/clinic/createOrUpdate',
-    GET_FOR_EDIT: '/clinic/GetClinicForEdit',
+    GET_FOR_EDIT: '/clinic/getClinicForEdit',
     DELETE: '/clinic/delete',
-    GET_ONE: '/clinic',
-    GET_FOR_DROPDOWN: '/clinic/GetClinicsForDropdown',
+    GET_ONE: '/clinic/getById',
+    GET_FOR_DROPDOWN: '/clinic/getClinicsForDropdown',
     UPLOAD_IMAGE: '/clinic/uploadImage',
     UPDATE_STATUS: '/clinic/updateStatus',
     UPDATE_LOCATION: '/clinic/updateLocation',
   },
-  // Add more endpoints as needed
+  CLINIC_STAFF: {
+    LIST: '/clinicStaff/getAll',
+    CREATE_OR_UPDATE: '/clinicStaff/createOrUpdate',
+    GET_ONE: '/clinicStaff/:id',
+    GET_FOR_EDIT: '/clinicStaff/getClinicStaffForEdit',
+    DELETE: '/clinicStaff/delete',
+    UPDATE_STATUS: '/clinicStaff/updateStatus',
+    CHANGE_PASSWORD: '/clinicStaff/changeStaffPassword',
+  },
 } as const;

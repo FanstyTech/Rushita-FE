@@ -1,13 +1,32 @@
 import { useMutation } from '@tanstack/react-query';
-import { type LoginRequest, AuthenticationResult } from '../types/auth';
+import {
+  type LoginRequest,
+  AuthenticationResult,
+  AuthenticationUserResult,
+} from '../types/auth';
 
 import { authService } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { toast } from '@/components/ui/Toast';
+import { useEffect, useState } from 'react';
 
 export const useAuth = () => {
   const router = useRouter();
+  const [user, setUser] = useState<AuthenticationUserResult | null>(() => {
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    }
+    return null;
+  });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const login = useMutation({
     mutationFn: async (data: LoginRequest) => {
@@ -38,6 +57,9 @@ export const useAuth = () => {
       // Store user data
       localStorage.setItem('user', JSON.stringify(response.user));
 
+      // Update user state
+      setUser(response.user);
+
       // Redirect to dashboard or home
       router.push('/admin/dashboard');
     },
@@ -50,17 +72,17 @@ export const useAuth = () => {
       Cookies.remove('auth-token');
       Cookies.remove('refresh-token');
       localStorage.removeItem('user');
-
-      // Navigate to login page and let the login page component handle cleanup
+      setUser(null);
       router.push('/auth/login');
     },
     onError: () => {
-      toast.error('Failed to update city');
+      toast.error('Failed to logout');
     },
   });
 
   return {
     login,
     logout,
+    user,
   };
 };

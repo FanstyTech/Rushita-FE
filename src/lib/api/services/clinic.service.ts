@@ -39,7 +39,12 @@ class ClinicService {
 
   async getOne(id: string): Promise<ClinicDto> {
     const response = await apiClient.get<ClinicDto>(
-      `${API_ENDPOINTS.CLINIC.GET_ONE}/${id}`
+      `${API_ENDPOINTS.CLINIC.GET_ONE}`,
+      {
+        params: {
+          id: id,
+        },
+      }
     );
     return response;
   }

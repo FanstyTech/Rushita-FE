@@ -1,8 +1,21 @@
+export interface UserPermissionDto {
+  key: string;
+  name: string;
+  module: string;
+}
+
+export interface UserClinicInfoDto {
+  id: string;
+  name: string;
+}
+
 export interface AuthenticationUserResult {
   id: string;
   name: string;
   email: string;
+  clinicInfo?: UserClinicInfoDto;
   roles: string[];
+  permissions: UserPermissionDto[];
 }
 
 export interface AuthenticationResult {

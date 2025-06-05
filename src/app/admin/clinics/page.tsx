@@ -30,7 +30,6 @@ import { getClinicStatusLabel, getClinicStatusClass } from '@/utils';
 import Avatar from '@/components/common/Avatar';
 import { TextArea } from '@/components/common';
 import { Menu } from '@headlessui/react';
-import { Fragment } from 'react';
 
 export default function ClinicsPage() {
   const router = useRouter();
@@ -287,7 +286,7 @@ export default function ClinicsPage() {
                                 <button
                                   onClick={() =>
                                     router.push(
-                                      `/admin/clinics/${clinic.id}/staff`
+                                      `/admin/clinics/staff/${clinic.id}`
                                     )
                                   }
                                   className={`${

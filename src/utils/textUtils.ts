@@ -3,6 +3,7 @@
  */
 
 import { ClinicStatus } from '@/lib/api/types/clinic';
+import { ClinicStaffStatus } from '@/lib/api/types/clinic-staff';
 
 /**
  * Generates initials from a name string.
@@ -160,4 +161,29 @@ export const getClinicStatusClass = (status: ClinicStatus): string => {
     [ClinicStatus.Closed]: 'bg-purple-100 text-purple-800',
   };
   return statusMap[status] || 'Unknown';
+};
+
+export const getClinicStaffStatusLabel = (
+  status: ClinicStaffStatus
+): string => {
+  const statusMap: Record<ClinicStaffStatus, string> = {
+    [ClinicStaffStatus.Active]: 'Active',
+    [ClinicStaffStatus.Inactive]: 'Inactive',
+    [ClinicStaffStatus.OnLeave]: 'On Leave',
+    [ClinicStaffStatus.Suspended]: 'Suspended',
+    [ClinicStaffStatus.Terminated]: 'Terminated',
+  };
+  return statusMap[status] || 'Unknown';
+};
+export const getClinicStaffStatusClass = (
+  status: ClinicStaffStatus
+): string => {
+  const statusMap: Record<ClinicStaffStatus, string> = {
+    [ClinicStaffStatus.Active]: 'bg-green-100 text-green-800',
+    [ClinicStaffStatus.Inactive]: 'bg-gray-100 text-gray-800',
+    [ClinicStaffStatus.OnLeave]: 'bg-yellow-100 text-yellow-800',
+    [ClinicStaffStatus.Suspended]: 'bg-blue-100 text-blue-800',
+    [ClinicStaffStatus.Terminated]: 'bg-red-100 text-red-800',
+  };
+  return statusMap[status] || 'bg-gray-50 text-gray-400';
 };
