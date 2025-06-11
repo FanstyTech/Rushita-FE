@@ -3,6 +3,15 @@
  */
 
 import { ClinicStatus } from '@/lib/api/types/clinic';
+import {
+  AppointmentStatus,
+  FrequencyType,
+  Gender,
+  MedicalConditionStatus,
+  Relationship,
+  Severity,
+  VisitType,
+} from '@/lib/api/types/clinic-patient';
 import { ClinicStaffStatus } from '@/lib/api/types/clinic-staff';
 
 /**
@@ -184,6 +193,141 @@ export const getClinicStaffStatusClass = (
     [ClinicStaffStatus.OnLeave]: 'bg-yellow-100 text-yellow-800',
     [ClinicStaffStatus.Suspended]: 'bg-blue-100 text-blue-800',
     [ClinicStaffStatus.Terminated]: 'bg-red-100 text-red-800',
+  };
+  return statusMap[status] || 'bg-gray-50 text-gray-400';
+};
+
+export const getGenderLabel = (gender: Gender): string => {
+  const genderMap: Record<Gender, string> = {
+    [Gender.Male]: 'Male',
+    [Gender.Female]: 'Female',
+  };
+  return genderMap[gender] || 'Unknown';
+};
+
+export const getMedicalConditionStatusLabel = (
+  status: MedicalConditionStatus
+): string => {
+  const statusMap: Record<MedicalConditionStatus, string> = {
+    [MedicalConditionStatus.Controlled]: 'Controlled',
+    [MedicalConditionStatus.Monitoring]: 'Monitoring',
+    [MedicalConditionStatus.Critical]: 'Critical',
+  };
+  return statusMap[status] || 'Unknown';
+};
+
+export const getSeverityLabel = (severity: Severity): string => {
+  const severityMap: Record<Severity, string> = {
+    [Severity.Mild]: 'Mild',
+    [Severity.Moderate]: 'Moderate',
+    [Severity.Severe]: 'Severe',
+  };
+  return severityMap[severity] || 'Unknown';
+};
+
+export const getFrequencyTypeLabel = (frequency: FrequencyType): string => {
+  const frequencyMap: Record<FrequencyType, string> = {
+    [FrequencyType.Daily]: 'Daily',
+    [FrequencyType.BID]: 'Twice a Day (BID)',
+    [FrequencyType.TID]: 'Three Times a Day (TID)',
+    [FrequencyType.QID]: 'Four Times a Day (QID)',
+    [FrequencyType.Weekly]: 'Weekly',
+    [FrequencyType.Monthly]: 'Monthly',
+    [FrequencyType.AsNeeded]: 'As Needed',
+  };
+  return frequencyMap[frequency] || 'Unknown';
+};
+
+export const getRelationshipLabel = (relationship: Relationship): string => {
+  const relationshipMap: Record<Relationship, string> = {
+    [Relationship.Father]: 'Father',
+    [Relationship.Mother]: 'Mother',
+    [Relationship.Sibling]: 'Sibling',
+  };
+  return relationshipMap[relationship] || 'Unknown';
+};
+
+export const getVisitTypeLabel = (visitType: VisitType): string => {
+  const visitTypeMap: Record<VisitType, string> = {
+    [VisitType.New]: 'New Visit',
+    [VisitType.Followup]: 'Follow-up Visit',
+  };
+  return visitTypeMap[visitType] || 'Unknown';
+};
+
+export const getAppointmentStatusLabel = (
+  status: AppointmentStatus
+): string => {
+  const statusMap: Record<AppointmentStatus, string> = {
+    [AppointmentStatus.Scheduled]: 'Scheduled',
+    [AppointmentStatus.Confirmed]: 'Confirmed',
+    [AppointmentStatus.InProgress]: 'In Progress',
+    [AppointmentStatus.Completed]: 'Completed',
+    [AppointmentStatus.Cancelled]: 'Cancelled',
+    [AppointmentStatus.NoShow]: 'No Show',
+  };
+  return statusMap[status] || 'Unknown';
+};
+export const getMedicalConditionStatusClass = (
+  status: MedicalConditionStatus
+): string => {
+  const statusMap: Record<MedicalConditionStatus, string> = {
+    [MedicalConditionStatus.Controlled]: 'bg-green-100 text-green-800',
+    [MedicalConditionStatus.Monitoring]: 'bg-yellow-100 text-yellow-800',
+    [MedicalConditionStatus.Critical]: 'bg-red-100 text-red-800',
+  };
+  return statusMap[status] || 'bg-gray-50 text-gray-400';
+};
+
+export const getSeverityClass = (severity: Severity): string => {
+  const severityMap: Record<Severity, string> = {
+    [Severity.Mild]: 'bg-green-100 text-green-800',
+    [Severity.Moderate]: 'bg-yellow-100 text-yellow-800',
+    [Severity.Severe]: 'bg-red-100 text-red-800',
+  };
+  return severityMap[severity] || 'bg-gray-50 text-gray-400';
+};
+
+export const getFrequencyTypeClass = (frequency: FrequencyType): string => {
+  const frequencyMap: Record<FrequencyType, string> = {
+    [FrequencyType.Daily]: 'bg-blue-100 text-blue-800',
+    [FrequencyType.BID]: 'bg-teal-100 text-teal-800',
+    [FrequencyType.TID]: 'bg-cyan-100 text-cyan-800',
+    [FrequencyType.QID]: 'bg-indigo-100 text-indigo-800',
+    [FrequencyType.Weekly]: 'bg-purple-100 text-purple-800',
+    [FrequencyType.Monthly]: 'bg-pink-100 text-pink-800',
+    [FrequencyType.AsNeeded]: 'bg-gray-100 text-gray-800',
+  };
+  return frequencyMap[frequency] || 'bg-gray-50 text-gray-400';
+};
+
+export const getRelationshipClass = (relationship: Relationship): string => {
+  const relationshipMap: Record<Relationship, string> = {
+    [Relationship.Father]: 'bg-blue-100 text-blue-800',
+    [Relationship.Mother]: 'bg-pink-100 text-pink-800',
+    [Relationship.Sibling]: 'bg-yellow-100 text-yellow-800',
+  };
+  return relationshipMap[relationship] || 'bg-gray-50 text-gray-400';
+};
+
+export const getVisitTypeClass = (visitType: VisitType): string => {
+  const visitTypeMap: Record<VisitType, string> = {
+    [VisitType.New]: 'bg-green-100 text-green-800',
+    [VisitType.Followup]: 'bg-blue-100 text-blue-800',
+  };
+  return visitTypeMap[visitType] || 'bg-gray-50 text-gray-400';
+};
+
+export const getAppointmentStatusClass = (
+  status: AppointmentStatus
+): string => {
+  const statusMap: Record<AppointmentStatus, string> = {
+    [AppointmentStatus.Scheduled]: 'bg-blue-100 text-blue-800',
+    [AppointmentStatus.Confirmed]: 'bg-green-100 text-green-800',
+    [AppointmentStatus.InProgress]: 'bg-yellow-100 text-yellow-800',
+    [AppointmentStatus.Completed]: 'bg-gray-100 text-gray-800',
+    [AppointmentStatus.Cancelled]: 'bg-red-100 text-red-800',
+    [AppointmentStatus.NoShow]: 'bg-orange-100 text-orange-800',
   };
   return statusMap[status] || 'bg-gray-50 text-gray-400';
 };

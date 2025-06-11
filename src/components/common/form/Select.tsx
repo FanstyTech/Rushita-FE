@@ -57,9 +57,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
               </option>
             ))}
           </select>
-          <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+          {/* <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
             <ChevronDownIcon className="w-4 h-4 text-gray-400" />
-          </div>
+          </div> */}
         </div>
         {(error || helperText) && (
           <p

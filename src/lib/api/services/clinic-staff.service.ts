@@ -8,9 +8,11 @@ import {
   ClinicStaffDto,
   UpdateClinicStaffStatusDto,
   ChangeStaffPasswordDto,
+  GetClinicStaffForDropdownInput,
 } from '../types/clinic-staff';
 import { convertFilterToParams, FilterParams } from '@/utils/filter';
 import { PaginationResponse } from '../types/pagination';
+import { SelectOption } from '../types/select-option';
 
 export const clinicStaffService = {
   async getAll(
@@ -34,7 +36,13 @@ export const clinicStaffService = {
       },
     });
   },
-
+  async getClinicStaffForDropdown(
+    filter: GetClinicStaffForDropdownInput
+  ): Promise<ApiResponse<SelectOption<string>[]>> {
+    return apiClient.get(API_ENDPOINTS.CLINIC_STAFF.GET_FOR_DROPDOWN, {
+      params: convertFilterToParams(filter as FilterParams),
+    });
+  },
   async createOrUpdate(
     data: CreateUpdateClinicStaffDto
   ): Promise<ApiResponse<ClinicStaffDto>> {

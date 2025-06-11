@@ -7,6 +7,7 @@ export interface UserPermissionDto {
 export interface UserClinicInfoDto {
   id: string;
   name: string;
+  staffId: string;
 }
 
 export interface AuthenticationUserResult {

@@ -1,17 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import PageLayout from '@/components/layouts/PageLayout';
-import {
-  Users,
-  Edit2,
-  Trash2,
-  Building2,
-  MoreVertical,
-  Key,
-} from 'lucide-react';
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import { useAuth } from '@/lib/api/hooks/useAuth';
 import { useClinicStaff } from '@/lib/api/hooks/useClinicStaff';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import {
@@ -19,6 +9,16 @@ import {
   ClinicStaffStatus,
   ClinicStaffListDto,
 } from '@/lib/api/types/clinic-staff';
+import PageLayout from '@/components/layouts/PageLayout';
+import {
+  Users,
+  MoreVertical,
+  Key,
+  Trash2,
+  Building2,
+  Edit2,
+} from 'lucide-react';
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import Button from '@/components/common/Button';
 import Avatar from '@/components/common/Avatar';
 import Modal from '@/components/common/Modal';
@@ -32,53 +32,87 @@ import {
   getClinicStaffStatusLabel,
 } from '@/utils/textUtils';
 import ChangeStaffPasswordModal from '@/components/clinic/staff/ChangeStaffPasswordModal';
+import EmptyState from '@/components/common/EmptyState';
 
 export default function ClinicStaffPage() {
-  const params = useParams();
-  const clinicId = params.id as string;
-  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  // 1. Authentication hook
+  const { user } = useAuth();
+
+  // 2. All state hooks
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasAccess, setHasAccess] = useState(false);
   const [selectedStaffId, setSelectedStaffId] = useState<string>();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showStaffForm, setShowStaffForm] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [editingStaff, setEditingStaff] = useState<
+    CreateUpdateClinicStaffDto | undefined
+  >();
   const [filters, setFilters] = useState<FilterState>({
     pageNumber: 1,
     pageSize: 5,
     sortColumn: '',
     sortDirection: '',
     searchValue: '',
-    clinicId: clinicId,
-    specialtyId: undefined as string | undefined,
-    isActive: undefined as boolean | undefined,
-    cityId: undefined as string | undefined,
-    status: undefined as ClinicStaffStatus | undefined,
+    clinicId: '',
+    specialtyId: undefined,
+    isActive: undefined,
+    cityId: undefined,
+    status: undefined,
   });
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showStaffForm, setShowStaffForm] = useState(false);
-  const [editingStaff, setEditingStaff] = useState<
-    CreateUpdateClinicStaffDto | undefined
-  >();
 
+  // 3. API hooks
   const {
     useClinicStaffList,
     useClinicStaffForEdit,
-    createOrUpdateClinicStaff,
     deleteClinicStaff,
     useChangeStaffPassword,
+    createOrUpdateClinicStaff,
   } = useClinicStaff();
 
+  const { useSpecialtiesDropdown } = useSpecialty();
+
+  // 4. Query hooks
+  const { data: staffList, isLoading: staffListLoading } =
+    useClinicStaffList(filters);
+  const { data: staffForEdit } = useClinicStaffForEdit(selectedStaffId ?? '');
+  const { data: specialties } = useSpecialtiesDropdown();
   const updateStaffPassword = useChangeStaffPassword();
 
-  const { data: staffForEdit } = useClinicStaffForEdit(selectedStaffId ?? '');
+  // 5. Effects
+  useEffect(() => {
+    if (user) {
+      const clinicId = user.clinicInfo?.id;
+      if (clinicId) {
+        setHasAccess(true);
+        setFilters((prev) => ({ ...prev, clinicId }));
+      }
+      setIsLoading(false);
+    }
+  }, [user]);
 
-  const { useSpecialtiesDropdown } = useSpecialty();
-  const { data: specialties } = useSpecialtiesDropdown();
+  useEffect(() => {
+    if (staffForEdit && showStaffForm) {
+      setEditingStaff(staffForEdit);
+    }
+  }, [staffForEdit, showStaffForm]);
 
-  const { data: staffList, isLoading } = useClinicStaffList(filters);
+  // Loading and access control
+  if (isLoading) {
+    return <ClinicStaffCardSkeleton />;
+  }
 
+  if (!hasAccess) {
+    return <div>Access Denied: No clinic associated with this user.</div>;
+  }
+
+  // Event handlers
   const handleDelete = (id: string) => {
     setSelectedStaffId(id);
     setShowDeleteModal(true);
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleConfirmDelete = async () => {
     if (selectedStaffId) {
       await deleteClinicStaff.mutateAsync(selectedStaffId);
       setShowDeleteModal(false);
@@ -97,6 +131,24 @@ export default function ClinicStaffPage() {
     setShowStaffForm(true);
   };
 
+  const handleCloseForm = () => {
+    setShowStaffForm(false);
+    setEditingStaff(undefined);
+    setSelectedStaffId(undefined);
+  };
+
+  const handleStaffSubmit = async (data: CreateUpdateClinicStaffDto) => {
+    await createOrUpdateClinicStaff.mutateAsync(data);
+    setShowStaffForm(false);
+    setEditingStaff(undefined);
+    setSelectedStaffId(undefined);
+  };
+
+  const handleChangePassword = (staff: ClinicStaffListDto) => {
+    setSelectedStaffId(staff.id);
+    setPasswordModalOpen(true);
+  };
+
   const handlePasswordSubmit = async (data: {
     id: string;
     password: string;
@@ -111,28 +163,6 @@ export default function ClinicStaffPage() {
       console.error('Failed to update password:', error);
     }
   };
-
-  const handleStaffSubmit = async (data: CreateUpdateClinicStaffDto) => {
-    await createOrUpdateClinicStaff.mutateAsync(data);
-    setShowStaffForm(false);
-    setEditingStaff(undefined);
-    setSelectedStaffId(undefined);
-  };
-
-  const handleCloseForm = () => {
-    setShowStaffForm(false);
-    setEditingStaff(undefined);
-    setSelectedStaffId(undefined);
-  };
-  const handleChangePassword = (staff: ClinicStaffListDto) => {
-    setSelectedStaffId(staff.id);
-    setPasswordModalOpen(true);
-  };
-  useEffect(() => {
-    if (staffForEdit && showStaffForm) {
-      setEditingStaff(staffForEdit);
-    }
-  }, [staffForEdit, showStaffForm]);
 
   return (
     <PageLayout>
@@ -172,38 +202,21 @@ export default function ClinicStaffPage() {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {isLoading ? (
+          {staffListLoading ? (
             Array.from({ length: 6 }).map((_, i) => (
               <ClinicStaffCardSkeleton key={i} />
             ))
           ) : staffList?.items.length === 0 ? (
-            <div className="col-span-3">
-              <div className="relative bg-white rounded-3xl p-12 flex flex-col items-center text-center">
-                <div className="w-24 h-24 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center transform rotate-12 hover:rotate-0 transition-transform duration-300">
-                  <Users className="w-12 h-12 text-white mb-3" />
-                </div>
-
-                <div className="mt-8 space-y-3">
-                  <h3 className="text-2xl font-semibold text-gray-900">
-                    No Staff Members Found
-                  </h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    {filters.searchValue || filters.role
-                      ? 'Try adjusting your search or filter criteria'
-                      : 'Get started by adding your first staff member'}
-                  </p>
-                </div>
-
-                <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                  <Button
-                    onClick={handleAddNew}
-                    className="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-colors duration-200"
-                  >
-                    Add Staff Member
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <EmptyState
+              icon={Users}
+              title="No Staff Members Found"
+              description="Get started by adding your first staff member"
+              buttonText="Add Staff Member"
+              onAction={handleAddNew}
+              hasFilters={
+                !!(filters.searchValue || filters.role || filters.specialtyId)
+              }
+            />
           ) : (
             staffList?.items.map((staff) => (
               <div
@@ -318,7 +331,7 @@ export default function ClinicStaffPage() {
             </Button>
             <Button
               variant="danger"
-              onClick={handleDeleteConfirm}
+              onClick={handleConfirmDelete}
               isLoading={deleteClinicStaff.isPending}
             >
               Delete Staff Member
@@ -331,14 +344,15 @@ export default function ClinicStaffPage() {
           be undone.
         </p>
       </Modal>
-
-      <ClinicStaffForm
-        isOpen={showStaffForm}
-        onClose={handleCloseForm}
-        initialData={editingStaff}
-        clinicId={clinicId}
-        onSubmit={handleStaffSubmit}
-      />
+      {filters?.clinicId && (
+        <ClinicStaffForm
+          isOpen={showStaffForm}
+          onClose={handleCloseForm}
+          initialData={editingStaff}
+          clinicId={String(filters.clinicId)}
+          onSubmit={handleStaffSubmit}
+        />
+      )}
       <ChangeStaffPasswordModal
         isOpen={passwordModalOpen}
         onClose={() => setPasswordModalOpen(false)}

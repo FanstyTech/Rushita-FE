@@ -32,7 +32,7 @@ export const useCity = () => {
 
   const useCitiesDropdown = (filter: GetCitiesForDropdownInput) =>
     useQuery({
-      queryKey: ['citiesForDropdown'],
+      queryKey: ['citiesForDropdown', filter.countryId],
       queryFn: async () => {
         const response = await cityService.getCitiesForDropdown(filter);
         if (!response.success) {

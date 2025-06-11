@@ -29,6 +29,10 @@ export const countryService = {
     return apiClient.get(API_ENDPOINTS.country.GET_COUNTRY_FOR_DROPDOWN);
   },
 
+  async getCountryPhoneCodes(): Promise<ApiResponse<SelectOption<string>[]>> {
+    return apiClient.get(API_ENDPOINTS.country.GET_PHONE_CODES_DROPDOWN);
+  },
+
   async create(data: CreateUpdateCountryDto): Promise<ApiResponse<CountryDto>> {
     return apiClient.post(API_ENDPOINTS.country.CREATE_OR_UPDATE, data);
   },

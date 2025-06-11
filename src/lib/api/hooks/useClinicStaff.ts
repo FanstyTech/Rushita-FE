@@ -4,6 +4,7 @@ import {
   ChangeStaffPasswordDto,
   ClinicStaffFilterDto,
   CreateUpdateClinicStaffDto,
+  GetClinicStaffForDropdownInput,
   UpdateClinicStaffStatusDto,
 } from '../types/clinic-staff';
 import { toast } from 'sonner';
@@ -22,6 +23,7 @@ export const useClinicStaff = () => {
         }
         return response.result;
       },
+      enabled: !!filters.clinicId,
     });
 
   const useClinicStaffDetails = (id: string) =>
@@ -36,6 +38,21 @@ export const useClinicStaff = () => {
         return response.result;
       },
       enabled: !!id,
+    });
+
+  const useClinicStaffForDropdown = (filter: GetClinicStaffForDropdownInput) =>
+    useQuery({
+      queryKey: ['clinic-staff', 'dropdown', filter],
+      queryFn: async () => {
+        const response = await clinicStaffService.getClinicStaffForDropdown(
+          filter
+        );
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+      enabled: !!filter.clinicId,
     });
   const useClinicStaffForEdit = (id: string) =>
     useQuery({
@@ -100,6 +117,7 @@ export const useClinicStaff = () => {
     useClinicStaffDetails,
     useClinicStaffForEdit,
     useChangeStaffPassword,
+    useClinicStaffForDropdown,
     createOrUpdateClinicStaff,
     deleteClinicStaff,
     updateClinicStaffStatus,

@@ -65,3 +65,8 @@ export interface ChangeStaffPasswordDto {
   id: string;
   newPassword: string;
 }
+export interface GetClinicStaffForDropdownInput {
+  clinicId?: string;
+  filter?: string;
+  all?: boolean | true;
+}

@@ -46,6 +46,18 @@ export function useCountry() {
       },
     });
 
+  const useCountryPhoneCodes = () =>
+    useQuery({
+      queryKey: ['country', 'phone-codes'],
+      queryFn: async () => {
+        const response = await countryService.getCountryPhoneCodes();
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+    });
+
   const createCountry = useMutation({
     mutationFn: async (data: CreateUpdateCountryDto) => {
       const response = await countryService.create(data);
@@ -101,6 +113,7 @@ export function useCountry() {
     useCountriesList,
     useCountryDetails,
     useCountryDropdown,
+    useCountryPhoneCodes,
     createCountry,
     updateCountry,
     deleteCountry,

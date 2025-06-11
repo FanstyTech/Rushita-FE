@@ -16,7 +16,7 @@ export default function PageLayout({
   return (
     <div className="min-h-screen ">
       <main className="flex-1">
-        <div className="py-8">
+        <div className="py-4">
           <div className="max-w-10xl mx-auto ">
             {title && (
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>

@@ -22,8 +22,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams?.get('callbackUrl') ?? '/';
 
   const { login } = useAuth();
 
@@ -57,8 +55,20 @@ export default function LoginPage() {
 
     // Call the login mutation from the useAuth hook
     login.mutate(data, {
-      onSuccess: () => {
-        router.push(callbackUrl);
+      onSuccess: (response) => {
+        // Get the user's role and redirect to appropriate dashboard
+        const roles = response?.user?.roles || [];
+        let dashboardPath = '/';
+
+        if (roles.includes('SuperAdmin')) {
+          dashboardPath = '/admin/dashboard';
+        } else if (roles.includes('Doctor')) {
+          dashboardPath = '/doctor/dashboard';
+        } else if (roles.includes('ClinicStaff')) {
+          dashboardPath = '/clinic/dashboard';
+        }
+
+        router.push(dashboardPath);
       },
     });
   };

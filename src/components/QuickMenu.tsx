@@ -1,49 +1,39 @@
-import { useState } from 'react';
+'use client';
+
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { IoCloseOutline } from 'react-icons/io5';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { IoChevronBackOutline } from 'react-icons/io5';
-import { adminNav, clinicNav, doctorNav } from './Sidebar';
-import { IconType } from 'react-icons';
-import { ForwardRefExoticComponent, SVGProps, RefAttributes } from 'react';
+import { adminNav, clinicNav, doctorNav } from '@/config/navigation';
+import { useAuth } from '@/lib/api/hooks/useAuth';
+import { filterNavItemsByPermission } from '@/utils/permissions';
+import type { NavItem } from '@/types/navigation';
 
-interface NavItem {
-  name: string;
-  icon:
-    | IconType
-    | ForwardRefExoticComponent<
-        Omit<SVGProps<SVGSVGElement>, 'ref'> & {
-          title?: string;
-          titleId?: string;
-        } & RefAttributes<SVGSVGElement>
-      >;
-  href?: string;
-  description?: string;
-  children?: NavItem[];
-}
-
-type UserRole = 'admin' | 'clinic' | 'doctor';
-
-interface QuickMenuProps {
-  userRole?: UserRole;
-}
-
-export default function QuickMenu({ userRole = 'admin' }: QuickMenuProps) {
+export default function QuickMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [navigationStack, setNavigationStack] = useState<NavItem[]>([]);
+  const { user } = useAuth();
+  const [mounted, setMounted] = useState(false);
 
-  const navItems: NavItem[] =
-    {
-      admin: adminNav,
-      clinic: clinicNav,
-      doctor: doctorNav,
-    }[userRole] || [];
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const currentItems: NavItem[] =
-    navigationStack.length > 0
-      ? navigationStack[navigationStack.length - 1].children || []
-      : navItems;
+  const navItems = useMemo(() => {
+    if (!mounted || !user?.permissions) return [];
+    const allNavItems = [...adminNav, ...clinicNav, ...doctorNav];
+    return filterNavItemsByPermission(allNavItems, user.permissions);
+  }, [mounted, user?.permissions]);
+
+  const currentItems = useMemo(
+    () =>
+      navigationStack.length > 0
+        ? navigationStack[navigationStack.length - 1].children || []
+        : navItems,
+    [navigationStack, navItems]
+  );
 
   const handleItemClick = (item: NavItem) => {
     if (item.children) {
@@ -58,7 +48,7 @@ export default function QuickMenu({ userRole = 'admin' }: QuickMenuProps) {
   const renderItems = (items: NavItem[]) => {
     return items.map((item) => (
       <motion.div
-        key={item.name}
+        key={item.id}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
@@ -109,6 +99,10 @@ export default function QuickMenu({ userRole = 'admin' }: QuickMenuProps) {
       </motion.div>
     ));
   };
+
+  if (!mounted || currentItems.length === 0) {
+    return null;
+  }
 
   return (
     <>

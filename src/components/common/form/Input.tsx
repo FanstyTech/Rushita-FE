@@ -13,6 +13,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   endIcon?: React.ReactNode;
   validation?: z.ZodString;
   hasBorder?: boolean;
+  hasShadow?: boolean;
   onValidation?: (isValid: boolean, error?: string) => void;
 }
 
@@ -28,6 +29,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       endIcon,
       validation,
       hasBorder = true,
+      hasShadow = true,
       onValidation,
       onChange,
       ...props
@@ -73,8 +75,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             onChange={handleChange}
             className={twMerge(
-              'block w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500',
-              hasBorder && 'border border-gray-300',
+              'block w-full px-4 py-3 rounded-xl text-gray-900 placeholder-gray-400',
+              hasBorder && 'border-2 border-gray-100 focus:border-blue-500',
               startIcon && 'pl-10',
               endIcon && 'pr-10',
               error && 'border-red-500',

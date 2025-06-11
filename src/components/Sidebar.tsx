@@ -1,283 +1,18 @@
 'use client';
 
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import {
-  UserGroupIcon,
-  CalendarIcon,
-  ClipboardDocumentListIcon,
-  ChartBarIcon,
-  UserIcon,
-  HomeIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  BuildingOfficeIcon,
-  GlobeAltIcon,
-  MapPinIcon,
-  ListBulletIcon,
-  HeartIcon,
-  ArchiveBoxIcon,
-  BookmarkIcon,
-  DocumentTextIcon,
-  ShieldCheckIcon,
-  BoltIcon,
-  PuzzlePieceIcon,
-  ClipboardDocumentCheckIcon,
-  AcademicCapIcon,
-  SparklesIcon,
-  Cog6ToothIcon,
-} from '@heroicons/react/24/outline';
-
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { FiSearch } from 'react-icons/fi';
-import { IconType } from 'react-icons';
 import { useAuth } from '@/lib/api/hooks/useAuth';
-import type { UserPermissionDto } from '@/lib/api/types/auth';
+import { filterNavItemsByPermission } from '@/utils/permissions';
+import type { NavItem } from '@/types/navigation';
+import { adminNav, clinicNav, doctorNav } from '@/config/navigation';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
-
-interface NavItem {
-  name: string;
-  href?: string;
-  icon: IconType;
-  children?: NavItem[];
-  permission?: string;
-}
-
-const hasPermission = (
-  requiredPermission: string | undefined,
-  userPermissions: UserPermissionDto[]
-): boolean => {
-  if (!requiredPermission) return true;
-  return userPermissions.some((p) => p.key === requiredPermission);
-};
-
-export const doctorNav: NavItem[] = [
-  { name: 'Dashboard', href: '/doctor/dashboard', icon: ChartBarIcon },
-  { name: 'Patients', href: '/doctor/patients', icon: UserGroupIcon },
-  {
-    name: 'Treatments',
-    href: '/doctor/treatments',
-    icon: ClipboardDocumentListIcon,
-  },
-  { name: 'Leaves', href: '/doctor/leaves', icon: CalendarIcon },
-  { name: 'Profile', href: '/doctor/profile', icon: UserIcon },
-];
-
-export const adminNav: NavItem[] = [
-  { name: 'Dashboard', href: '/admin/dashboard', icon: ChartBarIcon },
-  {
-    name: 'Clinics',
-    icon: HomeIcon,
-    children: [
-      {
-        name: 'Management',
-        icon: ClipboardDocumentListIcon,
-        children: [
-          {
-            name: 'Clinic List',
-            href: '/admin/clinics',
-            icon: ClipboardDocumentListIcon,
-          },
-          {
-            name: 'Add Clinic',
-            href: '/admin/clinics/add',
-            icon: UserGroupIcon,
-          },
-        ],
-      },
-      {
-        name: 'Reports',
-        icon: ChartBarIcon,
-        children: [
-          {
-            name: 'Performance',
-            href: '/admin/clinics/reports/performance',
-            icon: ChartBarIcon,
-          },
-          {
-            name: 'Analytics',
-            href: '/admin/clinics/reports/analytics',
-            icon: ChartBarIcon,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: 'Lookups',
-    icon: ListBulletIcon,
-    children: [
-      {
-        name: 'Specialty',
-        href: '/admin/lookups/specialty',
-        icon: AcademicCapIcon,
-      },
-      { name: 'Country', href: '/admin/lookups/country', icon: GlobeAltIcon },
-      { name: 'City', href: '/admin/lookups/city', icon: MapPinIcon },
-      {
-        name: 'Clinic Type',
-        href: '/admin/lookups/clinic-type',
-        icon: BuildingOfficeIcon,
-      },
-      {
-        name: 'Radiology Test Category',
-        href: '/admin/lookups/radiology-test-category',
-        icon: ArchiveBoxIcon,
-      },
-      {
-        name: 'Radiology Test',
-        href: '/admin/lookups/radiology-test',
-        icon: BoltIcon,
-      },
-      {
-        name: 'Medication Type',
-        href: '/admin/lookups/medication-type',
-        icon: BookmarkIcon,
-      },
-      {
-        name: 'Medicine',
-        href: '/admin/lookups/medicine',
-        icon: HeartIcon,
-      },
-      {
-        name: 'Lab Test Category',
-        href: '/admin/lookups/lab-test-category',
-        icon: PuzzlePieceIcon,
-      },
-      {
-        name: 'Lab Test',
-        href: '/admin/lookups/lab-test',
-        icon: ShieldCheckIcon,
-      },
-      {
-        name: 'Diagnosis Category',
-        href: '/admin/lookups/diagnosis-category',
-        icon: DocumentTextIcon,
-      },
-      {
-        name: 'Diagnosis',
-        href: '/admin/lookups/diagnosis',
-        icon: ClipboardDocumentCheckIcon,
-      },
-      {
-        name: 'Dental Procedure',
-        href: '/admin/lookups/dental-procedure',
-        icon: SparklesIcon,
-      },
-    ],
-  },
-  { name: 'Users', href: '/admin/users', icon: UserGroupIcon },
-];
-
-export const clinicNav: NavItem[] = [
-  {
-    name: 'Dashboard',
-    href: '/clinic/dashboard',
-    icon: ChartBarIcon,
-    permission: 'dashboard.access',
-  },
-  {
-    name: 'Appointments',
-    href: '/clinic/appointments',
-    icon: CalendarIcon,
-    permission: 'clinic.appointments.view',
-  },
-  {
-    name: 'Patients',
-    href: '/clinic/patients',
-    icon: UserGroupIcon,
-    permission: 'clinic.patients.view',
-  },
-  {
-    name: 'Staff',
-    icon: UserIcon,
-    permission: 'clinic.staff.view',
-    children: [
-      {
-        name: 'Staff List',
-        href: '/clinic/staff',
-        icon: UserGroupIcon,
-        permission: 'clinic.staff.view',
-      },
-      {
-        name: 'Roles',
-        href: '/clinic/staff/roles',
-        icon: ShieldCheckIcon,
-        permission: 'clinic.staff.roles.manage',
-      },
-    ],
-  },
-  {
-    name: 'Laboratory',
-    icon: ClipboardDocumentListIcon,
-    permission: 'laboratory.view',
-    children: [
-      {
-        name: 'Tests',
-        href: '/clinic/laboratory/tests',
-        icon: ClipboardDocumentCheckIcon,
-        permission: 'laboratory.view',
-      },
-      {
-        name: 'Results',
-        href: '/clinic/laboratory/results',
-        icon: DocumentTextIcon,
-        permission: 'laboratory.view',
-      },
-    ],
-  },
-  {
-    name: 'Pharmacy',
-    icon: HeartIcon,
-    permission: 'pharmacy.prescriptions.view',
-    children: [
-      {
-        name: 'Prescriptions',
-        href: '/clinic/pharmacy/prescriptions',
-        icon: DocumentTextIcon,
-        permission: 'pharmacy.prescriptions.view',
-      },
-      {
-        name: 'Dispense',
-        href: '/clinic/pharmacy/dispense',
-        icon: ArchiveBoxIcon,
-        permission: 'pharmacy.medication.dispense',
-      },
-    ],
-  },
-  {
-    name: 'Reports',
-    icon: ChartBarIcon,
-    permission: 'reports.view',
-    children: [
-      {
-        name: 'View Reports',
-        href: '/clinic/reports',
-        icon: ChartBarIcon,
-        permission: 'reports.view',
-      },
-      {
-        name: 'Generate Reports',
-        href: '/clinic/reports/generate',
-        icon: DocumentTextIcon,
-        permission: 'reports.generate',
-      },
-    ],
-  },
-  {
-    name: 'Settings',
-    href: '/clinic/settings',
-    icon: Cog6ToothIcon,
-    permission: 'clinic.settings.view',
-  },
-];
-
-const hasAdminRole = (userRoles: string[] = []): boolean => {
-  return userRoles.some((role) => ['SystemAdmin', 'SuperAdmin'].includes(role));
-};
 
 export function NavigationItem({
   item,
@@ -290,25 +25,10 @@ export function NavigationItem({
   isCollapsed: boolean;
   level?: number;
   expandedItems: string[];
-  toggleExpand: (name: string) => void;
+  toggleExpand: (id: string) => void;
 }) {
   const pathname = usePathname();
-  const { user } = useAuth();
-
-  // Check if user has permission to see this item
-  if (!hasPermission(item.permission, user?.permissions || [])) {
-    return null;
-  }
-
-  // If item has children, check if at least one child is accessible
-  if (item.children?.length) {
-    const hasAccessibleChild = item.children.some((child) =>
-      hasPermission(child.permission, user?.permissions || [])
-    );
-    if (!hasAccessibleChild) return null;
-  }
-
-  const isExpanded = expandedItems.includes(item.name);
+  const isExpanded = expandedItems.includes(item.id);
   const hasChildren = Boolean(item.children?.length);
   const isActive = pathname === item.href;
 
@@ -316,7 +36,7 @@ export function NavigationItem({
     return (
       <div className="space-y-1">
         <button
-          onClick={() => toggleExpand(item.name)}
+          onClick={() => toggleExpand(item.id)}
           className={classNames(
             'w-full group flex items-center px-3 py-2 rounded-lg transition-all duration-200',
             isActive
@@ -357,7 +77,7 @@ export function NavigationItem({
           <div className={classNames(level === 0 ? 'ml-4' : 'ml-6')}>
             {item.children.map((child) => (
               <NavigationItem
-                key={child.name}
+                key={child.id}
                 item={child}
                 isCollapsed={isCollapsed}
                 level={level + 1}
@@ -396,7 +116,7 @@ export function NavigationItem({
   );
 }
 
-function NavigationSection({
+export function NavigationSection({
   title,
   items,
   isCollapsed,
@@ -410,16 +130,10 @@ function NavigationSection({
   const pathname = usePathname();
 
   // Memoize authorized items to prevent unnecessary recalculations
-  const authorizedItems = useMemo(() => {
-    return items.filter((item) => {
-      if (item.children?.length) {
-        return item.children.some((child) =>
-          hasPermission(child.permission, user?.permissions || [])
-        );
-      }
-      return hasPermission(item.permission, user?.permissions || []);
-    });
-  }, [items, user?.permissions]);
+  const authorizedItems = useMemo(
+    () => filterNavItemsByPermission(items, user?.permissions || []),
+    [items, user?.permissions]
+  );
 
   // Don't render section if no authorized items
   if (authorizedItems.length === 0) {
@@ -440,7 +154,7 @@ function NavigationSection({
             );
 
             if (isActiveParent) {
-              activeParents.push(item.name);
+              activeParents.push(item.id);
             }
 
             traverse(item.children);
@@ -459,11 +173,9 @@ function NavigationSection({
     setExpandedItems(activeParents);
   }, [pathname, findActiveParent, authorizedItems]);
 
-  const toggleExpand = useCallback((itemName: string) => {
+  const toggleExpand = useCallback((id: string) => {
     setExpandedItems((prev) =>
-      prev.includes(itemName)
-        ? prev.filter((name) => name !== itemName)
-        : [...prev, itemName]
+      prev.includes(id) ? prev.filter((name) => name !== id) : [...prev, id]
     );
   }, []);
 
@@ -475,7 +187,7 @@ function NavigationSection({
       <div className="space-y-1">
         {authorizedItems.map((item) => (
           <NavigationItem
-            key={item.name}
+            key={item.id}
             item={item}
             isCollapsed={isCollapsed}
             expandedItems={expandedItems}
@@ -487,47 +199,58 @@ function NavigationSection({
   );
 }
 
-export default function Sidebar() {
-  const [mounted, setMounted] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true);
-  const { user } = useAuth();
+const hasAdminRole = (userRoles: string[] = []): boolean => {
+  return userRoles.some((role) => ['SystemAdmin', 'SuperAdmin'].includes(role));
+};
 
-  // Handle client-side mounting
+export default function Sidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const { user } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const getNavigationByRole = () => {
-    if (!mounted) return []; // Return empty array during SSR
+  const toggleExpand = useCallback((id: string) => {
+    setExpandedItems((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  }, []);
+
+  const filteredNavItems = useMemo(() => {
+    if (!mounted || !user?.permissions) return [];
 
     const sections = [];
 
-    // Admin section for SystemAdmin and SuperAdmin
-    if (hasAdminRole(user?.roles)) {
-      sections.push({ title: 'Admin', items: adminNav });
-    }
-
-    // Clinic section for ClinicStaff
-    if (user?.roles?.includes('ClinicStaff')) {
-      sections.push({ title: 'Clinic', items: clinicNav });
-    }
-
-    // Doctor section for Doctor role
-    if (user?.roles?.includes('Doctor')) {
-      sections.push({ title: 'Doctor', items: doctorNav });
-    }
-
-    // Patient section if needed
-    if (user?.roles?.includes('Patient')) {
-      sections.push({ title: 'Patient', items: [] });
-    }
-
+    // Add admin section for SuperAdmin role
+    sections.push({
+      title: 'Admin',
+      items: filterNavItemsByPermission(adminNav, user.permissions),
+    });
+    // Add clinic section for ClinicStaff role
+    sections.push({
+      title: 'Clinic',
+      items: filterNavItemsByPermission(clinicNav, user.permissions),
+    });
+    // Add doctor section for Doctor role
+    sections.push({
+      title: 'Doctor',
+      items: filterNavItemsByPermission(doctorNav, user.permissions),
+    });
     return sections;
-  };
+  }, [mounted, user?.permissions]);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
+
+  const sections = filteredNavItems;
+
+  if (!mounted || sections.length === 0) {
+    return null;
+  }
 
   return (
     <>
@@ -588,15 +311,14 @@ export default function Sidebar() {
         {/* Main Navigation */}
         <div className="flex-1 overflow-y-auto">
           <nav className="px-4 space-y-1">
-            {mounted &&
-              getNavigationByRole().map((section) => (
-                <NavigationSection
-                  key={section.title}
-                  title={section.title}
-                  items={section.items}
-                  isCollapsed={isCollapsed}
-                />
-              ))}
+            {sections.map((section) => (
+              <NavigationSection
+                key={section.title}
+                title={section.title}
+                items={section.items}
+                isCollapsed={isCollapsed}
+              />
+            ))}
           </nav>
         </div>
       </aside>
