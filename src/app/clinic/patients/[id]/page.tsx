@@ -22,6 +22,7 @@ import {
   Share2,
   Upload,
   ActivitySquare,
+  Plus,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import Avatar from '@/components/common/Avatar';
@@ -38,7 +39,14 @@ import {
   getSeverityLabel,
 } from '@/utils/textUtils';
 import PatientProfileSkeleton from '@/components/skeletons/PatientProfileSkeleton';
-// import PatientProfileSkeleton from '@/components/skeletons/PatientProfileSkeleton';
+import { useState } from 'react';
+import { MedicalConditionStatus } from '@/lib/api/types/clinic-patient';
+import {
+  AddConditionModal,
+  AddAllergyModal,
+  AddFamilyHistoryModal,
+} from '@/components/clinic/patients/modals';
+
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
@@ -54,6 +62,47 @@ export default function PatientProfilePage() {
     { name: 'Appointments', icon: Calendar },
     { name: 'Documents', icon: FileText },
   ];
+
+  const [isAddConditionOpen, setIsAddConditionOpen] = useState(false);
+  const [isAddAllergyOpen, setIsAddAllergyOpen] = useState(false);
+  const [isAddFamilyHistoryOpen, setIsAddFamilyHistoryOpen] = useState(false);
+
+  const handleAddCondition = async (data: {
+    name: string;
+    status: MedicalConditionStatus;
+  }) => {
+    try {
+      // TODO: Add API call to create condition
+      console.log('Adding condition:', data);
+    } catch (error) {
+      console.error('Error adding condition:', error);
+    }
+  };
+
+  const handleAddAllergy = async (data: {
+    name: string;
+    severity: string;
+    reaction: string;
+  }) => {
+    try {
+      // TODO: Add API call to create allergy
+      console.log('Adding allergy:', data);
+    } catch (error) {
+      console.error('Error adding allergy:', error);
+    }
+  };
+
+  const handleAddFamilyHistory = async (data: {
+    condition: string;
+    relationship: string;
+  }) => {
+    try {
+      // TODO: Add API call to create family history
+      console.log('Adding family history:', data);
+    } catch (error) {
+      console.error('Error adding family history:', error);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -274,26 +323,52 @@ export default function PatientProfilePage() {
                 </div>
               </TabPanel>
               <TabPanel>
-                <div className="space-y-8 p-6">
+                <div className="space-y-8 py-6">
                   {/* Medical Conditions */}
                   <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-6 border border-gray-100">
-                    <div className="flex items-center gap-2 mb-6">
-                      <motion.div
-                        animate={{
-                          scale: [1, 1.2, 1],
-                          opacity: [1, 0.6, 1],
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-2">
+                        <motion.div
+                          animate={{
+                            scale: [1, 1.1, 1],
+                            opacity: [0.5, 1, 0.5],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                          }}
+                        >
+                          <Activity className="w-5 h-5 text-blue-600" />
+                        </motion.div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Medical Conditions
+                        </h3>
+                      </div>
+                      <motion.button
+                        onClick={() => setIsAddConditionOpen(true)}
+                        whileHover={{
+                          scale: 1.05,
+                          boxShadow: '0 8px 20px -8px rgba(59, 130, 246, 0.5)',
                         }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: 'easeInOut',
-                        }}
+                        whileTap={{ scale: 0.95 }}
+                        className="group relative inline-flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 backdrop-blur-sm"
                       >
-                        <Activity className="w-5 h-5 text-blue-600" />
-                      </motion.div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        Medical Conditions
-                      </h3>
+                        <div className="absolute inset-0 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors duration-300" />
+                        <motion.div
+                          initial={{ rotate: 0 }}
+                          animate={{ rotate: 180 }}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 200,
+                            damping: 10,
+                          }}
+                          className="relative"
+                        >
+                          <Plus className="w-5 h-5 stroke-[3]" />
+                        </motion.div>
+                        <span className="sr-only">Add Condition</span>
+                      </motion.button>
                     </div>
                     <div className="space-y-3">
                       {patient.medicalHistory.conditions.length > 0 ? (
@@ -340,18 +415,16 @@ export default function PatientProfilePage() {
                           )}
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 gap-4">
-                          <div className="text-center py-8 px-4">
-                            <div className="flex flex-col items-center justify-center space-y-3">
-                              <ActivitySquare className="w-12 h-12 text-gray-300" />
-                              <div>
-                                <p className="text-gray-600 font-medium">
-                                  No Medical Conditions
-                                </p>
-                                <p className="text-sm text-gray-400">
-                                  No medical conditions have been recorded
-                                </p>
-                              </div>
+                        <div className="text-center py-8 px-4">
+                          <div className="flex flex-col items-center justify-center space-y-3">
+                            <ActivitySquare className="w-12 h-12 text-gray-300" />
+                            <div>
+                              <p className="text-gray-600 font-medium">
+                                No Medical Conditions
+                              </p>
+                              <p className="text-sm text-gray-400">
+                                No medical conditions have been recorded
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -361,20 +434,46 @@ export default function PatientProfilePage() {
 
                   {/* Allergies */}
                   <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-6 border border-gray-100">
-                    <div className="flex items-center gap-2 mb-6">
-                      <motion.div
-                        animate={{ y: [-2, 2, -2] }}
-                        transition={{
-                          duration: 1.5,
-                          repeat: Infinity,
-                          ease: 'easeInOut',
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-2">
+                        <motion.div
+                          animate={{ y: [-2, 2, -2] }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                          }}
+                        >
+                          <AlertTriangle className="w-5 h-5 text-red-600" />
+                        </motion.div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Allergies
+                        </h3>
+                      </div>
+                      <motion.button
+                        onClick={() => setIsAddAllergyOpen(true)}
+                        whileHover={{
+                          scale: 1.05,
+                          boxShadow: '0 8px 20px -8px rgba(239, 68, 68, 0.5)',
                         }}
+                        whileTap={{ scale: 0.95 }}
+                        className="group relative inline-flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-red-500 to-red-600 text-white shadow-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 backdrop-blur-sm"
                       >
-                        <AlertTriangle className="w-5 h-5 text-red-600" />
-                      </motion.div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        Allergies
-                      </h3>
+                        <div className="absolute inset-0 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors duration-300" />
+                        <motion.div
+                          initial={{ rotate: 0 }}
+                          animate={{ rotate: 180 }}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 200,
+                            damping: 10,
+                          }}
+                          className="relative"
+                        >
+                          <Plus className="w-5 h-5 stroke-[3]" />
+                        </motion.div>
+                        <span className="sr-only">Add Allergy</span>
+                      </motion.button>
                     </div>
                     <div className="space-y-3">
                       {patient.medicalHistory.allergies.length > 0 ? (
@@ -535,23 +634,46 @@ export default function PatientProfilePage() {
 
                   {/* Family History */}
                   <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-6 border border-gray-100">
-                    <div className="flex items-center gap-2 mb-6">
-                      <motion.div
-                        animate={{
-                          scale: [1, 1.2, 1],
-                          opacity: [1, 0.6, 1],
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-2">
+                        <motion.div
+                          animate={{ y: [-2, 2, -2] }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                          }}
+                        >
+                          <Users className="w-5 h-5 text-green-600" />
+                        </motion.div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Family History
+                        </h3>
+                      </div>
+                      <motion.button
+                        onClick={() => setIsAddFamilyHistoryOpen(true)}
+                        whileHover={{
+                          scale: 1.05,
+                          boxShadow: '0 8px 20px -8px rgba(34, 197, 94, 0.5)',
                         }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: 'easeInOut',
-                        }}
+                        whileTap={{ scale: 0.95 }}
+                        className="group relative inline-flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 backdrop-blur-sm"
                       >
-                        <Users className="w-5 h-5 text-teal-600" />
-                      </motion.div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        Family History
-                      </h3>
+                        <div className="absolute inset-0 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors duration-300" />
+                        <motion.div
+                          initial={{ rotate: 0 }}
+                          animate={{ rotate: 180 }}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 200,
+                            damping: 10,
+                          }}
+                          className="relative"
+                        >
+                          <Plus className="w-5 h-5 stroke-[3]" />
+                        </motion.div>
+                        <span className="sr-only">Add Family History</span>
+                      </motion.button>
                     </div>
                     <div className="space-y-3">
                       {patient.medicalHistory.familyHistory.length > 0 ? (
@@ -661,7 +783,7 @@ export default function PatientProfilePage() {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <span
-                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                         ${getAppointmentStatusClass(
                                           appointment.status
                                         )}`}
@@ -817,6 +939,21 @@ export default function PatientProfilePage() {
           </TabGroup>
         </div>
       </div>
+      <AddConditionModal
+        isOpen={isAddConditionOpen}
+        onClose={() => setIsAddConditionOpen(false)}
+        onSubmit={handleAddCondition}
+      />
+      <AddAllergyModal
+        isOpen={isAddAllergyOpen}
+        onClose={() => setIsAddAllergyOpen(false)}
+        onSubmit={handleAddAllergy}
+      />
+      <AddFamilyHistoryModal
+        isOpen={isAddFamilyHistoryOpen}
+        onClose={() => setIsAddFamilyHistoryOpen(false)}
+        onSubmit={handleAddFamilyHistory}
+      />
     </PageLayout>
   );
 }
