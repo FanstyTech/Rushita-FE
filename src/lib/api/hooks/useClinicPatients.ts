@@ -5,7 +5,10 @@ import {
   CreateUpdateClinicPatientDto,
   PatientStatus,
   ClinicPatientFilterDto,
-  PatientProfileDto,
+  CreateOrUpdateMedicalConditionDto,
+  CreateOrUpdateAllergyDto,
+  CreateOrUpdateFamilyHistoryDto,
+  GetPatientDropdownInput,
 } from '../types/clinic-patient';
 
 export function useClinicPatients() {
@@ -53,6 +56,19 @@ export function useClinicPatients() {
       retry: false,
     });
 
+  const usePatientDropdown = (filters: GetPatientDropdownInput) =>
+    useQuery({
+      queryKey: ['clinic-patients-dropdown', filters],
+      queryFn: async () => {
+        const response = await clinicPatientService.getPatientDropdown(filters);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+      retry: false,
+    });
+
   const createOrUpdatePatient = useMutation({
     mutationFn: async (data: CreateUpdateClinicPatientDto) => {
       const response = await clinicPatientService.createOrUpdate(data);
@@ -67,6 +83,71 @@ export function useClinicPatients() {
     },
     onError: (error: any) => {
       toast.error(error.message || 'Failed to save patient');
+    },
+    retry: false,
+  });
+
+  const createOrUpdateCondition = useMutation({
+    mutationFn: async (data: CreateOrUpdateMedicalConditionDto) => {
+      const response = await clinicPatientService.createOrUpdateCondition(data);
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      return response.result;
+    },
+    onSuccess: (data) => {
+      if (!data) return;
+      queryClient.invalidateQueries({
+        queryKey: ['clinic-patient-profile', data.patientId],
+      });
+      toast.success('Condition saved successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to save condition');
+    },
+    retry: false,
+  });
+
+  const createOrUpdateAllergy = useMutation({
+    mutationFn: async (data: CreateOrUpdateAllergyDto) => {
+      const response = await clinicPatientService.createOrUpdateAllergy(data);
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      return response.result;
+    },
+    onSuccess: (data) => {
+      if (!data) return;
+      queryClient.invalidateQueries({
+        queryKey: ['clinic-patient-profile', data.patientId],
+      });
+      toast.success('Allergy saved successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to save allergy');
+    },
+    retry: false,
+  });
+
+  const createOrUpdateFamilyHistory = useMutation({
+    mutationFn: async (data: CreateOrUpdateFamilyHistoryDto) => {
+      const response = await clinicPatientService.createOrUpdateFamilyHistory(
+        data
+      );
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      return response.result;
+    },
+    onSuccess: (data) => {
+      if (!data) return;
+      queryClient.invalidateQueries({
+        queryKey: ['clinic-patient-profile', data.patientId],
+      });
+      toast.success('Family history saved successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to save family history');
     },
     retry: false,
   });
@@ -116,7 +197,11 @@ export function useClinicPatients() {
     usePatientsList,
     usePatientForEdit,
     usePatientProfile,
+    usePatientDropdown,
     createOrUpdatePatient,
+    createOrUpdateCondition,
+    createOrUpdateAllergy,
+    createOrUpdateFamilyHistory,
     deletePatient,
     updatePatientStatus,
   };

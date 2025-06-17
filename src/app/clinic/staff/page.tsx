@@ -261,7 +261,7 @@ export default function ClinicStaffPage() {
                                 } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
                               >
                                 <Edit2 className="w-4 h-4" />
-                                Edit Clinic
+                                Edit Staff
                               </button>
                             )}
                           </MenuItem>

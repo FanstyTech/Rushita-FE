@@ -1,10 +1,20 @@
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
 import { ApiResponse } from '../types/api';
 import {
+  AllergyDto,
   ClinicPatientDto,
+  ClinicPatientFilterDto,
   ClinicPatientListDto,
+  CreateOrUpdateAllergyDto,
+  CreateOrUpdateFamilyHistoryDto,
+  CreateOrUpdateMedicalConditionDto,
   CreateUpdateClinicPatientDto,
+  FamilyHistoryDto,
+  GetPatientDropdownDto,
+  GetPatientDropdownInput,
+  MedicalConditionDto,
   PatientProfileDto,
   PatientStatus,
 } from '../types/clinic-patient';
@@ -12,9 +22,11 @@ import { PaginationResponse } from '../types/pagination';
 
 class ClinicPatientService {
   async getAll(
-    params: any
+    filter: ClinicPatientFilterDto
   ): Promise<ApiResponse<PaginationResponse<ClinicPatientListDto>>> {
-    return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.LIST, { params });
+    return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.LIST, {
+      params: convertFilterToParams(filter as FilterParams),
+    });
   }
 
   async getById(id: string): Promise<ApiResponse<ClinicPatientDto>> {
@@ -28,6 +40,14 @@ class ClinicPatientService {
   ): Promise<ApiResponse<CreateUpdateClinicPatientDto>> {
     return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_FOR_EDIT, {
       params: { id },
+    });
+  }
+
+  async getPatientDropdown(
+    filter: GetPatientDropdownInput
+  ): Promise<ApiResponse<GetPatientDropdownDto>> {
+    return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_PATIENT_DROPDOWN, {
+      params: convertFilterToParams(filter as FilterParams),
     });
   }
 
@@ -51,6 +71,32 @@ class ClinicPatientService {
       id,
       status,
     });
+  }
+
+  async createOrUpdateCondition(
+    data: CreateOrUpdateMedicalConditionDto
+  ): Promise<ApiResponse<MedicalConditionDto>> {
+    return apiClient.post(
+      API_ENDPOINTS.CLINIC_PATIENTS.CREATE_OR_UPDATE_CONDITION,
+      data
+    );
+  }
+  async createOrUpdateAllergy(
+    data: CreateOrUpdateAllergyDto
+  ): Promise<ApiResponse<AllergyDto>> {
+    return apiClient.post(
+      API_ENDPOINTS.CLINIC_PATIENTS.CREATE_OR_UPDATE_ALLERGY,
+      data
+    );
+  }
+
+  async createOrUpdateFamilyHistory(
+    data: CreateOrUpdateFamilyHistoryDto
+  ): Promise<ApiResponse<FamilyHistoryDto>> {
+    return apiClient.post(
+      API_ENDPOINTS.CLINIC_PATIENTS.CREATE_OR_UPDATE_FAMILY_HISTORY,
+      data
+    );
   }
 
   async getProfile(id: string): Promise<ApiResponse<PatientProfileDto>> {

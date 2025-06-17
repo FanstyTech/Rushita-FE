@@ -1,3 +1,5 @@
+import { PaginationRequest } from './pagination';
+
 // Enums
 export enum Gender {
   Male = 1,
@@ -30,6 +32,10 @@ export enum Relationship {
   Father = 1,
   Mother = 2,
   Sibling = 3,
+}
+export enum FamilyHistoryStatus {
+  Living = 1,
+  Deceased = 2,
 }
 
 export enum VisitType {
@@ -148,19 +154,14 @@ export interface CreateUpdateClinicPatientDto {
   preferredClinicId?: string;
 }
 
-export interface ClinicPatientFilterDto {
+export interface ClinicPatientFilterDto extends PaginationRequest {
   clinicId?: string;
-  searchValue?: string;
-  status?: PatientStatus;
   gender?: Gender;
   countryId?: string;
   cityId?: string;
   fromDate?: string;
   toDate?: string;
-  pageNumber?: number;
-  pageSize?: number;
-  sortColumn?: string;
-  sortDirection?: string;
+  status?: PatientStatus;
 }
 
 // DTOs
@@ -206,32 +207,12 @@ export interface MedicalHistoryDto {
   familyHistory: FamilyHistoryDto[];
 }
 
-export interface MedicalConditionDto {
-  id: string;
-  name: string;
-  diagnosedDate?: string;
-  status?: MedicalConditionStatus;
-}
-
-export interface AllergyDto {
-  id: string;
-  name: string;
-  severity?: Severity;
-  reaction?: string;
-}
-
 export interface MedicationDto {
   id: string;
   name: string;
   dosage: string;
   frequency: FrequencyType;
   startDate: string;
-}
-
-export interface FamilyHistoryDto {
-  id: string;
-  condition: string;
-  relationship?: Relationship;
 }
 
 export interface PatientAppointmentDto {
@@ -241,4 +222,64 @@ export interface PatientAppointmentDto {
   doctor?: string;
   status: AppointmentStatus;
   notes?: string;
+}
+
+export interface MedicalConditionDto {
+  id: string;
+  name: string;
+  diagnosedDate?: string;
+  status?: MedicalConditionStatus;
+  patientId: string;
+}
+export interface CreateOrUpdateMedicalConditionDto {
+  id?: string;
+  name: string;
+  diagnosedDate?: string;
+  status?: MedicalConditionStatus;
+  patientId: string;
+}
+
+export interface AllergyDto {
+  id: string;
+  name: string;
+  severity?: Severity;
+  reaction?: string;
+  patientId: string;
+}
+
+export interface CreateOrUpdateAllergyDto {
+  id?: string;
+  name: string;
+  severity?: Severity;
+  reaction?: string;
+  patientId: string;
+}
+
+export interface FamilyHistoryDto {
+  id: string;
+  condition: string;
+  relationship: Relationship;
+  ageOfOnset?: Number;
+  status: FamilyHistoryStatus;
+  notes: string;
+  patientId: string;
+}
+export interface CreateOrUpdateFamilyHistoryDto {
+  id?: string;
+  condition: string;
+  relationship: Relationship;
+  ageOfOnset?: string;
+  status: FamilyHistoryStatus;
+  notes?: string;
+  patientId: string;
+}
+
+export interface GetPatientDropdownInput {
+  clinicId?: string;
+  name?: string;
+}
+export interface GetPatientDropdownDto {
+  Id: string;
+  Name: string;
+  Age: number;
 }

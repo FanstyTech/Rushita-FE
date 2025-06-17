@@ -1,64 +1,98 @@
 import { useState } from 'react';
 import Modal from '@/components/common/Modal';
 import Button from '@/components/common/Button';
-import Input from '@/components/common/form/Input';
+import { Select, Input } from '@/components/common/form';
+import {
+  CreateOrUpdateAllergyDto,
+  Severity,
+} from '@/lib/api/types/clinic-patient';
+import { useForm } from 'react-hook-form';
+import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
+import {
+  allergySchema,
+  allergyFormData,
+  defaultAllergyValues,
+} from './validationAllergy';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface AddAllergyModalProps {
   isOpen: boolean;
+  patientId: string;
   onClose: () => void;
-  onSubmit: (data: {
-    name: string;
-    severity: string;
-    reaction: string;
-  }) => void;
 }
 
 export const AddAllergyModal = ({
   isOpen,
+  patientId,
   onClose,
-  onSubmit,
 }: AddAllergyModalProps) => {
-  const [name, setName] = useState('');
-  const [severity, setSeverity] = useState('');
-  const [reaction, setReaction] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<allergyFormData>({
+    resolver: zodResolver(allergySchema),
+    defaultValues: defaultAllergyValues,
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit({ name, severity, reaction });
-    setName('');
-    setSeverity('');
-    setReaction('');
-    onClose();
+  const { createOrUpdateAllergy } = useClinicPatients();
+  const onSubmitHandler = async (data: allergyFormData) => {
+    try {
+      const formattedData: CreateOrUpdateAllergyDto = {
+        ...data,
+        id: data.id || undefined,
+        patientId: patientId,
+      };
+
+      await createOrUpdateAllergy.mutateAsync(formattedData);
+      onClose();
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add Allergy">
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Add Allergy"
+      footer={
+        <div className="flex justify-end gap-3">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit(onSubmitHandler)}
+            isLoading={createOrUpdateAllergy.isPending}
+          >
+            Add Allergy
+          </Button>
+        </div>
+      }
+    >
+      <form className="space-y-4">
         <Input
           label="Allergy Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter allergy name"
-          required
+          error={errors.name?.message}
+          {...register('name')}
         />
-        <Input
+
+        <Select
           label="Severity"
-          value={severity}
-          onChange={(e) => setSeverity(e.target.value)}
-          placeholder="Enter severity"
-          required
+          error={errors.severity?.message}
+          {...register('severity', { valueAsNumber: true })}
+          options={Object.entries(Severity)
+            .filter(([key]) => isNaN(Number(key)))
+            .map(([key, value]) => ({
+              value: value.toString(),
+              label: key,
+            }))}
         />
         <Input
           label="Reaction"
-          value={reaction}
-          onChange={(e) => setReaction(e.target.value)}
-          placeholder="Enter reaction"
-          required
+          error={errors.reaction?.message}
+          {...register('reaction')}
         />
-        <div className="flex justify-end gap-3 mt-6">
-          <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit">Add Allergy</Button>
-        </div>
       </form>
     </Modal>
   );

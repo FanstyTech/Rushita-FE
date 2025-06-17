@@ -940,19 +940,19 @@ export default function PatientProfilePage() {
         </div>
       </div>
       <AddConditionModal
+        patientId={patient?.id}
         isOpen={isAddConditionOpen}
         onClose={() => setIsAddConditionOpen(false)}
-        onSubmit={handleAddCondition}
       />
       <AddAllergyModal
+        patientId={patient?.id}
         isOpen={isAddAllergyOpen}
         onClose={() => setIsAddAllergyOpen(false)}
-        onSubmit={handleAddAllergy}
       />
       <AddFamilyHistoryModal
+        patientId={patient?.id}
         isOpen={isAddFamilyHistoryOpen}
         onClose={() => setIsAddFamilyHistoryOpen(false)}
-        onSubmit={handleAddFamilyHistory}
       />
     </PageLayout>
   );
