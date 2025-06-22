@@ -291,7 +291,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto"
+                className="sm:text-xl text-lg text-gray-600 mb-10 max-w-2xl mx-auto"
               >
                 Your comprehensive clinic management solution for enhanced
                 healthcare delivery and seamless operations.
@@ -300,17 +300,17 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="flex justify-center gap-4"
+                className="flex justify-center gap-4 flex-wrap"
               >
                 <Link
                   href="/clinic/dashboard"
-                  className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow-md"
+                  className="px-8 py-3 sm:w-fit w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl sm:text-lg text-base font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow-md"
                 >
                   Get Started
                 </Link>
                 <Link
                   href="/auth/login"
-                  className="px-8 py-3 bg-white text-gray-700 rounded-xl text-lg font-medium border border-gray-200 hover:bg-gray-50 transition-all duration-300 inline-flex items-center gap-2"
+                  className="px-8 py-3 sm:w-fit w-full flex justify-center items-center bg-white text-gray-700 rounded-xl sm:text-lg text-base font-medium border border-gray-200 hover:bg-gray-50 transition-all duration-300  gap-2"
                 >
                   <LogIn className="w-5 h-5" />
                   Login
@@ -345,7 +345,7 @@ export default function Home() {
           </div>
         </Parallax>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
           {features.map((feature, index) => (
             <Parallax
               key={feature.title}
@@ -379,7 +379,7 @@ export default function Home() {
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 py-16 lg:py-24">
         <Parallax offset={30}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
+            <div className="grid xxs:grid-cols-2 grid-cols-1 md:grid-cols-4 gap-12">
               {statistics.map((stat, index) => (
                 <motion.div
                   key={stat.label}
@@ -389,11 +389,11 @@ export default function Home() {
                   className="text-center"
                 >
                   <stat.icon className="w-8 h-8 mx-auto mb-4 text-blue-600" />
-                  <div className="text-3xl font-bold text-gray-900 mb-2">
+                  <div className="sm:text-3xl text-lg font-bold text-gray-900 mb-2">
                     <CountUpAnimation end={stat.value} />
                     {stat.suffix}
                   </div>
-                  <div className="text-gray-600">{stat.label}</div>
+                  <div className="text-gray-600 sm:text-lg text-base line-clamp-2 ">{stat.label}</div>
                 </motion.div>
               ))}
             </div>
