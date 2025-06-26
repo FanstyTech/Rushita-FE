@@ -1,608 +1,231 @@
 'use client';
 
+import { useRef } from 'react';
+
+import HeroSection from '@/components/LandingPage/HeroSection';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { MoveLeft } from 'lucide-react';
+import NumberDiv from '@/components/LandingPage/NumberDiv';
+import SubscriptionSection from '@/components/LandingPage/SubscriptionSection';
+import CicyleBg from '@/components/LandingPage/CicyleBg';
+import { ChartPie } from '@/components/LandingPage/ChartPie';
 import Link from 'next/link';
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { useRef, useEffect, useState } from 'react';
-import {
-  Users,
-  Calendar,
-  BarChart3,
-  Clock,
-  Shield,
-  Stethoscope,
-  LogIn,
-  Heart,
-  Activity,
-  Pill,
-  Star,
-  ChevronDown,
-  CheckCircle,
-} from 'lucide-react';
-import { LucideIcon } from 'lucide-react';
 
-interface ParallaxProps {
-  children: React.ReactNode;
-  offset?: number;
-  className?: string;
-}
-
-interface CountUpAnimationProps {
-  end: number;
-  duration?: number;
-}
-
-interface FloatingIconProps {
-  icon: LucideIcon;
-  delay?: number;
-  className?: string;
-}
-
-const Parallax = ({ children, offset = 50, className = '' }: ParallaxProps) => {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [-offset, offset]);
-
-  return (
-    <motion.div ref={ref} style={{ y }} className={className}>
-      {children}
-    </motion.div>
-  );
-};
-
-const FloatingIcon = ({
-  icon: Icon,
-  delay = 0,
-  className = '',
-}: FloatingIconProps) => {
-  const float = {
-    y: [0, -15, 0],
-    x: [0, 10, 0],
-    rotate: [-5, 5, -5],
-  };
-
-  return (
-    <motion.div
-      className={`absolute ${className}`}
-      animate={float}
-      transition={{
-        duration: 4,
-        repeat: Infinity,
-        delay,
-        ease: 'easeInOut',
-      }}
-    >
-      <Icon className="w-8 h-8 text-blue-500/30" />
-    </motion.div>
-  );
-};
-
-const features = [
+const whyroshita = [
   {
-    icon: <Users className="w-6 h-6" />,
-    title: 'Doctor Management',
-    description:
-      'Efficiently manage your medical staff with comprehensive profiles and scheduling.',
+    image: "Why94551.png",
+    Title: "مريض اتصل يسأل عن حالته… والسكرتيرة قلبت الدفاتر.",
   },
   {
-    icon: <Calendar className="w-6 h-6" />,
-    title: 'Smart Scheduling',
-    description:
-      'Intelligent appointment system that optimizes doctor availability and patient convenience.',
+    image: "Why21492610591.png",
+    Title: "موعد تأخر لأنه الجدول ما انتبه للتداخل.",
   },
   {
-    icon: <BarChart3 className="w-6 h-6" />,
-    title: 'Analytics & Reports',
-    description:
-      'Gain valuable insights with detailed analytics and performance reports.',
+    image: "Why21512376191.png",
+    Title: "ملف مريض ناقص… والطبيب ارتجل من الذاكرة.",
   },
-  {
-    icon: <Clock className="w-6 h-6" />,
-    title: 'Real-time Updates',
-    description:
-      'Stay informed with instant notifications and real-time status updates.',
-  },
-  {
-    icon: <Shield className="w-6 h-6" />,
-    title: 'Secure Platform',
-    description:
-      'Enterprise-grade security ensuring your medical data is always protected.',
-  },
-  {
-    icon: <Stethoscope className="w-6 h-6" />,
-    title: 'Clinical Excellence',
-    description:
-      'Tools and features designed to enhance clinical care and patient outcomes.',
-  },
-];
+]
 
-const testimonials = [
-  {
-    name: 'Dr. Sarah Johnson',
-    role: 'Medical Director',
-    image: '/images/testimonials/doctor1.jpg',
-    content:
-      'Rushita has transformed how we manage our clinic. The efficiency gains are remarkable.',
-    rating: 5,
-  },
-  {
-    name: 'Dr. Michael Chen',
-    role: 'Pediatrician',
-    image: '/images/testimonials/doctor2.jpg',
-    content:
-      'The patient management features are intuitive and save us hours every week.',
-    rating: 5,
-  },
-  {
-    name: 'Dr. Emily Rodriguez',
-    role: 'Family Physician',
-    image: '/images/testimonials/doctor3.jpg',
-    content:
-      'Outstanding support team and regular updates keep the system running smoothly.',
-    rating: 5,
-  },
-];
-
-const statistics = [
-  { label: 'Active Users', value: 2000, suffix: '+', icon: Users },
-  {
-    label: 'Patient Appointments',
-    value: 1000000,
-    suffix: '+',
-    icon: Calendar,
-  },
-  { label: 'Clinics Worldwide', value: 500, suffix: '+', icon: Activity },
-  { label: 'Patient Satisfaction', value: 98, suffix: '%', icon: Heart },
-];
-
-const howItWorks = [
-  {
-    title: 'Sign Up',
-    description: 'Create your clinic account in minutes',
-    icon: LogIn,
-  },
-  {
-    title: 'Setup Your Clinic',
-    description: 'Customize settings to match your workflow',
-    icon: Shield,
-  },
-  {
-    title: 'Start Managing',
-    description: 'Begin scheduling and managing patients',
-    icon: Calendar,
-  },
-];
-
-const faqs = [
-  {
-    question: 'How secure is patient data?',
-    answer:
-      'We implement bank-level security measures and are fully HIPAA compliant to ensure your patient data is always protected.',
-  },
-  {
-    question: 'Can I integrate with existing systems?',
-    answer:
-      'Yes, Rushita offers API integration capabilities with most major healthcare systems and EMRs.',
-  },
-  {
-    question: 'What support options are available?',
-    answer:
-      'We provide 24/7 technical support, comprehensive documentation, and regular training sessions.',
-  },
-  {
-    question: 'How much does it cost?',
-    answer:
-      'We offer flexible pricing plans based on your clinic size and needs. Contact us for a custom quote.',
-  },
-];
-
-const CountUpAnimation = ({ end, duration = 2000 }: CountUpAnimationProps) => {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref);
-
-  useEffect(() => {
-    let startTime: number | null = null;
-    let animationFrame: number;
-
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = timestamp - startTime;
-      const percentage = Math.min(progress / duration, 1);
-
-      setCount(Math.floor(end * percentage));
-
-      if (percentage < 1) {
-        animationFrame = requestAnimationFrame(animate);
-      }
-    };
-
-    if (isInView) {
-      animationFrame = requestAnimationFrame(animate);
-    }
-
-    return () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-      }
-    };
-  }, [end, duration, isInView]);
-
-  return <span ref={ref}>{count.toLocaleString()}</span>;
-};
-
+const whatswepost = ["جدولة مواعيد بدون تعقيد. بتعرف من بدري وين في فراغات، وين في ضغط.", "ملف رقمي لكل مريض. مش بس التاريخ الطبي، بل ملاحظاتك كمان.", "تنبيهات تلقائية. للمريض، للطبيب، وللعيادة.", "متابعة عن بعد. مريضك في البيت؟ تقدر تتابعه من عندك.", "تقارير ذكية. مو بس أرقام… بل رؤى تساعدك تطور العيادة."]
+const roshtasystem = ["الطبيب يشوف تنبيهات السكرتارية", "المختبر يستلم المطلوب لحاله", "المحاسب يعرف تلقائيًا حالة الفاتورة"]
 export default function Home() {
   const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.2]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
 
   return (
     <div
       ref={containerRef}
       className="min-h-screen bg-gradient-to-b from-gray-50 to-white relative overflow-hidden"
     >
-      {/* Background Parallax Elements */}
-      <div className="fixed inset-0 pointer-events-none">
-        <FloatingIcon icon={Heart} className="top-[15%] left-[10%]" delay={0} />
-        <FloatingIcon
-          icon={Activity}
-          className="top-[45%] right-[15%]"
-          delay={1}
-        />
-        <FloatingIcon
-          icon={Pill}
-          className="bottom-[20%] left-[20%]"
-          delay={2}
-        />
-        <FloatingIcon
-          icon={Stethoscope}
-          className="top-[30%] right-[25%]"
-          delay={1.5}
-        />
+      <div id='home' className='relative'>
+        <HeroSection />
       </div>
+      <div className='max-w-7xl   relative  mx-auto'>
 
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <motion.div
-          style={{ scale, opacity }}
-          className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 transform -skew-y-6"
-        />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-          <Parallax offset={30} className="relative z-10">
-            <div className="text-center relative z-10">
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6"
-              >
-                Welcome to{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                  Rushita
-                </span>
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="sm:text-xl text-lg text-gray-600 mb-10 max-w-2xl mx-auto"
-              >
-                Your comprehensive clinic management solution for enhanced
-                healthcare delivery and seamless operations.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="flex justify-center gap-4 flex-wrap"
-              >
-                <Link
-                  href="/clinic/dashboard"
-                  className="px-8 py-3 sm:w-fit w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl sm:text-lg text-base font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow-md"
+        <h1 className="xxs:text-3xl text-xl max-w-3xl   mx-auto leading-tight font-normal text-center sm:text-4xl  p-4 bg-gradient-to-t from-primary/50 to-[#9612FC] bg-clip-text text-transparent">
+          ليش كل العيادات بتتحوّل لروشيتة؟ لأن الوقت ما بيتحمّل الفوضى.
+        </h1>
+        <CicyleBg className='top-[50%] -right-10' />
+
+        <p className='text-center mb-3 sm:mb-0'> لماذا روشيتة؟</p>
+        <div className='grid md:grid-cols-3 xsm:grid-cols-2  w-[95%] mx-auto grid-cols-1 lg:gap-0 py-3 gap-5  md:py-10 sm:py-5 '>
+          {whyroshita.map((item, index) => (
+            <div className='relative lg:h-[60vh]   w-full  flex justify-center items-center'
+              key={index}>
+              <div className='w-full flex justify-center items-center'>
+                <div className='relative '
                 >
-                  Get Started
-                </Link>
-                <Link
-                  href="/auth/login"
-                  className="px-8 py-3 sm:w-fit w-full flex justify-center items-center bg-white text-gray-700 rounded-xl sm:text-lg text-base font-medium border border-gray-200 hover:bg-gray-50 transition-all duration-300  gap-2"
-                >
-                  <LogIn className="w-5 h-5" />
-                  Login
-                </Link>
-              </motion.div>
-            </div>
-          </Parallax>
-        </div>
-      </div>
-
-      {/* Features Section with Enhanced Parallax */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-        <Parallax offset={20}>
-          <div className="text-center mb-16">
-            <motion.h2
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl font-bold text-gray-900 mb-4"
-            >
-              Powerful Features for Modern Healthcare
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-gray-600 max-w-2xl mx-auto"
-            >
-              Discover how our comprehensive suite of tools can transform your
-              clinic&apos;s operations and enhance patient care.
-            </motion.p>
-          </div>
-        </Parallax>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-          {features.map((feature, index) => (
-            <Parallax
-              key={feature.title}
-              offset={20 + index * 10}
-              className="h-full"
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: '0 10px 30px -10px rgba(0,0,0,0.1)',
-                }}
-                className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full transform transition-all duration-300"
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl flex items-center justify-center mb-6">
-                  {feature.icon}
+               
+                  <Image
+                    src={`/images/${item.image}`} fill className='!w-fit !relative object-cover bg-center' alt='' />
+                  <div className='bg-white/50  backdrop-blur p-2 py-3 text-center absolute  bottom-0 left-0'>
+                    {item.Title}
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </motion.div>
-            </Parallax>
+              </div>
+            </div>
           ))}
         </div>
       </div>
-      {/* Statistics Section */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 py-16 lg:py-24">
-        <Parallax offset={30}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid xxs:grid-cols-2 grid-cols-1 md:grid-cols-4 gap-12">
-              {statistics.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="text-center"
-                >
-                  <stat.icon className="w-8 h-8 mx-auto mb-4 text-blue-600" />
-                  <div className="sm:text-3xl text-lg font-bold text-gray-900 mb-2">
-                    <CountUpAnimation end={stat.value} />
-                    {stat.suffix}
-                  </div>
-                  <div className="text-gray-600 sm:text-lg text-base line-clamp-2 ">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </Parallax>
+
+
+      <div className='md:pb-20 pb-10'>
+        <h1 className="xxs:text-3xl text-xl max-w-6xl relative mx-auto leading-tight font-normal text-center sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
+          روشيتة خلصتك من كل هالفوضى، بنظام يشوف عنك، يتذكّر عنك، ويرتب لك كل شيء من أول لحظة.</h1>
       </div>
 
-      {/* How It Works Section */}
-      <div className="py-16 lg:py-24">
-        <Parallax offset={30}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <motion.h2
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                className="text-3xl font-bold text-gray-900 mb-4"
-              >
-                How It Works
-              </motion.h2>
-              <p className="text-gray-600">
-                Get started with Rushita in three simple steps
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {howItWorks.map((step, index) => (
-                <motion.div
-                  key={step.title}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="relative"
-                >
-                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 relative z-10">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                      <step.icon className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                    <p className="text-gray-600">{step.description}</p>
-                  </div>
-                  {index < howItWorks.length - 1 && (
-                    <motion.div
-                      className="hidden md:block absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 text-blue-300"
-                      animate={{ x: [0, 10, 0] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      <ChevronDown className="w-8 h-8 rotate-[-90deg]" />
-                    </motion.div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </Parallax>
-      </div>
+      <div id='whyroshita' className='py-20 bg-gray-bg relative overflow-hidden'>
+        <div className='flex flex-col gap-5 max-w-xl mx-auto justify-center items-center text-center text-white'>
+          <h1 className="xxs:text-3xl text-xl  leading-tight font-normal text-center sm:text-4xl  p-4 ">
+            احصل الآن على نسختك وتمتع بخصم مدى الحياة !
+          </h1>
 
-      {/* Testimonials Section */}
-      <div className="bg-gray-50 py-16 lg:py-24">
-        <Parallax offset={30}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <motion.h2
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                className="text-3xl font-bold text-gray-900 mb-4"
-              >
-                What Our Users Say
-              </motion.h2>
-              <p className="text-gray-600">
-                Trusted by healthcare professionals worldwide
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={testimonial.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
-                >
-                  <div className="flex items-center mb-4">
-                    <Image
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      width={48}
-                      height={48}
-                      className="rounded-full"
-                    />
-                    <div className="ml-4">
-                      <div className="font-semibold">{testimonial.name}</div>
-                      <div className="text-sm text-gray-600">
-                        {testimonial.role}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 mb-4">{testimonial.content}</p>
-                  <div className="flex text-yellow-400">
-                    {Array.from({ length: testimonial.rating }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </Parallax>
-      </div>
-
-      {/* FAQ Section */}
-      <div className="py-16 lg:py-24 bg-gray-50">
-        <Parallax offset={30}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <motion.h2
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                className="text-3xl font-bold text-gray-900 mb-4"
-              >
-                Frequently Asked Questions
-              </motion.h2>
-              <p className="text-gray-600">
-                Find answers to common questions about Rushita
-              </p>
-            </div>
-            <div className="max-w-3xl mx-auto space-y-6">
-              {faqs.map((faq, index) => (
-                <motion.div
-                  key={faq.question}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
-                >
-                  <div className="flex items-start">
-                    <CheckCircle className="w-6 h-6 text-blue-600 mt-1 mr-4 flex-shrink-0" />
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3 text-gray-700 hover:text-blue-600 transition-colors duration-300">
-                        {faq.question}
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        {faq.answer}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </Parallax>
-      </div>
-
-      {/* CTA Section with Parallax Background */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16 lg:py-24 relative overflow-hidden">
-        <motion.div style={{ y }} className="absolute inset-0 opacity-10">
-          <motion.div
-            style={{
-              backgroundImage: "url('/images/pattern.png')",
-              y: useTransform(scrollYProgress, [0, 1], ['0%', '-50%']),
-            }}
-            className="absolute inset-0 bg-repeat"
-          />
-        </motion.div>
-
-        <Parallax offset={40} className="relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <motion.h2
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl font-bold mb-6"
-            >
-              Ready to Transform Your Clinic?
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto"
-            >
-              Join thousands of healthcare providers who have already enhanced
-              their practice with our platform.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Link
-                href="/auth/login"
-                className="inline-flex items-center gap-2 px-8 py-3 bg-white text-blue-600 rounded-xl text-lg font-medium hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md"
-              >
-                <LogIn className="w-5 h-5" />
-                Start Now
+          <div className='flex flex-col gap-3'>
+            <div>
+              <Link href="/auth/login">
+                <Button variant="lineargradian" size="lg">
+                  إبدأ تجربة مجانية الآن
+                  <MoveLeft className="  scale-125" />
+                </Button>
               </Link>
-            </motion.div>
-          </div>
-        </Parallax>
-      </div>
-
-      {/* Footer */}
-      <footer className="bg-gray-50 py-12 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-gray-600">
-            <p>
-              &copy; {new Date().getFullYear()} Rushita. All rights reserved.
-            </p>
+            </div>
+            <p>كن من ضمن الفئة الأولى واحصل على خصم 50% مدى الحياة</p>
           </div>
         </div>
-      </footer>
+        <div className='rounded-full absolute -bottom-10 bg-secend w-24 h-24  -left-10'></div>
+      </div>
+
+      <div className='pt-7'>
+        <h1 className="xxs:text-3xl text-xl max-w-3xl   mx-auto leading-tight font-normal text-center sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
+          لماذا روشيتة؟!
+        </h1>
+        <div className='md:mt-10 mt-5 max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto md:min-h-[60vh] '>
+          <div className='grid  sm:grid-cols-2 grid-cols-1 gap-5 w-full h-full'>
+            <div className='flex items-center'>
+              <div className=''>
+                <div className='text-black flex
+                      flex-col gap-5 sm:max-w-sm sm:text-right text-center'>
+                  <div >
+
+                    <h1 className=" inline-block text-xl max-w-6xl relative mx-auto leading-tight font-normal text-center lg:text-4xl md:text-2xl sm:text-xl   ">
+                      مش مجرد نظام طبي…
+                    </h1>
+                  </div>
+
+                  <div>
+                    <h1 className=" inline-block text-xl max-w-6xl relative mx-auto leading-tight font-normal text-center lg:text-4xl md:text-2xl sm:text-xl   ">
+                      إحنا  فاهمين ألم العيادة.
+                    </h1>
+                  </div>
+                  <p className='text-black/60  md:text-sm text-xs font-semibold'>{`"روشيتة"`} انولد من قلب عيادة.. اشتغلنا مع أطباء، سكرتارية، مرضى سمعنا كل التفاصيل، كل المآسي، وكل آه صغيرة من ضغط يوم العيادة.</p>
+                  <p className='text-secend md:text-sm text-xs font-semibold'>ورجعنا صممنا النظام مش عشان يكون {`"جميل"`}وبس! ، لكن عشان يكون مفيد – سريع – واقعي – ذكي.</p>
+                </div>
+                <div className='flex  max-w-2xl   sm:justify-end justify-center mt-10'>
+                  <div className='xxs:w-3/5 w-full justify-between flex '>
+                    <NumberDiv number='1947' text='موظف' />
+                    <NumberDiv number='+60' text='عيادة' />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='relative rounded-4xl w-full sm:h-full h-[50vh] bg-center bg-cover ' style={{ backgroundImage: "url('/images/bg1.jpg')", backgroundPosition: "40% 20%" }}>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id='projects' className='relative bg-gradient-to-t to-transparent from-gray-50 overflow-hidden'>
+        <CicyleBg className='bottom-10 right-0' />
+        <div className='md:mt-10 mt-5 max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto sm:min-h-[60vh] '>
+          <div className='flex md:flex-nowrap flex-col-reverse md:flex-row flex-wrap justify-between w-full h-full'>
+            <div className='md:w-1/2 w-full'>
+              <div className='relative rounded-4xl lg:w-4/5 w-full md:h-full h-[50vh] bg-center bg-contain bg-no-repeat ' style={{ backgroundImage: "url('/images/image349.png')" }}>
+                <div className=' rounded-4xl xxs:block hidden w-[218px]  absolute sm:bottom-16 bottom-10 left-0  sm:left-10 md:-left-10 lg:-left-20 h-[100px] bg-center bg-cover bg-no-repeat ' style={{ backgroundImage: "url('/images/image350.png')" }}>
+                </div>
+              </div>
+            </div>
+            <div className='flex items-center md:w-[45%] w-full'>
+              <div className=''>
+                <div className='text-black flex
+                      flex-col gap-5  sm:text-right text-center'>
+                  <div className='text-right'>
+                    <h1 className="xxs:text-3xl text-right text-xl max-w-3xl   mx-auto leading-tight font-normal  sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
+                      ماذا نقدم؟
+                    </h1>
+                    <h1 className=" inline-block text-xl max-w-6xl relative mx-auto leading-tight font-normal text-right lg:text-3xl md:text-2xl sm:text-xl   ">
+                      كل شي تحتاجه… من أول {`"أهلا دكتور"`}
+
+                    </h1>
+                  </div>
+
+                  <div className='text-right'>
+                    <h1 className=" inline-block text-xl max-w-6xl relative mx-auto leading-tight font-normal text-right lg:text-3xl md:text-2xl sm:text-xl   ">
+                      لآخر   {`" الله يعطيك العافية"`}
+                    </h1>
+                  </div>
+                  <div>
+                    <ul className='flex-col flex gap-3 text-black/80 sm:text-sm text-xs'>
+                      {whatswepost.map((item, index) => (
+                        <li key={index} className='flex gap-2 '> <div className='min-h-2.5 mt-2 min-w-2.5 max-h-2.5 max-w-2.5   bg-secend rotate-45'></div> {item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div className='md:mt-32 mt-10 max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto sm:min-h-[60vh] '>
+          <div className='flex md:flex-nowrap flex-col-reverse md:flex-row flex-wrap justify-between w-full h-full'>
+            <div className='md:w-1/2 w-full'>
+
+              <div className='max-w-[540px] flex flex-col gap-5'>
+                <div className='lg:text-5xl md:text-4xl sm:text-3xl xxs:text-2xl text-xl font-normal md:leading-16'>
+                  <h1 className=''>
+                    <span>مش بس نظام…</span>
+                    <span className='mr-1 font-black'>روشيتة </span>
+                    <span>
+                      بيشتغل كأنه فريق كامل
+                    </span>
+                  </h1>
+                  <h1>
+                  </h1>
+                </div>
+
+                <p className='text-black/90 md:text-lg text-sm'>من لحظة دخول المريض، لجدولة الموعد، للتشخيص، للوصفة، للمتابعة.. كل قسم في العيادة يتواصل تلقائيًا مع الثاني.</p>
+                <ul className='flex-col flex gap-3 text-black/80 md:text-sm text-xs'>
+                  {roshtasystem.map((item, index) => (
+                    <li key={index} className='flex gap-2 '> <div className='min-h-2.5 mt-1 min-w-2.5 max-h-2.5 max-w-2.5   bg-secend rotate-45'></div> {item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className='flex justify-center items-center md:w-[45%] w-full'>
+              <div className=''>
+                <ChartPie />
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+      <div className='bg-gray-100 pt-10 mt-10' id='contact'>
+        <h1 className="xxs:text-3xl text-xl max-w-3xl   mx-auto leading-tight font-normal text-center sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
+          نظامك متكامل، ذكي، وما بيضيّع وقت.
+        </h1>
+
+        <p className='text-black/70 max-w-5xl mx-auto sm:text-lg xxs:text-base text-sm  text-center leading-8 w-[98%]'>
+          روشيتة وُلدت من قلب العيادات، بعد سنوات من الاستماع للأطباء، الموظفين، والمرضى. مش بس برنامج… بل شريك رقمي حقيقي، صُمم ليحل التحديات اليومية ويُعيد ترتيب يوم العمل الطبي
+        </p>
+        <SubscriptionSection />
+      </div>
     </div>
+
   );
 }

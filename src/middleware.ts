@@ -10,6 +10,8 @@ const publicPaths = [
 ];
 
 export function middleware(request: NextRequest) {
+  return NextResponse.next();
+
   const { pathname } = request.nextUrl;
 
   // Check if the path is public

@@ -1,7 +1,6 @@
 'use client';
 
 import './globals.css';
-import { IBM_Plex_Sans_Arabic } from 'next/font/google';
 import Sidebar from '@/components/Sidebar';
 import QuickMenu from '@/components/QuickMenu';
 import QuickActions from '@/components/QuickActions';
@@ -11,13 +10,6 @@ import Header from '@/components/Header';
 import { Providers } from '@/providers/Providers';
 import { Suspense } from 'react';
 
-const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['arabic', 'latin'],
-  display: 'swap',
-  variable: '--font-ibm-plex',
-  preload: true,
-});
 
 export default function RootLayout({
   children,
@@ -29,7 +21,7 @@ export default function RootLayout({
   const isAuthPage = pathname?.startsWith('/auth');
 
   return (
-    <html lang="en" dir="ltr" className={`${ibmPlexSansArabic.variable}`}>
+    <html lang="ar" dir="rtl" className={`  scroll-smooth`}>
       <body className="font-ibm-plex">
         <Providers>
           <Suspense fallback={<div>Loading...</div>}>

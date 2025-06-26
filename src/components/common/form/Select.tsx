@@ -2,7 +2,6 @@
 
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 interface Option {
   value: string;
