@@ -26,18 +26,17 @@ const HeroSection = () => {
                                 من أول موعد... لذكر متابعة – كل شيء في مكانه.
                             </span>
                         </p>
-                        <div className="flex flex-col xxs:flex-row items-center justify-center sm:gap-4 gap-2">
+                        <div className="flex flex-col xxs:flex-row ltr:flex-wrap-reverse items-center justify-center sm:gap-4 gap-2">
                             <Link href="/auth/login" className="xxs:w-fit w-full">
-
                                 <Button size="lg" variant="outline" className=" xxs:w-fit w-full">
                                     سجل دخولك
                                 </Button>
                             </Link>
                             <Link href="/auth/login" className="xxs:w-fit w-full">
 
-                                <Button size="lg" className="items-center flex xxs:w-fit w-full  " variant="lineargradian">
+                                <Button size="lg" className="items-center  flex xxs:w-fit w-full  " variant="lineargradian">
                                     إبدأ تجربة مجانية الآن
-                                    <MoveLeft className="  scale-125" />
+                                    <MoveLeft className="  scale-125 " />
 
                                 </Button>
                             </Link>

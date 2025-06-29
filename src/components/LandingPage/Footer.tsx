@@ -14,7 +14,7 @@ function Footer() {
     return (
         <footer className=" mt-5 text-black ">
             <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-                <div className="flex  md:flex-row flex-col sm:justify-between justify-center">
+                <div className="flex  md:ltr:flex-row-reverse md:flex-row flex-col sm:justify-between justify-center">
                     {/* معلومات الشركة */}
                     <div className="flex justify-center items-center  text-right">
                         <div className='flex justify-center items-center'>

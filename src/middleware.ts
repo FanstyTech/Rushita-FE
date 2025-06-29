@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Add paths that don't require authentication
 const publicPaths = [
   '/', // Landing page
   '/auth/login',

@@ -56,7 +56,7 @@ export default function Home() {
               <div className='w-full flex justify-center items-center'>
                 <div className='relative '
                 >
-               
+
                   <Image
                     src={`/images/${item.image}`} fill className='!w-fit !relative object-cover bg-center' alt='' />
                   <div className='bg-white/50  backdrop-blur p-2 py-3 text-center absolute  bottom-0 left-0'>
@@ -86,7 +86,7 @@ export default function Home() {
               <Link href="/auth/login">
                 <Button variant="lineargradian" size="lg">
                   إبدأ تجربة مجانية الآن
-                  <MoveLeft className="  scale-125" />
+                  <MoveLeft className="  scale-125 ltr:rotate-180" />
                 </Button>
               </Link>
             </div>
@@ -95,17 +95,16 @@ export default function Home() {
         </div>
         <div className='rounded-full absolute -bottom-10 bg-secend w-24 h-24  -left-10'></div>
       </div>
-
       <div className='pt-7'>
         <h1 className="xxs:text-3xl text-xl max-w-3xl   mx-auto leading-tight font-normal text-center sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
           لماذا روشيتة؟!
         </h1>
         <div className='md:mt-10 mt-5 max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto md:min-h-[60vh] '>
           <div className='grid  sm:grid-cols-2 grid-cols-1 gap-5 w-full h-full'>
-            <div className='flex items-center'>
+            <div className='flex items-center ltr:ml-auto'>
               <div className=''>
                 <div className='text-black flex
-                      flex-col gap-5 sm:max-w-sm sm:text-right text-center'>
+                      flex-col gap-5 sm:max-w-sm sm:ltr:max-w-lg  sm:text-right text-center'>
                   <div >
 
                     <h1 className=" inline-block text-xl max-w-6xl relative mx-auto leading-tight font-normal text-center lg:text-4xl md:text-2xl sm:text-xl   ">
@@ -121,7 +120,7 @@ export default function Home() {
                   <p className='text-black/60  md:text-sm text-xs font-semibold'>{`"روشيتة"`} انولد من قلب عيادة.. اشتغلنا مع أطباء، سكرتارية، مرضى سمعنا كل التفاصيل، كل المآسي، وكل آه صغيرة من ضغط يوم العيادة.</p>
                   <p className='text-secend md:text-sm text-xs font-semibold'>ورجعنا صممنا النظام مش عشان يكون {`"جميل"`}وبس! ، لكن عشان يكون مفيد – سريع – واقعي – ذكي.</p>
                 </div>
-                <div className='flex  max-w-2xl   sm:justify-end justify-center mt-10'>
+                <div className='flex  max-w-2xl   sm:justify-end sm:ltr:justify-start justify-center mt-10'>
                   <div className='xxs:w-3/5 w-full justify-between flex '>
                     <NumberDiv number='1947' text='موظف' />
                     <NumberDiv number='+60' text='عيادة' />
@@ -141,33 +140,33 @@ export default function Home() {
           <div className='flex md:flex-nowrap flex-col-reverse md:flex-row flex-wrap justify-between w-full h-full'>
             <div className='md:w-1/2 w-full'>
               <div className='relative rounded-4xl lg:w-4/5 w-full md:h-full h-[50vh] bg-center bg-contain bg-no-repeat ' style={{ backgroundImage: "url('/images/image349.png')" }}>
-                <div className=' rounded-4xl xxs:block hidden w-[218px]  absolute sm:bottom-16 bottom-10 left-0  sm:left-10 md:-left-10 lg:-left-20 h-[100px] bg-center bg-cover bg-no-repeat ' style={{ backgroundImage: "url('/images/image350.png')" }}>
+                <div className=' rounded-4xl xxs:block hidden w-[218px]  absolute sm:bottom-16 bottom-10 ltr:right-0 left-0  sm:left-10  lg:ltr:left-0 md:-left-10   lg:-left-20  h-[100px] bg-center bg-cover bg-no-repeat ' style={{ backgroundImage: "url('/images/image350.png')" }}>
                 </div>
               </div>
             </div>
             <div className='flex items-center md:w-[45%] w-full'>
               <div className=''>
                 <div className='text-black flex
-                      flex-col gap-5  sm:text-right text-center'>
-                  <div className='text-right'>
-                    <h1 className="xxs:text-3xl text-right text-xl max-w-3xl   mx-auto leading-tight font-normal  sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
+                      flex-col gap-5  ltr:sm:text-right sm:text-left text-center'>
+                  <div className='ltr:text-left text-right'>
+                    <h1 className="xxs:text-3xl  text-xl max-w-3xl   mx-auto leading-tight font-normal  sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
                       ماذا نقدم؟
                     </h1>
-                    <h1 className=" inline-block text-xl max-w-6xl relative mx-auto leading-tight font-normal text-right lg:text-3xl md:text-2xl sm:text-xl   ">
+                    <h1 className=" inline-block text-xl max-w-6xl relative mx-auto leading-tight font-normal  lg:text-3xl md:text-2xl sm:text-xl   ">
                       كل شي تحتاجه… من أول {`"أهلا دكتور"`}
 
                     </h1>
                   </div>
 
-                  <div className='text-right'>
-                    <h1 className=" inline-block text-xl max-w-6xl relative mx-auto leading-tight font-normal text-right lg:text-3xl md:text-2xl sm:text-xl   ">
+                  <div className='ltr:text-left text-right'>
+                    <h1 className=" inline-block text-xl max-w-6xl relative mx-auto leading-tight font-normal  lg:text-3xl md:text-2xl sm:text-xl   ">
                       لآخر   {`" الله يعطيك العافية"`}
                     </h1>
                   </div>
                   <div>
                     <ul className='flex-col flex gap-3 text-black/80 sm:text-sm text-xs'>
                       {whatswepost.map((item, index) => (
-                        <li key={index} className='flex gap-2 '> <div className='min-h-2.5 mt-2 min-w-2.5 max-h-2.5 max-w-2.5   bg-secend rotate-45'></div> {item}</li>
+                        <li key={index} className='flex gap-2 '> <div className='min-h-2.5 mt-2 ltr:mt-1 min-w-2.5 max-h-2.5 max-w-2.5   bg-secend rotate-45'></div> {item}</li>
                       ))}
                     </ul>
                   </div>
@@ -181,9 +180,8 @@ export default function Home() {
 
       <div>
         <div className='md:mt-32 mt-10 max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto sm:min-h-[60vh] '>
-          <div className='flex md:flex-nowrap flex-col-reverse md:flex-row flex-wrap justify-between w-full h-full'>
+          <div className='flex md:flex-nowrap flex-col-reverse md:flex-row  flex-wrap justify-between w-full h-full'>
             <div className='md:w-1/2 w-full'>
-
               <div className='max-w-[540px] flex flex-col gap-5'>
                 <div className='lg:text-5xl md:text-4xl sm:text-3xl xxs:text-2xl text-xl font-normal md:leading-16'>
                   <h1 className=''>
@@ -205,12 +203,11 @@ export default function Home() {
                 </ul>
               </div>
             </div>
-            <div className='flex justify-center items-center md:w-[45%] w-full'>
+            <div className='flex justify-center  items-center md:w-[45%] w-full'>
               <div className=''>
                 <ChartPie />
               </div>
             </div>
-
 
           </div>
         </div>

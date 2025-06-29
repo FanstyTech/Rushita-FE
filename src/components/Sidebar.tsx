@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import { FiSearch } from 'react-icons/fi';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { filterNavItemsByPermission } from '@/utils/permissions';
@@ -48,7 +48,7 @@ export function NavigationItem({
         >
           <div
             className={classNames(
-              'flex items-center',
+              'flex items-center gap-2',
               isCollapsed ? 'justify-center' : ''
             )}
           >
@@ -95,7 +95,7 @@ export function NavigationItem({
     <Link
       href={item.href || '#'}
       className={classNames(
-        'group flex items-center px-3 py-2 rounded-lg transition-all duration-200',
+        'group flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200',
         isActive
           ? 'bg-indigo-100 text-indigo-700 font-semibold'
           : 'text-gray-700 hover:bg-gray-100',
@@ -254,22 +254,21 @@ export default function Sidebar() {
       <aside
         className={classNames(
           'flex flex-col',
-          'fixed top-0 left-0 z-40 h-screen transition-all duration-300',
+          'fixed top-0 ltr:left-0 right-0 z-40 h-screen transition-all duration-300',
           'bg-white border-r border-gray-200',
           isCollapsed ? 'w-20' : 'w-72'
         )}
       >
         {/* Toggle Button */}
-        <button
-          onClick={toggleCollapse}
-          className="absolute -right-3 top-9 bg-white border border-gray-200 rounded-full p-1.5 hover:bg-gray-50"
-        >
-          {isCollapsed ? (
-            <ChevronRightIcon className="w-4 h-4" />
-          ) : (
-            <ChevronLeftIcon className="w-4 h-4" />
-          )}
-        </button>
+        <div className='flex justify-end  mb-3'>
+          <button
+            onClick={toggleCollapse}
+            className="absolute  ltr:-right-3 rtl:-left-3  top-9 bg-white border border-gray-200 rounded-full p-1.5 hover:bg-gray-50"
+          >
+            <ChevronRightIcon className={`w-4 duration-300 h-4 ${isCollapsed ? 'rotate-180 ltr:rotate-0' : 'rotate-0 ltr:rotate-180'}`} />
+
+          </button>
+        </div>
 
         {/* Logo */}
         <div
@@ -290,7 +289,7 @@ export default function Sidebar() {
               type="text"
               placeholder={isCollapsed ? '' : 'Search...'}
               className={classNames(
-                'w-full pr-4 py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-200 text-sm',
+                'w-full p-4 py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-200 text-sm',
                 isCollapsed ? 'pl-3' : 'pl-10'
               )}
             />
