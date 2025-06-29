@@ -259,7 +259,7 @@ export interface FamilyHistoryDto {
   id: string;
   condition: string;
   relationship: Relationship;
-  ageOfOnset?: Number;
+  ageOfOnset?: number;
   status: FamilyHistoryStatus;
   notes: string;
   patientId: string;

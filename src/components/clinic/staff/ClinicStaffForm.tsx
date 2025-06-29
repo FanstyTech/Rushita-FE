@@ -1,4 +1,4 @@
-import { useForm, SubmitHandler, useFormContext } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Button from '@/components/common/Button';
@@ -9,7 +9,7 @@ import {
   StaffType,
 } from '@/lib/api/types/clinic-staff';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 const schema = z.object({
   id: z.string().optional(),
@@ -44,20 +44,22 @@ export default function ClinicStaffForm({
 }: ClinicStaffFormProps) {
   const { useSpecialtiesDropdown } = useSpecialty();
   const { data: specialties } = useSpecialtiesDropdown();
-
-  const defaultValues = {
-    id: '',
-    fNameL: '',
-    lNameL: '',
-    fNameF: '',
-    lNameF: '',
-    email: '',
-    password: '',
-    joinDate: new Date().toISOString().split('T')[0],
-    staffType: undefined,
-    specialtyId: undefined,
-    clinicId: clinicId,
-  };
+  const defaultValues = useMemo(
+    () => ({
+      id: '',
+      fNameL: '',
+      lNameL: '',
+      fNameF: '',
+      lNameF: '',
+      email: '',
+      password: '',
+      joinDate: new Date().toISOString().split('T')[0],
+      staffType: undefined,
+      specialtyId: undefined,
+      clinicId: clinicId,
+    }),
+    [clinicId]
+  );
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -94,7 +96,7 @@ export default function ClinicStaffForm({
         reset(defaultValues);
       }
     }
-  }, [initialData, clinicId, isOpen, reset]);
+  }, [initialData, clinicId, isOpen, reset, defaultValues]);
 
   const onSubmitHandler: SubmitHandler<FormData> = async (data) => {
     const submitData = {
@@ -182,7 +184,7 @@ export default function ClinicStaffForm({
               {...register('staffType', { valueAsNumber: true })}
               error={errors.staffType?.message}
               options={Object.entries(StaffType)
-                .filter(([key, value]) => typeof value === 'number')
+                .filter(([value]) => typeof value === 'number')
                 .map(([key, value]) => ({
                   label: key,
                   value: value.toString(),

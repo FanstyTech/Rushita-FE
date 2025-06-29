@@ -61,24 +61,11 @@ export function useClinicStaffLeaves() {
       queryClient.invalidateQueries({ queryKey: ['clinic-staff-leaves'] });
       toast.success('Leave request saved successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to save leave request');
+    onError: () => {
+      toast.error('Failed to save leave request');
     },
     retry: false,
   });
-  const useClinicStaffForEdit = (id: string) =>
-    useQuery({
-      retry: false,
-      queryKey: ['clinic-staff', 'edit', id],
-      queryFn: async () => {
-        const response = await clinicStaffLeaveService.getForEdit(id);
-        if (!response.success) {
-          throw new Error(response.message);
-        }
-        return response.result;
-      },
-      enabled: !!id,
-    });
   const deleteLeave = useMutation({
     mutationFn: async (id: string) => {
       const response = await clinicStaffLeaveService.delete(id);
@@ -91,8 +78,8 @@ export function useClinicStaffLeaves() {
       queryClient.invalidateQueries({ queryKey: ['clinic-staff-leaves'] });
       toast.success('Leave request deleted successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to delete leave request');
+    onError: () => {
+      toast.error('Failed to delete leave request');
     },
   });
 
@@ -111,8 +98,8 @@ export function useClinicStaffLeaves() {
       queryClient.invalidateQueries({ queryKey: ['clinic-staff-leaves'] });
       toast.success('Leave status updated successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to update leave status');
+    onError: () => {
+      toast.error('Failed to update leave status');
     },
   });
 

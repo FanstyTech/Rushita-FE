@@ -50,8 +50,8 @@ export function useAppointments() {
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
       toast.success('Appointment saved successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to save appointment');
+    onError: () => {
+      toast.error('Failed to save appointment');
     },
     retry: false,
   });
@@ -68,8 +68,8 @@ export function useAppointments() {
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
       toast.success('Appointment deleted successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to delete appointment');
+    onError: () => {
+      toast.error('Failed to delete appointment');
     },
     retry: false,
   });
@@ -86,8 +86,8 @@ export function useAppointments() {
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
       toast.success('Appointment status updated successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to update appointment status');
+    onError: () => {
+      toast.error('Failed to update appointment status');
     },
   });
 

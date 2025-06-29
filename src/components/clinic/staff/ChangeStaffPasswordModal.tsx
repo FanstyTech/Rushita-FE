@@ -22,12 +22,7 @@ export default function ChangeStaffPasswordModal({
   onSubmit,
   isLoading,
 }: ChangeStaffPasswordModalProps) {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormInputs>();
+  const { register, handleSubmit, reset } = useForm<FormInputs>();
 
   const handleFormSubmit: SubmitHandler<FormInputs> = async (data) => {
     await onSubmit({ id: staffId, password: data.newPassword });

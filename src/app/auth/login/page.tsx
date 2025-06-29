@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input } from '@/components/common/form';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2, Stethoscope } from 'lucide-react';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import Cookies from 'js-cookie';

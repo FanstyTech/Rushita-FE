@@ -81,8 +81,8 @@ export function useClinicPatients() {
       queryClient.invalidateQueries({ queryKey: ['clinic-patients'] });
       toast.success('Patient saved successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to save patient');
+    onError: () => {
+      toast.error('Failed to save patient');
     },
     retry: false,
   });
@@ -102,8 +102,8 @@ export function useClinicPatients() {
       });
       toast.success('Condition saved successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to save condition');
+    onError: () => {
+      toast.error('Failed to save condition');
     },
     retry: false,
   });
@@ -123,8 +123,8 @@ export function useClinicPatients() {
       });
       toast.success('Allergy saved successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to save allergy');
+    onError: () => {
+      toast.error('Failed to save allergy');
     },
     retry: false,
   });
@@ -146,8 +146,8 @@ export function useClinicPatients() {
       });
       toast.success('Family history saved successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to save family history');
+    onError: () => {
+      toast.error('Failed to save family history');
     },
     retry: false,
   });
@@ -164,8 +164,8 @@ export function useClinicPatients() {
       queryClient.invalidateQueries({ queryKey: ['clinic-patients'] });
       toast.success('Patient deleted successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to delete patient');
+    onError: () => {
+      toast.error('Failed to delete patient');
     },
     retry: false,
   });
@@ -188,8 +188,8 @@ export function useClinicPatients() {
       queryClient.invalidateQueries({ queryKey: ['clinic-patients'] });
       toast.success('Patient status updated successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to update patient status');
+    onError: () => {
+      toast.error('Failed to update patient status');
     },
   });
 

@@ -213,7 +213,7 @@ export default function ClinicPatientsPage() {
         />
 
         {/* Table */}
-        <Table<any>
+        <Table<ClinicPatientListDto>
           data={patientsList?.items || []}
           columns={columns}
           isLoading={patientsLoading}

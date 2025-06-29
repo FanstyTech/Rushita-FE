@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
@@ -135,11 +135,7 @@ export function NavigationSection({
     [items, user?.permissions]
   );
 
-  // Don't render section if no authorized items
-  if (authorizedItems.length === 0) {
-    return null;
-  }
-
+  // Define findActiveParent with useCallback before any conditional returns
   const findActiveParent = useCallback(
     (navItems: NavItem[]) => {
       const activeParents: string[] = [];
@@ -168,16 +164,24 @@ export function NavigationSection({
     [pathname]
   );
 
+  // Use useEffect before any conditional returns
   useEffect(() => {
-    const activeParents = findActiveParent(authorizedItems);
-    setExpandedItems(activeParents);
-  }, [pathname, findActiveParent, authorizedItems]);
+    if (authorizedItems.length > 0) {
+      const activeParents = findActiveParent(authorizedItems);
+      setExpandedItems(activeParents);
+    }
+  }, [authorizedItems, findActiveParent]);
 
-  const toggleExpand = useCallback((id: string) => {
+  const toggleExpand = (id: string) => {
     setExpandedItems((prev) =>
       prev.includes(id) ? prev.filter((name) => name !== id) : [...prev, id]
     );
-  }, []);
+  };
+
+  // Don't render section if no authorized items - moved after all hooks
+  if (authorizedItems.length === 0) {
+    return null;
+  }
 
   return (
     <div className="space-y-1">
@@ -199,13 +203,8 @@ export function NavigationSection({
   );
 }
 
-const hasAdminRole = (userRoles: string[] = []): boolean => {
-  return userRoles.some((role) => ['SystemAdmin', 'SuperAdmin'].includes(role));
-};
-
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
 
@@ -213,32 +212,28 @@ export default function Sidebar() {
     setMounted(true);
   }, []);
 
-  const toggleExpand = useCallback((id: string) => {
-    setExpandedItems((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
-  }, []);
-
   const filteredNavItems = useMemo(() => {
-    if (!mounted || !user?.permissions) return [];
-
+    // Remove conditional check inside useMemo
     const sections = [];
 
-    // Add admin section for SuperAdmin role
-    sections.push({
-      title: 'Admin',
-      items: filterNavItemsByPermission(adminNav, user.permissions),
-    });
-    // Add clinic section for ClinicStaff role
-    sections.push({
-      title: 'Clinic',
-      items: filterNavItemsByPermission(clinicNav, user.permissions),
-    });
-    // Add doctor section for Doctor role
-    sections.push({
-      title: 'Doctor',
-      items: filterNavItemsByPermission(doctorNav, user.permissions),
-    });
+    // Only add sections if we have the necessary data
+    if (mounted && user?.permissions) {
+      // Add admin section for SuperAdmin role
+      sections.push({
+        title: 'Admin',
+        items: filterNavItemsByPermission(adminNav, user.permissions),
+      });
+      // Add clinic section for ClinicStaff role
+      sections.push({
+        title: 'Clinic',
+        items: filterNavItemsByPermission(clinicNav, user.permissions),
+      });
+      // Add doctor section for Doctor role
+      sections.push({
+        title: 'Doctor',
+        items: filterNavItemsByPermission(doctorNav, user.permissions),
+      });
+    }
     return sections;
   }, [mounted, user?.permissions]);
 
@@ -248,6 +243,7 @@ export default function Sidebar() {
 
   const sections = filteredNavItems;
 
+  // Conditional rendering moved after all hooks
   if (!mounted || sections.length === 0) {
     return null;
   }

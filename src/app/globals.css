@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -48,11 +48,11 @@
   --breakpoint-xxs: 350px;
   --breakpoint-xsm: 400px;
   --spacing-7xl: 1400px;
-  --color-primary: #3A3AFF;
-  --color-gray-color:#323232;
-  --color-gray-bg:#3A3C40;
-  --color-check-color:#29C5F6;
-  --color-secend: #9612FC;
+  --color-primary: #3a3aff;
+  --color-gray-color: #323232;
+  --color-gray-bg: #3a3c40;
+  --color-check-color: #29c5f6;
+  --color-secend: #9612fc;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -92,7 +92,6 @@
 }
 
 @layer base {
- 
   /* Add support for Arabic numerals */
   .font-ibm-plex {
     font-variant-numeric: tabular-nums;
@@ -101,12 +100,10 @@
 
 @font-face {
   font-family: 'Expo Arabic';
-  src: url('/Fonts/ExpoArabic-Book.ttf') format('truetype');
+  src: url('/fonts/ExpoArabic-Book.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
-
-
 
 body {
   font-family: 'Expo Arabic', sans-serif;

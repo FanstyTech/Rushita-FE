@@ -6,7 +6,6 @@ import { useClinicStaff } from '@/lib/api/hooks/useClinicStaff';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import {
   CreateUpdateClinicStaffDto,
-  ClinicStaffStatus,
   ClinicStaffListDto,
 } from '@/lib/api/types/clinic-staff';
 import PageLayout from '@/components/layouts/PageLayout';

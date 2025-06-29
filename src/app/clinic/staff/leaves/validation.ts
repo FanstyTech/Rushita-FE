@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { LeaveType } from '@/lib/api/types/clinic-staff-leave';
 
 export const leaveSchema = z
   .object({

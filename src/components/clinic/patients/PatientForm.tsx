@@ -160,12 +160,8 @@ export default function PatientForm({
           <TabPanel className="bg-white rounded-lg p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <PhoneInput
-                phoneCodeError={errors.countryCodeId?.message}
-                phoneNumberError={errors.phoneNumber?.message}
-                phoneCodeOptions={(phoneCodes || []).map((code) => ({
-                  value: code.value,
-                  label: code.label || code.value,
-                }))}
+                label="Mobile"
+                phoneCodeOptions={phoneCodes || []}
                 selectedPhoneCode={selectedPhoneCode}
                 onPhoneCodeChange={(value) => {
                   setSelectedPhoneCode(value);
@@ -174,9 +170,8 @@ export default function PatientForm({
                   };
                   register('countryCodeId').onChange(event);
                 }}
-                register={register}
-                phoneCodeName="countryCodeId"
-                phoneNumberName="phoneNumber"
+                phoneCodeName="phoneCode"
+                {...register('phoneNumber')}
               />
               <Input
                 label="Email"
@@ -238,9 +233,9 @@ export default function PatientForm({
                 {...register('bloodType', { valueAsNumber: true })}
                 options={Object.entries(BloodType)
                   .filter(([key]) => isNaN(Number(key)))
-                  .map(([key, value]) => ({
+                  .map(([value]) => ({
                     value: value.toString(),
-                    label: bloodTypeDisplayNames[value as BloodType],
+                    label: bloodTypeDisplayNames[value as unknown as BloodType],
                   }))}
               />
               <Input

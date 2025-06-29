@@ -272,8 +272,9 @@ export default function ClinicsPage() {
                               {({ active }) => (
                                 <button
                                   onClick={() => handleStatusChange(clinic)}
-                                  className={`${active ? 'bg-gray-50' : ''
-                                    } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
+                                  className={`${
+                                    active ? 'bg-gray-50' : ''
+                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
                                 >
                                   <Star className="w-4 h-4" />
                                   Change Status
@@ -288,8 +289,9 @@ export default function ClinicsPage() {
                                       `/admin/clinics/staff/${clinic.id}`
                                     )
                                   }
-                                  className={`${active ? 'bg-gray-50' : ''
-                                    } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
+                                  className={`${
+                                    active ? 'bg-gray-50' : ''
+                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
                                 >
                                   <Users className="w-4 h-4" />
                                   Manage Staff
@@ -300,8 +302,9 @@ export default function ClinicsPage() {
                               {({ active }) => (
                                 <button
                                   onClick={() => handleEdit(clinic.id)}
-                                  className={`${active ? 'bg-gray-50' : ''
-                                    } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
+                                  className={`${
+                                    active ? 'bg-gray-50' : ''
+                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
                                 >
                                   <Edit2 className="w-4 h-4" />
                                   Edit Clinic
@@ -312,8 +315,9 @@ export default function ClinicsPage() {
                               {({ active }) => (
                                 <button
                                   onClick={() => handleDelete(clinic.id)}
-                                  className={`${active ? 'bg-gray-50' : ''
-                                    } flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600`}
+                                  className={`${
+                                    active ? 'bg-gray-50' : ''
+                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600`}
                                 >
                                   <Trash2 className="w-4 h-4" />
                                   Delete Clinic
@@ -421,15 +425,16 @@ export default function ClinicsPage() {
             </label>
             <div className="grid grid-cols-2 gap-3">
               {Object.entries(ClinicStatus)
-                .filter(([key, value]) => typeof value === 'number')
+                .filter(([value]) => typeof value === 'number')
                 .map(([key, value]) => (
                   <button
-                    key={value}
+                    key={key}
                     onClick={() => setSelectedStatus(value as ClinicStatus)}
-                    className={`relative flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-900 ${selectedStatus === value
+                    className={`relative flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-900 ${
+                      selectedStatus === value
                         ? 'ring-2 ring-primary-500 ring-offset-2 bg-primary-50'
                         : 'hover:bg-gray-50 border border-gray-200'
-                      }`}
+                    }`}
                   >
                     <div
                       className={`w-3 h-3 rounded-full ${getClinicStatusClass(

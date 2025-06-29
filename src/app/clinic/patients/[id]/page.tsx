@@ -40,7 +40,6 @@ import {
 } from '@/utils/textUtils';
 import PatientProfileSkeleton from '@/components/skeletons/PatientProfileSkeleton';
 import { useState } from 'react';
-import { MedicalConditionStatus } from '@/lib/api/types/clinic-patient';
 import {
   AddConditionModal,
   AddAllergyModal,
@@ -66,43 +65,6 @@ export default function PatientProfilePage() {
   const [isAddConditionOpen, setIsAddConditionOpen] = useState(false);
   const [isAddAllergyOpen, setIsAddAllergyOpen] = useState(false);
   const [isAddFamilyHistoryOpen, setIsAddFamilyHistoryOpen] = useState(false);
-
-  const handleAddCondition = async (data: {
-    name: string;
-    status: MedicalConditionStatus;
-  }) => {
-    try {
-      // TODO: Add API call to create condition
-      console.log('Adding condition:', data);
-    } catch (error) {
-      console.error('Error adding condition:', error);
-    }
-  };
-
-  const handleAddAllergy = async (data: {
-    name: string;
-    severity: string;
-    reaction: string;
-  }) => {
-    try {
-      // TODO: Add API call to create allergy
-      console.log('Adding allergy:', data);
-    } catch (error) {
-      console.error('Error adding allergy:', error);
-    }
-  };
-
-  const handleAddFamilyHistory = async (data: {
-    condition: string;
-    relationship: string;
-  }) => {
-    try {
-      // TODO: Add API call to create family history
-      console.log('Adding family history:', data);
-    } catch (error) {
-      console.error('Error adding family history:', error);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -374,7 +336,7 @@ export default function PatientProfilePage() {
                       {patient.medicalHistory.conditions.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {patient.medicalHistory.conditions.map(
-                            (condition, index) => (
+                            (condition) => (
                               <motion.div
                                 key={condition.id}
                                 whileHover={{ scale: 1.02 }}
@@ -478,38 +440,36 @@ export default function PatientProfilePage() {
                     <div className="space-y-3">
                       {patient.medicalHistory.allergies.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {patient.medicalHistory.allergies.map(
-                            (allergy, index) => (
-                              <motion.div
-                                key={allergy.id}
-                                whileHover={{ scale: 1.02 }}
-                                className="group bg-gray-50 hover:bg-gray-100/80 rounded-lg p-4"
-                              >
-                                <div className="space-y-3">
-                                  <div className="flex items-center justify-between">
-                                    <h4 className="font-medium text-gray-900 group-hover:text-red-600 transition-colors">
-                                      {allergy.name}
-                                    </h4>
-                                    <span
-                                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium
+                          {patient.medicalHistory.allergies.map((allergy) => (
+                            <motion.div
+                              key={allergy.id}
+                              whileHover={{ scale: 1.02 }}
+                              className="group bg-gray-50 hover:bg-gray-100/80 rounded-lg p-4"
+                            >
+                              <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                  <h4 className="font-medium text-gray-900 group-hover:text-red-600 transition-colors">
+                                    {allergy.name}
+                                  </h4>
+                                  <span
+                                    className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium
                                     ${
                                       allergy.severity &&
                                       getSeverityClass(allergy.severity)
                                     }
                                     }`}
-                                    >
-                                      <AlertCircle className="w-3 h-3" />
-                                      {allergy.severity &&
-                                        getSeverityLabel(allergy.severity)}
-                                    </span>
-                                  </div>
-                                  <p className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
-                                    {allergy.reaction}
-                                  </p>
+                                  >
+                                    <AlertCircle className="w-3 h-3" />
+                                    {allergy.severity &&
+                                      getSeverityLabel(allergy.severity)}
+                                  </span>
                                 </div>
-                              </motion.div>
-                            )
-                          )}
+                                <p className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
+                                  {allergy.reaction}
+                                </p>
+                              </div>
+                            </motion.div>
+                          ))}
                         </div>
                       ) : (
                         <div className="text-center py-8 px-4">
@@ -582,7 +542,7 @@ export default function PatientProfilePage() {
                           </thead>
                           <tbody className="bg-white divide-y divide-gray-200">
                             {patient.medicalHistory.medications.map(
-                              (medication, index) => (
+                              (medication) => (
                                 <motion.tr
                                   key={medication.id}
                                   whileHover={{ backgroundColor: '#F9FAFB' }}
@@ -678,24 +638,22 @@ export default function PatientProfilePage() {
                     <div className="space-y-3">
                       {patient.medicalHistory.familyHistory.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                          {patient.medicalHistory.familyHistory.map(
-                            (item, index) => (
-                              <motion.div
-                                key={item.id}
-                                whileHover={{ scale: 1.02 }}
-                                className="group bg-gray-50 hover:bg-gray-100/80 rounded-lg p-4"
-                              >
-                                <h4 className="font-medium text-gray-900 group-hover:text-teal-600 transition-colors">
-                                  {item.condition}
-                                </h4>
-                                <p className="text-sm text-gray-500 mt-2 flex items-center gap-1">
-                                  <User2 className="w-4 h-4" />
-                                  {item.relationship &&
-                                    getRelationshipLabel(item.relationship)}
-                                </p>
-                              </motion.div>
-                            )
-                          )}
+                          {patient.medicalHistory.familyHistory.map((item) => (
+                            <motion.div
+                              key={item.id}
+                              whileHover={{ scale: 1.02 }}
+                              className="group bg-gray-50 hover:bg-gray-100/80 rounded-lg p-4"
+                            >
+                              <h4 className="font-medium text-gray-900 group-hover:text-teal-600 transition-colors">
+                                {item.condition}
+                              </h4>
+                              <p className="text-sm text-gray-500 mt-2 flex items-center gap-1">
+                                <User2 className="w-4 h-4" />
+                                {item.relationship &&
+                                  getRelationshipLabel(item.relationship)}
+                              </p>
+                            </motion.div>
+                          ))}
                         </div>
                       ) : (
                         <div className="text-center py-8 px-4">

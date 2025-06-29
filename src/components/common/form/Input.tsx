@@ -13,7 +13,6 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   endIcon?: React.ReactNode;
   validation?: z.ZodString;
   hasBorder?: boolean;
-  hasShadow?: boolean;
   onValidation?: (isValid: boolean, error?: string) => void;
 }
 
@@ -29,7 +28,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       endIcon,
       validation,
       hasBorder = true,
-      hasShadow = true,
       onValidation,
       onChange,
       ...props

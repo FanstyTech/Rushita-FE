@@ -126,7 +126,7 @@ export default function LeaveForm({
           {...register('type', { valueAsNumber: true })}
           error={errors.type?.message}
           options={Object.entries(LeaveType)
-            .filter(([key, value]) => typeof value === 'number')
+            .filter(([value]) => typeof value === 'number')
             .map(([key, value]) => ({
               label: key,
               value: value.toString(),

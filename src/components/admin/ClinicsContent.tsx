@@ -22,7 +22,7 @@ import { useClinic } from '@/lib/api/hooks/useClinic';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { useCity } from '@/lib/api/hooks/useCity';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
-import { getStatusLabel } from '@/utils';
+import { getClinicStatusLabel } from '@/utils';
 import Avatar from '@/components/common/Avatar';
 import PageLayout from '@/components/layouts/PageLayout';
 import ClinicCardSkeleton from '@/components/skeletons/ClinicCardSkeleton';
@@ -202,7 +202,9 @@ export default function ClinicsContent() {
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        {getStatusLabel(clinic.status || ClinicStatus.Active)}
+                        {getClinicStatusLabel(
+                          clinic.status || ClinicStatus.Active
+                        )}
                       </span>
                       <div className="flex items-center gap-1 text-yellow-500">
                         <Star className="w-4 h-4 fill-current" />

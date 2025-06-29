@@ -7,10 +7,13 @@ const publicPaths = [
   '/auth/login',
   '/auth/register',
   '/auth/forgot-password',
+  '/images', // Public images
+  '/fonts', // Public fonts
+  '/favicon.ico', // Favicon
 ];
 
 export function middleware(request: NextRequest) {
-  return NextResponse.next();
+  // return NextResponse.next();
 
   const { pathname } = request.nextUrl;
 
@@ -54,6 +57,7 @@ export const config = {
      * 4. /_vercel (Vercel internals)
      * 5. all root files inside /public (e.g. /favicon.ico)
      */
+
     '/((?!api|_next|_static|_vercel|[\\w-]+\\.\\w+).*)',
   ],
 };
