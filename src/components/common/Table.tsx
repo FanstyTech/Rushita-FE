@@ -47,7 +47,7 @@ export function Table<T>({
               }`}
             >
               <div className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-full max-w-[150px]" />
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full max-w-[150px]" />
               </div>
             </td>
           ))}
@@ -65,7 +65,7 @@ export function Table<T>({
         ${
           isCurrentPage
             ? 'bg-indigo-600 text-white'
-            : 'text-gray-700 hover:bg-gray-100'
+            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
         }
       `}
     >
@@ -74,30 +74,30 @@ export function Table<T>({
   );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
       <div className="overflow-x-auto relative">
         {data.length === 0 && !isLoading && (
-          <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] flex justify-center items-center z-10">
-            <div className="  px-8 py-4">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
+          <div className="absolute inset-0 bg-black/5 dark:bg-black/20 backdrop-blur-[1px] flex justify-center items-center z-10">
+            <div className="px-8 py-4">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 text-center">
                 {noDataMessage.title}
               </h3>
               {noDataMessage.subtitle && (
-                <p className="text-sm text-gray-500 text-center">
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
                   {noDataMessage.subtitle}
                 </p>
               )}
             </div>
           </div>
         )}
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead>
             <tr>
               {columns.map((column, index) => (
                 <th
                   key={index}
                   scope="col"
-                  className={`px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-gray-50 ${
+                  className={`px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-gray-800/80 ${
                     column.className || ''
                   }`}
                 >
@@ -106,7 +106,7 @@ export function Table<T>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
             {isLoading ? (
               <LoadingSkeleton />
             ) : data.length === 0 ? (
@@ -117,13 +117,13 @@ export function Table<T>({
               data.map((item, rowIndex) => (
                 <tr
                   key={rowIndex}
-                  className="hover:bg-gray-50 cursor-pointer"
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
                   style={{ transition: 'background-color .3s, box-shadow .3s' }}
                 >
                   {columns.map((column, colIndex) => (
                     <td
                       key={colIndex}
-                      className={`px-6 py-4 whitespace-nowrap text-sm text-gray-600 ${
+                      className={`px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 ${
                         column.className || ''
                       }`}
                     >
@@ -141,7 +141,7 @@ export function Table<T>({
         </table>
       </div>
       {data.length > 0 && pagination && pagination.pageCount > 1 && (
-        <div className="flex items-center justify-between px-6 py-4 bg-gray-50 border-t border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700">
           <div className="flex-1 flex justify-between sm:hidden">
             <button
               onClick={() => pagination.onPageChange(pagination.pageIndex - 1)}
@@ -149,8 +149,8 @@ export function Table<T>({
               className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
                 ${
                   pagination.pageIndex === 0
-                    ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                    : 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300'
+                    ? 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
+                    : 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'
                 }`}
             >
               Previous
@@ -161,8 +161,8 @@ export function Table<T>({
               className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
                 ${
                   pagination.pageIndex === pagination.pageCount - 1
-                    ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                    : 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300'
+                    ? 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
+                    : 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'
                 }`}
             >
               Next
@@ -170,7 +170,7 @@ export function Table<T>({
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
                 Showing{' '}
                 <span className="font-medium">
                   {pagination.pageIndex * pagination.pageSize + 1}

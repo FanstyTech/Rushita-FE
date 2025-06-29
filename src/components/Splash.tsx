@@ -8,26 +8,38 @@ export default function Loading() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  // Track if this is the initial load
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   useEffect(() => {
     // Check if document is already loaded
     if (document.readyState === 'complete') {
       setIsLoading(false);
+      setIsInitialLoad(false);
     } else {
       // If not, wait for it to load
-      const handleLoad = () => setIsLoading(false);
+      const handleLoad = () => {
+        setIsLoading(false);
+        setIsInitialLoad(false);
+      };
       window.addEventListener('load', handleLoad);
       return () => window.removeEventListener('load', handleLoad);
     }
   }, []);
 
-  // Handle route changes
+  // Handle route changes - only show loading on initial load
   useEffect(() => {
+    if (!isInitialLoad) {
+      // Don't show loading for regular navigation
+      return;
+    }
+
     setIsLoading(true);
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 300);
     return () => clearTimeout(timer);
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, isInitialLoad]);
 
   if (!isLoading) return null;
 
@@ -49,7 +61,7 @@ export default function Loading() {
         </div>
 
         {/* Loading text */}
-        <div className="mt-6 text-gray-600 font-medium tracking-wider">
+        <div className="mt-6 text-gray-600 font-medium tracking-wider animate-pulse">
           Loading...
         </div>
       </div>

@@ -179,7 +179,7 @@ export default function QuickActions() {
               transition={{ duration: 0.2 }}
               className="absolute bottom-full right-0 mb-4"
             >
-              <div className="p-3 bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl ring-1 ring-black/5 min-w-[320px]">
+              <div className="p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-3xl shadow-2xl ring-1 ring-black/5 dark:ring-white/10 min-w-[320px]">
                 <div className="grid grid-cols-2 gap-3">
                   {quickActions.map((action, index) => (
                     <motion.div
@@ -207,7 +207,7 @@ export default function QuickActions() {
                           <action.icon className="h-7 w-7 text-white" />
                           {isNavigating && activeItem === action.name && (
                             <motion.div
-                              className="absolute inset-0 rounded-xl bg-black/20 flex items-center justify-center"
+                              className="absolute inset-0 rounded-xl bg-black/20 dark:bg-black/40 flex items-center justify-center"
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                             >
@@ -234,10 +234,10 @@ export default function QuickActions() {
                             </motion.div>
                           )}
                         </div>
-                        <span className="text-sm font-medium text-gray-900 text-center line-clamp-1 w-full">
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100 text-center line-clamp-1 w-full">
                           {action.name}
                         </span>
-                        <span className="text-xs text-gray-500 text-center mt-1 line-clamp-2 w-full">
+                        <span className="text-xs text-gray-500 dark:text-gray-400 text-center mt-1 line-clamp-2 w-full">
                           {action.description}
                         </span>
                       </Link>

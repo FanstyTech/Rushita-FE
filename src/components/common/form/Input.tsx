@@ -58,7 +58,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             {label}
           </label>
         )}
@@ -73,12 +73,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             onChange={handleChange}
             className={twMerge(
-              'block w-full px-4 py-3 rounded-xl text-gray-900 placeholder-gray-400',
-              hasBorder && 'border-2 border-gray-100 focus:border-blue-500',
+              'block w-full px-4 py-3 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500',
+              hasBorder &&
+                'border-2 border-gray-100 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400',
               startIcon && 'pl-10',
               endIcon && 'pr-10',
-              error && 'border-red-500',
+              error && 'border-red-500 dark:border-red-500',
               'focus:outline-none focus-visible:outline-none focus-visible:ring-0',
+              'bg-white dark:bg-gray-800',
               className
             )}
           />
@@ -92,7 +94,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <p
             className={twMerge(
               'mt-1 text-sm',
-              error ? 'text-red-500' : 'text-gray-500'
+              error
+                ? 'text-red-500 dark:text-red-400'
+                : 'text-gray-500 dark:text-gray-400'
             )}
           >
             {error || helperText}

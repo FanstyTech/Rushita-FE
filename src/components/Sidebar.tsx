@@ -186,7 +186,9 @@ export function NavigationSection({
   return (
     <div className="space-y-1">
       {!isCollapsed && (
-        <h3 className="px-3 text-xs font-semibold text-gray-500">{title}</h3>
+        <h3 className="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400">
+          {title}
+        </h3>
       )}
       <div className="space-y-1">
         {authorizedItems.map((item) => (
@@ -255,18 +257,23 @@ export default function Sidebar() {
         className={classNames(
           'flex flex-col',
           'fixed top-0 ltr:left-0 right-0 z-40 h-screen transition-all duration-300',
-          'bg-white border-r border-gray-200',
+          'bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700',
           isCollapsed ? 'w-20' : 'w-72'
         )}
       >
         {/* Toggle Button */}
-        <div className='flex justify-end  mb-3'>
+        <div className="flex justify-end mb-3">
           <button
             onClick={toggleCollapse}
-            className="absolute  ltr:-right-3 rtl:-left-3  top-9 bg-white border border-gray-200 rounded-full p-1.5 hover:bg-gray-50"
+            className="absolute ltr:-right-3 rtl:-left-3 top-9 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-full p-1.5 hover:bg-gray-50 dark:hover:bg-gray-600"
           >
-            <ChevronRightIcon className={`w-4 duration-300 h-4 ${isCollapsed ? 'rotate-180 ltr:rotate-0' : 'rotate-0 ltr:rotate-180'}`} />
-
+            <ChevronRightIcon
+              className={`w-4 duration-300 h-4 text-gray-500 dark:text-gray-300 ${
+                isCollapsed
+                  ? 'rotate-180 ltr:rotate-0'
+                  : 'rotate-0 ltr:rotate-180'
+              }`}
+            />
           </button>
         </div>
 

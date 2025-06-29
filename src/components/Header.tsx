@@ -11,9 +11,12 @@ import {
 } from '@headlessui/react';
 import { BellIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/i18n/LanguageProvider';
 import { BsGrid } from 'react-icons/bs';
 import Avatar from './common/Avatar';
+import { languages } from '@/middleware';
+import { Language } from '@/i18n/LanguageProvider';
+import ThemeToggle from './ThemeToggle';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -22,19 +25,20 @@ function classNames(...classes: string[]) {
 export default function Header() {
   const { logout, user } = useAuth();
   const { t } = useTranslation();
-  const { language, setLanguage, direction } = useLanguage();
+  const { language, setLanguage, direction, isChangingLanguage } =
+    useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
   return (
-    <header className=" bg-white shadow-sm border-b border-gray-200">
+    <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Left Section: Branding */}
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-gray-900">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               {user?.clinicInfo?.name || 'Rushita'}
             </h1>
           </div>
@@ -43,23 +47,25 @@ export default function Header() {
             {/* Extra Utility Icon (Placeholder) */}
             <button
               type="button"
-              className="rounded-full p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="rounded-full p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
             >
-              <span className="sr-only">Utility</span>
+              <span className="sr-only">{t('user.notifications')}</span>
               <BsGrid className="h-6 w-6" aria-hidden="true" />
             </button>
             {/* Notifications */}
             <button
               type="button"
-              className="rounded-full p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="rounded-full p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
             >
-              <span className="sr-only">{t('notifications')}</span>
+              <span className="sr-only">{t('user.notifications')}</span>
               <BellIcon className="h-6 w-6" aria-hidden="true" />
             </button>
+            {/* Theme Toggle */}
+            <ThemeToggle />
             {/* Language Dropdown */}
             <Menu as="div" className="relative">
-              <MenuButton className="rounded-full p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                <span className="sr-only">{t('language')}</span>
+              <MenuButton className="rounded-full p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                <span className="sr-only">{t('settings.language')}</span>
                 <GlobeAltIcon className="h-6 w-6" aria-hidden="true" />
               </MenuButton>
               <Transition
@@ -73,59 +79,56 @@ export default function Header() {
               >
                 <MenuItems
                   className={classNames(
-                    'absolute z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1  ring-opacity-5 focus:outline-none',
+                    'absolute z-10 mt-2 w-48 rounded-md bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none',
                     direction === 'rtl'
                       ? 'left-0 right-auto origin-top-left'
                       : 'right-0 left-auto origin-top-right'
                   )}
                 >
-                  <MenuItem>
-                    {({ active }) => (
-                      <button
-                        onClick={() => setLanguage('en')}
-                        className={classNames(
-                          active ? 'bg-gray-100' : '',
-                          'block w-full px-4 py-2 text-start text-sm text-gray-700',
-                          language === 'en' ? 'bg-gray-50' : ''
-                        )}
-                      >
-                        {t('english')}
-                      </button>
-                    )}
-                  </MenuItem>
-                  <MenuItem>
-                    {({ active }) => (
-                      <button
-                        onClick={() => setLanguage('ar')}
-                        className={classNames(
-                          active ? 'bg-gray-100' : '',
-                          'block w-full px-4 py-2 text-start text-sm text-gray-700',
-                          language === 'ar' ? 'bg-gray-50' : ''
-                        )}
-                      >
-                        {t('arabic')}
-                      </button>
-                    )}
-                  </MenuItem>
+                  {languages.map((lang) => (
+                    <MenuItem key={lang}>
+                      {({ active }) => (
+                        <button
+                          onClick={() => setLanguage(lang as Language)}
+                          disabled={isChangingLanguage}
+                          className={classNames(
+                            active ? 'bg-gray-100 dark:bg-gray-700' : '',
+                            'block w-full px-4 py-2 text-start text-sm text-gray-700 dark:text-gray-300',
+                            language === lang
+                              ? 'bg-gray-50 dark:bg-gray-700/50'
+                              : '',
+                            isChangingLanguage
+                              ? 'opacity-50 cursor-not-allowed'
+                              : ''
+                          )}
+                        >
+                          {t(`languages.${lang}`)}
+                          {isChangingLanguage && language === lang && (
+                            <span className="ml-2 inline-block h-3 w-3 animate-pulse rounded-full bg-blue-500"></span>
+                          )}
+                        </button>
+                      )}
+                    </MenuItem>
+                  ))}
                 </MenuItems>
               </Transition>
             </Menu>
             {/* Profile dropdown */}
             <Menu as="div" className="relative">
               <MenuButton className="flex items-center gap-3">
-                <span className="sr-only">{t('profile')}</span>
+                <span className="sr-only">{t('user.profile')}</span>
                 <div className="flex items-center gap-3">
                   <div className="text-end">
-                    <div className="text-sm font-semibold text-gray-900">
+                    <div className="text-sm font-semibold text-gray-900 dark:text-white">
                       {user?.name}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                       {user?.clinicInfo?.name}
                     </div>
                   </div>
                   <Avatar
                     name={user?.name || ''}
-                    className="ring-2 ring-white"
+                    className="ring-2 ring-white dark:ring-gray-700"
                   />
                 </div>
               </MenuButton>
@@ -140,15 +143,17 @@ export default function Header() {
               >
                 <MenuItems
                   className={classNames(
-                    'absolute z-10 mt-2 w-56 divide-y divide-gray-100 rounded-lg bg-white py-1 shadow-lg ring-1  ring-opacity-5 focus:outline-none',
+                    'absolute z-10 mt-2 w-56 divide-y divide-gray-100 dark:divide-gray-700 rounded-lg bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none',
                     direction === 'rtl'
                       ? 'left-0 right-auto origin-top-left'
                       : 'right-0 left-auto origin-top-right'
                   )}
                 >
                   <div className="px-4 py-3">
-                    <p className="text-sm text-gray-900">{user?.name}</p>
-                    <p className="truncate text-sm text-gray-500">
+                    <p className="text-sm text-gray-900 dark:text-white">
+                      {user?.name}
+                    </p>
+                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
                       {user?.email}
                     </p>
                   </div>
@@ -159,12 +164,12 @@ export default function Header() {
                         <a
                           href="/admin/profile"
                           className={classNames(
-                            active ? 'bg-gray-50' : '',
-                            'group flex items-center px-4 py-2 text-sm text-gray-700'
+                            active ? 'bg-gray-100 dark:bg-gray-700' : '',
+                            'group flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300'
                           )}
                         >
                           <svg
-                            className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                            className="mr-3 h-5 w-5 text-gray-400 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-100"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -176,7 +181,7 @@ export default function Header() {
                               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                             />
                           </svg>
-                          {t('profile')}
+                          {t('user.profile')}
                         </a>
                       )}
                     </MenuItem>
@@ -185,12 +190,12 @@ export default function Header() {
                         <a
                           href="/admin/settings"
                           className={classNames(
-                            active ? 'bg-gray-50' : '',
-                            'group flex items-center px-4 py-2 text-sm text-gray-700'
+                            active ? 'bg-gray-100 dark:bg-gray-700' : '',
+                            'group flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300'
                           )}
                         >
                           <svg
-                            className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                            className="mr-3 h-5 w-5 text-gray-400 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-100"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -208,7 +213,7 @@ export default function Header() {
                               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                             />
                           </svg>
-                          {t('settings')}
+                          {t('settings.settings')}
                         </a>
                       )}
                     </MenuItem>
@@ -225,12 +230,12 @@ export default function Header() {
                           <button
                             onClick={handleLogout}
                             className={classNames(
-                              active ? 'bg-gray-50' : '',
-                              'group flex w-full items-center px-4 py-2 text-sm text-red-700'
+                              active ? 'bg-gray-100 dark:bg-gray-700' : '',
+                              'group flex w-full items-center px-4 py-2 text-sm text-red-700 dark:text-red-500'
                             )}
                           >
                             <svg
-                              className="mr-3 h-5 w-5 text-red-400 group-hover:text-red-500"
+                              className="mr-3 h-5 w-5 text-red-400 dark:text-red-300 group-hover:text-red-500 dark:group-hover:text-red-400"
                               viewBox="0 0 24 24"
                               fill="none"
                               stroke="currentColor"
@@ -242,7 +247,7 @@ export default function Header() {
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                               />
                             </svg>
-                            {t('logout')}
+                            {t('user.logout')}
                           </button>
                         );
                       }}

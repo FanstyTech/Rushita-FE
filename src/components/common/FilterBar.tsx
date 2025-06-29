@@ -72,7 +72,7 @@ export default function FilterBar({
     });
 
   return (
-    <div className="flex items-center gap-4 bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100">
+    <div className="flex items-center gap-4 bg-white dark:bg-gray-800 p-1.5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
       {/* Search Input */}
       <div className="flex-1 relative">
         <Input
@@ -86,7 +86,11 @@ export default function FilterBar({
             })
           }
           startIcon={
-            <FiSearch width={16} height={16} className="text-gray-500" />
+            <FiSearch
+              width={16}
+              height={16}
+              className="text-gray-500 dark:text-gray-400"
+            />
           }
         />
       </div>
@@ -126,15 +130,15 @@ export default function FilterBar({
           onClick={clearFilters}
           className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
             showClearFilters
-              ? 'text-blue-600 hover:bg-blue-50'
-              : 'text-gray-400'
+              ? 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+              : 'text-gray-400 dark:text-gray-500'
           }`}
         >
           Clear
         </button>
         {onAddNew && (
           <>
-            <div className="h-8 w-px bg-gray-200"></div>
+            <div className="h-8 w-px bg-gray-200 dark:bg-gray-700"></div>
             <Button onClick={onAddNew} className="gap-2">
               <PlusIcon className="h-5 w-5" />
               Add New

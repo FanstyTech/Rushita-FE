@@ -60,7 +60,7 @@ export default function Dropdown({
     <div className="relative group" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className={`px-4 py-2.5 text-sm text-gray-600 hover:text-gray-900 flex items-center gap-2 group-hover:text-blue-600 transition-colors ${className}`}
+        className={`px-4 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center gap-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors ${className}`}
       >
         {icon && icon}
         {selectedLabel}
@@ -72,12 +72,12 @@ export default function Dropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 p-4 animate-fadeIn z-50">
+        <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-4 animate-fadeIn z-50">
           <div className="space-y-2">
             {options.map((option) => (
               <label
                 key={option.value}
-                className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                className="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
               >
                 <input
                   type="radio"
@@ -85,9 +85,11 @@ export default function Dropdown({
                   value={option.value}
                   checked={value === option.value}
                   onChange={(e) => handleOptionSelect(e.target.value)}
-                  className="text-blue-600 focus:ring-blue-500"
+                  className="text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-500"
                 />
-                <span className="text-sm text-gray-700">{option.label}</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  {option.label}
+                </span>
               </label>
             ))}
           </div>

@@ -68,7 +68,20 @@ export default function LoginPage() {
           dashboardPath = '/clinic/dashboard';
         }
 
-        router.push(dashboardPath);
+        // Get the current language from cookie or use default
+        const getCookie = (name: string) => {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2)
+            return parts.pop()?.split(';').shift() || 'en';
+          return 'en';
+        };
+
+        const currentLang = getCookie('language');
+
+        // Add language prefix to dashboard path
+        const languagePrefixedPath = `/${currentLang}${dashboardPath}`;
+        router.push(languagePrefixedPath);
       },
     });
   };

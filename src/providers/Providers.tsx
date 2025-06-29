@@ -5,7 +5,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState, type ReactNode } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n/config';
-import { LanguageProvider } from '@/contexts/LanguageContext';
+import { LanguageProvider } from '@/i18n/LanguageProvider';
+import { ThemeProvider } from '@/theme/ThemeProvider';
 import { Toaster } from '@/components/ui/Toast';
 
 export function Providers({ children }: { children: ReactNode }) {
@@ -28,8 +29,10 @@ export function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <I18nextProvider i18n={i18n}>
         <LanguageProvider>
-          {children}
-          <Toaster />
+          <ThemeProvider>
+            {children}
+            <Toaster />
+          </ThemeProvider>
         </LanguageProvider>
       </I18nextProvider>
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
