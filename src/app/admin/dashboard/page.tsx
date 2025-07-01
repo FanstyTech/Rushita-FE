@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import PageLayout from '@/components/layouts/PageLayout';
-import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,6 +12,8 @@ import {
   Legend,
 } from 'chart.js';
 import { motion } from 'framer-motion';
+import { GrowthOverviewChart } from '@/components/Chart/GrowthOverviewChart';
+import CardList from '@/components/CardList';
 
 ChartJS.register(
   CategoryScale,
@@ -99,12 +99,8 @@ const fadeInUp = {
 };
 
 export default function AdminDashboard() {
-  const [timeRange, setTimeRange] = useState<'weekly' | 'monthly' | 'yearly'>(
-    'monthly'
-  );
   const stats = mockData.stats;
-  const activities = mockData.activities;
-  const currentChartData = mockData.chartData[timeRange];
+  // const activities = mockData.activities;
 
   const statsCards = [
     {
@@ -154,9 +150,8 @@ export default function AdminDashboard() {
     {
       title: 'Total Appointments',
       value: stats.totalAppointments.toLocaleString(),
-      change: `${stats.appointmentsChange > 0 ? '+' : ''}${
-        stats.appointmentsChange
-      }%`,
+      change: `${stats.appointmentsChange > 0 ? '+' : ''}${stats.appointmentsChange
+        }%`,
       changeType: stats.appointmentsChange >= 0 ? 'increase' : 'decrease',
       bgGradient: 'from-violet-500 to-violet-600',
       icon: (
@@ -177,67 +172,9 @@ export default function AdminDashboard() {
     },
   ];
 
-  const lineChartData = {
-    labels: currentChartData.labels,
-    datasets: [
-      {
-        label: 'New Patients',
-        data: currentChartData.patients,
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.4,
-        fill: true,
-      },
-      {
-        label: 'Appointments',
-        data: currentChartData.appointments,
-        borderColor: 'rgb(147, 51, 234)',
-        backgroundColor: 'rgba(147, 51, 234, 0.1)',
-        tension: 0.4,
-        fill: true,
-      },
-    ],
-  };
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'bottom' as const,
-        labels: {
-          usePointStyle: true,
-          padding: 20,
-        },
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        padding: 12,
-        titleFont: {
-          size: 14,
-        },
-        bodyFont: {
-          size: 13,
-        },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: 'rgba(0, 0, 0, 0.05)',
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-      },
-    },
-    interaction: {
-      intersect: false,
-      mode: 'index' as const,
-    },
-  };
+
+
 
   return (
     <PageLayout>
@@ -261,11 +198,10 @@ export default function AdminDashboard() {
                       {stat.value}
                     </p>
                     <p
-                      className={`mt-2 text-sm inline-flex items-center rounded-full px-2 py-1 ${
-                        stat.changeType === 'increase'
-                          ? 'bg-green-400/20 text-green-100'
-                          : 'bg-red-400/20 text-red-100'
-                      }`}
+                      className={`mt-2 text-sm inline-flex items-center rounded-full px-2 py-1 ${stat.changeType === 'increase'
+                        ? 'bg-green-400/20 text-green-100'
+                        : 'bg-red-400/20 text-red-100'
+                        }`}
                     >
                       {stat.change} from last month
                     </p>
@@ -286,107 +222,21 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Chart */}
           <motion.div
-            {...fadeInUp}
-            transition={{ delay: 0.3 }}
-            className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6"
+
+            className="lg:col-span-2 "
           >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Growth Overview
-              </h3>
-              <div className="flex gap-2 bg-gray-100 p-1 rounded-lg">
-                {(['weekly', 'monthly', 'yearly'] as const).map((range) => (
-                  <button
-                    key={range}
-                    onClick={() => setTimeRange(range)}
-                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
-                      timeRange === range
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    {range.charAt(0).toUpperCase() + range.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="h-[400px]">
-              <Line data={lineChartData} options={chartOptions} />
-            </div>
+
+            <GrowthOverviewChart />
           </motion.div>
 
           {/* Recent Activity */}
           <motion.div
             {...fadeInUp}
             transition={{ delay: 0.4 }}
-            className="bg-white rounded-2xl shadow-lg p-6"
+            className=" rounded-xl shadow border bg-primary-foreground p-4 "
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
-              Recent Activity
-            </h3>
-            <div className="space-y-6">
-              {activities.map((activity) => (
-                <div key={activity.id} className="flex items-start gap-4 group">
-                  <div
-                    className={`rounded-xl p-2 transition-all duration-200 ${
-                      activity.type === 'clinic_added'
-                        ? 'bg-blue-100 text-blue-600 group-hover:bg-blue-200'
-                        : activity.type === 'user_joined'
-                        ? 'bg-emerald-100 text-emerald-600 group-hover:bg-emerald-200'
-                        : activity.type === 'appointment_surge'
-                        ? 'bg-amber-100 text-amber-600 group-hover:bg-amber-200'
-                        : 'bg-violet-100 text-violet-600 group-hover:bg-violet-200'
-                    }`}
-                  >
-                    {activity.type === 'clinic_added' && (
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                        />
-                      </svg>
-                    )}
-                    {activity.type === 'user_joined' && (
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 group-hover:text-gray-700 transition-colors duration-200">
-                      {activity.type === 'clinic_added' &&
-                        `New clinic added: ${activity.clinic}`}
-                      {activity.type === 'user_joined' &&
-                        `${activity.name} joined as ${activity.role}`}
-                      {activity.type === 'appointment_surge' &&
-                        `High booking activity at ${activity.clinic}`}
-                      {activity.type === 'system_update' &&
-                        `System updated to version ${activity.version}`}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {activity.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <CardList title="latestTransactions" />
+
           </motion.div>
         </div>
       </div>
