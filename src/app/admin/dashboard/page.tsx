@@ -171,11 +171,6 @@ export default function AdminDashboard() {
       ),
     },
   ];
-
-
-
-
-
   return (
     <PageLayout>
       <div className="space-y-6">
@@ -233,9 +228,9 @@ export default function AdminDashboard() {
           <motion.div
             {...fadeInUp}
             transition={{ delay: 0.4 }}
-            className=" rounded-xl shadow border bg-primary-foreground p-4 "
+            className=" rounded-xl shadow border bg-white  dark:bg-primary-foreground p-4 "
           >
-            <CardList title="latestTransactions" />
+            <CardList  />
 
           </motion.div>
         </div>
