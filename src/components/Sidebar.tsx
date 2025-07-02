@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
@@ -9,6 +9,9 @@ import { useAuth } from '@/lib/api/hooks/useAuth';
 import { filterNavItemsByPermission } from '@/utils/permissions';
 import type { NavItem } from '@/types/navigation';
 import { adminNav, clinicNav, doctorNav } from '@/config/navigation';
+import { useLanguage } from '@/i18n/LanguageProvider';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './ui/sheet';
+import { Input } from './ui/input';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -38,12 +41,12 @@ export function NavigationItem({
         <button
           onClick={() => toggleExpand(item.id)}
           className={classNames(
-            'w-full group flex items-center px-3 py-2 rounded-lg transition-all duration-200',
+            'w-full group flex items-center  px-3 py-2 rounded-lg transition-all duration-200',
             isActive
               ? 'bg-indigo-100 text-indigo-700 font-semibold'
               : 'text-gray-700 hover:bg-gray-100',
             isCollapsed ? 'justify-center' : 'justify-between',
-            level > 0 && !isCollapsed ? 'ml-4' : ''
+            level > 0 && !isCollapsed ? 'ml-2' : ''
           )}
         >
           <div
@@ -61,7 +64,7 @@ export function NavigationItem({
                 isCollapsed ? 'mr-0' : 'mr-3'
               )}
             />
-            {!isCollapsed && <span>{item.name}</span>}
+            {!isCollapsed && <span className='text-popover-foreground'>{item.name}</span>}
           </div>
           {!isCollapsed && (
             <ChevronRightIcon
@@ -74,7 +77,7 @@ export function NavigationItem({
         </button>
 
         {!isCollapsed && isExpanded && item.children && (
-          <div className={classNames(level === 0 ? 'ml-4' : 'ml-6')}>
+          <div className={classNames(level === 0 ? 'ml-2' : 'ml-4')}>
             {item.children.map((child) => (
               <NavigationItem
                 key={child.id}
@@ -99,7 +102,7 @@ export function NavigationItem({
         isActive
           ? 'bg-indigo-100 text-indigo-700 font-semibold'
           : 'text-gray-700 hover:bg-gray-100',
-        level > 0 && !isCollapsed ? 'ml-4' : ''
+        level > 0 && !isCollapsed ? 'ml-2' : ''
       )}
     >
       <item.icon
@@ -111,7 +114,7 @@ export function NavigationItem({
           isCollapsed ? 'mr-0' : 'mr-3'
         )}
       />
-      {!isCollapsed && <span>{item.name}</span>}
+      {!isCollapsed && <span className='text-popover-foreground'>{item.name}</span>}
     </Link>
   );
 }
@@ -209,6 +212,7 @@ export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
+  const { language, open, toggolemenue } = useLanguage()
 
   useEffect(() => {
     setMounted(true);
@@ -244,21 +248,41 @@ export default function Sidebar() {
   };
 
   const sections = filteredNavItems;
-
   // Conditional rendering moved after all hooks
   if (!mounted || sections.length === 0) {
     return null;
   }
 
+
+
   return (
     <>
-      {/* Sidebar */}
+      <Sheet open={open} onOpenChange={toggolemenue}>
+
+        <SheetContent className='p-0' side={`${language == "ar" ? "right" : "left"}`}>
+          <SheetHeader>
+            <SheetTitle className='text-secend text-center text-4xl mt-10 '>Rushita</SheetTitle>
+            <SheetDescription asChild className='overflow-y-auto max-h-[80vh] overflow-x-hidden '>
+              <div className=' p-4'>
+                {sections.map((section) => (
+                  <NavigationSection
+                    key={section.title}
+                    title={section.title}
+                    items={section.items}
+                    isCollapsed={false}
+                  />
+                ))}
+              </div>
+            </SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet >
       <aside
         className={classNames(
           'flex flex-col',
           'fixed top-0 ltr:left-0 right-0 z-40 h-screen transition-all duration-300',
-          'bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700',
-          isCollapsed ? 'w-20' : 'w-72'
+          'bg-white dark:bg-gray-800 border-r  hidden md:block border-gray-200 dark:border-gray-700',
+          isCollapsed ? 'md:w-20' : 'md:w-72'
         )}
       >
         {/* Toggle Button */}
@@ -268,11 +292,10 @@ export default function Sidebar() {
             className="absolute ltr:-right-3 rtl:-left-3 top-9 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-full p-1.5 hover:bg-gray-50 dark:hover:bg-gray-600"
           >
             <ChevronRightIcon
-              className={`w-4 duration-300 h-4 text-gray-500 dark:text-gray-300 ${
-                isCollapsed
-                  ? 'rotate-180 ltr:rotate-0'
-                  : 'rotate-0 ltr:rotate-180'
-              }`}
+              className={`w-4 duration-300 h-4 text-gray-500 dark:text-gray-300 ${isCollapsed
+                ? 'rotate-180 ltr:rotate-0'
+                : 'rotate-0 ltr:rotate-180'
+                }`}
             />
           </button>
         </div>
@@ -285,21 +308,18 @@ export default function Sidebar() {
           )}
         >
           {!isCollapsed && (
-            <span className="text-xl font-semibold">Rushita</span>
+            <span className="text-xl font-semibold text-secend">Rushita</span>
           )}
         </div>
 
         {/* Search */}
         {!isCollapsed && (
           <div className="relative px-4 mb-4">
-            <input
+            <Input
               type="text"
-              placeholder={isCollapsed ? '' : 'Search...'}
-              className={classNames(
-                'w-full p-4 py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-200 text-sm',
-                isCollapsed ? 'pl-3' : 'pl-10'
-              )}
-            />
+              className={`p-4 py-2 pl-8 `}
+              placeholder={isCollapsed ? '' : 'Search...'} />
+
             <FiSearch
               className={classNames(
                 'absolute top-1/2 -translate-y-1/2 text-gray-400',
@@ -311,7 +331,7 @@ export default function Sidebar() {
         )}
 
         {/* Main Navigation */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto  max-h-[80vh]">
           <nav className="px-4 space-y-1">
             {sections.map((section) => (
               <NavigationSection
@@ -328,8 +348,8 @@ export default function Sidebar() {
       {/* Spacer div to push content */}
       <div
         className={classNames(
-          'flex-shrink-0 transition-all duration-300',
-          isCollapsed ? 'w-20' : 'w-72'
+          'flex-shrink-0 transition-all duration-300 w-0',
+          isCollapsed ? 'md:w-20' : 'md:w-72'
         )}
       />
     </>

@@ -17,6 +17,8 @@ import Avatar from './common/Avatar';
 import { languages } from '@/middleware';
 import { Language } from '@/i18n/LanguageProvider';
 import ThemeToggle from './ThemeToggle';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import { FaBars } from 'react-icons/fa';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -25,10 +27,9 @@ function classNames(...classes: string[]) {
 export default function Header() {
   const { logout, user } = useAuth();
   const { t } = useTranslation();
-  const { language, setLanguage, direction, isChangingLanguage } =
+  const { language, setLanguage, direction, isChangingLanguage, toggolemenue } =
     useLanguage();
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
@@ -37,8 +38,18 @@ export default function Header() {
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Left Section: Branding */}
-          <div className="flex items-center">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-center ">
+
+            <button
+              onClick={toggolemenue}
+              className="inline-flex md:hidden items-center justify-center p-2 rounded-md hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-700 transition-colors duration-300 focus:outline-none "
+              aria-expanded="false"
+            >
+              <FaBars className="h-6 w-6 text-secend" />
+
+
+            </button>
+            <h1 className="text-xl  font-bold text-gray-900 mt-1  dark:text-white">
               {user?.clinicInfo?.name || 'Rushita'}
             </h1>
           </div>
@@ -63,36 +74,22 @@ export default function Header() {
             {/* Theme Toggle */}
             <ThemeToggle />
             {/* Language Dropdown */}
-            <Menu as="div" className="relative">
-              <MenuButton className="rounded-full p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
-                <span className="sr-only">{t('settings.language')}</span>
-                <GlobeAltIcon className="h-6 w-6" aria-hidden="true" />
-              </MenuButton>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <MenuItems
-                  className={classNames(
-                    'absolute z-10 mt-2 w-48 rounded-md bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none',
-                    direction === 'rtl'
-                      ? 'left-0 right-auto origin-top-left'
-                      : 'right-0 left-auto origin-top-right'
-                  )}
-                >
-                  {languages.map((lang) => (
-                    <MenuItem key={lang}>
-                      {({ active }) => (
+            <div className=''>
+              <DropdownMenu >
+                <DropdownMenuTrigger asChild>
+                  <button className="rounded-full p-1  text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                    <span className="sr-only">{t('settings.language')}</span>
+                    <GlobeAltIcon className="h-6 w-6" aria-hidden="true" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent asChild>
+                  <div>
+                    {languages.map((lang, index) => (
+                      <DropdownMenuItem key={index} className='mx-auto p-0 my-1 flex justify-center items-center'>
                         <button
                           onClick={() => setLanguage(lang as Language)}
                           disabled={isChangingLanguage}
                           className={classNames(
-                            active ? 'bg-gray-100 dark:bg-gray-700' : '',
                             'block w-full px-4 py-2 text-start text-sm text-gray-700 dark:text-gray-300',
                             language === lang
                               ? 'bg-gray-50 dark:bg-gray-700/50'
@@ -107,18 +104,20 @@ export default function Header() {
                             <span className="ml-2 inline-block h-3 w-3 animate-pulse rounded-full bg-blue-500"></span>
                           )}
                         </button>
-                      )}
-                    </MenuItem>
-                  ))}
-                </MenuItems>
-              </Transition>
-            </Menu>
+                      </DropdownMenuItem>
+                    ))}
+                  </div>
+                </DropdownMenuContent>
+
+              </DropdownMenu>
+            </div>
+
             {/* Profile dropdown */}
             <Menu as="div" className="relative">
-              <MenuButton className="flex items-center gap-3">
+              <MenuButton className="flex items-center gap-3 outline-none ">
                 <span className="sr-only">{t('user.profile')}</span>
                 <div className="flex items-center gap-3">
-                  <div className="text-end">
+                  <div className="text-end md:block hidden">
                     <div className="text-sm font-semibold text-gray-900 dark:text-white">
                       {user?.name}
                     </div>
@@ -143,7 +142,7 @@ export default function Header() {
               >
                 <MenuItems
                   className={classNames(
-                    'absolute z-10 mt-2 w-56 divide-y divide-gray-100 dark:divide-gray-700 rounded-lg bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none',
+                    'absolute z-10 mt-2 w-56 divide-y divide-gray-100 dark:divide-gray-700 rounded-lg  bg-popover py-1 shadow-lg ring-1 ring-black ring-opacity-5  outline-none',
                     direction === 'rtl'
                       ? 'left-0 right-auto origin-top-left'
                       : 'right-0 left-auto origin-top-right'

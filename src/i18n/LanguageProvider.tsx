@@ -12,6 +12,8 @@ export type Language = 'ar' | 'en' | 'es';
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
+  toggolemenue: () => void;
+  open: boolean;
   direction: 'ltr' | 'rtl';
   navigateWithLanguage: (path: string) => void;
   isChangingLanguage: boolean;
@@ -31,6 +33,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // Language and direction state
+  const [open, setOpen] = useState(false);
   const [language, setLanguageState] = useState<Language>(
     (i18n.language as Language) || (defaultLanguage as Language)
   );
@@ -46,8 +49,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const pathSegments = pathname?.split('/').filter(Boolean);
     const pathLang =
       pathSegments &&
-      pathSegments.length > 0 &&
-      languages.includes(pathSegments[0])
+        pathSegments.length > 0 &&
+        languages.includes(pathSegments[0])
         ? (pathSegments[0] as Language)
         : null;
 
@@ -72,6 +75,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   /**
    * Change language and update path and cookies
    */
+  const toggolemenue = () => {
+    setOpen(!open)
+  }
   const setLanguage = async (lang: Language) => {
     // Prevent multiple changes at once
     if (isChangingLanguage || lang === language) return;
@@ -86,9 +92,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       await i18n.changeLanguage(lang);
 
       // Store language preference in cookie
-      document.cookie = `language=${lang}; path=/; max-age=${
-        60 * 60 * 24 * 30
-      }`; // 30 days
+      document.cookie = `language=${lang}; path=/; max-age=${60 * 60 * 24 * 30
+        }`; // 30 days
 
       // Update path to include language prefix
       const pathSegments = pathname?.split('/').filter(Boolean);
@@ -147,6 +152,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       value={{
         language,
         setLanguage,
+        toggolemenue,
+        open,
         direction,
         navigateWithLanguage,
         isChangingLanguage,

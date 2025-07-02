@@ -217,6 +217,8 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Chart */}
           <motion.div
+            {...fadeInUp}
+            transition={{ delay: 0.3 }}
 
             className="lg:col-span-2 "
           >
@@ -230,7 +232,7 @@ export default function AdminDashboard() {
             transition={{ delay: 0.4 }}
             className=" rounded-xl shadow border bg-white  dark:bg-primary-foreground p-4 "
           >
-            <CardList  />
+            <CardList />
 
           </motion.div>
         </div>
