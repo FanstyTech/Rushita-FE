@@ -425,7 +425,7 @@ export default function ClinicsPage() {
             </label>
             <div className="grid grid-cols-2 gap-3">
               {Object.entries(ClinicStatus)
-                .filter(([value]) => typeof value === 'number')
+                .filter(([, value]) => typeof value === 'number')
                 .map(([key, value]) => (
                   <button
                     key={key}
