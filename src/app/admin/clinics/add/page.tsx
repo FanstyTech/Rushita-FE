@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import AddClinicForm from './ClinicForm';
 import PageLayout from '@/components/layouts/PageLayout';
+import { Card } from '@/components/ui/card';
 
 export default function AddClinicPage() {
   return (
@@ -17,11 +18,11 @@ export default function AddClinicPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="bg-white shadow-xl rounded-2xl overflow-hidden"
+          className=""
         >
-          <div className="p-6 sm:p-8">
+          <Card className="p-6 sm:p-8">
             <AddClinicForm />
-          </div>
+          </Card>
         </motion.div>
       </motion.div>
     </PageLayout>

@@ -1,9 +1,11 @@
 'use client';
 
-import { Search as FiSearch, PlusIcon, List as FiList } from 'lucide-react';
-import { Input } from './form';
+import { PlusIcon, List as FiList, Search } from 'lucide-react';
 import Dropdown, { DropdownOption } from './Dropdown';
 import Button from './Button';
+import { Card } from '../ui/card';
+import { Input } from '../ui/input';
+
 
 export interface FilterState {
   pageNumber: number;
@@ -72,11 +74,11 @@ export default function FilterBar({
     });
 
   return (
-    <div className="flex items-center gap-4 bg-white dark:bg-gray-800 p-1.5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+    <Card className='flex-row flex-wrap   p-3'>
       {/* Search Input */}
       <div className="flex-1 relative">
         <Input
-          hasBorder={false}
+          // hasBorder={false}
           placeholder={searchPlaceholder}
           value={filter.searchValue}
           onChange={(e) =>
@@ -85,13 +87,12 @@ export default function FilterBar({
               searchValue: e.target.value,
             })
           }
-          startIcon={
-            <FiSearch
-              width={16}
-              height={16}
-              className="text-gray-500 dark:text-gray-400"
-            />
-          }
+          className='py-5 px-8'
+        />
+        <Search
+          width={16}
+          height={16}
+          className="text-gray-500 absolute top-3 left-3 dark:text-gray-400"
         />
       </div>
 
@@ -128,11 +129,10 @@ export default function FilterBar({
       <div className="pl-2 flex items-center gap-2">
         <button
           onClick={clearFilters}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-            showClearFilters
-              ? 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
-              : 'text-gray-400 dark:text-gray-500'
-          }`}
+          className={` py-2 rounded-xl text-sm font-medium transition-all duration-300 ${showClearFilters
+            ? 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+            : 'text-gray-400 dark:text-gray-500'
+            }`}
         >
           Clear
         </button>
@@ -146,6 +146,6 @@ export default function FilterBar({
           </>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

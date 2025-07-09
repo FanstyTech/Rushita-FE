@@ -20,7 +20,6 @@ import { LuBriefcaseMedical } from 'react-icons/lu';
 
 import { ClinicStatus, ClinicListDto } from '@/lib/api/types/clinic';
 import { SelectOption } from '@/lib/api/types/select-option';
-import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import { useClinic } from '@/lib/api/hooks/useClinic';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
@@ -29,7 +28,10 @@ import FilterBar, { FilterState } from '@/components/common/FilterBar';
 import { getClinicStatusLabel, getClinicStatusClass } from '@/utils';
 import Avatar from '@/components/common/Avatar';
 import { TextArea } from '@/components/common';
-import { Menu } from '@headlessui/react';
+import { Card } from '@/components/ui/card';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 
 export default function ClinicsPage() {
   const router = useRouter();
@@ -121,7 +123,11 @@ export default function ClinicsPage() {
 
   return (
     <PageLayout>
-      <div className="space-y-4">
+
+      <motion.div className="space-y-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}>
         <FilterBar
           filter={filters}
           onFilterChange={(newFilter) => {
@@ -178,14 +184,14 @@ export default function ClinicsPage() {
               <ClinicCardSkeleton key={i} />
             ))
           ) : clinics?.items.length === 0 ? (
-            <div className="col-span-3">
-              <div className="relative bg-white rounded-3xl p-12 flex flex-col items-center text-center">
+            <Card className="col-span-3">
+              <div className="relative  rounded-3xl p-12 flex flex-col items-center text-center">
                 <div className="w-24 h-24 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center transform rotate-12 hover:rotate-0 transition-transform duration-300">
                   <Building2 className="w-12 h-12 text-white transform -rotate-12 group-hover:rotate-0 transition-transform duration-300" />
                 </div>
 
                 <div className="mt-8 space-y-3">
-                  <h3 className="text-2xl font-semibold text-gray-900">
+                  <h3 className="text-2xl font-semibold text-foreground">
                     No clinics found
                   </h3>
                   <p className="text-gray-500 max-w-sm mx-auto">
@@ -196,6 +202,8 @@ export default function ClinicsPage() {
 
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={() => {
                       setFilters({
                         pageNumber: 1,
@@ -209,26 +217,26 @@ export default function ClinicsPage() {
                         status: undefined,
                       });
                     }}
-                    className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors duration-200"
                   >
                     Clear Filters
                   </Button>
                   <Button
+                    variant="lineargradian"
+                    size="sm"
                     onClick={() => router.push('/admin/clinics/add')}
-                    className="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-colors duration-200"
                   >
                     Add New Clinic
                   </Button>
                 </div>
               </div>
-            </div>
+            </Card>
           ) : (
             clinics?.items.map((clinic) => (
-              <div
+              <Card
+                className='p-0'
                 key={clinic.id}
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200"
               >
-                <div className="p-6">
+                <div className='p-6'>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-4">
                       <div className="relative w-16 h-16">
@@ -244,7 +252,7 @@ export default function ClinicsPage() {
                         />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        <h3 className="text-lg font-semibold text-foreground mb-1">
                           {clinic.name}
                         </h3>
                         <div className="flex items-center gap-2 text-sm">
@@ -262,109 +270,98 @@ export default function ClinicsPage() {
                     </div>
 
                     <div className="flex items-center">
-                      <Menu as="div" className="relative">
-                        <Menu.Button className="p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                      <DropdownMenu >
+                        <DropdownMenuTrigger asChild>
                           <MoreVertical className="w-5 h-5 text-gray-400" />
-                        </Menu.Button>
-                        <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right bg-white rounded-xl shadow-lg border border-gray-100 focus:outline-none">
-                          <div className="py-2">
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => handleStatusChange(clinic)}
-                                  className={`${
-                                    active ? 'bg-gray-50' : ''
-                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
-                                >
-                                  <Star className="w-4 h-4" />
-                                  Change Status
-                                </button>
-                              )}
-                            </Menu.Item>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() =>
-                                    router.push(
-                                      `/admin/clinics/staff/${clinic.id}`
-                                    )
-                                  }
-                                  className={`${
-                                    active ? 'bg-gray-50' : ''
-                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
-                                >
-                                  <Users className="w-4 h-4" />
-                                  Manage Staff
-                                </button>
-                              )}
-                            </Menu.Item>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => handleEdit(clinic.id)}
-                                  className={`${
-                                    active ? 'bg-gray-50' : ''
-                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
-                                >
-                                  <Edit2 className="w-4 h-4" />
-                                  Edit Clinic
-                                </button>
-                              )}
-                            </Menu.Item>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => handleDelete(clinic.id)}
-                                  className={`${
-                                    active ? 'bg-gray-50' : ''
-                                  } flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600`}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                  Delete Clinic
-                                </button>
-                              )}
-                            </Menu.Item>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent asChild>
+                          <div className='bg-white dark:bg-gray-800'>
+                            <DropdownMenuItem className=''>
+                              <button
+                                onClick={() => handleStatusChange(clinic)}
+                                className='w-full flex gap-2  px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300'
+
+                              >
+                                <Star className="w-4 h-4" />
+                                Change Status
+                              </button>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <button
+                                className=' w-full flex gap-2 px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300'
+
+                                onClick={() =>
+                                  router.push(
+                                    `/admin/clinics/staff/${clinic.id}`
+                                  )
+                                }
+
+                              >
+                                <Users className="w-4 h-4" />
+                                Manage Staff
+                              </button>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <button
+                                onClick={() => handleEdit(clinic.id)}
+                                className=' w-full flex gap-2 px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300'
+
+                              >
+                                <Edit2 className="w-4 h-4" />
+                                Edit Clinic
+                              </button>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <button
+                                onClick={() => handleDelete(clinic.id)}
+                                className=' w-full flex gap-2 px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300'
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                Delete Clinic
+                              </button>
+                            </DropdownMenuItem>
                           </div>
-                        </Menu.Items>
-                      </Menu>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                  <div className="grid xl:grid-cols-3 xsm:grid-cols-3 grid-cols-1   md:grid-cols-2 gap-1 mb-4">
+                    <div className=" flex flex-wrap items-center gap-2 p-3 text-foreground/70 bg-gray-50 dark:bg-black/15 rounded-xl">
                       <MapPin className="w-5 h-5 text-gray-400" />
                       <div>
-                        <div className="text-xs text-gray-500">Location</div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-xs  ">Location</div>
+                        <div className="text-sm font-medium ">
                           {clinic.cityName}
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                    <div className="flex  flex-wrap items-center  gap-2 p-3 text-foreground/70 bg-gray-50 dark:bg-black/15 rounded-xl">
                       <Users className="w-5 h-5 text-gray-400" />
                       <div>
-                        <div className="text-xs text-gray-500">Patients</div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-xs ">Patients</div>
+                        <div className="text-sm font-medium ">
                           {clinic.patientsCount}
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                    <div className="flex  flex-wrap xl:col-span-1  md:col-span-2 items-center gap-2 p-3 text-foreground/70 bg-gray-50 dark:bg-black/15 rounded-xl">
                       <UserRound className="w-5 h-5 text-gray-400" />
                       <div>
-                        <div className="text-xs text-gray-500">Doctors</div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-xs ">Doctors</div>
+                        <div className="text-sm font-medium ">
                           {clinic.doctorsCount}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))
           )}
         </div>
-      </div>
+      </motion.div>
 
       <Modal
         isOpen={showStatusModal}
@@ -385,8 +382,9 @@ export default function ClinicsPage() {
             </Button>
             <Button
               onClick={handleStatusConfirm}
-              isLoading={updateClinicStatusMutation.isPending}
-              variant="primary"
+              variant="lineargradian"
+              disabled={updateClinicStatusMutation.isPending}
+
             >
               Update Status
             </Button>
@@ -398,13 +396,13 @@ export default function ClinicsPage() {
             <Avatar
               name={selectedClinic?.name || ''}
               size="lg"
-              className="w-16 h-16 rounded-xl border-2 border-gray-100"
+              className="w-16 h-16 rounded-xl border border-foreground"
             />
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold ">
                 {selectedClinic?.name}
               </h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-foreground/90">
                 Current Status:{' '}
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getClinicStatusClass(
@@ -420,7 +418,7 @@ export default function ClinicsPage() {
           </div>
 
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium ">
               Select New Status
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -430,11 +428,10 @@ export default function ClinicsPage() {
                   <button
                     key={key}
                     onClick={() => setSelectedStatus(value as ClinicStatus)}
-                    className={`relative flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-900 ${
-                      selectedStatus === value
-                        ? 'ring-2 ring-primary-500 ring-offset-2 bg-primary-50'
-                        : 'hover:bg-gray-50 border border-gray-200'
-                    }`}
+                    className={`relative flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all text-foreground ${selectedStatus === value
+                      ? 'ring-2 ring-primary-500 ring-offset-2 bg-primary-50'
+                      : 'hover:bg-gray-900 border border-gray-200'
+                      }`}
                   >
                     <div
                       className={`w-3 h-3 rounded-full ${getClinicStatusClass(
@@ -448,7 +445,7 @@ export default function ClinicsPage() {
           </div>
 
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium ">
               Reason for Status Change
             </label>
             <TextArea

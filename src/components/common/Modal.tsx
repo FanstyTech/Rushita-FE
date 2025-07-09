@@ -1,6 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { Card, CardFooter, CardHeader } from '../ui/card';
 
 interface ModalProps {
   isOpen: boolean;
@@ -41,46 +42,48 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = '2x
               leaveFrom="opacity-100 scale-100 translate-y-0"
               leaveTo="opacity-0 scale-95 translate-y-4"
             >
-              <Dialog.Panel 
-                className={`w-full transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all relative
+              <Dialog.Panel
+                className={`w-full transform transition-all relative
                   ${maxWidth === '7xl' ? 'max-w-7xl' :
                     maxWidth === '6xl' ? 'max-w-6xl' :
-                    maxWidth === '5xl' ? 'max-w-5xl' :
-                    maxWidth === '4xl' ? 'max-w-4xl' :
-                    maxWidth === '3xl' ? 'max-w-3xl' :
-                    'max-w-2xl'}`}
+                      maxWidth === '5xl' ? 'max-w-5xl' :
+                        maxWidth === '4xl' ? 'max-w-4xl' :
+                          maxWidth === '3xl' ? 'max-w-3xl' :
+                            'max-w-2xl'}`}
               >
-                {/* Modal header */}
-                {title && (
-                  <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/80 backdrop-blur-sm">
-                    <div className="flex items-center justify-between">
-                      <Dialog.Title className="text-xl font-semibold leading-6 text-gray-900">
-                        {title}
-                      </Dialog.Title>
-                      <button
-                        type="button"
-                        onClick={onClose}
-                        className="rounded-lg p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100/80 
+                <Card className='p-0 overflow-hidden rounded-2xl'>
+                  {/* Modal header */}
+                  {title && (
+                    <CardHeader className="px-6 py-4 border-b border-gray-100 dark:border-gray-900 bg-gray-50/80 dark:bg-gray-900/50 backdrop-blur-sm">
+                      <div className="flex items-center justify-between">
+                        <Dialog.Title className="text-xl font-semibold leading-6 text-foreground">
+                          {title}
+                        </Dialog.Title>
+                        <button
+                          type="button"
+                          onClick={onClose}
+                          className="rounded-lg p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100/80 
                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-                      >
-                        <span className="sr-only">Close</span>
-                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </div>
-                )}
+                        >
+                          <span className="sr-only">Close</span>
+                          <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                        </button>
+                      </div>
+                    </CardHeader>
+                  )}
 
-                {/* Modal content */}
-                <div className="px-6 py-6 max-h-[calc(100vh-8rem)] overflow-y-auto">
-                  {children}
-                </div>
-
-                {/* Modal footer */}
-                {footer && (
-                  <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/80 backdrop-blur-sm">
-                    {footer}
+                  {/* Modal content */}
+                  <div className="px-6 py-6 max-h-[calc(100vh-8rem)] overflow-y-auto">
+                    {children}
                   </div>
-                )}
+
+                  {/* Modal footer */}
+                  {footer && (
+                    <CardFooter className="px-6 py-4 border-t border-gray-100  dark:bg-gray-900/50 dark:border-gray-900 bg-gray-50/80 backdrop-blur-sm">
+                      {footer}
+                    </CardFooter>
+                  )}
+                </Card>
               </Dialog.Panel>
             </Transition.Child>
           </div>

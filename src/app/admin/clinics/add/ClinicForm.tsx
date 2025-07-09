@@ -30,6 +30,8 @@ import { useCountry } from '@/lib/api/hooks/useCountry';
 import { useClinic } from '@/lib/api/hooks/useClinic';
 import { SelectOption } from '@/lib/api/types/select-option';
 import { CreateUpdateClinicDto, DayEnum } from '@/lib/api/types/clinic';
+import { Button } from '@/components/ui/button';
+import { ComboboxDemo } from '@/components/ComboBox';
 
 interface ClinicFormProps {
   initialData?: CreateUpdateClinicDto;
@@ -257,6 +259,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
   };
 
   const onSubmit = async (data: ClinicFormData) => {
+    console.log(data)
     try {
       const payload: CreateUpdateClinicDto = {
         id: initialData?.id,
@@ -334,16 +337,19 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 text-foreground">
       {/* Header with Cancel Button */}
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-semibold text-gray-900">Add New Clinic</h2>
+        <h2 className="text-2xl font-semibold ">Add New Clinic</h2>
+
         <Link
           href="/admin/clinics"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors duration-300"
         >
-          <FiX className="w-4 h-4" />
-          Cancel
+          <Button variant="secondary" >
+            Cancel
+            <FiX className="w-4 h-4" />
+          </Button>
+
         </Link>
       </div>
 
@@ -353,18 +359,16 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
           <div key={step.id} className="flex items-center">
             <button
               onClick={() => handleStepChange(step.id)}
-              className={`flex items-center space-x-2 ${
-                currentStep === step.id
-                  ? 'text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
+              className={`flex items-center space-x-2 ${currentStep === step.id
+                ? 'text-blue-600'
+                : 'text-foreground/70 hover:text-foreground/50'
+                }`}
             >
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  currentStep === step.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-500'
-                }`}
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${currentStep === step.id
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-500'
+                  }`}
               >
                 <step.icon className="w-5 h-5" />
               </div>
@@ -373,11 +377,10 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
             {index < formSteps.length - 1 && (
               <div className="w-full sm:w-16 h-1 mx-2 bg-gray-200">
                 <div
-                  className={`h-full transition-all duration-500 ${
-                    formSteps.findIndex((s) => s.id === currentStep) > index
-                      ? 'bg-blue-600'
-                      : ''
-                  }`}
+                  className={`h-full transition-all duration-500 ${formSteps.findIndex((s) => s.id === currentStep) > index
+                    ? 'bg-blue-600'
+                    : ''
+                    }`}
                 />
               </div>
             )}
@@ -478,17 +481,16 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
             >
               <div className="grid grid-cols-1 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium  mb-1">
                     Address
                   </label>
                   <input
                     type="text"
                     {...register('address')}
-                    className={`block w-full px-4 py-3 rounded-xl border-2 ${
-                      errors.address
-                        ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                        : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
-                    } focus:outline-none`}
+                    className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.address
+                      ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
+                      : 'border-gray-100  placeholder-gray-400 focus:border-blue-500'
+                      } focus:outline-none`}
                     placeholder="Enter clinic address"
                   />
                   {errors.address && (
@@ -499,6 +501,22 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <ComboboxDemo
+                    label="Country"
+                    items={[
+                      { value: '', label: 'Select Country' },
+                      ...(countries || []).map(
+                        (country: SelectOption<string>) => ({
+                          value: country.value,
+                          label: country.label || '',
+                        })
+                      ),
+                    ]}
+                    onchange={(value: string) => {
+                      setValue('countryId', value);
+                    }}
+                  // {...register('countryId')}
+                  />
                   <Select
                     label="Country"
                     error={errors.countryId?.message}
@@ -542,23 +560,20 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                 {hours.map((day, index) => (
                   <div
                     key={day.day}
-                    className={`p-4 rounded-2xl transition-all duration-200 ${
-                      day.isOpen
-                        ? 'bg-white shadow-lg border border-blue-100'
-                        : 'bg-gray-50 border border-gray-100'
-                    }`}
+                    className={`p-4 rounded-2xl transition-all duration-200 ${day.isOpen
+                      ? 'bg-white shadow-lg border border-blue-100'
+                      : 'bg-gray-50 border border-gray-100'
+                      }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div
-                          className={`p-2 rounded-xl ${
-                            day.isOpen ? 'bg-blue-50' : 'bg-gray-100'
-                          }`}
+                          className={`p-2 rounded-xl ${day.isOpen ? 'bg-blue-50' : 'bg-gray-100'
+                            }`}
                         >
                           <FiClock
-                            className={`w-5 h-5 ${
-                              day.isOpen ? 'text-blue-500' : 'text-gray-400'
-                            }`}
+                            className={`w-5 h-5 ${day.isOpen ? 'text-blue-500' : 'text-gray-400'
+                              }`}
                           />
                         </div>
                         <span className="font-medium text-gray-900">
@@ -647,11 +662,10 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                   <input
                     type="url"
                     {...register('social.website')}
-                    className={`block w-full px-4 py-3 rounded-xl border-2 ${
-                      errors.social?.website
-                        ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                        : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
-                    } focus:outline-none`}
+                    className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.website
+                      ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
+                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      } focus:outline-none`}
                     placeholder="https://www.example.com"
                   />
                   {errors.social?.website && (
@@ -671,11 +685,10 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                   <input
                     type="url"
                     {...register('social.facebook')}
-                    className={`block w-full px-4 py-3 rounded-xl border-2 ${
-                      errors.social?.facebook
-                        ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                        : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
-                    } focus:outline-none`}
+                    className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.facebook
+                      ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
+                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      } focus:outline-none`}
                     placeholder="https://facebook.com/your-clinic"
                   />
                   {errors.social?.facebook && (
@@ -695,11 +708,10 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                   <input
                     type="url"
                     {...register('social.twitter')}
-                    className={`block w-full px-4 py-3 rounded-xl border-2 ${
-                      errors.social?.twitter
-                        ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                        : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
-                    } focus:outline-none`}
+                    className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.twitter
+                      ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
+                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      } focus:outline-none`}
                     placeholder="https://twitter.com/your-clinic"
                   />
                   {errors.social?.twitter && (
@@ -719,11 +731,10 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                   <input
                     type="url"
                     {...register('social.instagram')}
-                    className={`block w-full px-4 py-3 rounded-xl border-2 ${
-                      errors.social?.instagram
-                        ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                        : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
-                    } focus:outline-none`}
+                    className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.instagram
+                      ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
+                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      } focus:outline-none`}
                     placeholder="https://instagram.com/your-clinic"
                   />
                   {errors.social?.instagram && (
@@ -743,11 +754,10 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                   <input
                     type="url"
                     {...register('social.linkedin')}
-                    className={`block w-full px-4 py-3 rounded-xl border-2 ${
-                      errors.social?.linkedin
-                        ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                        : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
-                    } focus:outline-none`}
+                    className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.linkedin
+                      ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
+                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      } focus:outline-none`}
                     placeholder="https://linkedin.com/company/your-clinic"
                   />
                   {errors.social?.linkedin && (
@@ -767,11 +777,10 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                   <input
                     type="url"
                     {...register('social.youtube')}
-                    className={`block w-full px-4 py-3 rounded-xl border-2 ${
-                      errors.social?.youtube
-                        ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                        : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
-                    } focus:outline-none`}
+                    className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.youtube
+                      ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
+                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      } focus:outline-none`}
                     placeholder="https://youtube.com/c/your-clinic"
                   />
                   {errors.social?.youtube && (
@@ -858,11 +867,10 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
               type="button"
               onClick={handleSubmit(onSubmit)}
               disabled={createOrUpdateClinic.isPending}
-              className={`px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 ${
-                createOrUpdateClinic.isPending
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
-              }`}
+              className={`px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 ${createOrUpdateClinic.isPending
+                ? 'opacity-50 cursor-not-allowed'
+                : ''
+                }`}
             >
               {createOrUpdateClinic.isPending ? 'Saving...' : 'Save Clinic'}
             </button>

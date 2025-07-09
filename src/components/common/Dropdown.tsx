@@ -58,16 +58,16 @@ export default function Dropdown({
 
   return (
     <div className="relative group" ref={dropdownRef}>
+
       <button
         onClick={toggleDropdown}
-        className={`px-4 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center gap-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors ${className}`}
+        className={` py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center gap-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors ${className}`}
       >
         {icon && icon}
         {selectedLabel}
         <FiChevronDown
-          className={`w-4 h-4 transition-transform ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''
+            }`}
         />
       </button>
 

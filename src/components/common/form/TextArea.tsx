@@ -28,7 +28,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-foreground mb-1">
             {label}
           </label>
         )}
@@ -36,7 +36,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           ref={ref}
           {...props}
           className={twMerge(
-            'block w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500',
+            'block w-full px-4 py-3 rounded-xl border-2 border-gray-100 text-foreground placeholder-gray-400 focus:outline-none focus:border-blue-500',
             hasBorder && 'border border-gray-300',
             error && 'border-red-500',
             'focus:outline-none focus-visible:outline-none focus-visible:ring-0',
