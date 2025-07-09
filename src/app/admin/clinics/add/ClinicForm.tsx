@@ -23,7 +23,7 @@ import {
   FiX,
 } from 'react-icons/fi';
 import Link from 'next/link';
-import { Input, Select, TextArea } from '@/components/common/form';
+import { Input, TextArea } from '@/components/common/form';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { useCity } from '@/lib/api/hooks/useCity';
 import { useCountry } from '@/lib/api/hooks/useCountry';
@@ -104,6 +104,7 @@ const formSteps = [
 export default function ClinicForm({ initialData }: ClinicFormProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<string>('basic');
+  const [valuere, setvaluereset] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(
     initialData?.imageUrl || null
   );
@@ -514,10 +515,12 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                     ]}
                     onchange={(value: string) => {
                       setValue('countryId', value);
+                      setvaluereset(true)
+                      setValue('cityId', "");
+
                     }}
-                  // {...register('countryId')}
                   />
-                  <Select
+                  {/* <Select
                     label="Country"
                     error={errors.countryId?.message}
                     {...register('countryId')}
@@ -530,8 +533,23 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                         })
                       ),
                     ]}
+                  /> */}
+                  <ComboboxDemo
+                    setValue2={setvaluereset}
+                    value2={valuere}
+                    label="City"
+                    items={[
+                      { value: '', label: 'Select City' },
+                      ...(cities || []).map((city: SelectOption<string>) => ({
+                        value: city.value,
+                        label: city.label || '',
+                      })),
+                    ]}
+                    onchange={(value: string) => {
+                      setValue('cityId', value);
+                    }}
                   />
-                  <Select
+                  {/* <Select
                     label="City"
                     error={errors.cityId?.message}
                     {...register('cityId')}
@@ -542,7 +560,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                         label: city.label || '',
                       })),
                     ]}
-                  />
+                  /> */}
                 </div>
               </div>
             </motion.div>
