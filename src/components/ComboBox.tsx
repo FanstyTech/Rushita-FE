@@ -29,6 +29,8 @@ export function ComboboxDemo({ items, label
         if (value2 && setValue2) {
             setValue("")
             setValue2(false)
+            onchange("")
+
         }
     }, [value2])
     return (

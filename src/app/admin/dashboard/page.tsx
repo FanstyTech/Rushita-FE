@@ -14,6 +14,7 @@ import {
 import { motion } from 'framer-motion';
 import { GrowthOverviewChart } from '@/components/Chart/GrowthOverviewChart';
 import CardList from '@/components/CardList';
+import { Card } from '@/components/ui/card';
 
 ChartJS.register(
   CategoryScale,
@@ -230,9 +231,12 @@ export default function AdminDashboard() {
           <motion.div
             {...fadeInUp}
             transition={{ delay: 0.4 }}
-            className=" rounded-xl shadow border bg-white  dark:bg-primary-foreground p-4 "
+            className="  "
           >
-            <CardList />
+            <Card className='w-full h-full p-4  '>
+
+              <CardList />
+            </Card>
 
           </motion.div>
         </div>

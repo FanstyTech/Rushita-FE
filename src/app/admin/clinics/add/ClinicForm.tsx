@@ -520,20 +520,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
 
                     }}
                   />
-                  {/* <Select
-                    label="Country"
-                    error={errors.countryId?.message}
-                    {...register('countryId')}
-                    options={[
-                      { value: '', label: 'Select Country' },
-                      ...(countries || []).map(
-                        (country: SelectOption<string>) => ({
-                          value: country.value,
-                          label: country.label || '',
-                        })
-                      ),
-                    ]}
-                  /> */}
+
                   <ComboboxDemo
                     setValue2={setvaluereset}
                     value2={valuere}
@@ -549,18 +536,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                       setValue('cityId', value);
                     }}
                   />
-                  {/* <Select
-                    label="City"
-                    error={errors.cityId?.message}
-                    {...register('cityId')}
-                    options={[
-                      { value: '', label: 'Select City' },
-                      ...(cities || []).map((city: SelectOption<string>) => ({
-                        value: city.value,
-                        label: city.label || '',
-                      })),
-                    ]}
-                  /> */}
+
                 </div>
               </div>
             </motion.div>
