@@ -104,7 +104,7 @@ const formSteps = [
 export default function ClinicForm({ initialData }: ClinicFormProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<string>('basic');
-  const [valuere, setvaluereset] = useState(false)
+
   const [selectedImage, setSelectedImage] = useState<string | null>(
     initialData?.imageUrl || null
   );
@@ -194,6 +194,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
   const { data: specialties } = getSpecialtiesForDropdown();
 
   const selectedCountry = watch('countryId');
+  const selectedCityId = watch('cityId');
 
   const { useCitiesDropdown: getCitiesForDropdown } = useCity();
   const { data: cities } = getCitiesForDropdown({
@@ -260,7 +261,6 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
   };
 
   const onSubmit = async (data: ClinicFormData) => {
-    console.log(data)
     try {
       const payload: CreateUpdateClinicDto = {
         id: initialData?.id,
@@ -502,41 +502,55 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <ComboboxDemo
-                    label="Country"
-                    items={[
-                      { value: '', label: 'Select Country' },
-                      ...(countries || []).map(
-                        (country: SelectOption<string>) => ({
-                          value: country.value,
-                          label: country.label || '',
-                        })
-                      ),
-                    ]}
-                    onchange={(value: string) => {
-                      setValue('countryId', value);
-                      setvaluereset(true)
-                      setValue('cityId', "");
+                  <div>
+                    <h1 className='text-foreground mb-2'>Country</h1>
+                    <ComboboxDemo
+                      value={selectedCountry}
+                      onchange={(value) => {
+                        setValue("countryId", value)
+                      }}
+                      label="Country"
+                      items={[
+                        { value: '', label: 'Select Country' },
+                        ...(countries || []).map(
+                          (country: SelectOption<string>) => ({
+                            value: country.value,
+                            label: country.label || '',
+                          })
+                        ),
+                      ]}
+                    />
+                  </div>
+                  <div>
+                    <h1 className='text-foreground mb-2'>City</h1>
+                    <ComboboxDemo
+                      label="City"
+                      value={selectedCityId}
+                      onchange={(value) => {
+                        setValue("cityId", value)
+                      }}
+                      items={[
+                        { value: '', label: 'Select City' },
+                        ...(cities || []).map((city: SelectOption<string>) => ({
+                          value: city.value,
+                          label: city.label || '',
+                        })),
+                      ]}
 
-                    }}
-                  />
-
-                  <ComboboxDemo
-                    setValue2={setvaluereset}
-                    value2={valuere}
+                    />
+                  </div>
+                  {/* <Select
                     label="City"
-                    items={[
+                    error={errors.cityId?.message}
+                    {...register('cityId')}
+                    options={[
                       { value: '', label: 'Select City' },
                       ...(cities || []).map((city: SelectOption<string>) => ({
                         value: city.value,
                         label: city.label || '',
                       })),
                     ]}
-                    onchange={(value: string) => {
-                      setValue('cityId', value);
-                    }}
-                  />
-
+                  /> */}
                 </div>
               </div>
             </motion.div>
@@ -554,9 +568,9 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                 {hours.map((day, index) => (
                   <div
                     key={day.day}
-                    className={`p-4 rounded-2xl transition-all duration-200 ${day.isOpen
-                      ? 'bg-white shadow-lg border border-blue-100'
-                      : 'bg-gray-50 border border-gray-100'
+                    className={`p-4 rounded-2xl transition-all dark:shadow-2xl duration-200 ${day.isOpen
+                      ? 'bg-white dark:bg-gray-800 shadow-lg border border-blue-100 dark:border-blue-500'
+                      : 'bg-primary-foreground dark:bg-gray-700/50 border border-gray-100 dark:border-gray-500'
                       }`}
                   >
                     <div className="flex items-center justify-between">
@@ -570,7 +584,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                               }`}
                           />
                         </div>
-                        <span className="font-medium text-gray-900">
+                        <span className="font-medium text-foreground">
                           {DayEnum[day.day]}
                         </span>
                       </div>
@@ -588,49 +602,51 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                       </label>
                     </div>
 
-                    {day.isOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="mt-4 grid grid-cols-2 gap-4"
-                      >
-                        <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-1.5">
-                            Opening Time
-                          </label>
-                          <input
-                            type="time"
-                            value={day.openTime}
-                            onChange={(e) =>
-                              handleHourChange(
-                                index,
-                                'openTime',
-                                e.target.value
-                              )
-                            }
-                            className="block w-full px-4 py-2.5 rounded-xl border-2 border-gray-100 text-gray-900 text-sm focus:outline-none focus:border-blue-500 bg-gray-50"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-1.5">
-                            Closing Time
-                          </label>
-                          <input
-                            type="time"
-                            value={day.closeTime}
-                            onChange={(e) =>
-                              handleHourChange(
-                                index,
-                                'closeTime',
-                                e.target.value
-                              )
-                            }
-                            className="block w-full px-4 py-2.5 rounded-xl border-2 border-gray-100 text-gray-900 text-sm focus:outline-none focus:border-blue-500 bg-gray-50"
-                          />
-                        </div>
-                      </motion.div>
-                    )}
+                    <AnimatePresence mode='wait'>
+                      {day.isOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="mt-4 grid grid-cols-2 gap-4"
+                        >
+                          <div>
+                            <label className="block text-sm font-medium text-gray-500 mb-1.5">
+                              Opening Time
+                            </label>
+                            <input
+                              type="time"
+                              value={day.openTime}
+                              onChange={(e) =>
+                                handleHourChange(
+                                  index,
+                                  'openTime',
+                                  e.target.value
+                                )
+                              }
+                              className="block w-full px-4 py-2.5 rounded-xl border-2 border-gray-100 text-foreground text-sm focus:outline-none focus:border-blue-500 bg-gray-50"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-500 mb-1.5">
+                              Closing Time
+                            </label>
+                            <input
+                              type="time"
+                              value={day.closeTime}
+                              onChange={(e) =>
+                                handleHourChange(
+                                  index,
+                                  'closeTime',
+                                  e.target.value
+                                )
+                              }
+                              className="block w-full px-4 py-2.5 rounded-xl border-2 border-gray-100 text-foreground text-sm focus:outline-none focus:border-blue-500 bg-gray-50"
+                            />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 ))}
               </div>
@@ -647,7 +663,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
             >
               <div className="grid grid-cols-1 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     <div className="flex items-center space-x-2">
                       <FiGlobe className="text-blue-500" />
                       <span>Website</span>
@@ -658,7 +674,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                     {...register('social.website')}
                     className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.website
                       ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      : 'border-gray-100 text-foreground placeholder-gray-400 focus:border-blue-500'
                       } focus:outline-none`}
                     placeholder="https://www.example.com"
                   />
@@ -670,7 +686,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     <div className="flex items-center space-x-2">
                       <FiFacebook className="text-[#1877F2]" />
                       <span>Facebook</span>
@@ -681,7 +697,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                     {...register('social.facebook')}
                     className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.facebook
                       ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      : 'border-gray-100 text-foreground placeholder-gray-400 focus:border-blue-500'
                       } focus:outline-none`}
                     placeholder="https://facebook.com/your-clinic"
                   />
@@ -693,7 +709,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     <div className="flex items-center space-x-2">
                       <FiTwitter className="text-[#1DA1F2]" />
                       <span>Twitter</span>
@@ -704,7 +720,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                     {...register('social.twitter')}
                     className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.twitter
                       ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      : 'border-gray-100 text-foreground placeholder-gray-400 focus:border-blue-500'
                       } focus:outline-none`}
                     placeholder="https://twitter.com/your-clinic"
                   />
@@ -716,7 +732,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     <div className="flex items-center space-x-2">
                       <FiInstagram className="text-[#E4405F]" />
                       <span>Instagram</span>
@@ -727,7 +743,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                     {...register('social.instagram')}
                     className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.instagram
                       ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      : 'border-gray-100 text-foreground placeholder-gray-400 focus:border-blue-500'
                       } focus:outline-none`}
                     placeholder="https://instagram.com/your-clinic"
                   />
@@ -739,7 +755,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     <div className="flex items-center space-x-2">
                       <FiLinkedin className="text-[#0A66C2]" />
                       <span>LinkedIn</span>
@@ -750,7 +766,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                     {...register('social.linkedin')}
                     className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.linkedin
                       ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      : 'border-gray-100 text-foreground placeholder-gray-400 focus:border-blue-500'
                       } focus:outline-none`}
                     placeholder="https://linkedin.com/company/your-clinic"
                   />
@@ -762,7 +778,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     <div className="flex items-center space-x-2">
                       <FiYoutube className="text-[#FF0000]" />
                       <span>YouTube</span>
@@ -773,7 +789,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                     {...register('social.youtube')}
                     className={`block w-full px-4 py-3 rounded-xl border-2 ${errors.social?.youtube
                       ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500'
-                      : 'border-gray-100 text-gray-900 placeholder-gray-400 focus:border-blue-500'
+                      : 'border-gray-100 text-foreground placeholder-gray-400 focus:border-blue-500'
                       } focus:outline-none`}
                     placeholder="https://youtube.com/c/your-clinic"
                   />
@@ -796,7 +812,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
               className="space-y-6"
             >
               <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-foreground">
                   Select Specialties
                 </label>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -811,7 +827,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                         {...register('specialtyIds')}
                         className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
-                      <span className="ml-3 text-sm text-gray-700">
+                      <span className="ml-3 text-sm text-foreground">
                         {specialty.label}
                       </span>
                     </label>
@@ -839,7 +855,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                 setCurrentStep(formSteps[currentIndex - 1].id);
               }
             }}
-            className="inline-flex items-center gap-2 px-6 py-2.5 text-gray-600 hover:text-gray-900 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-2.5 text-gray-600 hover:text-foreground transition-colors"
           >
             <svg
               className="w-5 h-5"

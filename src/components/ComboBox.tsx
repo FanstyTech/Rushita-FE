@@ -20,19 +20,10 @@ import {
 } from "@/components/ui/popover"
 
 export function ComboboxDemo({ items, label
-    , onchange, value2, setValue2
-}: { value2?: boolean, setValue2?: React.Dispatch<React.SetStateAction<boolean>>, label: string, items: { value: string, label: string }[], onchange: (value: string) => void }) {
+    , value, onchange
+}: { value: string | undefined, onchange: (value: string) => void, label: string, items: { value: string, label: string }[] }) {
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState("")
 
-    React.useEffect(() => {
-        if (value2 && setValue2) {
-            setValue("")
-            setValue2(false)
-            onchange("")
-
-        }
-    }, [value2])
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -59,8 +50,7 @@ export function ComboboxDemo({ items, label
                                     key={framework.value}
                                     value={framework.value}
                                     onSelect={(currentValue) => {
-                                        setValue(currentValue === value ? "" : currentValue)
-                                        onchange(value)
+                                        onchange(currentValue === value ? "" : currentValue)
                                         setOpen(false)
                                     }}
                                 >
