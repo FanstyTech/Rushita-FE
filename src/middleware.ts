@@ -26,6 +26,7 @@ const excludedFromRedirect = [
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  return NextResponse.next();
 
   // Skip language handling for excluded paths
   if (excludedFromRedirect.some((path) => pathname.startsWith(path))) {
