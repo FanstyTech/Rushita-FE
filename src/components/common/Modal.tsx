@@ -12,7 +12,14 @@ interface ModalProps {
   footer?: React.ReactNode;
 }
 
-export default function Modal({ isOpen, onClose, title, children, maxWidth = '2xl', footer }: ModalProps) {
+export default function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  maxWidth = '2xl',
+  footer,
+}: ModalProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -44,14 +51,21 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = '2x
             >
               <Dialog.Panel
                 className={`w-full transform transition-all relative
-                  ${maxWidth === '7xl' ? 'max-w-7xl' :
-                    maxWidth === '6xl' ? 'max-w-6xl' :
-                      maxWidth === '5xl' ? 'max-w-5xl' :
-                        maxWidth === '4xl' ? 'max-w-4xl' :
-                          maxWidth === '3xl' ? 'max-w-3xl' :
-                            'max-w-2xl'}`}
+                  ${
+                    maxWidth === '7xl'
+                      ? 'max-w-7xl'
+                      : maxWidth === '6xl'
+                      ? 'max-w-6xl'
+                      : maxWidth === '5xl'
+                      ? 'max-w-5xl'
+                      : maxWidth === '4xl'
+                      ? 'max-w-4xl'
+                      : maxWidth === '3xl'
+                      ? 'max-w-3xl'
+                      : 'max-w-2xl'
+                  }`}
               >
-                <Card className='p-0 overflow-hidden rounded-2xl'>
+                <Card className="p-0 overflow-hidden rounded-2xl">
                   {/* Modal header */}
                   {title && (
                     <CardHeader className="px-6 py-4 border-b border-gray-100 dark:border-gray-900 bg-gray-50/80 dark:bg-gray-900/50 backdrop-blur-sm">
@@ -73,7 +87,7 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = '2x
                   )}
 
                   {/* Modal content */}
-                  <div className="px-6 py-6 max-h-[calc(100vh-8rem)] overflow-y-auto">
+                  <div className="px-6 py-3 max-h-[calc(100vh-8rem)] overflow-y-auto">
                     {children}
                   </div>
 

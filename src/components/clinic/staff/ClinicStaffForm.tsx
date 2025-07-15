@@ -184,7 +184,7 @@ export default function ClinicStaffForm({
               {...register('staffType', { valueAsNumber: true })}
               error={errors.staffType?.message}
               options={Object.entries(StaffType)
-                .filter(([value]) => typeof value === 'number')
+                .filter(([, value]) => typeof value === 'number')
                 .map(([key, value]) => ({
                   label: key,
                   value: value.toString(),

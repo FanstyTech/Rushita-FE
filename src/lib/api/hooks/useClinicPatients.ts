@@ -56,7 +56,7 @@ export function useClinicPatients() {
       retry: false,
     });
 
-  const usePatientDropdown = (filters: GetPatientDropdownInput) =>
+  const usePatientDropdown = (filters: GetPatientDropdownInput, options?: { enabled?: boolean }) =>
     useQuery({
       queryKey: ['clinic-patients-dropdown', filters],
       queryFn: async () => {
@@ -66,6 +66,7 @@ export function useClinicPatients() {
         }
         return response.result;
       },
+      enabled: options?.enabled !== undefined ? options.enabled : true,
       retry: false,
     });
 

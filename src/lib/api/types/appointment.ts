@@ -34,6 +34,7 @@ export interface AppointmentDto {
 export interface AppointmentFilterDto extends PaginationRequest {
   clinicId?: string;
   date?: string;
+  type?: VisitType;
 }
 
 export interface AppointmentListDto {
@@ -47,10 +48,11 @@ export interface AppointmentListDto {
   date: string;
   startTime: string;
   endTime: string;
+  notes?: string;
 }
 
 export interface CreateUpdateAppointmentDto {
-  id: string;
+  id?: string;
   date: string;
   startTime: string;
   endTime: string;

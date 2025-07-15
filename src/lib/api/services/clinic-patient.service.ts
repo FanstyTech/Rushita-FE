@@ -12,13 +12,13 @@ import {
   CreateOrUpdateMedicalConditionDto,
   CreateUpdateClinicPatientDto,
   FamilyHistoryDto,
-  GetPatientDropdownDto,
   GetPatientDropdownInput,
   MedicalConditionDto,
   PatientProfileDto,
   PatientStatus,
 } from '../types/clinic-patient';
 import { PaginationResponse } from '../types/pagination';
+import { SelectOption } from '../types/select-option';
 
 class ClinicPatientService {
   async getAll(
@@ -45,7 +45,7 @@ class ClinicPatientService {
 
   async getPatientDropdown(
     filter: GetPatientDropdownInput
-  ): Promise<ApiResponse<GetPatientDropdownDto>> {
+  ): Promise<ApiResponse<SelectOption<string>[]>> {
     return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_PATIENT_DROPDOWN, {
       params: convertFilterToParams(filter as FilterParams),
     });

@@ -1,114 +1,183 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useAuth } from '@/lib/api/hooks/useAuth';
 import { Calendar } from '@/components/clinic/appointments/Calendar';
-import { Appointment, appointmentAPI } from '@/mockData/appointments';
 import { format } from 'date-fns';
-import { Patient, patientAPI } from '@/mockData/patients';
 import Modal from '@/components/common/Modal';
 import {
   CalendarIcon,
-  ClockIcon,
-  UserIcon,
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
+import AppointmentSkeleton from '@/components/skeletons/AppointmentSkeleton';
 import PageLayout from '@/components/layouts/PageLayout';
+import { Card } from '@/components/ui/card';
+import Button from '@/components/common/Button';
+import { useAppointments } from '@/lib/api/hooks/useAppointments';
+import {
+  AppointmentListDto,
+  CreateUpdateAppointmentDto,
+  VisitType,
+  AppointmentStatus,
+  AppointmentFilterDto,
+} from '@/lib/api/types/appointment';
+import {
+  convertFormDataForAPI,
+  validateAppointmentTime,
+} from '@/utils/dateTimeUtils';
+import { toast } from '@/components/ui/Toast';
+import AppointmentForm from '../../../components/clinic/appointments/AppointmentForm';
 
 export default function AppointmentsPage() {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const { user } = useAuth();
+
+  // Extract clinicId and staffId directly from user
+  const clinicId = user?.clinicInfo?.id || '';
+
+  // Use client-side only initialization for dates to avoid hydration mismatches
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  // Initialize date on client-side only
+  useEffect(() => {
+    setSelectedDate(new Date());
+  }, []);
+
   const [showNewAppointment, setShowNewAppointment] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Patient[]>([]);
-  const [newAppointment, setNewAppointment] = useState({
-    type: 'checkup' as 'checkup' | 'followup' | 'emergency' | 'dental',
+    useState<AppointmentListDto | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+
+  const [selectedStaff, setSelectedStaff] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+
+  const [newAppointment, setNewAppointment] = useState<{
+    type: VisitType;
+    startTime: string;
+    endTime: string;
+    notes: string;
+    status: AppointmentStatus;
+  }>({
+    type: VisitType.New,
     startTime: '09:00',
     endTime: '09:30',
     notes: '',
+    status: AppointmentStatus.Scheduled,
   });
 
-  // Load appointments
-  useEffect(() => {
-    loadAppointments();
-  }, []);
+  // API Hooks
+  const { useAppointmentsList, createOrUpdateAppointment, deleteAppointment } =
+    useAppointments();
 
-  const loadAppointments = async () => {
-    try {
-      const data: Appointment[] = await appointmentAPI.getAppointments();
-      setAppointments(data);
-    } catch (error) {
-      console.error('Failed to load appointments:', error);
-    }
-  };
+  // Loading states
+  const isSubmitting =
+    createOrUpdateAppointment.isPending || deleteAppointment.isPending;
 
-  // Search patients
-  const searchPatients = async (query: string) => {
-    if (!query.trim()) {
-      setSearchResults([]);
+  // Filter for appointments
+  const appointmentFilter: AppointmentFilterDto = useMemo(
+    () => ({
+      clinicId,
+      pageNumber: 1,
+      pageSize: 100,
+    }),
+    [clinicId]
+  );
+
+  // Fetch appointments
+  const { data: appointmentsData, isLoading: appointmentsLoading } =
+    useAppointmentsList(appointmentFilter);
+
+  // Create or update appointment
+  const handleCreateAppointment = async () => {
+    if (!selectedPatient) {
+      toast.error('Please select a patient');
       return;
     }
-    try {
-      const results = await patientAPI.searchPatients(query);
-      setSearchResults(results);
-    } catch (error) {
-      console.error('Failed to search patients:', error);
+    if (!selectedStaff) {
+      toast.error('Please select a staff member');
+      return;
     }
-  };
+    if (
+      !validateAppointmentTime(newAppointment.startTime, newAppointment.endTime)
+    ) {
+      toast.error('End time must be after start time');
+      return;
+    }
 
-  // Create appointment
-  const handleCreateAppointment = async () => {
-    if (!selectedPatient) return;
-
-    setIsSubmitting(true);
     try {
-      const appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'> = {
-        patientId: selectedPatient.id,
-        doctorId: '1', // TODO: Replace with actual logged-in doctor ID
-        date: format(selectedDate, 'yyyy-MM-dd'),
+      const appointmentData: CreateUpdateAppointmentDto = {
+        id: selectedAppointment?.id || null,
+        patientId: selectedPatient.value || '',
+        staffId: selectedStaff.value || '',
+        clinicId: clinicId,
+        date: format(selectedDate || new Date(), 'yyyy-MM-dd'),
         startTime: newAppointment.startTime,
         endTime: newAppointment.endTime,
         type: newAppointment.type,
-        status: 'scheduled',
+        status: newAppointment.status,
         notes: newAppointment.notes,
       };
 
-      await appointmentAPI.createAppointment(appointment);
-      await loadAppointments();
+      const convertedData = convertFormDataForAPI(appointmentData);
+      await createOrUpdateAppointment.mutateAsync(convertedData);
+
       setShowNewAppointment(false);
       resetNewAppointmentForm();
+
+      toast.success(
+        selectedAppointment
+          ? 'Appointment updated successfully'
+          : 'Appointment created successfully'
+      );
     } catch (error) {
-      console.error('Failed to create appointment:', error);
-    } finally {
-      setIsSubmitting(false);
+      toast.error('Failed to save appointment');
     }
   };
 
+  // Reset form
+  const resetNewAppointmentForm = () => {
+    setSelectedPatient(null);
+    setSelectedStaff(null);
+    setNewAppointment({
+      type: VisitType.New,
+      startTime: '09:00',
+      endTime: '09:30',
+      notes: '',
+      status: AppointmentStatus.Scheduled,
+    });
+  };
+
   // Handle edit appointment
-  const handleEditAppointment = async (appointment: Appointment) => {
+  const handleEditAppointment = (appointment: AppointmentListDto) => {
     setSelectedAppointment(appointment);
     setNewAppointment({
       type: appointment.type,
       startTime: appointment.startTime,
       endTime: appointment.endTime,
       notes: appointment.notes || '',
+      status: appointment.status,
     });
 
-    // Get and set the patient for the appointment
-    try {
-      const patient = await patientAPI.getPatientById(appointment.patientId);
-      if (patient) {
-        setSelectedPatient(patient);
-      }
-    } catch (error) {
-      console.error('Failed to load patient:', error);
-    }
+    // // Find and set the patient for the appointment
+    // const patient = patientOptions.find(
+    //   (p) => p.value === appointment.patientName
+    // );
+
+    // if (patient) {
+    //   setSelectedPatient(patient);
+    // } else {
+    //   // If patient not found in current list, search by name
+    //   if (appointment.patientName) {
+    //     setPatientSearchQuery(appointment.patientName);
+    //   }
+    // }
 
     setShowNewAppointment(true);
   };
@@ -117,65 +186,71 @@ export default function AppointmentsPage() {
   const handleDeleteAppointment = async () => {
     if (!selectedAppointment) return;
 
-    setIsSubmitting(true);
     try {
-      await appointmentAPI.deleteAppointment(selectedAppointment.id);
-      await loadAppointments();
+      await deleteAppointment.mutateAsync(selectedAppointment.id);
       setShowDeleteConfirm(false);
       setSelectedAppointment(null);
+      setSelectedPatient(null);
+      setSelectedStaff(null);
+      toast.success('Appointment deleted successfully');
     } catch (error) {
-      console.error('Failed to delete appointment:', error);
-    } finally {
-      setIsSubmitting(false);
+      toast.error('Failed to delete appointment');
     }
   };
 
-  const resetNewAppointmentForm = () => {
-    setSelectedPatient(null);
-    setSearchQuery('');
-    setSearchResults([]);
-    setNewAppointment({
-      type: 'checkup' as 'checkup' | 'followup' | 'emergency' | 'dental',
-      startTime: '09:00',
-      endTime: '09:30',
-      notes: '',
-    });
-  };
+  // Calendar data conversion
+  const calendarAppointments = useMemo(() => {
+    if (!appointmentsData?.items) return [];
+    return appointmentsData.items;
+  }, [appointmentsData]);
+
+  // Show skeleton loading state when appointments are loading initially
+  if (appointmentsLoading && !appointmentsData) {
+    return (
+      <PageLayout>
+        <AppointmentSkeleton />
+      </PageLayout>
+    );
+  }
+
+  // Only render the full UI when we're on the client side
+  if (!selectedDate) {
+    return (
+      <PageLayout>
+        <AppointmentSkeleton />
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout>
-      {/* Calendar View */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-gray-900"></h1>
-        <button
-          onClick={() => setShowNewAppointment(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
+      {/* Header */}
+      <div className="flex justify-end items-center">
+        <Button onClick={() => setShowNewAppointment(true)} className="gap-2">
           <CalendarIcon className="h-5 w-5 mr-2" />
           New Appointment
-        </button>
+        </Button>
       </div>
 
+      {/* Main Content */}
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Calendar */}
         <div className="lg:col-span-2">
           <Calendar
-            appointments={appointments}
+            appointments={calendarAppointments}
             selectedDate={selectedDate}
             onDaySelect={setSelectedDate}
           />
         </div>
 
         {/* Day's Schedule */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
-              Schedule for {format(selectedDate, 'MMMM d, yyyy')}
-            </h3>
-          </div>
+        <Card className="">
+          <h3 className="px-4 sm:px-6 text-lg font-medium">
+            Schedule for {format(selectedDate, 'MMMM d, yyyy')}
+          </h3>
           <div className="border-t border-gray-200">
             <ul className="divide-y divide-gray-200">
-              {appointments
+              {calendarAppointments
                 .filter(
                   (apt) =>
                     format(new Date(apt.date), 'yyyy-MM-dd') ===
@@ -192,19 +267,19 @@ export default function AppointmentsPage() {
                           <CalendarIcon className="h-6 w-6 text-gray-400" />
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium">
                             {appointment.startTime} - {appointment.endTime}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {appointment.type.charAt(0).toUpperCase() +
-                              appointment.type.slice(1)}
+                            {appointment.patientName} -{' '}
+                            {VisitType[appointment.type]}
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-4">
                         <button
                           onClick={() => handleEditAppointment(appointment)}
-                          className="inline-flex items-center p-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          className="inline-flex items-center p-2 border border-gray-300 rounded-md text-sm font-medium bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
                           <PencilIcon className="h-4 w-4" />
                           <span className="sr-only">Edit</span>
@@ -224,7 +299,7 @@ export default function AppointmentsPage() {
                   </li>
                 ))}
             </ul>
-            {appointments.filter(
+            {calendarAppointments.filter(
               (apt) =>
                 format(new Date(apt.date), 'yyyy-MM-dd') ===
                 format(selectedDate, 'yyyy-MM-dd')
@@ -234,9 +309,7 @@ export default function AppointmentsPage() {
                   <div className="rounded-full bg-gray-100 p-3 mb-4">
                     <CalendarIcon className="h-6 w-6 text-gray-400" />
                   </div>
-                  <h3 className="text-sm font-medium text-gray-900 mb-1">
-                    No appointments
-                  </h3>
+                  <h3 className="text-sm font-medium mb-1">No appointments</h3>
                   <p className="text-sm text-gray-500">
                     There are no appointments scheduled for this day.
                   </p>
@@ -244,7 +317,7 @@ export default function AppointmentsPage() {
               </div>
             )}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Delete Confirmation Modal */}
@@ -263,7 +336,7 @@ export default function AppointmentsPage() {
               type="button"
               disabled={isSubmitting}
               onClick={() => setShowDeleteConfirm(false)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-4 py-2 text-sm font-medium bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
               Cancel
             </button>
@@ -286,225 +359,53 @@ export default function AppointmentsPage() {
         </div>
       </Modal>
 
-      {/* New Appointment Modal */}
+      {/* New/Edit Appointment Modal */}
       <Modal
         isOpen={showNewAppointment}
-        onClose={() => !isSubmitting && setShowNewAppointment(false)}
-        title="Schedule New Appointment"
+        onClose={() => {
+          if (!isSubmitting) {
+            setShowNewAppointment(false);
+            resetNewAppointmentForm();
+          }
+        }}
+        title={
+          selectedAppointment ? 'Edit Appointment' : 'Schedule New Appointment'
+        }
         footer={
-          <div className=" flex justify-end space-x-4 border-gray-200 ">
-            <button
+          <div className="flex justify-end gap-3">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setShowNewAppointment(false);
+                resetNewAppointmentForm();
+              }}
               type="button"
-              onClick={() => setShowNewAppointment(false)}
               disabled={isSubmitting}
-              className="rounded-md bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors duration-150"
             >
               Cancel
-            </button>
-            <button
-              type="submit"
+            </Button>
+            <Button
               onClick={handleCreateAppointment}
-              disabled={!selectedPatient || isSubmitting}
-              className="rounded-md bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-150 flex items-center gap-2"
+              type="button"
+              className="gap-2"
+              isLoading={isSubmitting}
             >
-              {isSubmitting ? (
-                <>
-                  <LoadingSpinner size="sm" />
-                  Creating...
-                </>
-              ) : (
-                'Schedule Appointment'
-              )}
-            </button>
+              {selectedAppointment
+                ? 'Update Appointment'
+                : 'Schedule Appointment'}
+            </Button>
           </div>
         }
       >
-        <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
-          {/* Patient Selection */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Patient Information
-            </h3>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Patient Name
-              </label>
-              <div className="relative">
-                {selectedPatient ? (
-                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-md border border-blue-200">
-                    <div className="flex items-center">
-                      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        <UserIcon className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <span className="ml-3 text-sm font-medium text-gray-900">
-                        {selectedPatient.name}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedPatient(null)}
-                      className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
-                    >
-                      Change
-                    </button>
-                  </div>
-                ) : (
-                  <div className="relative">
-                    <div className="relative rounded-md shadow-sm">
-                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <UserIcon
-                          className="h-5 w-5 text-gray-400"
-                          aria-hidden="true"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => {
-                          setSearchQuery(e.target.value);
-                          searchPatients(e.target.value);
-                        }}
-                        placeholder="Search patients..."
-                        className="block w-full rounded-md border-0 py-3 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    {searchResults.length > 0 && (
-                      <ul className="absolute z-50 w-full mt-2 max-h-60 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm divide-y divide-gray-100">
-                        {searchResults.map((patient) => (
-                          <li
-                            key={patient.id}
-                            onClick={() => {
-                              setSelectedPatient(patient);
-                              setSearchQuery('');
-                              setSearchResults([]);
-                            }}
-                            className="relative cursor-pointer select-none py-3 px-4 hover:bg-gray-50 transition-colors duration-150"
-                          >
-                            <div className="flex items-center">
-                              <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
-                                <UserIcon className="h-5 w-5 text-gray-600" />
-                              </div>
-                              <span className="ml-3 font-medium block text-gray-700 ">
-                                {patient.name}
-                              </span>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Appointment Details */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Appointment Details
-            </h3>
-            <div className="space-y-6">
-              {/* Appointment Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Type of Appointment
-                </label>
-                <div className="relative rounded-md shadow-sm">
-                  <select
-                    value={newAppointment.type}
-                    onChange={(e) =>
-                      setNewAppointment({
-                        ...newAppointment,
-                        type: e.target.value as
-                          | 'checkup'
-                          | 'followup'
-                          | 'emergency'
-                          | 'dental',
-                      })
-                    }
-                    className="block w-full rounded-md border-0 py-3 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                  >
-                    <option value="checkup">Check-up</option>
-                    <option value="followup">Follow-up</option>
-                    <option value="emergency">Emergency</option>
-                    <option value="dental">Dental</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Time Selection */}
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Start Time
-                  </label>
-                  <div className="relative rounded-md shadow-sm">
-                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <ClockIcon
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <input
-                      type="time"
-                      value={newAppointment.startTime}
-                      onChange={(e) =>
-                        setNewAppointment({
-                          ...newAppointment,
-                          startTime: e.target.value,
-                        })
-                      }
-                      className="block w-full rounded-md border-0 py-3 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    End Time
-                  </label>
-                  <div className="relative rounded-md shadow-sm">
-                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <ClockIcon
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <input
-                      type="time"
-                      value={newAppointment.endTime}
-                      onChange={(e) =>
-                        setNewAppointment({
-                          ...newAppointment,
-                          endTime: e.target.value,
-                        })
-                      }
-                      className="block w-full rounded-md border-0 py-3 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Notes */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Additional Notes
-                </label>
-                <textarea
-                  value={newAppointment.notes}
-                  onChange={(e) =>
-                    setNewAppointment({
-                      ...newAppointment,
-                      notes: e.target.value,
-                    })
-                  }
-                  rows={3}
-                  className="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 resize-none"
-                  placeholder="Add any additional notes about the appointment..."
-                />
-              </div>
-            </div>
-          </div>
-        </form>
+        <AppointmentForm
+          clinicId={clinicId}
+          onPatientChange={setSelectedPatient}
+          onStaffChange={setSelectedStaff}
+          initialPatient={selectedPatient}
+          initialStaff={selectedStaff}
+          appointmentDetails={newAppointment}
+          setAppointmentDetails={setNewAppointment}
+        />
       </Modal>
     </PageLayout>
   );

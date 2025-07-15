@@ -12,10 +12,11 @@ import {
   addMonths,
   subMonths,
 } from 'date-fns';
-import { Appointment } from '@/mockData/appointments';
+import { AppointmentListDto } from '@/lib/api/types/appointment';
+import { Card } from '@/components/ui/card';
 
 interface CalendarProps {
-  appointments: Appointment[];
+  appointments: AppointmentListDto[];
   onDaySelect: (date: Date) => void;
   selectedDate?: Date;
 }
@@ -35,11 +36,11 @@ export function Calendar({
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <Card>
       {/* Calendar Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className="px-6 py-2 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold">
             {format(currentMonth, 'MMMM yyyy')}
           </h2>
           <div className="flex space-x-2">
@@ -64,10 +65,7 @@ export function Calendar({
         {/* Weekday headers */}
         <div className="grid grid-cols-7 gap-1 mb-2">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-            <div
-              key={day}
-              className="text-center text-sm font-medium text-gray-500 py-2"
-            >
+            <div key={day} className="text-center text-sm font-medium  py-2">
               {day}
             </div>
           ))}
@@ -85,6 +83,7 @@ export function Calendar({
                 key={day.toString()}
                 onClick={() => onDaySelect(day)}
                 className={`
+                  dark:bg-gray-900 
                   min-h-[100px] p-2 border rounded-lg relative
                   ${isSameMonth(day, currentMonth) ? 'bg-white' : 'bg-gray-50'}
                   ${
@@ -100,8 +99,8 @@ export function Calendar({
                     block text-sm
                     ${
                       isSameMonth(day, currentMonth)
-                        ? 'text-gray-900'
-                        : 'text-gray-400'
+                        ? 'text-gray-900 dark:text-white'
+                        : 'text-gray-400 dark:text-white'
                     }
                   `}
                 >
@@ -129,6 +128,6 @@ export function Calendar({
           })}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

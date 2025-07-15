@@ -40,7 +40,7 @@ export const useClinicStaff = () => {
       enabled: !!id,
     });
 
-  const useClinicStaffForDropdown = (filter: GetClinicStaffForDropdownInput) =>
+  const useClinicStaffForDropdown = (filter: GetClinicStaffForDropdownInput, options?: { enabled?: boolean }) =>
     useQuery({
       queryKey: ['clinic-staff', 'dropdown', filter],
       queryFn: async () => {
@@ -52,7 +52,7 @@ export const useClinicStaff = () => {
         }
         return response.result;
       },
-      enabled: !!filter.clinicId,
+      enabled: options?.enabled !== undefined ? options.enabled : !!filter.clinicId,
     });
   const useClinicStaffForEdit = (id: string) =>
     useQuery({

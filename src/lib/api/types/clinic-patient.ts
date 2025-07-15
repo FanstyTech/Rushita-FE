@@ -278,8 +278,3 @@ export interface GetPatientDropdownInput {
   clinicId?: string;
   name?: string;
 }
-export interface GetPatientDropdownDto {
-  Id: string;
-  Name: string;
-  Age: number;
-}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from '@/components/ui/Toast';
 import {
   patientSchema,
   PatientFormData,
@@ -54,8 +55,9 @@ export default function PatientForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     reset,
+    setValue,
   } = useForm<PatientFormData>({
     resolver: zodResolver(patientSchema),
     defaultValues: initialData
@@ -81,6 +83,17 @@ export default function PatientForm({
     }
   }, [initialData, reset]);
 
+  // Handle country code selection
+  const handlePhoneCodeChange = (value: string) => {
+    setSelectedPhoneCode(value);
+    setValue('countryCodeId', value);
+  };
+
+  // Custom submit handler with validation
+  const submitWithValidation = handleSubmit((data) => {
+    onSubmit(data);
+  });
+
   const tabs = [
     { name: 'Basic Information', icon: User },
     { name: 'Contact Details', icon: Phone },
@@ -88,7 +101,7 @@ export default function PatientForm({
   ];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={submitWithValidation} className="space-y-6">
       <TabGroup>
         <TabList className="flex p-1 space-x-1 bg-gray-100 rounded-lg">
           {tabs.map((tab) => (
@@ -159,18 +172,19 @@ export default function PatientForm({
 
           <TabPanel className="bg-white rounded-lg p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Hidden input to ensure countryCodeId is registered with the form */}
+              <input
+                type="hidden"
+                {...register('countryCodeId')}
+                value={selectedPhoneCode}
+              />
               <PhoneInput
                 label="Mobile"
                 phoneCodeOptions={phoneCodes || []}
                 selectedPhoneCode={selectedPhoneCode}
-                onPhoneCodeChange={(value) => {
-                  setSelectedPhoneCode(value);
-                  const event = {
-                    target: { value, name: 'countryCodeId' },
-                  };
-                  register('countryCodeId').onChange(event);
-                }}
+                onPhoneCodeChange={handlePhoneCodeChange}
                 phoneCodeName="phoneCode"
+                error={errors.phoneNumber?.message}
                 {...register('phoneNumber')}
               />
               <Input
@@ -232,7 +246,7 @@ export default function PatientForm({
                 error={errors.bloodType?.message}
                 {...register('bloodType', { valueAsNumber: true })}
                 options={Object.entries(BloodType)
-                  .filter(([key]) => isNaN(Number(key)))
+                  .filter(([, key]) => isNaN(Number(key)))
                   .map(([value]) => ({
                     value: value.toString(),
                     label: bloodTypeDisplayNames[value as unknown as BloodType],

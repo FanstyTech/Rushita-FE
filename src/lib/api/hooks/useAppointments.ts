@@ -22,6 +22,8 @@ export function useAppointments() {
       },
       enabled: !!filters.clinicId,
       retry: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000,   // 10 minutes
     });
 
   const useAppointmentForEdit = (id: string) =>
@@ -46,12 +48,15 @@ export function useAppointments() {
       }
       return response.result;
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      const isUpdate = !!variables.id;
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
-      toast.success('Appointment saved successfully');
+      toast.success(
+        isUpdate ? 'Appointment updated successfully' : 'Appointment created successfully'
+      );
     },
-    onError: () => {
-      toast.error('Failed to save appointment');
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to save appointment');
     },
     retry: false,
   });

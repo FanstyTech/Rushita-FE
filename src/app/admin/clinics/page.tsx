@@ -29,7 +29,12 @@ import { getClinicStatusLabel, getClinicStatusClass } from '@/utils';
 import Avatar from '@/components/common/Avatar';
 import { TextArea } from '@/components/common';
 import { Card } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
@@ -123,11 +128,12 @@ export default function ClinicsPage() {
 
   return (
     <PageLayout>
-
-      <motion.div className="space-y-4"
+      <motion.div
+        className="space-y-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}>
+        transition={{ duration: 0.5 }}
+      >
         <FilterBar
           filter={filters}
           onFilterChange={(newFilter) => {
@@ -232,11 +238,8 @@ export default function ClinicsPage() {
             </Card>
           ) : (
             clinics?.items.map((clinic) => (
-              <Card
-                className='p-0'
-                key={clinic.id}
-              >
-                <div className='p-6'>
+              <Card className="p-0" key={clinic.id}>
+                <div className="px-6 pt-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-4">
                       <div className="relative w-16 h-16">
@@ -270,17 +273,16 @@ export default function ClinicsPage() {
                     </div>
 
                     <div className="flex items-center">
-                      <DropdownMenu >
+                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <MoreVertical className="w-5 h-5 text-gray-400" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent asChild>
-                          <div className='bg-white dark:bg-gray-800'>
-                            <DropdownMenuItem className=''>
+                          <div className="bg-white dark:bg-gray-800">
+                            <DropdownMenuItem className="">
                               <button
                                 onClick={() => handleStatusChange(clinic)}
-                                className='w-full flex gap-2  px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300'
-
+                                className="w-full flex gap-2  px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300"
                               >
                                 <Star className="w-4 h-4" />
                                 Change Status
@@ -288,14 +290,12 @@ export default function ClinicsPage() {
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                               <button
-                                className=' w-full flex gap-2 px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300'
-
+                                className=" w-full flex gap-2 px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300"
                                 onClick={() =>
                                   router.push(
                                     `/admin/clinics/staff/${clinic.id}`
                                   )
                                 }
-
                               >
                                 <Users className="w-4 h-4" />
                                 Manage Staff
@@ -304,8 +304,7 @@ export default function ClinicsPage() {
                             <DropdownMenuItem>
                               <button
                                 onClick={() => handleEdit(clinic.id)}
-                                className=' w-full flex gap-2 px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300'
-
+                                className=" w-full flex gap-2 px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300"
                               >
                                 <Edit2 className="w-4 h-4" />
                                 Edit Clinic
@@ -314,7 +313,7 @@ export default function ClinicsPage() {
                             <DropdownMenuItem>
                               <button
                                 onClick={() => handleDelete(clinic.id)}
-                                className=' w-full flex gap-2 px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300'
+                                className=" w-full flex gap-2 px-2 py-1.5 text-start text-sm text-gray-700 dark:text-gray-300"
                               >
                                 <Trash2 className="w-4 h-4" />
                                 Delete Clinic
@@ -323,7 +322,6 @@ export default function ClinicsPage() {
                           </div>
                         </DropdownMenuContent>
                       </DropdownMenu>
-
                     </div>
                   </div>
 
@@ -384,7 +382,6 @@ export default function ClinicsPage() {
               onClick={handleStatusConfirm}
               variant="lineargradian"
               disabled={updateClinicStatusMutation.isPending}
-
             >
               Update Status
             </Button>
@@ -399,9 +396,7 @@ export default function ClinicsPage() {
               className="w-16 h-16 rounded-xl border border-foreground"
             />
             <div>
-              <h3 className="text-lg font-semibold ">
-                {selectedClinic?.name}
-              </h3>
+              <h3 className="text-lg font-semibold ">{selectedClinic?.name}</h3>
               <p className="text-sm text-foreground/90">
                 Current Status:{' '}
                 <span
@@ -428,10 +423,11 @@ export default function ClinicsPage() {
                   <button
                     key={key}
                     onClick={() => setSelectedStatus(value as ClinicStatus)}
-                    className={`relative flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all text-foreground ${selectedStatus === value
-                      ? 'ring-2 ring-primary-500 ring-offset-2 bg-primary-50'
-                      : 'hover:bg-gray-900 border border-gray-200'
-                      }`}
+                    className={`relative flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all text-foreground ${
+                      selectedStatus === value
+                        ? 'ring-2 ring-primary-500 ring-offset-2 bg-primary-50'
+                        : 'hover:bg-gray-900 border border-gray-200'
+                    }`}
                   >
                     <div
                       className={`w-3 h-3 rounded-full ${getClinicStatusClass(

@@ -8,6 +8,7 @@ import { PatientFormData } from '../validation';
 import PatientForm from '@/components/clinic/patients/PatientForm';
 import PageLayout from '@/components/layouts/PageLayout';
 import { CreateUpdateClinicPatientDto } from '@/lib/api/types/clinic-patient';
+import { toast } from '@/components/ui/Toast';
 
 export default function PatientActionPage() {
   const router = useRouter();
@@ -15,7 +16,24 @@ export default function PatientActionPage() {
   const { createOrUpdatePatient } = useClinicPatients();
 
   const handleSubmit = async (data: PatientFormData) => {
+    console.log('Form Data:', data);
     try {
+      // Validate required fields
+      if (!data.fNameF) {
+        toast.error('First name is required');
+        return;
+      }
+
+      if (!data.phoneNumber) {
+        toast.error('Phone number is required');
+        return;
+      }
+
+      if (!data.dateOfBirth) {
+        toast.error('Date of birth is required');
+        return;
+      }
+
       const formattedData: CreateUpdateClinicPatientDto = {
         ...data,
         fNameL: data.fNameL || undefined,
@@ -34,12 +52,15 @@ export default function PatientActionPage() {
         weight: data.weight || undefined,
       };
 
-      await createOrUpdatePatient.mutateAsync(formattedData);
+      const result = await createOrUpdatePatient.mutateAsync(formattedData);
 
-      router.push('/clinic/patients');
-      router.refresh();
-    } catch (error) {
+      if (result) {
+        router.push('/clinic/patients');
+        router.refresh();
+      }
+    } catch (error: any) {
       console.error('Error:', error);
+      toast.error(error?.message || 'Failed to save patient');
     }
   };
 

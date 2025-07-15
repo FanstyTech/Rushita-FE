@@ -10,13 +10,36 @@ import {
   UpdateAppointmentStatusDto,
 } from '../types/appointment';
 import { PaginationResponse } from '../types/pagination';
+import { formatAppointmentDateTime } from '@/utils/dateTimeUtils';
+
+// Helper function to convert date and time for API submission
+const convertDateTimeForSubmission = (data: CreateUpdateAppointmentDto): CreateUpdateAppointmentDto => {
+  const { date, startTime, endTime } = formatAppointmentDateTime(
+    data.date,
+    data.startTime,
+    data.endTime
+  );
+  
+  return {
+    ...data,
+    date,
+    startTime,
+    endTime,
+  };
+};
 
 class AppointmentService {
   async getAll(
     filter: AppointmentFilterDto
   ): Promise<ApiResponse<PaginationResponse<AppointmentListDto>>> {
+    // Convert date to ISO string if provided for filtering
+    const convertedFilter = {
+      ...filter,
+      date: filter.date ? new Date(filter.date).toISOString() : undefined,
+    };
+    
     return apiClient.get(API_ENDPOINTS.APPOINTMENT.LIST, {
-      params: convertFilterToParams(filter as FilterParams),
+      params: convertFilterToParams(convertedFilter as FilterParams),
     });
   }
 
@@ -37,7 +60,8 @@ class AppointmentService {
   async createOrUpdate(
     data: CreateUpdateAppointmentDto
   ): Promise<ApiResponse<AppointmentDto>> {
-    return apiClient.post(API_ENDPOINTS.APPOINTMENT.CREATE_OR_UPDATE, data);
+    const convertedData = convertDateTimeForSubmission(data);
+    return apiClient.post(API_ENDPOINTS.APPOINTMENT.CREATE_OR_UPDATE, convertedData);
   }
 
   async delete(id: string): Promise<ApiResponse<void>> {
