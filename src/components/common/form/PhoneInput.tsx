@@ -75,7 +75,7 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
                   {selectedOption?.label || 'Select'}
                 </span>
                 <span className="text-xs text-gray-500 leading-3">
-                  {selectedOption?.value}
+                  {/* {selectedOption?.value} */}
                 </span>
               </div>
               <ChevronDown
@@ -102,9 +102,6 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
                   >
                     <div className="flex justify-between">
                       <span>{option.label}</span>
-                      <span className="text-xs text-gray-400">
-                        {option.value}
-                      </span>
                     </div>
                   </div>
                 ))}

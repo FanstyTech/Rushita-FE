@@ -47,9 +47,10 @@ export default function PatientActionPage() {
         address: data.address || undefined,
         countryId: data.countryId || undefined,
         cityId: data.cityId || undefined,
-        bloodType: data.bloodType || undefined,
+        bloodType: Number(data.bloodType) || undefined,
         height: data.height || undefined,
         weight: data.weight || undefined,
+        gender: Number(data.gender),
       };
 
       const result = await createOrUpdatePatient.mutateAsync(formattedData);
@@ -76,12 +77,10 @@ export default function PatientActionPage() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <PatientForm
-          onSubmit={handleSubmit}
-          isSubmitting={createOrUpdatePatient.isPending}
-        />
-      </div>
+      <PatientForm
+        onSubmit={handleSubmit}
+        isSubmitting={createOrUpdatePatient.isPending}
+      />
     </PageLayout>
   );
 }

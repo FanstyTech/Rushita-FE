@@ -56,7 +56,24 @@ export function useClinicPatients() {
       retry: false,
     });
 
-  const usePatientDropdown = (filters: GetPatientDropdownInput, options?: { enabled?: boolean }) =>
+  const usePatientForView = (id: string) =>
+    useQuery({
+      queryKey: ['clinic-patient-view', id],
+      queryFn: async () => {
+        const response = await clinicPatientService.getForView(id);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+      enabled: !!id,
+      retry: false,
+    });
+
+  const usePatientDropdown = (
+    filters: GetPatientDropdownInput,
+    options?: { enabled?: boolean }
+  ) =>
     useQuery({
       queryKey: ['clinic-patients-dropdown', filters],
       queryFn: async () => {
@@ -197,6 +214,7 @@ export function useClinicPatients() {
   return {
     usePatientsList,
     usePatientForEdit,
+    usePatientForView,
     usePatientProfile,
     usePatientDropdown,
     createOrUpdatePatient,

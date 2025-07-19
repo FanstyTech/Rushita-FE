@@ -503,7 +503,6 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <h1 className="text-foreground mb-2">Country</h1>
                     <Select
                       value={selectedCountry}
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -523,7 +522,6 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
                     />
                   </div>
                   <div>
-                    <h1 className="text-foreground mb-2">City</h1>
                     <Select
                       label="City"
                       value={selectedCityId}

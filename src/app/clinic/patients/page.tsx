@@ -95,9 +95,7 @@ export default function ClinicPatientsPage() {
         <div className="flex items-center gap-3">
           <Avatar name={row.original.fullName} size="sm" />
           <div>
-            <div className="font-medium text-gray-900">
-              {row.original.fullName}
-            </div>
+            <div className="font-medium">{row.original.fullName}</div>
           </div>
         </div>
       ),
@@ -107,8 +105,8 @@ export default function ClinicPatientsPage() {
       accessor: 'phoneNumber',
       cell: ({ row }: { row: { original: ClinicPatientListDto } }) => (
         <div>
-          <div className="text-gray-900">{row.original.phoneNumber}</div>
-          <div className="text-sm text-gray-500">{row.original.email}</div>
+          <div>{row.original.phoneNumber}</div>
+          <div className="text-sm">{row.original.email}</div>
         </div>
       ),
     },
@@ -117,9 +115,7 @@ export default function ClinicPatientsPage() {
       accessor: 'gender',
       cell: ({ row }: { row: { original: ClinicPatientListDto } }) => (
         <div>
-          <div className="text-gray-900">
-            {getGenderLabel(row.original.gender)}
-          </div>
+          <div>{getGenderLabel(row.original.gender)}</div>
         </div>
       ),
     },

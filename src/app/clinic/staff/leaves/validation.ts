@@ -6,7 +6,8 @@ export const leaveSchema = z
     staffId: z.string().min(1, 'Staff member is required'),
     startDate: z.string().min(1, 'Start date is required'),
     endDate: z.string().min(1, 'End date is required'),
-    type: z.number().min(1, 'Leave type is required'),
+    type: z.coerce.number().min(1, 'Leave type is required'),
+
     reason: z.string().min(1, 'Reason is required'),
   })
   .refine(

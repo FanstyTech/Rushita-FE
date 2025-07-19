@@ -56,6 +56,7 @@ export const API_ENDPOINTS = {
     CREATE_OR_UPDATE: '/labTest/CreateOrUpdate',
     DELETE: '/labTest/Delete',
     GET_ONE: '/labTest/:id',
+    GET_FOR_DROPDOWN: '/labTest/GetLabTestForDropdown',
   },
   diagnosisCategory: {
     LIST: '/diagnosisCategory/getAll',
@@ -110,7 +111,7 @@ export const API_ENDPOINTS = {
     CREATE_OR_UPDATE: '/radiologyTest/CreateOrUpdate',
     DELETE: '/radiologyTest/Delete',
     GET_ONE: '/radiologyTest/:id',
-    GET_FOR_DROPDOWN: '/radiologyTest/getRadiologyTestForDropdown',
+    GET_FOR_DROPDOWN: '/radiologyTest/GetRadiologyTestsForDropdown',
   },
   clinicType: {
     LIST: '/clinicType/getAll',
@@ -152,6 +153,7 @@ export const API_ENDPOINTS = {
     LIST: '/patient/getAll',
     GET_ONE: '/patient/:id',
     GET_FOR_EDIT: '/patient/getPatientForEdit',
+    GET_FOR_VIEW: '/patient/getPatientForView',
     GET_PATIENT_DROPDOWN: '/patient/getPatientDropdown',
     CREATE_OR_UPDATE: '/patient/createOrUpdate',
     DELETE: '/patient/Delete',

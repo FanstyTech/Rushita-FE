@@ -13,6 +13,7 @@ import {
   CreateUpdateClinicPatientDto,
   FamilyHistoryDto,
   GetPatientDropdownInput,
+  GetPatientForView,
   MedicalConditionDto,
   PatientProfileDto,
   PatientStatus,
@@ -39,6 +40,11 @@ class ClinicPatientService {
     id: string
   ): Promise<ApiResponse<CreateUpdateClinicPatientDto>> {
     return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_FOR_EDIT, {
+      params: { id },
+    });
+  }
+  async getForView(id: string): Promise<ApiResponse<GetPatientForView>> {
+    return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_FOR_VIEW, {
       params: { id },
     });
   }

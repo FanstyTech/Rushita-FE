@@ -17,7 +17,7 @@ export const patientSchema = z.object({
   dateOfBirth: z.string().min(1, {
     message: 'Date of birth is required ',
   }),
-  gender: z.number().min(1, 'Gender is required'),
+  gender: z.coerce.number().min(1, 'Gender is required'),
   // Contact Information
   email: z.string().email('Invalid email format').optional().nullable(),
   phoneNumber: z
@@ -32,15 +32,47 @@ export const patientSchema = z.object({
   countryId: z.string().optional(),
   cityId: z.string().optional(),
   // Medical Information
-  bloodType: z.number().min(1, 'Blood type is required'),
+  bloodType: z.coerce.number().min(1, 'Blood type is required'),
 
-  height: z.number().min(0).max(300).optional(),
-  weight: z.number().min(0).max(500).optional(),
+  // In your schema
+  height: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val || val === '') return undefined;
+      const num = Number(val);
+      return isNaN(num) ? undefined : num;
+    })
+    .refine((val) => val === undefined || (val >= 0 && val <= 300), {
+      message: 'Height must be between 0 and 300',
+    }),
+
+  weight: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val || val === '') return undefined;
+      const num = Number(val);
+      return isNaN(num) ? undefined : num;
+    })
+    .refine((val) => val === undefined || (val >= 0 && val <= 500), {
+      message: 'Weight must be between 0 and 500',
+    }),
 });
 
-export type PatientFormData = z.infer<typeof patientSchema>;
+// Create a base type from the schema
+type PatientSchemaType = z.infer<typeof patientSchema>;
 
-export const defaultPatientValues: PatientFormData = {
+// Override the gender and bloodType to be strictly numbers for form usage
+export type PatientFormData = Omit<
+  PatientSchemaType,
+  'gender' | 'bloodType'
+> & {
+  gender: number | string;
+  bloodType: number | string;
+};
+
+export const defaultPatientValues: PatientSchemaType = {
   fNameF: '',
   sNameF: '',
   tNameF: '',

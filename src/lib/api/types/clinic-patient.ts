@@ -278,3 +278,12 @@ export interface GetPatientDropdownInput {
   clinicId?: string;
   name?: string;
 }
+export interface GetPatientForViewDto {
+  id: string;
+  patientNumber: string;
+  patientName: string;
+  phoneNumber: string;
+  age: number;
+  bloodType?: BloodType;
+  gender?: Gender;
+}

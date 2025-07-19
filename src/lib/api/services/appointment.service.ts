@@ -7,6 +7,7 @@ import {
   AppointmentFilterDto,
   AppointmentListDto,
   CreateUpdateAppointmentDto,
+  GetAppointmentForEditDto,
   UpdateAppointmentStatusDto,
 } from '../types/appointment';
 import { PaginationResponse } from '../types/pagination';
@@ -51,7 +52,7 @@ class AppointmentService {
 
   async getForEdit(
     id: string
-  ): Promise<ApiResponse<CreateUpdateAppointmentDto>> {
+  ): Promise<ApiResponse<GetAppointmentForEditDto>> {
     return apiClient.get(API_ENDPOINTS.APPOINTMENT.GET_FOR_EDIT, {
       params: { id },
     });

@@ -13,6 +13,7 @@ import { useEffect, useMemo } from 'react';
 
 const schema = z.object({
   id: z.string().optional(),
+
   fNameL: z.string().min(1, 'First name in Latin is required'),
   lNameL: z.string().min(1, 'Last name in Latin is required'),
   fNameF: z.string().min(1, 'First name in Arabic is required'),
@@ -20,7 +21,7 @@ const schema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().optional(),
   joinDate: z.string(),
-  staffType: z.number().min(1, 'Staff type is required'),
+  staffType: z.coerce.number().min(1, 'Staff type is required'),
   specialtyId: z.string().min(1, 'Specialty is required'),
   clinicId: z.string(),
 });
@@ -104,6 +105,7 @@ export default function ClinicStaffForm({
       joinDate: new Date(data.joinDate).toISOString(),
       clinicId: clinicId,
       id: initialData?.id || undefined,
+      password: data.password || undefined,
     };
     await onSubmit(submitData);
     reset(defaultValues);
@@ -181,6 +183,7 @@ export default function ClinicStaffForm({
           <div>
             <Select
               label="Staff Type"
+              value={initialData?.staffType?.toString() || ''}
               {...register('staffType', { valueAsNumber: true })}
               error={errors.staffType?.message}
               options={Object.entries(StaffType)
@@ -194,6 +197,7 @@ export default function ClinicStaffForm({
           <div>
             <Select
               label="Specialty"
+              value={initialData?.specialtyId || ''}
               {...register('specialtyId')}
               error={errors.specialtyId?.message}
               options={[

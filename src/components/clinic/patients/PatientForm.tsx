@@ -3,14 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from '@/components/ui/Toast';
 import {
   patientSchema,
   PatientFormData,
 } from '@/app/clinic/patients/validation';
 import { Input, Select, PhoneInput } from '@/components/common';
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { User, Phone, Activity } from 'lucide-react';
 import {
   BloodType,
   bloodTypeDisplayNames,
@@ -20,10 +17,6 @@ import { useCountry } from '@/lib/api/hooks/useCountry';
 import { useCity } from '@/lib/api/hooks/useCity';
 import Button from '@/components/common/Button';
 import { format } from 'date-fns';
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
 
 interface PatientFormProps {
   onSubmit: (data: PatientFormData) => void;
@@ -55,14 +48,16 @@ export default function PatientForm({
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     reset,
     setValue,
   } = useForm<PatientFormData>({
-    resolver: zodResolver(patientSchema),
+    resolver: zodResolver(patientSchema) as any,
     defaultValues: initialData
       ? {
           ...initialData,
+          gender: initialData.gender?.toString(), // Convert to string
+          bloodType: initialData.bloodType?.toString(), // Convert to string
           dateOfBirth: initialData.dateOfBirth
             ? format(new Date(initialData.dateOfBirth), 'yyyy-MM-dd')
             : undefined,
@@ -70,10 +65,13 @@ export default function PatientForm({
       : undefined,
   });
 
+  // Reset form when initialData changes
   useEffect(() => {
     if (initialData) {
       reset({
         ...initialData,
+        gender: initialData.gender?.toString(), // Convert to string
+        bloodType: initialData.bloodType?.toString(), // Convert to string
         dateOfBirth: initialData.dateOfBirth
           ? format(new Date(initialData.dateOfBirth), 'yyyy-MM-dd')
           : undefined,
@@ -83,196 +81,222 @@ export default function PatientForm({
     }
   }, [initialData, reset]);
 
+  // Clear city when country changes (except on initial load)
+  useEffect(() => {
+    if (selectedCountry && initialData?.countryId !== selectedCountry) {
+      setValue('cityId', '');
+    }
+  }, [selectedCountry, setValue, initialData?.countryId]);
+
+  // Set city value when cities load and initialData has cityId
+  useEffect(() => {
+    if (cities && cities.length > 0 && initialData?.cityId) {
+      const cityExists = cities.some(
+        (city) => city.value === initialData.cityId
+      );
+      if (cityExists) {
+        setValue('cityId', initialData.cityId);
+      } else {
+        setValue('cityId', '');
+      }
+    }
+  }, [cities, initialData?.cityId, setValue]);
+
   // Handle country code selection
   const handlePhoneCodeChange = (value: string) => {
     setSelectedPhoneCode(value);
     setValue('countryCodeId', value);
   };
 
-  // Custom submit handler with validation
-  const submitWithValidation = handleSubmit((data) => {
-    onSubmit(data);
-  });
-
-  const tabs = [
-    { name: 'Basic Information', icon: User },
-    { name: 'Contact Details', icon: Phone },
-    { name: 'Medical Info', icon: Activity },
-  ];
+  // Handle country selection
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const countryId = e.target.value;
+    setSelectedCountry(countryId);
+    setValue('countryId', countryId);
+    // Clear city when country changes
+    setValue('cityId', '');
+  };
 
   return (
-    <form onSubmit={submitWithValidation} className="space-y-6">
-      <TabGroup>
-        <TabList className="flex p-1 space-x-1 bg-gray-100 rounded-lg">
-          {tabs.map((tab) => (
-            <Tab
-              key={tab.name}
-              className={({ selected }) =>
-                classNames(
-                  'w-full rounded-md py-2.5 text-sm font-medium',
-                  'flex items-center justify-center gap-2',
-                  'ring-white ring-opacity-60 ring-offset-2 focus:outline-none',
-                  selected
-                    ? 'bg-white shadow text-blue-600'
-                    : 'text-gray-600 hover:bg-white/[0.12] hover:text-gray-700'
-                )
-              }
-            >
-              <tab.icon className="w-4 h-4" />
-              {tab.name}
-            </Tab>
-          ))}
-        </TabList>
-
-        <TabPanels className="mt-4">
-          <TabPanel className="bg-white rounded-lg p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="First Name (Foreign)"
-                error={errors.fNameF?.message}
-                {...register('fNameF')}
-              />
-              <Input
-                label="First Name (Arabic)"
-                error={errors.fNameL?.message}
-                {...register('fNameL')}
-              />
-              <Input
-                label="Second Name (Foreign)"
-                error={errors.sNameF?.message}
-                {...register('sNameF')}
-              />
-              <Input
-                label="Second Name (Arabic)"
-                error={errors.sNameL?.message}
-                {...register('sNameL')}
-              />
-              <Input
-                label="Third Name (Foreign)"
-                error={errors.tNameF?.message}
-                {...register('tNameF')}
-              />
-              <Input
-                label="Third Name (Arabic)"
-                error={errors.tNameL?.message}
-                {...register('tNameL')}
-              />
-              <Input
-                label="Last Name (Foreign)"
-                error={errors.lNameF?.message}
-                {...register('lNameF')}
-              />
-              <Input
-                label="Last Name (Arabic)"
-                error={errors.lNameL?.message}
-                {...register('lNameL')}
-              />
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-6 dark:text-gray-200"
+    >
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
+        <div className="space-y-8">
+          {/* Personal Information Section */}
+          <div>
+            <div className="flex items-center mb-4">
+              <div className="h-8 w-1 bg-indigo-600 dark:bg-indigo-400 rounded mr-3"></div>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                Personal Information
+              </h3>
             </div>
-          </TabPanel>
-
-          <TabPanel className="bg-white rounded-lg p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Hidden input to ensure countryCodeId is registered with the form */}
-              <input
-                type="hidden"
-                {...register('countryCodeId')}
-                value={selectedPhoneCode}
-              />
-              <PhoneInput
-                label="Mobile"
-                phoneCodeOptions={phoneCodes || []}
-                selectedPhoneCode={selectedPhoneCode}
-                onPhoneCodeChange={handlePhoneCodeChange}
-                phoneCodeName="phoneCode"
-                error={errors.phoneNumber?.message}
-                {...register('phoneNumber')}
-              />
-              <Input
-                label="Email"
-                type="email"
-                error={errors.email?.message}
-                {...register('email')}
-              />
-              <Select
-                label="Country"
-                error={errors.countryId?.message}
-                {...register('countryId')}
-                options={(countries || []).map((country) => ({
-                  value: country.value,
-                  label: country.label || country.value,
-                }))}
-                onChange={(e) => setSelectedCountry(e.target.value)}
-              />
-              <Select
-                label="City"
-                error={errors.cityId?.message}
-                {...register('cityId')}
-                options={(cities || []).map((city) => ({
-                  value: city.value,
-                  label: city.label || city.value,
-                }))}
-                disabled={!selectedCountry}
-              />
-              <Input
-                label="Address"
-                error={errors.address?.message}
-                {...register('address')}
-                className="col-span-2"
-              />
+            <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg border border-gray-100 dark:border-gray-600 shadow-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <Input
+                  label="First Name (Foreign)*"
+                  error={errors.fNameF?.message}
+                  {...register('fNameF')}
+                />
+                <Input
+                  label="First Name (Arabic)"
+                  error={errors.fNameL?.message}
+                  {...register('fNameL')}
+                />
+                <Input
+                  label="Second Name (Foreign)"
+                  error={errors.sNameF?.message}
+                  {...register('sNameF')}
+                />
+                <Input
+                  label="Second Name (Arabic)"
+                  error={errors.sNameL?.message}
+                  {...register('sNameL')}
+                />
+                <Input
+                  label="Third Name (Foreign)"
+                  error={errors.tNameF?.message}
+                  {...register('tNameF')}
+                />
+                <Input
+                  label="Third Name (Arabic)"
+                  error={errors.tNameL?.message}
+                  {...register('tNameL')}
+                />
+                <Input
+                  label="Last Name (Foreign)"
+                  error={errors.lNameF?.message}
+                  {...register('lNameF')}
+                />
+                <Input
+                  label="Last Name (Arabic)"
+                  error={errors.lNameL?.message}
+                  {...register('lNameL')}
+                />
+                <Select
+                  label="Gender"
+                  value={initialData?.gender?.toString()}
+                  error={errors.gender?.message}
+                  {...register('gender', { valueAsNumber: true })}
+                  options={Object.entries(Gender)
+                    .filter(([key]) => isNaN(Number(key)))
+                    .map(([key, value]) => ({
+                      value: value.toString(),
+                      label: key,
+                    }))}
+                />
+                <Input
+                  label="Date of Birth*"
+                  type="date"
+                  error={errors.dateOfBirth?.message}
+                  {...register('dateOfBirth')}
+                />
+              </div>
             </div>
-          </TabPanel>
+          </div>
 
-          <TabPanel className="bg-white rounded-lg p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Select
-                label="Gender"
-                error={errors.gender?.message}
-                {...register('gender', { valueAsNumber: true })}
-                options={Object.entries(Gender)
-                  .filter(([key]) => isNaN(Number(key)))
-                  .map(([key, value]) => ({
-                    value: value.toString(),
-                    label: key,
+          {/* Contact Information Section */}
+          <div>
+            <div className="flex items-center mb-4">
+              <div className="h-8 w-1 bg-emerald-500 dark:bg-emerald-400 rounded mr-3"></div>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                Contact Information
+              </h3>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg border border-gray-100 dark:border-gray-600 shadow-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <PhoneInput
+                  label="Mobile*"
+                  phoneCodeOptions={phoneCodes || []}
+                  selectedPhoneCode={selectedPhoneCode}
+                  onPhoneCodeChange={handlePhoneCodeChange}
+                  phoneCodeName="phoneCode"
+                  error={errors.phoneNumber?.message}
+                  {...register('phoneNumber')}
+                />
+                <Input
+                  label="Email"
+                  type="email"
+                  error={errors.email?.message}
+                  {...register('email')}
+                />
+                <Select
+                  value={initialData?.countryId}
+                  label="Country"
+                  error={errors.countryId?.message}
+                  {...register('countryId')}
+                  options={(countries || []).map((country) => ({
+                    value: country.value,
+                    label: country.label || country.value,
                   }))}
-              />
-              <Input
-                label="Date of Birth"
-                type="date"
-                error={errors.dateOfBirth?.message}
-                {...register('dateOfBirth')}
-              />
-              <Select
-                label="Blood Type"
-                error={errors.bloodType?.message}
-                {...register('bloodType', { valueAsNumber: true })}
-                options={Object.entries(BloodType)
-                  .filter(([, key]) => isNaN(Number(key)))
-                  .map(([value]) => ({
-                    value: value.toString(),
-                    label: bloodTypeDisplayNames[value as unknown as BloodType],
+                  onChange={handleCountryChange}
+                />
+                <Select
+                  label="City"
+                  value={initialData?.cityId?.toString()}
+                  error={errors.cityId?.message}
+                  {...register('cityId')}
+                  options={(cities || []).map((city) => ({
+                    value: city.value,
+                    label: city.label || city.value,
                   }))}
-              />
-              <Input
-                label="Height (cm)"
-                type="number"
-                {...register('height', { valueAsNumber: true })}
-                error={errors.height?.message}
-              />
-              <Input
-                label="Weight (kg)"
-                type="number"
-                {...register('weight', { valueAsNumber: true })}
-                error={errors.weight?.message}
-              />
+                  disabled={!selectedCountry}
+                />
+                <Input
+                  label="Address"
+                  error={errors.address?.message}
+                  {...register('address')}
+                  className="col-span-2"
+                />
+              </div>
             </div>
-          </TabPanel>
-        </TabPanels>
-      </TabGroup>
+          </div>
 
-      <div className="flex justify-end pt-4 border-t">
-        <Button type="submit" className="gap-2" isLoading={isSubmitting}>
-          {isSubmitting ? 'Saving...' : initialData ? 'Update' : 'Save'} Patient
-        </Button>
+          {/* Medical Information Section */}
+          <div>
+            <div className="flex items-center mb-4">
+              <div className="h-8 w-1 bg-amber-500 dark:bg-amber-400 rounded mr-3"></div>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                Medical Information
+              </h3>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg border border-gray-100 dark:border-gray-600 shadow-sm">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <Select
+                  label="Blood Type"
+                  value={initialData?.bloodType?.toString()}
+                  error={errors.bloodType?.message}
+                  {...register('bloodType', { valueAsNumber: true })}
+                  options={Object.entries(BloodType)
+                    .filter(([key]) => isNaN(Number(key)))
+                    .map(([key, value]) => ({
+                      value: value.toString(),
+                      label: bloodTypeDisplayNames[value as BloodType],
+                    }))}
+                />
+                <Input
+                  label="Height (cm)"
+                  type="number"
+                  {...register('height')}
+                  error={errors.height?.message}
+                />
+                <Input
+                  label="Weight (kg)"
+                  type="number"
+                  {...register('weight')}
+                  error={errors.weight?.message}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end pt-4 border-t dark:border-gray-700">
+          <Button type="submit" className="gap-2" isLoading={isSubmitting}>
+            {isSubmitting ? 'Saving...' : initialData ? 'Update' : 'Save'}{' '}
+            Patient
+          </Button>
+        </div>
       </div>
     </form>
   );

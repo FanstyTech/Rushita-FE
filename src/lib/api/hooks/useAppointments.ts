@@ -5,6 +5,7 @@ import {
   AppointmentFilterDto,
   UpdateAppointmentStatusDto,
   CreateUpdateAppointmentDto,
+  GetAppointmentForEditDto,
 } from '../types/appointment';
 
 export function useAppointments() {
@@ -23,16 +24,20 @@ export function useAppointments() {
       enabled: !!filters.clinicId,
       retry: false,
       staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000,   // 10 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
     });
 
   const useAppointmentForEdit = (id: string) =>
-    useQuery({
+    useQuery<GetAppointmentForEditDto, Error, GetAppointmentForEditDto>({
       queryKey: ['appointment-edit', id],
       queryFn: async () => {
         const response = await appointmentService.getForEdit(id);
         if (!response.success) {
           throw new Error(response.message);
+        }
+        // Ensure we always return a valid GetAppointmentForEditDto
+        if (!response.result) {
+          throw new Error('No appointment data found');
         }
         return response.result;
       },
@@ -52,11 +57,10 @@ export function useAppointments() {
       const isUpdate = !!variables.id;
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
       toast.success(
-        isUpdate ? 'Appointment updated successfully' : 'Appointment created successfully'
+        isUpdate
+          ? 'Appointment updated successfully'
+          : 'Appointment created successfully'
       );
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to save appointment');
     },
     retry: false,
   });

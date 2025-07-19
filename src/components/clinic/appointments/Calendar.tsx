@@ -12,8 +12,9 @@ import {
   addMonths,
   subMonths,
 } from 'date-fns';
-import { AppointmentListDto } from '@/lib/api/types/appointment';
+import { AppointmentListDto, VisitType } from '@/lib/api/types/appointment';
 import { Card } from '@/components/ui/card';
+import { formatTimeForAPI } from '@/utils/dateTimeUtils';
 
 interface CalendarProps {
   appointments: AppointmentListDto[];
@@ -75,7 +76,9 @@ export function Calendar({
         <div className="grid grid-cols-7 gap-1">
           {monthDays.map((day) => {
             const dayAppointments = appointments.filter(
-              (apt) => apt.date === format(day, 'yyyy-MM-dd')
+              (apt) =>
+                format(new Date(apt.date), 'yyyy-MM-dd') ===
+                format(day, 'yyyy-MM-dd')
             );
 
             return (
@@ -113,7 +116,8 @@ export function Calendar({
                         key={apt.id}
                         className="text-xs px-1 py-0.5 rounded bg-blue-50 text-blue-700 mb-1 truncate"
                       >
-                        {apt.startTime} - {apt.type}
+                        {formatTimeForAPI(apt.startTime)} -{' '}
+                        {VisitType[apt.type]}
                       </div>
                     ))}
                     {dayAppointments.length > 2 && (

@@ -1,4 +1,5 @@
 import { PaginationRequest } from './pagination';
+import { SelectOption } from './select-option';
 
 export enum VisitType {
   New = 1,
@@ -68,4 +69,9 @@ export interface UpdateAppointmentStatusDto {
   id: string;
   status: AppointmentStatus;
   cancellationReason?: string;
+}
+
+export interface GetAppointmentForEditDto extends CreateUpdateAppointmentDto {
+  patient: SelectOption<string>;
+  staff: SelectOption<string>;
 }

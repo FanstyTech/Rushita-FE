@@ -6,9 +6,13 @@ import {
   LabTestFilterDto,
   LabTestListDto,
 } from '../types/lab-test';
+import { SelectOption } from '../types/shared';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
 import { convertFilterToParams, FilterParams } from '@/utils/filter';
+
+// Update API_ENDPOINTS in config.ts to include the new endpoint
+// API_ENDPOINTS.labTest.GET_FOR_DROPDOWN = '/labTest/GetLabTestForDropdown'
 
 export const labTestService = {
   async getAll(
@@ -46,5 +50,11 @@ export const labTestService = {
     return apiClient.delete<ApiResponse<void>>(API_ENDPOINTS.labTest.DELETE, {
       id,
     });
+  },
+
+  async getLabTestsForDropdown(): Promise<ApiResponse<SelectOption<string>[]>> {
+    return apiClient.get<ApiResponse<SelectOption<string>[]>>(
+      API_ENDPOINTS.labTest.GET_FOR_DROPDOWN
+    );
   },
 };

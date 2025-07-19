@@ -1,6 +1,7 @@
 import { LucideIcon } from 'lucide-react';
 import Button from './Button';
 import { Plus } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 interface EmptyStateProps {
   icon: LucideIcon;
@@ -24,15 +25,15 @@ export default function EmptyState({
     : description;
 
   return (
-    <div className="col-span-full">
-      <div className="relative bg-white rounded-3xl p-12 flex flex-col items-center text-center">
+    <Card className="col-span-3">
+      <div className="relative  rounded-3xl p-12 flex flex-col items-center text-center">
         <div className="w-24 h-24 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center transform rotate-12 hover:rotate-0 transition-transform duration-300">
           <Icon className="w-12 h-12 text-white mb-3" />
         </div>
 
         <div className="mt-8 space-y-3">
-          <h3 className="text-2xl font-semibold text-gray-900">{title}</h3>
-          <p className="mt-1 text-sm text-gray-500">{defaultDescription}</p>
+          <h3 className="text-2xl font-semibold text-foreground">{title}</h3>
+          <p className="text-gray-500 max-w-sm mx-auto">{defaultDescription}</p>
         </div>
 
         {buttonText && onAction && (
@@ -47,6 +48,6 @@ export default function EmptyState({
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

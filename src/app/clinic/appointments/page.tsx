@@ -26,9 +26,13 @@ import {
 import {
   convertFormDataForAPI,
   validateAppointmentTime,
+  formatTimeForAPI,
 } from '@/utils/dateTimeUtils';
 import { toast } from '@/components/ui/Toast';
-import AppointmentForm from '../../../components/clinic/appointments/AppointmentForm';
+import AppointmentForm from '@/components/clinic/appointments/AppointmentForm';
+import { ConfirmationModal } from '@/components/common';
+
+// Using formatTimeForAPI from dateTimeUtils for time formatting
 
 export default function AppointmentsPage() {
   const { user } = useAuth();
@@ -46,6 +50,9 @@ export default function AppointmentsPage() {
 
   const [showNewAppointment, setShowNewAppointment] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [selectedAppointmentFoDelete, setSelectedAppointmentFoDelete] =
+    useState('');
+
   const [selectedAppointment, setSelectedAppointment] =
     useState<AppointmentListDto | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<{
@@ -73,8 +80,12 @@ export default function AppointmentsPage() {
   });
 
   // API Hooks
-  const { useAppointmentsList, createOrUpdateAppointment, deleteAppointment } =
-    useAppointments();
+  const {
+    useAppointmentsList,
+    useAppointmentForEdit,
+    createOrUpdateAppointment,
+    deleteAppointment,
+  } = useAppointments();
 
   // Loading states
   const isSubmitting =
@@ -94,6 +105,9 @@ export default function AppointmentsPage() {
   const { data: appointmentsData, isLoading: appointmentsLoading } =
     useAppointmentsList(appointmentFilter);
 
+  const { data: appointmentForEditData, isLoading: appointmentForEditLoading } =
+    useAppointmentForEdit(selectedAppointment?.id || '');
+
   // Create or update appointment
   const handleCreateAppointment = async () => {
     if (!selectedPatient) {
@@ -111,34 +125,24 @@ export default function AppointmentsPage() {
       return;
     }
 
-    try {
-      const appointmentData: CreateUpdateAppointmentDto = {
-        id: selectedAppointment?.id || null,
-        patientId: selectedPatient.value || '',
-        staffId: selectedStaff.value || '',
-        clinicId: clinicId,
-        date: format(selectedDate || new Date(), 'yyyy-MM-dd'),
-        startTime: newAppointment.startTime,
-        endTime: newAppointment.endTime,
-        type: newAppointment.type,
-        status: newAppointment.status,
-        notes: newAppointment.notes,
-      };
+    const appointmentData: CreateUpdateAppointmentDto = {
+      id: selectedAppointment?.id || undefined,
+      patientId: selectedPatient.value || '',
+      staffId: selectedStaff.value || '',
+      clinicId: clinicId,
+      date: format(selectedDate || new Date(), 'yyyy-MM-dd'),
+      startTime: newAppointment.startTime,
+      endTime: newAppointment.endTime,
+      type: newAppointment.type,
+      status: newAppointment.status,
+      notes: newAppointment.notes,
+    };
 
-      const convertedData = convertFormDataForAPI(appointmentData);
-      await createOrUpdateAppointment.mutateAsync(convertedData);
+    const convertedData = convertFormDataForAPI(appointmentData);
+    await createOrUpdateAppointment.mutateAsync(convertedData);
 
-      setShowNewAppointment(false);
-      resetNewAppointmentForm();
-
-      toast.success(
-        selectedAppointment
-          ? 'Appointment updated successfully'
-          : 'Appointment created successfully'
-      );
-    } catch (error) {
-      toast.error('Failed to save appointment');
-    }
+    setShowNewAppointment(false);
+    resetNewAppointmentForm();
   };
 
   // Reset form
@@ -155,47 +159,48 @@ export default function AppointmentsPage() {
   };
 
   // Handle edit appointment
-  const handleEditAppointment = (appointment: AppointmentListDto) => {
+  const handleEditAppointment = async (appointment: AppointmentListDto) => {
     setSelectedAppointment(appointment);
-    setNewAppointment({
-      type: appointment.type,
-      startTime: appointment.startTime,
-      endTime: appointment.endTime,
-      notes: appointment.notes || '',
-      status: appointment.status,
-    });
-
-    // // Find and set the patient for the appointment
-    // const patient = patientOptions.find(
-    //   (p) => p.value === appointment.patientName
-    // );
-
-    // if (patient) {
-    //   setSelectedPatient(patient);
-    // } else {
-    //   // If patient not found in current list, search by name
-    //   if (appointment.patientName) {
-    //     setPatientSearchQuery(appointment.patientName);
-    //   }
-    // }
-
-    setShowNewAppointment(true);
   };
 
-  // Handle delete appointment
-  const handleDeleteAppointment = async () => {
-    if (!selectedAppointment) return;
+  useEffect(() => {
+    if (appointmentForEditData) {
+      console.log(appointmentForEditData);
+      const appointmentData = appointmentForEditData;
 
-    try {
-      await deleteAppointment.mutateAsync(selectedAppointment.id);
-      setShowDeleteConfirm(false);
-      setSelectedAppointment(null);
-      setSelectedPatient(null);
-      setSelectedStaff(null);
-      toast.success('Appointment deleted successfully');
-    } catch (error) {
-      toast.error('Failed to delete appointment');
+      // Set appointment details
+      setNewAppointment({
+        type: appointmentData.type,
+        startTime: appointmentData.startTime,
+        endTime: appointmentData.endTime,
+        notes: appointmentData.notes || '',
+        status: appointmentData.status,
+      });
+
+      // Convert SelectOption<string> to the expected state type
+      if (appointmentData.patient) {
+        setSelectedPatient({
+          value: appointmentData.patient.value,
+          label: appointmentData.patient.label || '',
+        });
+      }
+
+      if (appointmentData.staff) {
+        setSelectedStaff({
+          value: appointmentData.staff.value,
+          label: appointmentData.staff.label || '',
+        });
+      }
+
+      setShowNewAppointment(true);
     }
+  }, [appointmentForEditData]); // Handle delete appointment
+
+  const handleDeleteAppointment = async () => {
+    if (!selectedAppointmentFoDelete) return;
+
+    await deleteAppointment.mutateAsync(selectedAppointmentFoDelete);
+    setShowDeleteConfirm(false);
   };
 
   // Calendar data conversion
@@ -226,7 +231,13 @@ export default function AppointmentsPage() {
     <PageLayout>
       {/* Header */}
       <div className="flex justify-end items-center">
-        <Button onClick={() => setShowNewAppointment(true)} className="gap-2">
+        <Button
+          onClick={() => {
+            setShowNewAppointment(true);
+            setSelectedAppointment(null);
+          }}
+          className="gap-2"
+        >
           <CalendarIcon className="h-5 w-5 mr-2" />
           New Appointment
         </Button>
@@ -268,7 +279,8 @@ export default function AppointmentsPage() {
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium">
-                            {appointment.startTime} - {appointment.endTime}
+                            {formatTimeForAPI(appointment.startTime)} -{' '}
+                            {formatTimeForAPI(appointment.endTime)}
                           </div>
                           <div className="text-sm text-gray-500">
                             {appointment.patientName} -{' '}
@@ -286,8 +298,8 @@ export default function AppointmentsPage() {
                         </button>
                         <button
                           onClick={() => {
-                            setSelectedAppointment(appointment);
                             setShowDeleteConfirm(true);
+                            setSelectedAppointmentFoDelete(appointment?.id);
                           }}
                           className="inline-flex items-center p-2 border border-gray-300 rounded-md text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                         >
@@ -321,44 +333,17 @@ export default function AppointmentsPage() {
       </div>
 
       {/* Delete Confirmation Modal */}
-      <Modal
+      <ConfirmationModal
         isOpen={showDeleteConfirm}
-        onClose={() => !isSubmitting && setShowDeleteConfirm(false)}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDeleteAppointment}
         title="Delete Appointment"
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-gray-500">
-            Are you sure you want to delete this appointment? This action cannot
-            be undone.
-          </p>
-          <div className="mt-5 flex justify-end space-x-3">
-            <button
-              type="button"
-              disabled={isSubmitting}
-              onClick={() => setShowDeleteConfirm(false)}
-              className="px-4 py-2 text-sm font-medium bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleDeleteAppointment}
-              disabled={isSubmitting}
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700"
-            >
-              {isSubmitting ? (
-                <>
-                  <LoadingSpinner size="sm" />
-                  Deleting...
-                </>
-              ) : (
-                'Delete'
-              )}
-            </button>
-          </div>
-        </div>
-      </Modal>
-
+        message="Are you sure you want to delete this appointment?"
+        secondaryMessage="This action cannot be undone."
+        variant="error"
+        confirmText="Delete"
+        isLoading={deleteAppointment.isPending}
+      />
       {/* New/Edit Appointment Modal */}
       <Modal
         isOpen={showNewAppointment}

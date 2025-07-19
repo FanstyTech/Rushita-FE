@@ -32,6 +32,7 @@ export const useRadiologyTest = () => {
   const useRadiologyTestsDropdown = () =>
     useQuery({
       queryKey: ['radiologyTestsDropdown'],
+      retry: false,
       queryFn: async () => {
         const response =
           await radiologyTestService.getRadiologyTestsForDropdown();

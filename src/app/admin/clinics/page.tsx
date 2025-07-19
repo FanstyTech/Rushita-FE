@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import EmptyState from '@/components/common/EmptyState';
 
 export default function ClinicsPage() {
   const router = useRouter();
@@ -190,52 +191,16 @@ export default function ClinicsPage() {
               <ClinicCardSkeleton key={i} />
             ))
           ) : clinics?.items.length === 0 ? (
-            <Card className="col-span-3">
-              <div className="relative  rounded-3xl p-12 flex flex-col items-center text-center">
-                <div className="w-24 h-24 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center transform rotate-12 hover:rotate-0 transition-transform duration-300">
-                  <Building2 className="w-12 h-12 text-white transform -rotate-12 group-hover:rotate-0 transition-transform duration-300" />
-                </div>
-
-                <div className="mt-8 space-y-3">
-                  <h3 className="text-2xl font-semibold text-foreground">
-                    No clinics found
-                  </h3>
-                  <p className="text-gray-500 max-w-sm mx-auto">
-                    Try adjusting your search filters or add a new clinic to get
-                    started
-                  </p>
-                </div>
-
-                <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => {
-                      setFilters({
-                        pageNumber: 1,
-                        pageSize: 5,
-                        sortColumn: '',
-                        sortDirection: '',
-                        searchValue: '',
-                        specialtyId: undefined,
-                        isActive: undefined,
-                        cityId: undefined,
-                        status: undefined,
-                      });
-                    }}
-                  >
-                    Clear Filters
-                  </Button>
-                  <Button
-                    variant="lineargradian"
-                    size="sm"
-                    onClick={() => router.push('/admin/clinics/add')}
-                  >
-                    Add New Clinic
-                  </Button>
-                </div>
-              </div>
-            </Card>
+            <EmptyState
+              icon={Users}
+              title=" No clinics found"
+              description="Try adjusting your search filters or add a new clinic to get started"
+              buttonText="Add New Clinic"
+              onAction={() => router.push('/admin/clinics/add')}
+              hasFilters={
+                !!(filters.searchValue || filters.role || filters.specialtyId)
+              }
+            />
           ) : (
             clinics?.items.map((clinic) => (
               <Card className="p-0" key={clinic.id}>

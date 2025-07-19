@@ -16,22 +16,22 @@ export const convertDateToISO = (dateString: string): string => {
  */
 export const formatTimeForAPI = (timeString: string): string => {
   if (!timeString) return '';
-  
-  // If time is already in HH:mm format, return as is
+
+  // If time is in HH:mm:ss, trim to HH:mm
+  if (/^\d{2}:\d{2}:\d{2}$/.test(timeString)) {
+    return timeString.substring(0, 5);
+  }
+
+  // If time includes 'T' (e.g., ISO string), extract HH:mm
+  if (timeString.includes('T')) {
+    return timeString.split('T')[1].substring(0, 5);
+  }
+
+  // If already in HH:mm format
   if (/^\d{2}:\d{2}$/.test(timeString)) {
     return timeString;
   }
-  
-  // If time is in HH:mm:ss format, return as is
-  if (/^\d{2}:\d{2}:\d{2}$/.test(timeString)) {
-    return timeString;
-  }
-  
-  // If time is in Date object format, extract time part
-  if (timeString.includes('T')) {
-    return timeString.split('T')[1].substring(0, 5); // Extract HH:mm
-  }
-  
+
   return timeString;
 };
 
@@ -55,7 +55,7 @@ export const formatAppointmentDateTime = (
  */
 export const formatDateForInput = (date: string | Date): string => {
   if (!date) return '';
-  
+
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   return dateObj.toISOString().split('T')[0];
 };
@@ -65,12 +65,12 @@ export const formatDateForInput = (date: string | Date): string => {
  */
 export const formatTimeForInput = (time: string): string => {
   if (!time) return '';
-  
+
   // If time is in HH:mm:ss format, extract HH:mm
   if (/^\d{2}:\d{2}:\d{2}$/.test(time)) {
     return time.substring(0, 5);
   }
-  
+
   return time;
 };
 
@@ -82,10 +82,10 @@ export const validateAppointmentTime = (
   endTime: string
 ): boolean => {
   if (!startTime || !endTime) return false;
-  
+
   const start = new Date(`2000-01-01T${startTime}`);
   const end = new Date(`2000-01-01T${endTime}`);
-  
+
   return start < end;
 };
 
@@ -97,10 +97,10 @@ export const getTimeDifferenceInMinutes = (
   endTime: string
 ): number => {
   if (!startTime || !endTime) return 0;
-  
+
   const start = new Date(`2000-01-01T${startTime}`);
   const end = new Date(`2000-01-01T${endTime}`);
-  
+
   return Math.round((end.getTime() - start.getTime()) / (1000 * 60));
 };
 
@@ -125,11 +125,11 @@ export const convertFormDataForAPI = (formData: any) => {
     formData.startTime,
     formData.endTime
   );
-  
+
   return {
     ...formData,
     date,
     startTime,
     endTime,
   };
-}; 
+};

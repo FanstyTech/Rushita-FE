@@ -1,11 +1,10 @@
 'use client';
 
-import { PlusIcon, List as FiList, Search } from 'lucide-react';
+import { PlusIcon, List as FiList } from 'lucide-react';
 import Dropdown, { DropdownOption } from './Dropdown';
 import Button from './Button';
 import { Card } from '../ui/card';
-import { Input } from '../ui/input';
-
+import { Input } from '@/components/common/form';
 
 export interface FilterState {
   pageNumber: number;
@@ -74,77 +73,80 @@ export default function FilterBar({
     });
 
   return (
-    <Card className='flex-row flex-wrap   p-3'>
-      {/* Search Input */}
-      <div className="flex-1 relative">
-        <Input
-          // hasBorder={false}
-          placeholder={searchPlaceholder}
-          value={filter.searchValue}
-          onChange={(e) =>
-            onFilterChange({
-              ...filter,
-              searchValue: e.target.value,
-            })
-          }
-          className='py-5 px-8'
-        />
-        <Search
-          width={16}
-          height={16}
-          className="text-gray-500 absolute top-3 left-3 dark:text-gray-400"
-        />
-      </div>
-
-      {/* Status Filter */}
-      {haveStatusFilter && (
-        <div>
-          <Dropdown
-            icon={<FiList className="w-4 h-4" />}
-            label="Status"
-            options={[
-              { value: '', label: 'All Status' },
-              { value: 'true', label: 'Active' },
-              { value: 'false', label: 'Inactive' },
-            ]}
-            value={filter.isActive?.toString() || ''}
-            onChange={(value) =>
+    <Card className="p-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+        {/* Search Input - Takes full width on mobile, flexible on desktop */}
+        <div className="flex-1 min-w-0">
+          <Input
+            hasBorder={false}
+            placeholder={searchPlaceholder}
+            value={filter.searchValue}
+            onChange={(e) =>
               onFilterChange({
                 ...filter,
-                isActive: value === '' ? undefined : value === 'true',
+                searchValue: e.target.value,
               })
             }
+            className="py-2 px-4 w-full"
           />
         </div>
-      )}
 
-      {/* Additional Filters */}
-      {additionalFilters.map((filterProps, index) => (
-        <div key={index}>
-          <Dropdown {...filterProps} />
+        {/* Filter Controls - Wrap on mobile, inline on desktop */}
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3">
+          {/* Status Filter */}
+          {haveStatusFilter && (
+            <div className="flex-shrink-0">
+              <Dropdown
+                icon={<FiList className="w-4 h-4" />}
+                label="Status"
+                options={[
+                  { value: '', label: 'All Status' },
+                  { value: 'true', label: 'Active' },
+                  { value: 'false', label: 'Inactive' },
+                ]}
+                value={filter.isActive?.toString() || ''}
+                onChange={(value) =>
+                  onFilterChange({
+                    ...filter,
+                    isActive: value === '' ? undefined : value === 'true',
+                  })
+                }
+              />
+            </div>
+          )}
+
+          {/* Additional Filters */}
+          {additionalFilters.map((filterProps, index) => (
+            <div key={index} className="flex-shrink-0">
+              <Dropdown {...filterProps} />
+            </div>
+          ))}
+
+          {/* Filter Actions */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={clearFilters}
+              className={`px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap ${
+                showClearFilters
+                  ? 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                  : 'text-gray-400 dark:text-gray-500'
+              }`}
+            >
+              Clear
+            </button>
+
+            {onAddNew && (
+              <>
+                <div className="h-8 w-px bg-gray-200 dark:bg-gray-700"></div>
+                <Button onClick={onAddNew} className="gap-2 whitespace-nowrap">
+                  <PlusIcon className="h-5 w-5" />
+                  <span className="hidden sm:inline">Add New</span>
+                  <span className="sm:hidden">Add</span>
+                </Button>
+              </>
+            )}
+          </div>
         </div>
-      ))}
-
-      {/* Filter Actions */}
-      <div className="pl-2 flex items-center gap-2">
-        <button
-          onClick={clearFilters}
-          className={` py-2 rounded-xl text-sm font-medium transition-all duration-300 ${showClearFilters
-            ? 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
-            : 'text-gray-400 dark:text-gray-500'
-            }`}
-        >
-          Clear
-        </button>
-        {onAddNew && (
-          <>
-            <div className="h-8 w-px bg-gray-200 dark:bg-gray-700"></div>
-            <Button onClick={onAddNew} className="gap-2">
-              <PlusIcon className="h-5 w-5" />
-              Add New
-            </Button>
-          </>
-        )}
       </div>
     </Card>
   );

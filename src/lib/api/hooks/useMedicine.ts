@@ -6,7 +6,10 @@ import { medicineService } from '../services/medicine.service';
 export const useMedicine = () => {
   const queryClient = useQueryClient();
 
-  const useMedicinesList = (filter: MedicineFilterDto) =>
+  const useMedicinesList = (
+    filter: MedicineFilterDto,
+    options?: { enabled?: boolean }
+  ) =>
     useQuery({
       queryKey: ['medicines', filter],
       queryFn: async () => {
@@ -16,6 +19,8 @@ export const useMedicine = () => {
         }
         return response.result;
       },
+      enabled: options?.enabled !== undefined ? options.enabled : true,
+      retry: false,
     });
 
   const useMedicineDetails = (id: string) =>

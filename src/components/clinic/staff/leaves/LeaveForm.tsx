@@ -15,11 +15,7 @@ import {
   CreateUpdateClinicStaffLeaveDto,
   LeaveType,
 } from '@/lib/api/types/clinic-staff-leave';
-
-interface Option {
-  label: string;
-  value: string;
-}
+import { SelectOption } from '@/lib/api/types/select-option';
 
 interface LeaveFormProps {
   isOpen: boolean;
@@ -27,7 +23,7 @@ interface LeaveFormProps {
   onSubmit: (data: LeaveFormData) => Promise<void>;
   initialData?: Partial<CreateUpdateClinicStaffLeaveDto>;
   isLoading?: boolean;
-  staffOptions?: Option[];
+  staffOptions?: SelectOption<string>[];
 }
 
 export default function LeaveForm({
@@ -123,10 +119,11 @@ export default function LeaveForm({
 
         <Select
           label="Leave Type"
+          value={initialData?.type?.toString()}
           {...register('type', { valueAsNumber: true })}
           error={errors.type?.message}
           options={Object.entries(LeaveType)
-            .filter(([value]) => typeof value === 'number')
+            .filter(([, value]) => typeof value === 'number')
             .map(([key, value]) => ({
               label: key,
               value: value.toString(),

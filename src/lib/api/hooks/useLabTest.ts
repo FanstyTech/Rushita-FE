@@ -31,6 +31,18 @@ export const useLabTest = () => {
       enabled: !!id,
     });
 
+  const useLabTestsForDropdown = () =>
+    useQuery({
+      queryKey: ['labTestsDropdown'],
+      queryFn: async () => {
+        const response = await labTestService.getLabTestsForDropdown();
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+    });
+
   const createLabTest = useMutation({
     mutationFn: async (data: CreateUpdateLabTestDto) => {
       const response = await labTestService.create(data);
@@ -85,6 +97,7 @@ export const useLabTest = () => {
   return {
     useLabTestsList,
     useLabTestDetails,
+    useLabTestsForDropdown,
     createLabTest,
     updateLabTest,
     deleteLabTest,

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { LeaveStatus, LeaveType } from '@/lib/api/types/clinic-staff-leave';
 import Avatar from '@/components/common/Avatar';
+import { Card } from '@/components/ui/card';
 
 interface LeaveCardProps {
   leave: {
@@ -46,7 +47,7 @@ export default function LeaveCard({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 space-y-4 hover:shadow-md transition-shadow duration-200">
+    <Card className="p-6 gap-3" key={leave.id}>
       <div className="flex items-start justify-between">
         <div className="flex items-start space-x-4">
           <Avatar
@@ -54,10 +55,10 @@ export default function LeaveCard({
             className="w-10 h-10 rounded-xl text-lg"
           />
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               {leave.staffName}
             </h3>
-            <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-600">
+            <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-white">
               <span className="inline-flex items-center">
                 {format(new Date(leave.startDate), 'MMM dd')} -{' '}
                 {format(new Date(leave.endDate), 'MMM dd, yyyy')}
@@ -75,18 +76,18 @@ export default function LeaveCard({
         </div>
 
         <Menu as="div" className="relative">
-          <MenuButton className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <MenuButton className="p-2 hover:bg-gray-100   dark:hover:bg-gray-600 rounded-lg transition-colors">
             <MoreVertical className="w-5 h-5 text-gray-400" />
           </MenuButton>
-          <MenuItems className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 focus:outline-none z-10">
+          <MenuItems className="absolute right-0 mt-2 w-48 bg-white border-gray-100 dark:border-gray-700 dark:bg-gray-700 rounded-xl shadow-lg border focus:outline-none z-10">
             <div className="py-2">
               <MenuItem>
                 {({ active }) => (
                   <button
                     onClick={() => onEdit(leave.id)}
                     className={`${
-                      active ? 'bg-gray-50' : ''
-                    } flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                      active ? 'bg-gray-50 dark:bg-gray-600' : ''
+                    } flex items-center px-4 py-2 text-sm w-full text-left`}
                   >
                     <Edit2 className="w-4 h-4 mr-3" />
                     Edit Leave
@@ -102,7 +103,7 @@ export default function LeaveCard({
                           onStatusChange(leave.id, LeaveStatus.Approved)
                         }
                         className={`${
-                          active ? 'bg-gray-50' : ''
+                          active ? 'bg-gray-50 dark:bg-gray-600' : ''
                         } flex items-center px-4 py-2 text-sm text-green-600 w-full text-left`}
                       >
                         <CheckCircle className="w-4 h-4 mr-3" />
@@ -117,7 +118,7 @@ export default function LeaveCard({
                           onStatusChange(leave.id, LeaveStatus.Rejected)
                         }
                         className={`${
-                          active ? 'bg-gray-50' : ''
+                          active ? 'bg-gray-50 dark:bg-gray-600' : ''
                         } flex items-center px-4 py-2 text-sm text-red-600 w-full text-left`}
                       >
                         <XCircle className="w-4 h-4 mr-3" />
@@ -132,7 +133,7 @@ export default function LeaveCard({
                   <button
                     onClick={() => onDelete(leave.id)}
                     className={`${
-                      active ? 'bg-gray-50' : ''
+                      active ? 'bg-gray-50 dark:bg-gray-600' : ''
                     } flex items-center px-4 py-2 text-sm text-red-600 w-full text-left`}
                   >
                     <Trash2 className="w-4 h-4 mr-3" />
@@ -145,17 +146,15 @@ export default function LeaveCard({
         </Menu>
       </div>
 
-      <div className="mt-4">
-        <div className="text-sm text-gray-500 bg-gray-50 rounded-lg p-3">
-          {leave.reason}
-        </div>
+      <div className="text-sm text-gray-500 bg-gray-50 rounded-lg p-3 dark:bg-black/15">
+        {leave.reason}
       </div>
 
-      <div className="pt-2 flex items-center gap-3 text-xs text-gray-500">
+      <div className=" flex items-center gap-3 text-xs">
         <span className="px-2 py-1 rounded-md bg-blue-50 text-blue-700">
           {LeaveType[leave.type]}
         </span>
       </div>
-    </div>
+    </Card>
   );
 }
