@@ -2,8 +2,12 @@
 
 import { Input, Select } from '@/components/common/form';
 import Button from '@/components/common/Button';
-import { GetPatientForViewDto } from '@/lib/api/types/clinic-patient';
+import {
+  GetPatientForViewDto,
+  VisitType,
+} from '@/lib/api/types/clinic-patient';
 import { SelectOption } from '@/lib/api/types/select-option';
+import { FieldErrors, UseFormRegister } from 'react-hook-form';
 
 interface PatientInfoSectionProps {
   patientSearchQuery: string;
@@ -18,6 +22,8 @@ interface PatientInfoSectionProps {
   selectedPatientLoading: boolean;
   onShowAdvancedSearch: () => void;
   onShowAddPatient: () => void;
+  register: UseFormRegister<any>;
+  errors: FieldErrors;
 }
 
 export default function PatientInfoSection({
@@ -33,6 +39,8 @@ export default function PatientInfoSection({
   selectedPatientLoading,
   onShowAdvancedSearch,
   onShowAddPatient,
+  register,
+  errors,
 }: PatientInfoSectionProps) {
   return (
     <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -125,13 +133,15 @@ export default function PatientInfoSection({
 
             <div>
               <Select
+                {...register(`visitType`)}
                 label="Visit Type"
-                options={[
-                  { value: 'initial', label: 'Initial Visit' },
-                  { value: 'followup', label: 'Follow-up' },
-                  { value: 'emergency', label: 'Emergency' },
-                  { value: 'dental', label: 'Dental' },
-                ]}
+                options={Object.entries(VisitType)
+                  .filter(([key]) => isNaN(Number(key)))
+                  .map(([key, value]) => ({
+                    value: value.toString(),
+                    label: key,
+                  }))}
+                error={errors.visitType?.message as string}
               />
             </div>
           </div>
@@ -201,12 +211,6 @@ export default function PatientInfoSection({
                     </p>
                   </div>
                 </div>
-                {/* {selectedPatientData?.medicalHistory.length > 0 && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Medical History</p>
-                  <div className="flex flex-wrap gap-2"></div>
-                </div>
-              )} */}
               </div>
             )}
         </div>

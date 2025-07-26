@@ -30,7 +30,10 @@ import { useMedicine } from '@/lib/api/hooks/useMedicine';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import { FilterState } from '@/components/common/FilterBar';
-import { GetPatientDropdownInput } from '@/lib/api/types/clinic-patient';
+import {
+  GetPatientDropdownInput,
+  VisitType,
+} from '@/lib/api/types/clinic-patient';
 import { MedicineListDto } from '@/lib/api/types/medicine';
 import { useVisit } from '@/lib/api/hooks/useVisit';
 
@@ -62,7 +65,8 @@ const dentalProcedureSchema = z.object({
 
 const treatmentFormSchema = z.object({
   patientId: z.string().min(1, 'Patient selection is required'),
-  visitType: z.enum(['initial', 'followup', 'emergency', 'dental']),
+  visitType: z.coerce.number().min(1, 'Visit Type is required'),
+
   symptoms: z.string().min(1, 'Symptoms are required'),
   diagnosis: z.string().min(1, 'Diagnosis is required'),
   medications: z.array(medicationSchema),
@@ -115,7 +119,7 @@ export default function TreatmentForm() {
     resolver: zodResolver(treatmentFormSchema),
     defaultValues: {
       patientId: '',
-      visitType: 'initial',
+      visitType: VisitType.New,
       symptoms: '',
       diagnosis: '',
       medications: [
@@ -335,6 +339,8 @@ export default function TreatmentForm() {
         selectedPatientLoading={selectedPatientLoading}
         onShowAdvancedSearch={() => setShowAdvancedSearch(true)}
         onShowAddPatient={() => setShowAddPatient(true)}
+        register={register}
+        errors={errors}
       />
 
       {/* Treatment Form Section */}
@@ -381,7 +387,7 @@ export default function TreatmentForm() {
                 isLoading={isLoadingRayTests}
               />
 
-              {formData.visitType === 'dental' && (
+              {formData.visitType === VisitType.Followup && (
                 <DentalChart
                   selectedTeeth={formData.selectedTeeth || []}
                   onTeethSelect={(teeth) =>

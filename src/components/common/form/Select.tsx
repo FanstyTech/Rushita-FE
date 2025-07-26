@@ -191,7 +191,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {(error || helperText) && (
           <p
             className={twMerge(
-              'mt-1 text-sm',
+              'mt-1 text-xs',
               error ? 'text-red-500' : 'text-gray-500'
             )}
           >

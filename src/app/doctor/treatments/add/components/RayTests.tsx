@@ -44,13 +44,13 @@ export default function RayTests({
 
   return (
     <div className="bg-gray-50 p-4 rounded-lg mt-4">
-      <div className="flex justify-between items-center mb-3">
-        <h4 className="text-sm font-medium text-gray-700">Ray Tests</h4>
+      <div className="flex justify-between items-center mb-4">
+        <h4 className="text-base font-medium text-gray-800">Ray Tests</h4>
         <button
           type="button"
           onClick={handleAddRay}
           className="p-2 text-blue-600 hover:bg-gray-100 rounded"
-          title="Add Ray Test"
+          title="Add Medication"
         >
           <svg
             className="h-4 w-4"
@@ -68,18 +68,21 @@ export default function RayTests({
         </button>
       </div>
 
-      <div className="mt-4 space-y-4">
+      <div className="space-y-4">
         {rays.map((ray, index) => (
           <div
             key={ray.id}
-            className="flex flex-col space-y-2 p-4 border rounded-lg"
+            className="p-4 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200"
           >
-            <div className="flex justify-between">
-              <h4 className="text-lg font-medium">Ray Test #{index + 1}</h4>
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="text-sm font-medium text-gray-700">
+                Ray Test #{index + 1}
+              </h4>
               <button
                 type="button"
                 onClick={() => handleRemoveRay(index)}
-                className="text-red-500 hover:text-red-700"
+                className="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                title="Remove Ray Test"
               >
                 <svg
                   className="h-4 w-4"
@@ -99,7 +102,7 @@ export default function RayTests({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Test Name
                 </label>
                 <Controller
@@ -112,10 +115,10 @@ export default function RayTests({
                       placeholder="Select Ray"
                       disabled={isLoading}
                       isLoading={isLoading}
+                      className="w-full"
                     />
                   )}
                 />
-                {/* Error handling for name field */}
                 {errors.rays &&
                   Array.isArray(errors.rays) &&
                   errors.rays[index]?.name && (
@@ -126,13 +129,14 @@ export default function RayTests({
                   )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Additional details
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Additional Details
                 </label>
                 <Input
                   type="text"
                   placeholder="Additional details"
                   {...register(`rays.${index}.details`)}
+                  className="w-full"
                   error={
                     errors.rays &&
                     Array.isArray(errors.rays) &&
@@ -146,6 +150,12 @@ export default function RayTests({
             </div>
           </div>
         ))}
+
+        {rays.length === 0 && (
+          <div className="text-center py-6 text-gray-500 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+            <p>No ray tests added yet. Click "Add Ray Test" to begin.</p>
+          </div>
+        )}
       </div>
     </div>
   );

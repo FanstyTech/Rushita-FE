@@ -80,124 +80,21 @@ export default function Medications({
           </svg>
         </button>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-4">
         {medications.map((med, index) => (
           <div
             key={med.id || index}
-            className="grid grid-cols-12 gap-2 items-start"
+            className="p-4 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200"
           >
-            <div className="col-span-3">
-              <Controller
-                name={`medications.${index}.name`}
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    placeholder="Search medicine..."
-                    value={field.value}
-                    onClick={() => onShowMedicationSearch(index)}
-                    readOnly
-                    className="cursor-pointer"
-                    startIcon={
-                      <svg
-                        className="h-4 w-4 text-gray-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                      </svg>
-                    }
-                  />
-                )}
-              />
-              {errors.medications &&
-                Array.isArray(errors.medications) &&
-                errors.medications[index]?.name && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {(errors.medications[index]?.name?.message as string) ||
-                      'Medication name is required'}
-                  </p>
-                )}
-            </div>
-            <div className="col-span-2">
-              <Input
-                placeholder="Dosage"
-                {...register(`medications.${index}.dosage`, { required: true })}
-                error={
-                  errors.medications &&
-                  Array.isArray(errors.medications) &&
-                  errors.medications[index]?.dosage
-                    ? (errors.medications[index]?.dosage?.message as string)
-                    : undefined
-                }
-              />
-            </div>
-            <div className="col-span-3">
-              <Select
-                label="Frequency"
-                {...register(`medications.${index}.frequency`, {
-                  required: true,
-                })}
-                options={Object.entries(FrequencyType)
-                  .filter(([key]) => isNaN(Number(key)))
-                  .map(([key, value]) => ({
-                    value: value.toString(),
-                    label: key,
-                  }))}
-                error={
-                  errors.medications &&
-                  Array.isArray(errors.medications) &&
-                  errors.medications[index]?.frequency
-                    ? (errors.medications[index]?.frequency?.message as string)
-                    : undefined
-                }
-              />
-            </div>
-            <div className="col-span-3">
-              <Input
-                type="number"
-                placeholder="Duration"
-                {...register(`medications.${index}.duration`, {
-                  required: true,
-                })}
-                error={
-                  errors.medications &&
-                  Array.isArray(errors.medications) &&
-                  errors.medications[index]?.duration
-                    ? (errors.medications[index]?.duration?.message as string)
-                    : undefined
-                }
-              />
-            </div>
-
-            <div className="col-span-3">
-              <TextArea
-                {...register(`medications.${index}.notes`, {
-                  required: true,
-                })}
-                placeholder="Notes"
-                label="Notes"
-                rows={3}
-                error={
-                  errors.medications &&
-                  Array.isArray(errors.medications) &&
-                  errors.medications[index]?.notes
-                    ? (errors.medications[index]?.notes?.message as string)
-                    : undefined
-                }
-              />
-            </div>
-            <div className="col-span-1 flex items-center justify-center">
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="text-sm font-medium text-gray-700">
+                Medication #{index + 1}
+              </h4>
               {medications.length > 1 && (
                 <button
                   type="button"
                   onClick={() => handleRemoveMedication(index)}
-                  className="p-1 text-red-500 hover:bg-gray-100 rounded"
+                  className="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
                   title="Remove Medication"
                 >
                   <svg
@@ -215,6 +112,137 @@ export default function Medications({
                   </svg>
                 </button>
               )}
+            </div>
+
+            <div className="grid grid-cols-12 gap-4">
+              <div className="col-span-12 md:col-span-3">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Medication Name
+                </label>
+                <Controller
+                  name={`medications.${index}.name`}
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      placeholder="Search medicine..."
+                      value={field.value}
+                      onClick={() => onShowMedicationSearch(index)}
+                      readOnly
+                      className="cursor-pointer w-full"
+                      startIcon={
+                        <svg
+                          className="h-4 w-4 text-gray-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                          />
+                        </svg>
+                      }
+                    />
+                  )}
+                />
+                {errors.medications &&
+                  Array.isArray(errors.medications) &&
+                  errors.medications[index]?.name && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {(errors.medications[index]?.name?.message as string) ||
+                        'Medication name is required'}
+                    </p>
+                  )}
+              </div>
+
+              <div className="col-span-6 md:col-span-2">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Dosage
+                </label>
+                <Input
+                  placeholder="Dosage"
+                  {...register(`medications.${index}.dosage`, {
+                    required: true,
+                  })}
+                  className="w-full"
+                  error={
+                    errors.medications &&
+                    Array.isArray(errors.medications) &&
+                    errors.medications[index]?.dosage
+                      ? (errors.medications[index]?.dosage?.message as string)
+                      : undefined
+                  }
+                />
+              </div>
+
+              <div className="col-span-6 md:col-span-3">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Frequency
+                </label>
+                <Select
+                  {...register(`medications.${index}.frequency`, {
+                    required: true,
+                  })}
+                  options={Object.entries(FrequencyType)
+                    .filter(([key]) => isNaN(Number(key)))
+                    .map(([key, value]) => ({
+                      value: value.toString(),
+                      label: key,
+                    }))}
+                  error={
+                    errors.medications &&
+                    Array.isArray(errors.medications) &&
+                    errors.medications[index]?.frequency
+                      ? (errors.medications[index]?.frequency
+                          ?.message as string)
+                      : undefined
+                  }
+                />
+              </div>
+
+              <div className="col-span-6 md:col-span-2">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Duration (days)
+                </label>
+                <Input
+                  type="number"
+                  placeholder="Duration"
+                  {...register(`medications.${index}.duration`, {
+                    required: true,
+                  })}
+                  className="w-full"
+                  error={
+                    errors.medications &&
+                    Array.isArray(errors.medications) &&
+                    errors.medications[index]?.duration
+                      ? (errors.medications[index]?.duration?.message as string)
+                      : undefined
+                  }
+                />
+              </div>
+
+              <div className="col-span-12 md:col-span-12 mt-2">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Notes
+                </label>
+                <TextArea
+                  {...register(`medications.${index}.notes`, {
+                    required: true,
+                  })}
+                  placeholder="Additional instructions or notes about this medication"
+                  rows={2}
+                  className="w-full"
+                  error={
+                    errors.medications &&
+                    Array.isArray(errors.medications) &&
+                    errors.medications[index]?.notes
+                      ? (errors.medications[index]?.notes?.message as string)
+                      : undefined
+                  }
+                />
+              </div>
             </div>
           </div>
         ))}

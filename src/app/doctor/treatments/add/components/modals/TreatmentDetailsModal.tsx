@@ -1,29 +1,24 @@
 import React from 'react';
 import Modal from '@/components/common/Modal';
-import { GetPatientForViewDto } from '@/lib/api/types/clinic-patient';
+import {
+  GetPatientForViewDto,
+  VisitType,
+} from '@/lib/api/types/clinic-patient';
+import {
+  CreateOrUpdateVisitLabTestDto,
+  CreateOrUpdateVisitPrescriptionDto,
+  CreateOrUpdateVisitRadiologyTestDto,
+} from '@/lib/api/types/treatment';
+import { getVisitTypeLabel } from '@/utils/textUtils';
 
 interface TreatmentFormData {
   patientId: string;
-  visitType: 'initial' | 'followup' | 'emergency' | 'dental';
+  visitType: VisitType;
   symptoms: string;
   diagnosis: string;
-  medications: Array<{
-    id: string;
-    name: string;
-    dosage?: string;
-    frequency?: string;
-    duration?: string;
-  }>;
-  labTests: Array<{
-    id: string;
-    name: string;
-    details: string;
-  }>;
-  rays: Array<{
-    id: string;
-    name: string;
-    details: string;
-  }>;
+  medications: CreateOrUpdateVisitPrescriptionDto[];
+  labTests: CreateOrUpdateVisitLabTestDto[];
+  rays: CreateOrUpdateVisitRadiologyTestDto[];
   notes?: string;
   attachments?: Array<{
     id: string;
@@ -47,10 +42,6 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
   formData,
   selectedPatientData,
 }) => {
-  const formatVisitType = (type: string) => {
-    return type.charAt(0).toUpperCase() + type.slice(1);
-  };
-
   return (
     <Modal
       isOpen={isOpen}
@@ -85,7 +76,7 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                   Visit Type
                 </dt>
                 <dd className="text-sm text-gray-900 col-span-2">
-                  {formatVisitType(formData.visitType)} Visit
+                  {getVisitTypeLabel(formData.visitType)} Visit
                 </dd>
               </div>
             </dl>
@@ -191,10 +182,10 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                     {formData.labTests.map((test, index) => (
                       <tr key={index}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {test.name || 'Not specified'}
+                          {test.id || 'Not specified'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {test.details || 'No additional details'}
+                          {test.notes || 'No additional details'}
                         </td>
                       </tr>
                     ))}
@@ -228,10 +219,10 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                     {formData.rays.map((ray, index) => (
                       <tr key={index}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {ray.name || 'Not specified'}
+                          {ray.id || 'Not specified'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {ray.details || 'No additional details'}
+                          {ray?.notes || 'No additional details'}
                         </td>
                       </tr>
                     ))}
