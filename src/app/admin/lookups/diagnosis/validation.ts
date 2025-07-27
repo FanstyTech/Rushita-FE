@@ -33,12 +33,8 @@ export const diagnosisSchema = z.object({
     .string()
     .max(1000, 'Risk factors must not exceed 1000 characters')
     .optional(),
-  specialtyId: z
-    .string()
-    .optional(),
-  diagnosisCategoryId: z
-    .string()
-    .optional(),
+  specialtyId: z.string().optional(),
+  parentId: z.string().optional(),
   isActive: z.enum(['true', 'false'], {
     required_error: 'Status is required',
     invalid_type_error: 'Status must be either active or inactive',
@@ -47,7 +43,8 @@ export const diagnosisSchema = z.object({
 
 export type DiagnosisFormData = z.infer<typeof diagnosisSchema>;
 
-export interface ParsedDiagnosisData extends Omit<DiagnosisFormData, 'isActive'> {
+export interface ParsedDiagnosisData
+  extends Omit<DiagnosisFormData, 'isActive'> {
   isActive: boolean;
   id?: string;
 }

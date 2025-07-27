@@ -70,6 +70,7 @@ export const API_ENDPOINTS = {
     CREATE_OR_UPDATE: '/diagnosis/CreateOrUpdate',
     DELETE: '/diagnosis/Delete',
     GET_ONE: '/diagnosis/:id',
+    GET_FOR_DROPDOWN: '/diagnosis/GetDiagnosesForDropdown',
   },
   dentalProcedure: {
     LIST: '/dentalProcedure/getAll',

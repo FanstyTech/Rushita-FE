@@ -34,6 +34,18 @@ export const useDiagnosis = () => {
       enabled: !!id,
     });
 
+  const useDiagnosesDropdown = () =>
+    useQuery({
+      queryKey: ['diagnoses-dropdown'],
+      queryFn: async () => {
+        const response = await diagnosisService.getDropdownOptions();
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+    });
+
   const createDiagnosis = useMutation({
     mutationFn: async (data: CreateUpdateDiagnosisDto) => {
       const response = await diagnosisService.create(data);
@@ -45,6 +57,7 @@ export const useDiagnosis = () => {
     onSuccess: () => {
       toast.success('Diagnosis created successfully');
       queryClient.invalidateQueries({ queryKey: ['diagnoses'] });
+      queryClient.invalidateQueries({ queryKey: ['diagnoses-dropdown'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -62,6 +75,7 @@ export const useDiagnosis = () => {
     onSuccess: () => {
       toast.success('Diagnosis updated successfully');
       queryClient.invalidateQueries({ queryKey: ['diagnoses'] });
+      queryClient.invalidateQueries({ queryKey: ['diagnoses-dropdown'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -79,6 +93,7 @@ export const useDiagnosis = () => {
     onSuccess: () => {
       toast.success('Diagnosis deleted successfully');
       queryClient.invalidateQueries({ queryKey: ['diagnoses'] });
+      queryClient.invalidateQueries({ queryKey: ['diagnoses-dropdown'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -88,6 +103,7 @@ export const useDiagnosis = () => {
   return {
     useDiagnosesList,
     useDiagnosisDetails,
+    useDiagnosesDropdown,
     createDiagnosis,
     updateDiagnosis,
     deleteDiagnosis,

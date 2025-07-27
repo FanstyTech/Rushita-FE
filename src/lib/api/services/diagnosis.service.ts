@@ -9,6 +9,7 @@ import {
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
 import { convertFilterToParams, FilterParams } from '@/utils/filter';
+import { SelectOption } from '../types/select-option';
 
 export const diagnosisService = {
   async getAll(
@@ -25,6 +26,12 @@ export const diagnosisService = {
   async getOne(id: string): Promise<ApiResponse<DiagnosisDto>> {
     return apiClient.get<ApiResponse<DiagnosisDto>>(
       API_ENDPOINTS.diagnosis.GET_ONE.replace(':id', id)
+    );
+  },
+
+  async getDropdownOptions(): Promise<ApiResponse<SelectOption<string>[]>> {
+    return apiClient.get<ApiResponse<SelectOption<string>[]>>(
+      API_ENDPOINTS.diagnosis.GET_FOR_DROPDOWN
     );
   },
 

@@ -9,7 +9,6 @@ import Modal from '@/components/common/Modal';
 import { Column, Table } from '@/components/common/Table';
 import PageLayout from '@/components/layouts/PageLayout';
 import { useDiagnosis } from '@/lib/api/hooks/useDiagnosis';
-import { useDiagnosisCategory } from '@/lib/api/hooks/useDiagnosisCategory';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { DiagnosisListDto } from '@/lib/api/types/diagnosis';
 import { SelectOption } from '@/lib/api/types/select-option';
@@ -38,7 +37,7 @@ export default function DiagnosisPage() {
     searchValue: '',
     code: '',
     specialtyId: undefined as string | undefined,
-    diagnosisCategoryId: undefined as string | undefined,
+    parentId: undefined as string | undefined,
     isActive: undefined as boolean | undefined,
   });
 
@@ -50,9 +49,8 @@ export default function DiagnosisPage() {
     deleteDiagnosis,
   } = useDiagnosis();
 
-  const { useDiagnosisCategoriesDropdown: getDiagnosisCategoriesForDropdown } =
-    useDiagnosisCategory();
-  const { data: categories } = getDiagnosisCategoriesForDropdown();
+  const { useDiagnosesDropdown: getDiagnosesForDropdown } = useDiagnosis();
+  const { data: parentDiagnoses } = getDiagnosesForDropdown();
 
   const { useSpecialtiesDropdown: getSpecialtiesForDropdown } = useSpecialty();
   const { data: specialties } = getSpecialtiesForDropdown();
@@ -71,7 +69,7 @@ export default function DiagnosisPage() {
       recommendedTests: '',
       riskFactors: '',
       specialtyId: '',
-      diagnosisCategoryId: '',
+      parentId: '',
       isActive: 'true',
     },
   });
@@ -88,7 +86,7 @@ export default function DiagnosisPage() {
       recommendedTests: formData.recommendedTests,
       riskFactors: formData.riskFactors,
       specialtyId: formData.specialtyId || undefined,
-      diagnosisCategoryId: formData.diagnosisCategoryId || undefined,
+      parentId: formData.parentId || undefined,
       isActive: formData.isActive === 'true',
       ...(selectedDiagnosis && { id: selectedDiagnosis.id }),
     };
@@ -116,8 +114,8 @@ export default function DiagnosisPage() {
       commonMedications: '',
       recommendedTests: '',
       riskFactors: '',
-      specialtyId: diagnosis.id,
-      diagnosisCategoryId: diagnosis.id,
+      specialtyId: diagnosis.specialtyId,
+      parentId: diagnosis.parentId,
       isActive: diagnosis.isActive ? 'true' : 'false',
     });
     setIsModalOpen(true);
@@ -148,7 +146,7 @@ export default function DiagnosisPage() {
       recommendedTests: '',
       riskFactors: '',
       specialtyId: '',
-      diagnosisCategoryId: '',
+      parentId: '',
       isActive: 'true',
     });
     setIsModalOpen(true);
@@ -174,8 +172,8 @@ export default function DiagnosisPage() {
       accessor: 'nameF',
     },
     {
-      header: 'Category',
-      accessor: 'diagnosisCategoryName',
+      header: 'Parent Diagnosis',
+      accessor: 'parentName',
     },
     {
       header: 'Specialty',
@@ -259,19 +257,19 @@ export default function DiagnosisPage() {
             },
             {
               icon: <FiList className="w-4 h-4" />,
-              label: 'Category',
+              label: 'Parent Diagnosis',
               options: [
-                { value: '', label: 'All Categories' },
-                ...(categories?.map((category: SelectOption<string>) => ({
-                  value: category.value,
-                  label: category.label || '',
+                { value: '', label: 'All Diagnoses' },
+                ...(parentDiagnoses?.map((diagnosis: SelectOption<string>) => ({
+                  value: diagnosis.value,
+                  label: diagnosis.label || '',
                 })) || []),
               ],
-              value: String(filter.diagnosisCategoryId || ''),
+              value: String(filter.parentId || ''),
               onChange: (value) =>
                 setFilter((prev) => ({
                   ...prev,
-                  diagnosisCategoryId: value,
+                  parentId: value,
                 })),
             },
             {
@@ -336,6 +334,7 @@ export default function DiagnosisPage() {
             />
             <Select
               label="Status"
+              value={selectedDiagnosis?.isActive ? 'true' : 'false'}
               {...form.register('isActive')}
               error={form.formState.errors.isActive?.message}
               options={[
@@ -355,6 +354,7 @@ export default function DiagnosisPage() {
             />
             <Select
               label="Specialty"
+              value={selectedDiagnosis?.specialtyId}
               {...form.register('specialtyId')}
               error={form.formState.errors.specialtyId?.message}
               options={[
@@ -366,14 +366,15 @@ export default function DiagnosisPage() {
               ]}
             />
             <Select
-              label="Category"
-              {...form.register('diagnosisCategoryId')}
-              error={form.formState.errors.diagnosisCategoryId?.message}
+              label="Parent Diagnosis"
+              value={selectedDiagnosis?.parentId}
+              {...form.register('parentId')}
+              error={form.formState.errors.parentId?.message}
               options={[
-                { value: '', label: 'Select Category' },
-                ...(categories?.map((category: SelectOption<string>) => ({
-                  value: category.value,
-                  label: category.label || '',
+                { value: '', label: 'Select Parent Diagnosis' },
+                ...(parentDiagnoses?.map((diagnosis: SelectOption<string>) => ({
+                  value: diagnosis.value,
+                  label: diagnosis.label || '',
                 })) || []),
               ]}
             />

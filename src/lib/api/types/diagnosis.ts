@@ -14,8 +14,8 @@ export interface DiagnosisDto {
   riskFactors: string;
   specialtyId?: string;
   specialtyName?: string;
-  diagnosisCategoryId?: string;
-  diagnosisCategoryName?: string;
+  parentId?: string;
+  parentName?: string;
 }
 
 export interface CreateUpdateDiagnosisDto {
@@ -30,7 +30,7 @@ export interface CreateUpdateDiagnosisDto {
   recommendedTests?: string;
   riskFactors?: string;
   specialtyId?: string;
-  diagnosisCategoryId?: string;
+  parentId?: string;
 }
 
 export interface DiagnosisListDto {
@@ -41,12 +41,14 @@ export interface DiagnosisListDto {
   name: string;
   isActive: boolean;
   specialtyName?: string;
-  diagnosisCategoryName?: string;
+  parentName?: string;
+  specialtyId?: string;
+  parentId?: string;
 }
 
 export interface DiagnosisFilterDto extends PaginationRequest {
   code?: string;
   isActive?: boolean;
   specialtyId?: string;
-  diagnosisCategoryId?: string;
+  parentId?: string;
 }
