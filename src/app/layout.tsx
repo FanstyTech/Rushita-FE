@@ -36,8 +36,8 @@ export default async function RootLayout({
   const initialDir = initialLang === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={initialLang} dir={initialDir} suppressHydrationWarning>
-      <body className="font-ibm-plex">
+    <html lang={initialLang} className='scroll-smooth' dir={initialDir} suppressHydrationWarning>
+      <body className="font-ibm-plex" suppressHydrationWarning>
         <Providers>
           <ClientLayout languages={languages}>{children}</ClientLayout>
         </Providers>

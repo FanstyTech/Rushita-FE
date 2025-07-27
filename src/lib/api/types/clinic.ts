@@ -88,3 +88,10 @@ export interface ClinicFilterDto {
   clinicTypeId?: string;
   status?: ClinicStatus;
 }
+
+export interface GetUserInfoDto {
+  email?: string;
+  bio?: string;
+  phoneNumber?: string;
+  address: string;
+}

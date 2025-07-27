@@ -41,8 +41,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const pathSegments = pathname?.split('/').filter(Boolean);
     const pathLang =
       pathSegments &&
-      pathSegments.length > 0 &&
-      languages.includes(pathSegments[0])
+        pathSegments.length > 0 &&
+        languages.includes(pathSegments[0])
         ? (pathSegments[0] as Language)
         : null;
 
@@ -52,7 +52,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     // Try to get from cookie if we're in the browser
     if (typeof document !== 'undefined') {
       const cookieLang = document.cookie
-        .split('; ')
+        .split('; ')  
         .find((row) => row.startsWith('language='))
         ?.split('=')[1];
 
@@ -75,18 +75,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Set direction on the document element as early as possible
-  // This runs during the initial render to minimize flashing
-  if (typeof document !== 'undefined' && !isMounted) {
-    document.documentElement.lang = initialLang;
-    document.documentElement.dir = initialLang === 'ar' ? 'rtl' : 'ltr';
-
-    // Force a repaint to ensure the direction is applied immediately
-    document.body.style.display = 'none';
-    setTimeout(() => {
-      document.body.style.display = '';
-    }, 0);
-  }
+  // Set direction on the document element after mounting
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = initialLang;
+      document.documentElement.dir = initialLang === 'ar' ? 'rtl' : 'ltr';
+    }
+  }, [initialLang]);
 
   // Mark component as mounted
   useEffect(() => {
@@ -100,8 +95,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const pathSegments = pathname?.split('/').filter(Boolean);
     const pathLang =
       pathSegments &&
-      pathSegments.length > 0 &&
-      languages.includes(pathSegments[0])
+        pathSegments.length > 0 &&
+        languages.includes(pathSegments[0])
         ? (pathSegments[0] as Language)
         : null;
 
@@ -145,9 +140,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       await i18n.changeLanguage(lang);
 
       // Store language preference in cookie
-      document.cookie = `language=${lang}; path=/; max-age=${
-        60 * 60 * 24 * 30
-      }`; // 30 days
+      document.cookie = `language=${lang}; path=/; max-age=${60 * 60 * 24 * 30
+        }`; // 30 days
 
       // Update path to include language prefix
       const pathSegments = pathname?.split('/').filter(Boolean);

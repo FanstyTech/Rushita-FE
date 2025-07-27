@@ -11,7 +11,6 @@ import {
   Users,
   UserRound,
   Star,
-  Building2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ClinicCardSkeleton from '@/components/skeletons/ClinicCardSkeleton';

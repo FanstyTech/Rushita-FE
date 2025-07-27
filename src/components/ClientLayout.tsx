@@ -54,7 +54,7 @@ export default function ClientLayout({
   return (
     <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
       {/* Only render these components client-side */}
-      {isMounted && (
+      {isMounted ? (
         <>
           <Sidebar />
           <div className="flex-1 overflow-auto">
@@ -70,9 +70,7 @@ export default function ClientLayout({
             </div>
           </div>
         </>
-      )}
-      {/* Show a simple placeholder while client-side components are loading */}
-      {!isMounted && (
+      ) : (
         <div className="flex h-screen w-full items-center justify-center">
           <Loading />
         </div>
