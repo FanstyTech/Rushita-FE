@@ -5,6 +5,7 @@
 import { ClinicStatus } from '@/lib/api/types/clinic';
 import {
   AppointmentStatus,
+  BloodType,
   FrequencyType,
   Gender,
   MedicalConditionStatus,
@@ -268,6 +269,23 @@ export const getAppointmentStatusLabel = (
   };
   return statusMap[status] || 'Unknown';
 };
+
+export const getBloodTypeLabel = (status: BloodType): string => {
+  // Blood type display names mapping
+  const bloodTypeDisplayNames: Record<BloodType, string> = {
+    [BloodType.A_Positive]: 'A+',
+    [BloodType.A_Negative]: 'A-',
+    [BloodType.B_Positive]: 'B+',
+    [BloodType.B_Negative]: 'B-',
+    [BloodType.AB_Positive]: 'AB+',
+    [BloodType.AB_Negative]: 'AB-',
+    [BloodType.O_Positive]: 'O+',
+    [BloodType.O_Negative]: 'O-',
+  };
+
+  return bloodTypeDisplayNames[status] || 'Unknown';
+};
+
 export const getMedicalConditionStatusClass = (
   status: MedicalConditionStatus
 ): string => {

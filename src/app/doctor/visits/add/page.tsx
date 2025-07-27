@@ -1,10 +1,10 @@
 import PageLayout from '@/components/layouts/PageLayout';
-import TreatmentForm from './components/TreatmentForm';
+import VisitForm from '@/components/doctor/visits/components/VisitForm';
 
 export default function AddTreatmentPage() {
   return (
     <PageLayout>
-      <TreatmentForm />
+      <VisitForm />
     </PageLayout>
   );
 }

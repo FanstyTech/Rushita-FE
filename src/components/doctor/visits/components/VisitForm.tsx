@@ -43,7 +43,7 @@ const medicationSchema = z.object({
   name: z.string().min(1, 'Medication name is required'),
   dosage: z.string().min(1, 'Dosage is required'),
   frequency: z.coerce.number().min(1, 'Frequency is required'),
-  duration: z.number().min(1, 'Duration is required'),
+  duration: z.coerce.number().min(1, 'Duration is required'),
   notes: z.string().optional(),
 });
 
@@ -354,7 +354,11 @@ export default function TreatmentForm() {
             </div>
 
             <div className="p-6 space-y-6">
-              <SymptomsAndDiagnosis register={register} errors={errors} />
+              <SymptomsAndDiagnosis
+                register={register}
+                errors={errors}
+                control={control}
+              />
 
               <Medications
                 medications={formData.medications}
@@ -500,7 +504,7 @@ export default function TreatmentForm() {
         isOpen={showTreatmentDetails}
         onClose={() => setShowTreatmentDetails(false)}
         formData={formData}
-        selectedPatientData={selectedPatientData}
+        selectedPatientData={selectedPatientData || undefined}
       />
     </div>
   );

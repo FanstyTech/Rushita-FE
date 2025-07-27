@@ -3,11 +3,13 @@
 import { Input, Select } from '@/components/common/form';
 import Button from '@/components/common/Button';
 import {
+  BloodType,
   GetPatientForViewDto,
   VisitType,
 } from '@/lib/api/types/clinic-patient';
 import { SelectOption } from '@/lib/api/types/select-option';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
+import { getBloodTypeLabel } from '@/utils/textUtils';
 
 interface PatientInfoSectionProps {
   patientSearchQuery: string;
@@ -201,7 +203,9 @@ export default function PatientInfoSection({
                   <div>
                     <p className="text-xs text-gray-500">Blood Type</p>
                     <p className="text-sm font-medium text-gray-900">
-                      {selectedPatientData?.bloodType}
+                      {getBloodTypeLabel(
+                        selectedPatientData?.bloodType || BloodType.AB_Negative
+                      )}
                     </p>
                   </div>
                   <div>

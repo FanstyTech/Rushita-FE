@@ -17,7 +17,12 @@ import Avatar from './common/Avatar';
 import { languages } from '@/middleware';
 import { Language } from '@/i18n/LanguageProvider';
 import ThemeToggle from './ThemeToggle';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { FaBars } from 'react-icons/fa';
 
 function classNames(...classes: string[]) {
@@ -30,8 +35,22 @@ export default function Header() {
   const { language, setLanguage, direction, isChangingLanguage, toggolemenue } =
     useLanguage();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
+
+  // Use useEffect to handle client-side operations
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Return a placeholder during server rendering or initial client render
+  if (!mounted) {
+    return (
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 h-16">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between"></div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
@@ -39,20 +58,18 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Left Section: Branding */}
           <div className="flex items-center justify-center ">
-
             <button
               onClick={toggolemenue}
               className="inline-flex md:hidden items-center justify-center p-2 rounded-md hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-700 transition-colors duration-300 focus:outline-none "
               aria-expanded="false"
             >
               <FaBars className="h-6 w-6 text-secend" />
-
-
             </button>
-            <h1 className="text-xl  font-bold text-gray-900 mt-1  dark:text-white">
+            <h1 className="text-xl font-bold text-gray-900 mt-1 dark:text-white">
               {user?.clinicInfo?.name || 'Rushita'}
             </h1>
           </div>
+
           {/* Right Section: Icons */}
           <div className="flex items-center space-x-3 rtl:space-x-reverse">
             {/* Extra Utility Icon (Placeholder) */}
@@ -63,6 +80,7 @@ export default function Header() {
               <span className="sr-only">{t('user.notifications')}</span>
               <BsGrid className="h-6 w-6" aria-hidden="true" />
             </button>
+
             {/* Notifications */}
             <button
               type="button"
@@ -71,13 +89,15 @@ export default function Header() {
               <span className="sr-only">{t('user.notifications')}</span>
               <BellIcon className="h-6 w-6" aria-hidden="true" />
             </button>
+
             {/* Theme Toggle */}
             <ThemeToggle />
+
             {/* Language Dropdown */}
-            <div className=''>
-              <DropdownMenu >
+            <div className="">
+              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="rounded-full p-1  text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                  <button className="rounded-full p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
                     <span className="sr-only">{t('settings.language')}</span>
                     <GlobeAltIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
@@ -85,7 +105,10 @@ export default function Header() {
                 <DropdownMenuContent asChild>
                   <div>
                     {languages.map((lang, index) => (
-                      <DropdownMenuItem key={index} className='mx-auto p-0 my-1 flex justify-center items-center'>
+                      <DropdownMenuItem
+                        key={index}
+                        className="mx-auto p-0 my-1 flex justify-center items-center"
+                      >
                         <button
                           onClick={() => setLanguage(lang as Language)}
                           disabled={isChangingLanguage}
@@ -108,7 +131,6 @@ export default function Header() {
                     ))}
                   </div>
                 </DropdownMenuContent>
-
               </DropdownMenu>
             </div>
 

@@ -2,12 +2,19 @@
 
 import { usePathname } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
-import Sidebar from '@/components/Sidebar';
-import QuickMenu from '@/components/QuickMenu';
-import QuickActions from '@/components/QuickActions';
+import dynamic from 'next/dynamic';
 import Loading from '@/components/Splash';
-import Header from '@/components/Header';
 import { useLanguage } from '@/i18n/LanguageProvider';
+
+// Dynamically import heavy components with ssr: false to prevent hydration issues
+const Sidebar = dynamic(() => import('@/components/Sidebar'), { ssr: false });
+const Header = dynamic(() => import('@/components/Header'), { ssr: false });
+const QuickMenu = dynamic(() => import('@/components/QuickMenu'), {
+  ssr: false,
+});
+const QuickActions = dynamic(() => import('@/components/QuickActions'), {
+  ssr: false,
+});
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -34,44 +41,42 @@ export default function ClientLayout({
     setIsMounted(true);
   }, []);
 
-  // Update html lang and dir attributes when language changes
-  useEffect(() => {
-    if (!isMounted) return;
-
-    // Update html lang attribute only on client side
-    if (typeof document !== 'undefined') {
-      document.documentElement.lang = language;
-      document.documentElement.dir = direction;
-    }
-  }, [language, direction, isMounted]);
-
   // Show a minimal loading state when language is changing
   if (isChangingLanguage) {
     return <Loading />;
   }
 
+  // For landing and auth pages, render without sidebar/header
+  if (isLandingPage || isAuthPage) {
+    return <main>{children}</main>;
+  }
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      {isLandingPage || isAuthPage ? (
-        <main>{children}</main>
-      ) : (
-        <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
+      {/* Only render these components client-side */}
+      {isMounted && (
+        <>
           <Sidebar />
           <div className="flex-1 overflow-auto">
             <div className="flex-1 flex flex-col overflow-hidden">
               <div className="relative">
+                <Header />
                 <QuickMenu />
                 <QuickActions />
-                <Header />
                 <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-6">
-                  {/* <Loading /> */}
                   {children}
                 </main>
               </div>
             </div>
           </div>
+        </>
+      )}
+      {/* Show a simple placeholder while client-side components are loading */}
+      {!isMounted && (
+        <div className="flex h-screen w-full items-center justify-center">
+          <Loading />
         </div>
       )}
-    </Suspense>
+    </div>
   );
 }

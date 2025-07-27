@@ -40,11 +40,11 @@ export const doctorNav: NavItem[] = [
     permission: PermissionKeys.VIEW_PATIENTS,
   },
   {
-    name: 'Treatments',
-    id: 'doctor-treatments',
-    href: '/doctor/treatments',
+    name: 'Vistis',
+    id: 'doctor-visits',
+    href: '/doctor/visits',
     icon: ClipboardDocumentListIcon,
-    permission: PermissionKeys.MANAGE_TREATMENTS,
+    permission: PermissionKeys.MANAGE_VISITS,
   },
   {
     name: 'Leaves',

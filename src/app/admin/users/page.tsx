@@ -2,7 +2,6 @@
 
 import PageLayout from '@/components/layouts/PageLayout';
 import { useState } from 'react';
-import { PermissionsModal } from '@/components/modals/PermissionsModal';
 
 // Import constants from mock data
 const organizationalUnits = [
@@ -243,15 +242,6 @@ export default function UsersPage() {
           }}
         /> */}
       </div>
-
-      {selectedUser && (
-        <PermissionsModal
-          isOpen={isPermissionsModalOpen}
-          onClose={() => setIsPermissionsModalOpen(false)}
-          userName={selectedUser.name}
-          userId={selectedUser.id}
-        />
-      )}
     </PageLayout>
   );
 }

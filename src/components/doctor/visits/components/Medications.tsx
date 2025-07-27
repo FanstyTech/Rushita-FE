@@ -209,9 +209,7 @@ export default function Medications({
                 <Input
                   type="number"
                   placeholder="Duration"
-                  {...register(`medications.${index}.duration`, {
-                    required: true,
-                  })}
+                  {...register(`medications.${index}.duration`, {})}
                   className="w-full"
                   error={
                     errors.medications &&

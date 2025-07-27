@@ -332,7 +332,7 @@ export default function TreatmentsPage() {
 
           {/* Add Treatment Button */}
           <Link
-            href="/doctor/treatments/add"
+            href="/doctor/visits/add"
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow-md"
           >
             <Plus className="w-4 h-4" />

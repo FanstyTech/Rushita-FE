@@ -58,8 +58,8 @@ export const PermissionKeys = {
   ACCESS_DOCTOR_DASHBOARD: 'doctor.dashboard.access',
 
   // Doctor Specific
-  MANAGE_TREATMENTS: 'doctor.treatments.manage',
-  VIEW_TREATMENTS: 'doctor.treatments.view',
+  MANAGE_VISITS: 'doctor.visits.manage',
+  VIEW_VISITS: 'doctor.visits.view',
   MANAGE_LEAVES: 'doctor.leaves.manage',
   VIEW_LEAVES: 'doctor.leaves.view',
   VIEW_PROFILE: 'doctor.profile.view',

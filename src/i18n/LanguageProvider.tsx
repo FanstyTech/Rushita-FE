@@ -34,23 +34,74 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   // Language and direction state
   const [open, setOpen] = useState(false);
-  const [language, setLanguageState] = useState<Language>(
-    (i18n.language as Language) || (defaultLanguage as Language)
-  );
+
+  // Get initial language from cookie or URL path
+  const getInitialLanguage = (): Language => {
+    // Check for language in URL path first
+    const pathSegments = pathname?.split('/').filter(Boolean);
+    const pathLang =
+      pathSegments &&
+      pathSegments.length > 0 &&
+      languages.includes(pathSegments[0])
+        ? (pathSegments[0] as Language)
+        : null;
+
+    // If found in path, use it
+    if (pathLang) return pathLang as Language;
+
+    // Try to get from cookie if we're in the browser
+    if (typeof document !== 'undefined') {
+      const cookieLang = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('language='))
+        ?.split('=')[1];
+
+      if (cookieLang && languages.includes(cookieLang)) {
+        return cookieLang as Language;
+      }
+    }
+
+    // Otherwise use i18n language or default
+    return (i18n.language as Language) || (defaultLanguage as Language);
+  };
+
+  const initialLang = getInitialLanguage();
+  const [language, setLanguageState] = useState<Language>(initialLang);
   const [direction, setDirection] = useState<'ltr' | 'rtl'>(
-    language === 'ar' ? 'rtl' : 'ltr'
+    initialLang === 'ar' ? 'rtl' : 'ltr'
   );
 
   // State to track if language is currently changing
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Set direction on the document element as early as possible
+  // This runs during the initial render to minimize flashing
+  if (typeof document !== 'undefined' && !isMounted) {
+    document.documentElement.lang = initialLang;
+    document.documentElement.dir = initialLang === 'ar' ? 'rtl' : 'ltr';
+
+    // Force a repaint to ensure the direction is applied immediately
+    document.body.style.display = 'none';
+    setTimeout(() => {
+      document.body.style.display = '';
+    }, 0);
+  }
+
+  // Mark component as mounted
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Extract language from URL path on initial load
   useEffect(() => {
+    if (!isMounted) return;
+
     const pathSegments = pathname?.split('/').filter(Boolean);
     const pathLang =
       pathSegments &&
-        pathSegments.length > 0 &&
-        languages.includes(pathSegments[0])
+      pathSegments.length > 0 &&
+      languages.includes(pathSegments[0])
         ? (pathSegments[0] as Language)
         : null;
 
@@ -59,10 +110,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       i18n.changeLanguage(pathLang);
       setDirection(pathLang === 'ar' ? 'rtl' : 'ltr');
     }
-  }, [pathname, language, i18n]);
+  }, [pathname, language, i18n, isMounted]);
 
   // Update document direction when language changes
   useEffect(() => {
+    if (!isMounted) return;
+
     setDirection(language === 'ar' ? 'rtl' : 'ltr');
 
     // Update HTML attributes only on client side
@@ -70,14 +123,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.lang = language;
       document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
     }
-  }, [language]);
+  }, [language, isMounted]);
 
   /**
    * Change language and update path and cookies
    */
   const toggolemenue = () => {
-    setOpen(!open)
-  }
+    setOpen(!open);
+  };
   const setLanguage = async (lang: Language) => {
     // Prevent multiple changes at once
     if (isChangingLanguage || lang === language) return;
@@ -92,8 +145,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       await i18n.changeLanguage(lang);
 
       // Store language preference in cookie
-      document.cookie = `language=${lang}; path=/; max-age=${60 * 60 * 24 * 30
-        }`; // 30 days
+      document.cookie = `language=${lang}; path=/; max-age=${
+        60 * 60 * 24 * 30
+      }`; // 30 days
 
       // Update path to include language prefix
       const pathSegments = pathname?.split('/').filter(Boolean);
