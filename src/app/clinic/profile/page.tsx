@@ -363,7 +363,7 @@ function ClinicProfileContent() {
                 <div className="ml-4">
                   {isEditing ? (
                     <EditableField
-                      value={editedData.name}
+                      value={data.name}
                       onChange={(value) =>
                         setEditedData({ ...editedData, name: value })
                       }
@@ -420,7 +420,7 @@ function ClinicProfileContent() {
               <h2 className="text-xl font-semibold mb-4 text-gray-900">About</h2>
               {isEditing ? (
                 <EditableField
-                  value={editedData.about}
+                  value={data?.bio || ""}
                   onChange={(value) =>
                     setEditedData({ ...editedData, about: value })
                   }

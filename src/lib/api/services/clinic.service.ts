@@ -37,17 +37,13 @@ class ClinicService {
     });
   }
 
-  async getOne(id: string): Promise<ClinicDto> {
-    const response = await apiClient.get<ClinicDto>(
-      `${API_ENDPOINTS.CLINIC.GET_ONE}`,
-      {
-        params: {
-          id: id,
-        },
-      }
-    );
-    return response;
-  }
+async getOne(id: string): Promise<ClinicDto> {
+  const response = await apiClient.get<{ success: boolean; message: string; result: ClinicDto }>(
+    `${API_ENDPOINTS.CLINIC.GET_ONE}`,
+    { params: { id } }
+  );
+  return response.result; // فقط بيانات العيادة
+}
 
   async getForEdit(id: string): Promise<ApiResponse<CreateUpdateClinicDto>> {
     const response = await apiClient.get<ApiResponse<CreateUpdateClinicDto>>(

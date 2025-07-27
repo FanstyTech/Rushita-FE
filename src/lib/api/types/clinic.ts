@@ -32,7 +32,9 @@ export interface ClinicDto {
   clinicTypeId?: string;
   latitude?: number;
   longitude?: number;
+  workingHours : WorkingHours[]
 }
+
 
 export interface WorkingHours {
   day: DayEnum;
