@@ -36,6 +36,8 @@ import {
 } from '@/lib/api/types/clinic-patient';
 import { MedicineListDto } from '@/lib/api/types/medicine';
 import { useVisit } from '@/lib/api/hooks/useVisit';
+import { useDiagnosis } from '@/lib/api/hooks/useDiagnosis';
+import { Button } from '@/components/ui/button';
 
 // Validation Schemas
 const medicationSchema = z.object({
@@ -202,6 +204,9 @@ export default function TreatmentForm() {
   const { useRadiologyTestsDropdown } = useRadiologyTest();
   const { useMedicinesList } = useMedicine();
   const { usePatientDropdown, usePatientForView } = useClinicPatients();
+  // Hooks
+  const { useDiagnosesTree: getDiagnoses } = useDiagnosis();
+  const { data: diagnosesTree } = getDiagnoses();
 
   // Patient filter
   const patientFilter = useMemo<GetPatientDropdownInput>(
@@ -329,8 +334,7 @@ export default function TreatmentForm() {
       <PatientInfoSection
         patientSearchQuery={patientSearchQuery}
         setPatientSearchQuery={setPatientSearchQuery}
-        showDropdown={showDropdown}
-        setShowDropdown={setShowDropdown}
+        shouldFetchPatients={shouldFetchPatients}
         patientsData={patientsData || []}
         patientsLoading={patientsLoading}
         selectedPatient={selectedPatient}
@@ -355,6 +359,7 @@ export default function TreatmentForm() {
 
             <div className="p-6 space-y-6">
               <SymptomsAndDiagnosis
+                diagnosesTree={diagnosesTree || []}
                 register={register}
                 errors={errors}
                 control={control}
@@ -446,17 +451,9 @@ export default function TreatmentForm() {
                   >
                     Preview
                   </button>
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                      isLoading
-                        ? 'bg-blue-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700'
-                    }`}
-                  >
+                  <Button variant="default" type="submit" disabled={isLoading}>
                     {isLoading ? 'Saving...' : 'Save Treatment'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

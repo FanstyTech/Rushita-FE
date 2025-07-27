@@ -46,6 +46,18 @@ export const useDiagnosis = () => {
       },
     });
 
+  const useDiagnosesTree = () =>
+    useQuery({
+      queryKey: ['diagnoses-tree'],
+      queryFn: async () => {
+        const response = await diagnosisService.getDiagnosesTree();
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+    });
+
   const createDiagnosis = useMutation({
     mutationFn: async (data: CreateUpdateDiagnosisDto) => {
       const response = await diagnosisService.create(data);
@@ -104,6 +116,7 @@ export const useDiagnosis = () => {
     useDiagnosesList,
     useDiagnosisDetails,
     useDiagnosesDropdown,
+    useDiagnosesTree,
     createDiagnosis,
     updateDiagnosis,
     deleteDiagnosis,

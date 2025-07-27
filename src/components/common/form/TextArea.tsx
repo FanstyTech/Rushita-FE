@@ -28,7 +28,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <label className="block text-sm font-medium text-foreground mb-1">
+          <label className="block text-xs font-medium text-foreground mb-1">
             {label}
           </label>
         )}

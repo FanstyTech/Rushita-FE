@@ -1,15 +1,18 @@
 'use client';
 
 import { TextArea, DiagnosisTreeSelector } from '@/components/common/form';
+import { GetDiagnosesTreeDto } from '@/lib/api/types/diagnosis';
 import { UseFormRegister, FieldErrors, Control } from 'react-hook-form';
 
 interface SymptomsAndDiagnosisProps {
+  diagnosesTree: GetDiagnosesTreeDto[];
   register: UseFormRegister<any>;
   errors: FieldErrors;
   control: Control<any>;
 }
 
 export default function SymptomsAndDiagnosis({
+  diagnosesTree,
   register,
   errors,
   control,
@@ -27,6 +30,7 @@ export default function SymptomsAndDiagnosis({
 
       {/* Diagnosis - ICD-10 Tree Selection */}
       <DiagnosisTreeSelector
+        diagnosesTree={diagnosesTree}
         name="diagnosis"
         control={control}
         label="Diagnosis (ICD-10)"

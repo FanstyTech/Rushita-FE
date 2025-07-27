@@ -52,3 +52,11 @@ export interface DiagnosisFilterDto extends PaginationRequest {
   specialtyId?: string;
   parentId?: string;
 }
+
+export interface GetDiagnosesTreeDto {
+  id: string;
+  code: string;
+  name: string;
+  parentId?: string;
+  children: GetDiagnosesTreeDto[];
+}

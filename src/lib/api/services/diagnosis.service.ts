@@ -5,6 +5,7 @@ import {
   DiagnosisDto,
   DiagnosisFilterDto,
   DiagnosisListDto,
+  GetDiagnosesTreeDto,
 } from '../types/diagnosis';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
@@ -32,6 +33,11 @@ export const diagnosisService = {
   async getDropdownOptions(): Promise<ApiResponse<SelectOption<string>[]>> {
     return apiClient.get<ApiResponse<SelectOption<string>[]>>(
       API_ENDPOINTS.diagnosis.GET_FOR_DROPDOWN
+    );
+  },
+  async getDiagnosesTree(): Promise<ApiResponse<GetDiagnosesTreeDto[]>> {
+    return apiClient.get<ApiResponse<GetDiagnosesTreeDto[]>>(
+      API_ENDPOINTS.diagnosis.GET_FOR_TREE
     );
   },
 

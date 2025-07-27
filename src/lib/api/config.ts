@@ -71,6 +71,7 @@ export const API_ENDPOINTS = {
     DELETE: '/diagnosis/Delete',
     GET_ONE: '/diagnosis/:id',
     GET_FOR_DROPDOWN: '/diagnosis/GetDiagnosesForDropdown',
+    GET_FOR_TREE: '/diagnosis/GetDiagnosesTree',
   },
   dentalProcedure: {
     LIST: '/dentalProcedure/getAll',

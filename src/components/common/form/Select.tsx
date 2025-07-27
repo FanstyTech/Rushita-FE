@@ -95,7 +95,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <label className="block text-sm font-medium mb-1">{label}</label>
+          <label className="block text-xs font-medium mb-1">{label}</label>
         )}
 
         <Popover open={open} onOpenChange={disabled ? undefined : setOpen}>

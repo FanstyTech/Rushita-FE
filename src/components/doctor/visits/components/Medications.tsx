@@ -1,6 +1,7 @@
 'use client';
 
 import { Input, Select, TextArea } from '@/components/common/form';
+import { Button } from '@/components/ui/button';
 
 import {
   Controller,
@@ -12,6 +13,7 @@ import {
   CreateOrUpdateVisitPrescriptionDto,
   FrequencyType,
 } from '@/lib/api/types/treatment';
+import { Trash, Plus } from 'lucide-react';
 
 interface MedicationsProps {
   medications: CreateOrUpdateVisitPrescriptionDto[];
@@ -59,26 +61,15 @@ export default function Medications({
     <div className="bg-gray-50 p-4 rounded-lg mt-4">
       <div className="flex justify-between items-center mb-3">
         <h4 className="text-sm font-medium text-gray-700">Medications</h4>
-        <button
+        <Button
           type="button"
+          variant={'ghost'}
           onClick={handleAddMedication}
           className="p-2 text-blue-600 hover:bg-gray-100 rounded"
           title="Add Medication"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-        </button>
+          <Plus className="h-4 w-4 " />
+        </Button>
       </div>
       <div className="space-y-4">
         {medications.map((med, index) => (
@@ -91,39 +82,26 @@ export default function Medications({
                 Medication #{index + 1}
               </h4>
               {medications.length > 1 && (
-                <button
+                <Button
                   type="button"
                   onClick={() => handleRemoveMedication(index)}
+                  variant="ghost"
                   className="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
                   title="Remove Medication"
                 >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m5-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
-                </button>
+                  <Trash className="h-4 w-4 " />
+                </Button>
               )}
             </div>
 
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-12 md:col-span-3">
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Medication Name
-                </label>
                 <Controller
                   name={`medications.${index}.name`}
                   control={control}
                   render={({ field }) => (
                     <Input
+                      label="Medication Name"
                       placeholder="Search medicine..."
                       value={field.value}
                       onClick={() => onShowMedicationSearch(index)}
@@ -158,10 +136,8 @@ export default function Medications({
               </div>
 
               <div className="col-span-6 md:col-span-2">
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Dosage
-                </label>
                 <Input
+                  label="Dosage"
                   placeholder="Dosage"
                   {...register(`medications.${index}.dosage`, {
                     required: true,
@@ -178,10 +154,8 @@ export default function Medications({
               </div>
 
               <div className="col-span-6 md:col-span-3">
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Frequency
-                </label>
                 <Select
+                  label="Frequency"
                   {...register(`medications.${index}.frequency`, {
                     required: true,
                   })}
@@ -203,10 +177,8 @@ export default function Medications({
               </div>
 
               <div className="col-span-6 md:col-span-2">
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Duration (days)
-                </label>
                 <Input
+                  label="Duration (days)"
                   type="number"
                   placeholder="Duration"
                   {...register(`medications.${index}.duration`, {})}
@@ -222,10 +194,8 @@ export default function Medications({
               </div>
 
               <div className="col-span-12 md:col-span-12 mt-2">
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Notes
-                </label>
                 <TextArea
+                  label="Notes"
                   {...register(`medications.${index}.notes`, {
                     required: true,
                   })}

@@ -58,7 +58,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <label className="block text-sm font-medium mb-1">{label}</label>
+          <label className="block text-xs font-medium mb-1">{label}</label>
         )}
         <div className="relative">
           {startIcon && (
