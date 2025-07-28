@@ -18,6 +18,15 @@ export enum DayEnum {
   Friday,
   Saturday,
 }
+export enum StaffTypeEnum {
+  Doctor = 1,
+  Nurse = 2,
+  Receptionist = 3,
+  FinancialStaff = 4,
+  ClinicAdministrator = 5,
+  LabTechnician = 6,
+  Pharmacist = 7,
+}
 
 export interface ClinicDto {
   id: string;
@@ -33,7 +42,16 @@ export interface ClinicDto {
   latitude?: number;
   longitude?: number;
   workingHours : WorkingHours[]
+  specialtiess:string[]
+  staffdto:staffdto[]
 }
+export interface staffdto{
+  id: string;
+  name: string;
+  staffType:StaffTypeEnum;
+  specialty: string;
+}
+
 
 
 export interface WorkingHours {

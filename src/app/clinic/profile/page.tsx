@@ -13,148 +13,143 @@ import {
   Save,
   X,
   Plus,
-  Trash2,
-  Facebook,
-  Instagram,
-  Twitter,
-  Linkedin,
-  Globe,
+
   Percent,
 } from 'lucide-react';
 import PageLayout from '@/components/layouts/PageLayout';
 import ClinicProfileSkeleton from '@/components/skeletons/ClinicProfileSkeleton';
-import { getInitials } from '@/utils/textUtils';
+import { getDayLabel, getInitials, GetStaffType } from '@/utils/textUtils';
 import { useClinic } from '@/lib/api/hooks/useClinic';
+import { ClinicDto } from '@/lib/api/types/clinic';
 
-interface ClinicInfo {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  hours: {
-    day: string;
-    hours: string;
-  }[];
-  about: string;
-  specialties: string[];
-  staff: {
-    id: string;
-    name: string;
-    role: string;
-    image: string;
-    speciality: string;
-  }[];
-  services: {
-    name: string;
-    description: string;
-    price: string;
-  }[];
-  offers: {
-    title: string;
-    description: string;
-    discount: string;
-    validUntil: string;
-  }[];
-  socialMedia: {
-    website: string;
-    facebook: string;
-    instagram: string;
-    twitter: string;
-    linkedin: string;
-  };
-}
+// interface ClinicInfo {
+//   name: string;
+//   email: string;
+//   phone: string;
+//   address: string;
+//   hours: {
+//     day: string;
+//     hours: string;
+//   }[];
+//   about: string;
+//   specialties: string[];
+//   staff: {
+//     id: string;
+//     name: string;
+//     role: string;
+//     image: string;
+//     speciality: string;
+//   }[];
+//   services: {
+//     name: string;
+//     description: string;
+//     price: string;
+//   }[];
+//   offers: {
+//     title: string;
+//     description: string;
+//     discount: string;
+//     validUntil: string;
+//   }[];
+//   socialMedia: {
+//     website: string;
+//     facebook: string;
+//     instagram: string;
+//     twitter: string;
+//     linkedin: string;
+//   };
+// }
 
 const EditableField = dynamic(() => import('@/components/EditableField'), {
   ssr: false,
   loading: () => <div className="animate-pulse h-8 bg-gray-200 rounded"></div>,
 });
 
-const initialData: ClinicInfo = {
-  name: 'HealthCare Plus Clinic',
-  email: 'contact@healthcareplus.com',
-  phone: '+1 (555) 123-4567',
-  address: '123 Medical Center Drive, Suite 100, San Francisco, CA 94105',
-  hours: [
-    { day: 'Monday - Friday', hours: '8:00 AM - 6:00 PM' },
-    { day: 'Saturday', hours: '9:00 AM - 2:00 PM' },
-    { day: 'Sunday', hours: 'Closed' },
-  ],
-  about:
-    'HealthCare Plus Clinic is a state-of-the-art medical facility providing comprehensive healthcare services. Our team of experienced medical professionals is dedicated to delivering personalized care with the latest medical technologies.',
-  specialties: [
-    'Family Medicine',
-    'Pediatrics',
-    'Internal Medicine',
-    'Cardiology',
-    'Dermatology',
-  ],
-  staff: [
-    {
-      id: '1',
-      name: 'Dr. Sarah Johnson',
-      role: 'Medical Director',
-      image: '/images/staff/doctor1.jpg',
-      speciality: 'Internal Medicine',
-    },
-    {
-      id: '2',
-      name: 'Dr. Michael Chen',
-      role: 'Senior Physician',
-      image: '/images/staff/doctor2.jpg',
-      speciality: 'Pediatrics',
-    },
-    // Add more staff members
-  ],
-  services: [
-    {
-      name: 'General Consultation',
-      description: 'Comprehensive medical consultation and examination',
-      price: '$150',
-    },
-    {
-      name: 'Pediatric Care',
-      description: 'Specialized healthcare for children and adolescents',
-      price: '$175',
-    },
-    // Add more services
-  ],
-  offers: [
-    {
-      title: 'Summer Health Check',
-      description:
-        'Complete health checkup including blood work, ECG, and consultation.',
-      discount: '20',
-      validUntil: '2025-08-31',
-    },
-    {
-      title: 'Family Package',
-      description:
-        'Health checkup for family of 4, including dental cleaning and eye examination.',
-      discount: '25',
-      validUntil: '2025-06-30',
-    },
-    {
-      title: 'Senior Care',
-      description:
-        'Specialized health package for seniors including bone density test and cardiac evaluation.',
-      discount: '15',
-      validUntil: '2025-12-31',
-    },
-  ],
-  socialMedia: {
-    website: '',
-    facebook: '',
-    instagram: '',
-    twitter: '',
-    linkedin: '',
-  },
-};
+// const initialData: ClinicInfo = {
+//   name: 'HealthCare Plus Clinic',
+//   email: 'contact@healthcareplus.com',
+//   phone: '+1 (555) 123-4567',
+//   address: '123 Medical Center Drive, Suite 100, San Francisco, CA 94105',
+//   hours: [
+//     { day: 'Monday - Friday', hours: '8:00 AM - 6:00 PM' },
+//     { day: 'Saturday', hours: '9:00 AM - 2:00 PM' },
+//     { day: 'Sunday', hours: 'Closed' },
+//   ],
+//   about:
+//     'HealthCare Plus Clinic is a state-of-the-art medical facility providing comprehensive healthcare services. Our team of experienced medical professionals is dedicated to delivering personalized care with the latest medical technologies.',
+//   specialties: [
+//     'Family Medicine',
+//     'Pediatrics',
+//     'Internal Medicine',
+//     'Cardiology',
+//     'Dermatology',
+//   ],
+//   staff: [
+//     {
+//       id: '1',
+//       name: 'Dr. Sarah Johnson',
+//       role: 'Medical Director',
+//       image: '/images/staff/doctor1.jpg',
+//       speciality: 'Internal Medicine',
+//     },
+//     {
+//       id: '2',
+//       name: 'Dr. Michael Chen',
+//       role: 'Senior Physician',
+//       image: '/images/staff/doctor2.jpg',
+//       speciality: 'Pediatrics',
+//     },
+//     // Add more staff members
+//   ],
+//   services: [
+//     {
+//       name: 'General Consultation',
+//       description: 'Comprehensive medical consultation and examination',
+//       price: '$150',
+//     },
+//     {
+//       name: 'Pediatric Care',
+//       description: 'Specialized healthcare for children and adolescents',
+//       price: '$175',
+//     },
+//     // Add more services
+//   ],
+//   offers: [
+//     {
+//       title: 'Summer Health Check',
+//       description:
+//         'Complete health checkup including blood work, ECG, and consultation.',
+//       discount: '20',
+//       validUntil: '2025-08-31',
+//     },
+//     {
+//       title: 'Family Package',
+//       description:
+//         'Health checkup for family of 4, including dental cleaning and eye examination.',
+//       discount: '25',
+//       validUntil: '2025-06-30',
+//     },
+//     {
+//       title: 'Senior Care',
+//       description:
+//         'Specialized health package for seniors including bone density test and cardiac evaluation.',
+//       discount: '15',
+//       validUntil: '2025-12-31',
+//     },
+//   ],
+//   socialMedia: {
+//     website: '',
+//     facebook: '',
+//     instagram: '',
+//     twitter: '',
+//     linkedin: '',
+//   },
+// };
 
 function ClinicProfileContent() {
 
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editedData, setEditedData] = useState<ClinicInfo>(initialData);
   const [newService, setNewService] = useState({
     name: '',
     description: '',
@@ -205,6 +200,7 @@ function ClinicProfileContent() {
     }
   }, []);
   const { data, isLoading, error } = useClinicDetails(userId || '');
+  const [editedData, setEditedData] = useState<ClinicDto>();
 
 
   const handleSave = () => {
@@ -213,96 +209,103 @@ function ClinicProfileContent() {
   };
 
   const handleCancel = () => {
-    setEditedData(initialData);
+    setEditedData(data);
     setIsEditing(false);
   };
 
-  const addService = () => {
-    if (newService.name && newService.description && newService.price) {
-      setEditedData({
-        ...editedData,
-        services: [...editedData.services, newService],
-      });
-      setNewService({ name: '', description: '', price: '' });
-    }
-  };
+  // const addService = () => {
+  //   if (newService.name && newService.description && newService.price) {
+  //     setEditedData({
+  //       ...editedData,
+  //       services: [...editedData.services, newService],
+  //     });
+  //     setNewService({ name: '', description: '', price: '' });
+  //   }
+  // };
 
-  const removeService = (index: number) => {
-    setEditedData({
-      ...editedData,
-      services: editedData.services.filter((_, i) => i !== index),
-    });
-  };
+  // const removeService = (index: number) => {
+  //   setEditedData({
+  //     ...editedData,
+  //     services: editedData.services.filter((_, i) => i !== index),
+  //   });
+  // };
 
   const addSpecialty = () => {
-    if (newSpecialty) {
+    if (newSpecialty && editedData) {
       setEditedData({
         ...editedData,
-        specialties: [...editedData.specialties, newSpecialty],
+        specialtiess: [...editedData.specialtiess, newSpecialty || ""],
       });
       setNewSpecialty('');
     }
   };
 
   const removeSpecialty = (specialty: string) => {
-    setEditedData({
-      ...editedData,
-      specialties: editedData.specialties.filter((s) => s !== specialty),
-    });
-  };
+    if (editedData) {
 
-  const addStaffMember = () => {
-    if (
-      newStaffMember.name &&
-      newStaffMember.role &&
-      newStaffMember.speciality
-    ) {
       setEditedData({
         ...editedData,
-        staff: [
-          ...editedData.staff,
-          { ...newStaffMember, id: `staff-${Date.now()}` },
-        ],
-      });
-      setNewStaffMember({
-        id: '',
-        name: '',
-        role: '',
-        image: '/images/staff/placeholder.jpg',
-        speciality: '',
+        specialtiess: editedData?.specialtiess.filter((s) => s !== specialty),
       });
     }
   };
 
-  const removeStaffMember = (id: string) => {
-    setEditedData({
-      ...editedData,
-      staff: editedData.staff.filter((member) => member.id !== id),
-    });
-  };
+  // const addStaffMember = () => {
+  //   if (
+  //     newStaffMember.name &&
+  //     newStaffMember.role &&
+  //     newStaffMember.speciality &&
+  //     editedData
+  //   ) {
+  //     setEditedData({
+  //       ...editedData,
+  //       staff: [
+  //         ...editedData.staff,
+  //         { ...newStaffMember, id: `staff-${Date.now()}` },
+  //       ],
+  //     });
+  //     setNewStaffMember({
+  //       id: '',
+  //       name: '',
+  //       role: '',
+  //       image: '/images/staff/placeholder.jpg',
+  //       speciality: '',
+  //     });
+  //   }
+  // };
 
-  const addOffer = () => {
-    if (
-      newOffer.title &&
-      newOffer.description &&
-      newOffer.discount &&
-      newOffer.validUntil
-    ) {
-      setEditedData({
-        ...editedData,
-        offers: [...editedData.offers, newOffer],
-      });
-      setNewOffer({ title: '', description: '', discount: '', validUntil: '' });
-    }
-  };
+  // const removeStaffMember = (id: string) => {
+  //   setEditedData({
+  //     ...editedData,
+  //     staff: editedData.staff.filter((member) => member.id !== id),
+  //   });
+  // };
 
-  const removeOffer = (index: number) => {
-    setEditedData({
-      ...editedData,
-      offers: editedData.offers.filter((_, i) => i !== index),
-    });
-  };
+  // const addOffer = () => {
+  //   if (
+  //     newOffer.title &&
+  //     newOffer.description &&
+  //     newOffer.discount &&
+  //     newOffer.validUntil
+  //   ) {
+  //     setEditedData({
+  //       ...editedData,
+  //       offers: [...editedData.offers, newOffer],
+  //     });
+  //     setNewOffer({ title: '', description: '', discount: '', validUntil: '' });
+  //   }
+  // };
 
+  // const removeOffer = (index: number) => {
+  //   setEditedData({
+  //     ...editedData,
+  //     offers: editedData.offers.filter((_, i) => i !== index),
+  //   });
+  // };
+
+  useEffect(() => {
+    setEditedData(data)
+  }, [data])
   if (isLoading) {
     return (
       <PageLayout>
@@ -312,7 +315,6 @@ function ClinicProfileContent() {
   }
 
   if (data) {
-    console.log(data)
     return (
       <PageLayout>
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-8">
@@ -338,7 +340,7 @@ function ClinicProfileContent() {
                   ) : (
                     <div className="w-28 h-28 rounded-2xl border-4 border-white shadow-sm bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
                       <span className="text-3xl font-semibold text-white">
-                        {getInitials(data.name)}
+                        {getInitials(editedData?.name || "")}
                       </span>
                     </div>
                   )}
@@ -363,14 +365,17 @@ function ClinicProfileContent() {
                 <div className="ml-4">
                   {isEditing ? (
                     <EditableField
-                      value={data.name}
-                      onChange={(value) =>
-                        setEditedData({ ...editedData, name: value })
+                      value={editedData?.name || ""}
+                      onChange={(value) => {
+                        console.log(1)
+                        if (editedData)
+                          setEditedData({ ...editedData, name: value })
+                      }
                       }
                     />
                   ) : (
                     <h1 className="text-2xl font-bold text-gray-900">
-                      {data.name}
+                      {editedData?.name || ""}
                     </h1>
                   )}
                   <p className="text-gray-600">Healthcare Provider</p>
@@ -420,15 +425,17 @@ function ClinicProfileContent() {
               <h2 className="text-xl font-semibold mb-4 text-gray-900">About</h2>
               {isEditing ? (
                 <EditableField
-                  value={data?.bio || ""}
-                  onChange={(value) =>
-                    setEditedData({ ...editedData, about: value })
+                  value={editedData?.bio || ""}
+                  onChange={(value) => {
+                    if (editedData)
+                      setEditedData({ ...editedData, bio: value })
+                  }
                   }
                   multiline
                 />
               ) : (
                 <p className="text-gray-600 leading-relaxed">
-                  {data?.bio}
+                  {editedData?.bio}
                 </p>
               )}
             </motion.div>
@@ -444,7 +451,7 @@ function ClinicProfileContent() {
                 Services
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {editedData.services.map((service, index) => (
+                {/* {editedData.services.map((service, index) => (
                   <div
                     key={index}
                     className="p-4 rounded-xl border border-gray-100 hover:border-blue-100 transition-colors duration-200"
@@ -511,7 +518,7 @@ function ClinicProfileContent() {
                       </>
                     )}
                   </div>
-                ))}
+                ))} */}
                 {isEditing && (
                   <div className="p-4 rounded-xl border-2 border-dashed border-gray-200">
                     <div className="space-y-3">
@@ -536,13 +543,13 @@ function ClinicProfileContent() {
                         }
                         label="Price"
                       />
-                      <button
+                      {/* <button
                         onClick={addService}
                         className="w-full py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center gap-2"
                       >
                         <Plus className="w-4 h-4" />
                         Add Service
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 )}
@@ -560,7 +567,7 @@ function ClinicProfileContent() {
                 Special Offers
               </h2>
               <div className="grid grid-cols-1 gap-4">
-                {editedData.offers.map((offer, index) => (
+                {/* {editedData.offers.map((offer, index) => (
                   <div
                     key={index}
                     className="p-4 border rounded-xl hover:border-blue-200 transition-colors"
@@ -647,7 +654,7 @@ function ClinicProfileContent() {
                       </button>
                     )}
                   </div>
-                ))}
+                ))} */}
                 {isEditing && (
                   <div className="p-4 rounded-xl border-2 border-dashed border-gray-200">
                     <div className="space-y-4">
@@ -691,13 +698,13 @@ function ClinicProfileContent() {
                         label="Description"
                         multiline
                       />
-                      <button
+                      {/* <button
                         onClick={addOffer}
                         className="w-full py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center gap-2"
                       >
                         <Plus className="w-4 h-4" />
                         Add Offer
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 )}
@@ -715,19 +722,19 @@ function ClinicProfileContent() {
                 Medical Staff
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {editedData.staff.map((member) => (
+                {data.staffdto.map((member) => (
                   <div
                     key={member.id}
                     className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-blue-100 transition-colors duration-200"
                   >
                     <div className="relative">
-                      <Image
+                      {/* <Image
                         src={member.image}
                         alt={member.name}
                         width={64}
                         height={64}
                         className="rounded-full"
-                      />
+                      /> */}
                       {isEditing && (
                         <button className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-sm border border-gray-200">
                           <Camera className="w-3 h-3 text-gray-600" />
@@ -736,7 +743,7 @@ function ClinicProfileContent() {
                     </div>
                     {isEditing ? (
                       <div className="flex-1 space-y-2">
-                        <EditableField
+                        {/* <EditableField
                           value={member.name}
                           onChange={(value) =>
                             setEditedData({
@@ -747,21 +754,21 @@ function ClinicProfileContent() {
                             })
                           }
                           label="Name"
-                        />
-                        <EditableField
-                          value={member.role}
+                        /> */}
+                        {/* <EditableField
+                          value={member.id}
                           onChange={(value) =>
                             setEditedData({
                               ...editedData,
                               staff: editedData.staff.map((s) =>
                                 s.id === member.id ? { ...s, role: value } : s
-                              ),
+                              ),  
                             })
                           }
                           label="Role"
-                        />
-                        <EditableField
-                          value={member.speciality}
+                        /> */}
+                        {/* <EditableField
+                          value={member.specialty}
                           onChange={(value) =>
                             setEditedData({
                               ...editedData,
@@ -780,16 +787,16 @@ function ClinicProfileContent() {
                         >
                           <Trash2 className="w-4 h-4" />
                           Remove Staff Member
-                        </button>
+                        </button> */}
                       </div>
                     ) : (
                       <div>
                         <h3 className="font-semibold text-gray-900">
                           {member.name}
                         </h3>
-                        <p className="text-gray-600">{member.role}</p>
+                        <p className="text-gray-600">{GetStaffType(member.staffType)}</p>
                         <p className="text-sm text-blue-600">
-                          {member.speciality}
+                          {member.specialty}
                         </p>
                       </div>
                     )}
@@ -836,13 +843,13 @@ function ClinicProfileContent() {
                         }
                         label="Speciality"
                       />
-                      <button
+                      {/* <button
                         onClick={addStaffMember}
                         className="w-full py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center gap-2"
                       >
                         <Plus className="w-4 h-4" />
                         Add Staff Member
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 )}
@@ -865,23 +872,33 @@ function ClinicProfileContent() {
                 {isEditing ? (
                   <>
                     <EditableField
-                      value={data.email || ""}
-                      onChange={(value) =>
-                        setEditedData({ ...editedData, email: value })
+                      value={editedData?.email || ""}
+                      onChange={(value) => {
+                        if (editedData) {
+                          setEditedData({ ...editedData, email: value })
+                        }
+                      }
                       }
                       label="Email"
                     />
                     <EditableField
-                      value={data.phoneNumber || ""}
-                      onChange={(value) =>
-                        setEditedData({ ...editedData, phone: value })
+                      value={editedData?.phoneNumber || ""}
+                      onChange={(value) => {
+                        if (editedData) {
+
+                          setEditedData({ ...editedData, phoneNumber: value })
+                        }
+                      }
                       }
                       label="Phone"
                     />
                     <EditableField
-                      value={data.address || ""}
-                      onChange={(value) =>
-                        setEditedData({ ...editedData, address: value })
+                      value={editedData?.address || ""}
+                      onChange={(value) => {
+                        if (editedData) {
+                          setEditedData({ ...editedData, address: value })
+                        }
+                      }
                       }
                       label="Address"
                     />
@@ -889,7 +906,7 @@ function ClinicProfileContent() {
                       <h3 className="text-sm font-medium text-gray-700">
                         Social Media
                       </h3>
-                      <EditableField
+                      {/* <EditableField
                         value={editedData.socialMedia.website}
                         onChange={(value) =>
                           setEditedData({
@@ -953,7 +970,7 @@ function ClinicProfileContent() {
                           })
                         }
                         label="LinkedIn"
-                      />
+                      /> */}
                     </div>
                   </>
                 ) : (
@@ -962,27 +979,27 @@ function ClinicProfileContent() {
                       <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
                         <p className="text-sm text-gray-600">Email</p>
-                        <p className="text-gray-900">{data.email}</p>
+                        <p className="text-gray-900">{editedData?.email}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
                         <p className="text-sm text-gray-600">Phone</p>
-                        <p className="text-gray-900">{data.phoneNumber}</p>
+                        <p className="text-gray-900">{editedData?.phoneNumber}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
                         <p className="text-sm text-gray-600">Address</p>
-                        <p className="text-gray-900">{data.address}</p>
+                        <p className="text-gray-900">{editedData?.address}</p>
                       </div>
                     </div>
                     <div className="pt-2 border-t">
                       <p className="text-sm text-gray-600 mb-3">Social Media</p>
                       <div className="flex gap-3">
-                        {editedData.socialMedia.website && (
+                        {/* {editedData.socialMedia.website && (
                           <a
                             href={editedData.socialMedia.website}
                             target="_blank"
@@ -1031,7 +1048,7 @@ function ClinicProfileContent() {
                           >
                             <Linkedin className="w-5 h-5" />
                           </a>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   </>
@@ -1050,38 +1067,40 @@ function ClinicProfileContent() {
                 Business Hours
               </h2>
               <div className="space-y-3">
-                {editedData.hours.map((schedule, index) => (
-                  <div key={schedule.day} className="flex justify-between">
+                {editedData?.workingHours.map((schedule, index) => (
+                  <div key={index} className="flex justify-between">
                     {isEditing ? (
                       <>
+                        <span className="text-gray-600">{getDayLabel(schedule.day)}</span>
+
+
                         <EditableField
-                          value={schedule.day}
-                          onChange={(value) =>
-                            setEditedData({
-                              ...editedData,
-                              hours: editedData.hours.map((h, i) =>
-                                i === index ? { ...h, day: value } : h
-                              ),
-                            })
+                          value={schedule.openTime}
+                          onChange={(value) => {
+                            if (editedData) {
+                              const updatedWorkingHours = editedData.workingHours.map((wh) =>
+                                wh.day === schedule.day
+                                  ? { ...wh, openTime: value } // عدّل فقط العنصر اللي يطابق اليوم
+                                  : wh
+                              );
+
+                              setEditedData({
+                                ...editedData,
+                                workingHours: updatedWorkingHours
+                              })
+                            }
                           }
-                        />
-                        <EditableField
-                          value={schedule.hours}
-                          onChange={(value) =>
-                            setEditedData({
-                              ...editedData,
-                              hours: editedData.hours.map((h, i) =>
-                                i === index ? { ...h, hours: value } : h
-                              ),
-                            })
                           }
                         />
                       </>
                     ) : (
                       <>
-                        <span className="text-gray-600">{schedule.day}</span>
+                        <span className="text-gray-600">{getDayLabel(schedule.day)}</span>
                         <span className="text-gray-900 font-medium">
-                          {schedule.hours}
+                          {schedule.openTime?.slice(0, 5)}
+                          -
+                          {schedule.closeTime?.slice(0, 5)}
+
                         </span>
                       </>
                     )}
@@ -1101,7 +1120,7 @@ function ClinicProfileContent() {
                 Specialties
               </h2>
               <div className="flex flex-wrap gap-2">
-                {editedData.specialties.map((specialty) => (
+                {editedData?.specialtiess.map((specialty) => (
                   <span
                     key={specialty}
                     className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm group relative"

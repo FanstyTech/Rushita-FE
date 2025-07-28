@@ -2,7 +2,7 @@
  * Collection of text utility functions for common text operations
  */
 
-import { ClinicStatus } from '@/lib/api/types/clinic';
+import { ClinicStatus, DayEnum,  StaffTypeEnum } from '@/lib/api/types/clinic';
 import {
   AppointmentStatus,
   BloodType,
@@ -349,3 +349,51 @@ export const getAppointmentStatusClass = (
   };
   return statusMap[status] || 'bg-gray-50 text-gray-400';
 };
+
+
+export const getDayLabel = (day: DayEnum): string => {
+
+  // Blood type display names mapping
+  const dayNames: Record<DayEnum, string> = {
+    [DayEnum.Sunday]: 'Sunday',
+    [DayEnum.Monday]: 'Monday',
+    [DayEnum.Tuesday]: 'Tuesday',
+    [DayEnum.Wednesday]: 'Wednesday',
+    [DayEnum.Thursday]: 'Thursday',
+    [DayEnum.Friday]: 'Friday',
+    [DayEnum.Saturday]: 'Saturday',
+  };
+
+
+  return dayNames[day] ||"unknown";
+};
+
+export const ConvartDayLabel = (day: string): number => {
+
+  // Blood type display names mapping
+  const dayNames: Record< string,DayEnum> = {
+    ["Sunday"]:DayEnum.Sunday,
+     ['Monday']:DayEnum.Monday,
+    ['Tuesday']:DayEnum.Tuesday ,
+    ['Wednesday']:DayEnum.Wednesday ,
+    ['Thursday']:DayEnum.Thursday ,
+    ['Friday']:DayEnum.Friday ,
+    ['Saturday']:DayEnum.Saturday ,
+  };
+
+  return dayNames[day] || day;
+};
+
+export const GetStaffType=(StaffType:StaffTypeEnum):string=>{
+const Type: Record<StaffTypeEnum,string>={
+     [StaffTypeEnum.ClinicAdministrator]: 'ClinicAdministrator',
+     [StaffTypeEnum.Doctor]: 'Doctor',
+     [StaffTypeEnum.Nurse]: 'Nurse',
+     [StaffTypeEnum.Receptionist]: 'Receptionist',
+     [StaffTypeEnum.FinancialStaff]: 'FinancialStaff',
+     [StaffTypeEnum.LabTechnician]: 'LabTechnician',
+     [StaffTypeEnum.Pharmacist]: 'Pharmacist',
+};
+return Type[StaffType]||"Unknown"
+
+}
