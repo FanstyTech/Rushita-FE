@@ -2,9 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { visitService } from '../services/visit.service';
 import type {
   VisitFilterDto,
-  CreateVisitDto,
-  UpdateVisitDto,
   VisitStatus,
+  CreateOrUpdateVisitDto,
 } from '../types/treatment';
 import { toast } from '@/components/ui/Toast';
 
@@ -18,12 +17,16 @@ export function useVisit() {
     list: (filter: VisitFilterDto) => [...queryKeys.lists(), filter] as const,
     details: () => [...queryKeys.all, 'detail'] as const,
     detail: (id: string) => [...queryKeys.details(), id] as const,
-    statusHistory: (id: string) => [...queryKeys.detail(id), 'statusHistory'] as const,
+    statusHistory: (id: string) =>
+      [...queryKeys.detail(id), 'statusHistory'] as const,
     diagnoses: (id: string) => [...queryKeys.detail(id), 'diagnoses'] as const,
-    prescriptions: (id: string) => [...queryKeys.detail(id), 'prescriptions'] as const,
+    prescriptions: (id: string) =>
+      [...queryKeys.detail(id), 'prescriptions'] as const,
     labTests: (id: string) => [...queryKeys.detail(id), 'labTests'] as const,
-    radiologyTests: (id: string) => [...queryKeys.detail(id), 'radiologyTests'] as const,
-    dentalProcedures: (id: string) => [...queryKeys.detail(id), 'dentalProcedures'] as const,
+    radiologyTests: (id: string) =>
+      [...queryKeys.detail(id), 'radiologyTests'] as const,
+    dentalProcedures: (id: string) =>
+      [...queryKeys.detail(id), 'dentalProcedures'] as const,
   };
 
   // Get paginated list
@@ -38,7 +41,7 @@ export function useVisit() {
         return response.result;
       },
       staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000,   // 10 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
     });
 
   // Get single visit
@@ -47,6 +50,20 @@ export function useVisit() {
       queryKey: queryKeys.detail(id),
       queryFn: async () => {
         const response = await visitService.getById(id);
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch visit');
+        }
+        return response.result;
+      },
+      enabled: !!id,
+    });
+
+  // Get single visit for edit
+  const getVisitForEdit = (id: string) =>
+    useQuery({
+      queryKey: queryKeys.detail(id),
+      queryFn: async () => {
+        const response = await visitService.getVisitForEdit(id);
         if (!response.success) {
           throw new Error(response.message || 'Failed to fetch visit');
         }
@@ -118,7 +135,9 @@ export function useVisit() {
       queryFn: async () => {
         const response = await visitService.getRadiologyTests(visitId);
         if (!response.success) {
-          throw new Error(response.message || 'Failed to fetch radiology tests');
+          throw new Error(
+            response.message || 'Failed to fetch radiology tests'
+          );
         }
         return response.result;
       },
@@ -132,50 +151,27 @@ export function useVisit() {
       queryFn: async () => {
         const response = await visitService.getDentalProcedures(visitId);
         if (!response.success) {
-          throw new Error(response.message || 'Failed to fetch dental procedures');
+          throw new Error(
+            response.message || 'Failed to fetch dental procedures'
+          );
         }
         return response.result;
       },
       enabled: !!visitId,
     });
 
-  // Create visit mutation
-  const createVisit = useMutation({
-    mutationFn: async (data: CreateVisitDto) => {
-      const response = await visitService.create(data);
-      if (!response.success) {
-        throw new Error(response.message || 'Failed to create visit');
-      }
-      return response.result;
-    },
-    onSuccess: () => {
-      toast.success('Visit created successfully');
-      queryClient.invalidateQueries({ queryKey: queryKeys.lists() });
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
+  // Create or Update visit mutation
+  const createOrUpdateVisit = useMutation({
+    retry: false,
+    mutationFn: (data: CreateOrUpdateVisitDto) =>
+      visitService.createOrUpdate(data),
+    onSuccess: (_, data) => {
+      queryClient.invalidateQueries({ queryKey: ['clinicStaff'] });
+      toast.success(
+        `Visit has been successfully ${data.id ? 'updated' : 'created'}`
+      );
     },
   });
-
-  // Update visit mutation
-  const updateVisit = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: UpdateVisitDto }) => {
-      const response = await visitService.update(id, data);
-      if (!response.success) {
-        throw new Error(response.message || 'Failed to update visit');
-      }
-      return response.result;
-    },
-    onSuccess: (_, variables) => {
-      toast.success('Visit updated successfully');
-      queryClient.invalidateQueries({ queryKey: queryKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.detail(variables.id) });
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
-
   // Delete visit mutation
   const deleteVisit = useMutation({
     mutationFn: async (id: string) => {
@@ -196,7 +192,15 @@ export function useVisit() {
 
   // Update visit status mutation
   const updateVisitStatus = useMutation({
-    mutationFn: async ({ id, status, notes }: { id: string; status: VisitStatus; notes?: string }) => {
+    mutationFn: async ({
+      id,
+      status,
+      notes,
+    }: {
+      id: string;
+      status: VisitStatus;
+      notes?: string;
+    }) => {
       const response = await visitService.updateStatus(id, status, notes);
       if (!response.success) {
         throw new Error(response.message || 'Failed to update visit status');
@@ -206,8 +210,12 @@ export function useVisit() {
     onSuccess: (_, variables) => {
       toast.success('Visit status updated successfully');
       queryClient.invalidateQueries({ queryKey: queryKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.detail(variables.id) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.statusHistory(variables.id) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.detail(variables.id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.statusHistory(variables.id),
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -218,19 +226,19 @@ export function useVisit() {
     // Queries
     getVisits,
     getVisit,
+    getVisitForEdit,
     getVisitStatusHistory,
     getVisitDiagnoses,
     getVisitPrescriptions,
     getVisitLabTests,
     getVisitRadiologyTests,
     getVisitDentalProcedures,
-    
+
     // Mutations
-    createVisit,
-    updateVisit,
+    createOrUpdateVisit,
     deleteVisit,
     updateVisitStatus,
-    
+
     // Query keys (for manual cache management)
     queryKeys,
   };

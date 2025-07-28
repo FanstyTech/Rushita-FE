@@ -173,23 +173,27 @@ export interface CreateOrUpdateVisitPrescriptionDto {
 // Lab Test DTO
 export interface CreateOrUpdateVisitLabTestDto {
   id: string;
+  name?: string;
   notes?: string;
 }
 
 // Radiology Test DTO
 export interface CreateOrUpdateVisitRadiologyTestDto {
   id: string;
+  name?: string;
   notes?: string;
 }
 
 // Main Visit DTO
 export interface CreateOrUpdateVisitDto {
+  id?: string;
   patientId: string;
   staffId: string;
   clinicId: string;
   appointmentId?: string;
   nextVisitDate?: string; // or Date, depending on your usage
   followUpInstructions: string;
+  diagnosis: string;
   type: VisitType;
   notes: string;
   symptoms: string;

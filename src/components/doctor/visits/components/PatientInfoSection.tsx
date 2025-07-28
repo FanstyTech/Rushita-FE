@@ -26,6 +26,8 @@ interface PatientInfoSectionProps {
   onShowAddPatient: () => void;
   register: UseFormRegister<any>;
   errors: FieldErrors;
+  isReadOnly?: boolean;
+  visitType?: VisitType;
 }
 
 export default function PatientInfoSection({
@@ -41,6 +43,8 @@ export default function PatientInfoSection({
   onShowAddPatient,
   register,
   errors,
+  isReadOnly = false,
+  visitType,
 }: PatientInfoSectionProps) {
   // Handle staff selection
   const handlePatientSelect = useCallback(
@@ -53,52 +57,77 @@ export default function PatientInfoSection({
         setSelectedPatient(selectedOption?.value);
       }
     },
-    [patientsData]
+    [patientsData, setSelectedPatient]
   );
 
   return (
     <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="border-b border-gray-100 bg-white px-6 py-4">
         <h2 className="text-lg font-semibold text-gray-900">
-          Patient Information
+          Patient Information {isReadOnly && '(Read Only)'}
         </h2>
       </div>
       <div className="p-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Search and Visit Type */}
           <div className="space-y-4">
-            <div>
-              <Select
-                label="Search Patient"
-                placeholder="Search by name, ID, or phone..."
-                options={patientsData || []}
-                value={selectedPatient}
-                onChange={handlePatientSelect}
-                isLoading={patientsLoading}
-                onSearch={(value) => setPatientSearchQuery(value)}
-                className="w-full"
-                error={errors?.patientId?.message as string}
-                noOptionsMessage={
-                  shouldFetchPatients
-                    ? 'No patients found'
-                    : 'Type to search for patients'
-                }
-              />
-            </div>
+            {isReadOnly ? (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Patient
+                  </label>
+                  <div className="px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-700">
+                    {selectedPatientData?.patientName || 'N/A'}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Visit Type
+                  </label>
+                  <div className="px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-700">
+                    {visitType === VisitType.New
+                      ? 'New Visit'
+                      : 'Follow-up Visit'}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <Select
+                    label="Search Patient"
+                    placeholder="Search by name, ID, or phone..."
+                    options={patientsData || []}
+                    value={selectedPatient}
+                    onChange={handlePatientSelect}
+                    isLoading={patientsLoading}
+                    onSearch={(value) => setPatientSearchQuery(value)}
+                    className="w-full"
+                    error={errors?.patientId?.message as string}
+                    noOptionsMessage={
+                      shouldFetchPatients
+                        ? 'No patients found'
+                        : 'Type to search for patients'
+                    }
+                  />
+                </div>
 
-            <div>
-              <Select
-                {...register(`visitType`)}
-                label="Visit Type"
-                options={Object.entries(VisitType)
-                  .filter(([key]) => isNaN(Number(key)))
-                  .map(([key, value]) => ({
-                    value: value.toString(),
-                    label: key,
-                  }))}
-                error={errors.visitType?.message as string}
-              />
-            </div>
+                <div>
+                  <Select
+                    {...register(`visitType`)}
+                    label="Visit Type"
+                    options={Object.entries(VisitType)
+                      .filter(([key]) => isNaN(Number(key)))
+                      .map(([key, value]) => ({
+                        value: value.toString(),
+                        label: key,
+                      }))}
+                    error={errors.visitType?.message as string}
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           {/* Patient Details */}
@@ -172,18 +201,20 @@ export default function PatientInfoSection({
             )}
         </div>
 
-        <div className="flex justify-end mt-6 space-x-3">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onShowAdvancedSearch}
-          >
-            Advanced Search
-          </Button>
-          <Button type="button" onClick={onShowAddPatient}>
-            Add New Patient
-          </Button>
-        </div>
+        {!isReadOnly && (
+          <div className="flex justify-end mt-6 space-x-3">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onShowAdvancedSearch}
+            >
+              Advanced Search
+            </Button>
+            <Button type="button" onClick={onShowAddPatient}>
+              Add New Patient
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

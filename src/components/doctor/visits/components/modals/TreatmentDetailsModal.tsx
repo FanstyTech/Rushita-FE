@@ -9,7 +9,16 @@ import {
   CreateOrUpdateVisitPrescriptionDto,
   CreateOrUpdateVisitRadiologyTestDto,
 } from '@/lib/api/types/treatment';
-import { getVisitTypeLabel } from '@/utils/textUtils';
+import { getFrequencyTypeLabel, getVisitTypeLabel } from '@/utils/textUtils';
+import {
+  CalendarDays,
+  FileText,
+  DotSquare,
+  PenLine,
+  Pill,
+  Stethoscope,
+  RailSymbolIcon,
+} from 'lucide-react';
 
 interface TreatmentFormData {
   patientId: string;
@@ -49,72 +58,108 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
       title="Treatment Details"
       maxWidth="4xl"
     >
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Patient Information */}
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-3">
-            Patient Information
-          </h3>
-          <div className="border-t border-gray-200 pt-3">
-            <dl className="divide-y divide-gray-200">
-              <div className="py-3 grid grid-cols-3 gap-4">
-                <dt className="text-sm font-medium text-gray-500">Name</dt>
-                <dd className="text-sm text-gray-900 col-span-2">
-                  {selectedPatientData?.patientName || 'N/A'}
-                </dd>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-blue-50 px-6 py-4 border-b border-blue-100 flex items-center">
+            <Stethoscope className="h-5 w-5 text-blue-600 mr-2" />
+            <h3 className="text-lg font-semibold text-blue-800">
+              Patient Information
+            </h3>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-start">
+                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-blue-600 font-semibold text-lg">
+                    {selectedPatientData?.patientName?.charAt(0) || 'P'}
+                  </span>
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-sm font-medium text-gray-500">Name</h4>
+                  <p className="mt-1 text-base font-medium text-gray-900">
+                    {selectedPatientData?.patientName || 'N/A'}
+                  </p>
+                </div>
               </div>
-              <div className="py-3 grid grid-cols-3 gap-4">
-                <dt className="text-sm font-medium text-gray-500">
-                  Patient ID
-                </dt>
-                <dd className="text-sm text-gray-900 col-span-2">
-                  {selectedPatientData?.patientNumber || 'N/A'}
-                </dd>
+              <div className="flex items-start">
+                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-blue-600 font-semibold text-sm">
+                    #ID
+                  </span>
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-sm font-medium text-gray-500">
+                    Patient ID
+                  </h4>
+                  <p className="mt-1 text-base font-medium text-gray-900">
+                    {selectedPatientData?.patientNumber || 'N/A'}
+                  </p>
+                </div>
               </div>
-              <div className="py-3 grid grid-cols-3 gap-4">
-                <dt className="text-sm font-medium text-gray-500">
-                  Visit Type
-                </dt>
-                <dd className="text-sm text-gray-900 col-span-2">
-                  {getVisitTypeLabel(formData.visitType)} Visit
-                </dd>
+              <div className="flex items-start">
+                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <CalendarDays className="h-5 w-5 text-blue-600" />
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-sm font-medium text-gray-500">
+                    Visit Type
+                  </h4>
+                  <p className="mt-1 text-base font-medium text-gray-900">
+                    {getVisitTypeLabel(formData.visitType)} Visit
+                  </p>
+                </div>
               </div>
-            </dl>
+            </div>
           </div>
         </div>
 
         {/* Treatment Information */}
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-3">
-            Treatment Information
-          </h3>
-          <div className="border-t border-gray-200 pt-3">
-            <dl className="divide-y divide-gray-200">
-              <div className="py-3 grid grid-cols-3 gap-4">
-                <dt className="text-sm font-medium text-gray-500">Symptoms</dt>
-                <dd className="text-sm text-gray-900 col-span-2">
-                  {formData.symptoms || 'None specified'}
-                </dd>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-green-50 px-6 py-4 border-b border-green-100 flex items-center">
+            <PenLine className="h-5 w-5 text-green-600 mr-2" />
+            <h3 className="text-lg font-semibold text-green-800">
+              Treatment Information
+            </h3>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-2">
+                  Symptoms
+                </h4>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <p className="text-base text-gray-900">
+                    {formData.symptoms || 'None specified'}
+                  </p>
+                </div>
               </div>
-              <div className="py-3 grid grid-cols-3 gap-4">
-                <dt className="text-sm font-medium text-gray-500">Diagnosis</dt>
-                <dd className="text-sm text-gray-900 col-span-2">
-                  {formData.diagnosis || 'None specified'}
-                </dd>
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-2">
+                  Diagnosis
+                </h4>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <p className="text-base text-gray-900">
+                    {formData.diagnosis || 'None specified'}
+                  </p>
+                </div>
               </div>
-            </dl>
+            </div>
           </div>
         </div>
 
         {/* Medications */}
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-3">
-            Medications
-          </h3>
-          <div className="border-t border-gray-200 pt-3">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-purple-50 px-6 py-4 border-b border-purple-100 flex items-center">
+            <Pill className="h-5 w-5 text-purple-600 mr-2" />
+            <h3 className="text-lg font-semibold text-purple-800">
+              Medications
+            </h3>
+          </div>
+          <div className="p-6">
             {formData.medications.length > 0 ? (
-              <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-300">
+              <div className="overflow-hidden rounded-lg border border-gray-200">
+                <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -133,17 +178,21 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {formData.medications.map((med, index) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <tr
+                        key={index}
+                        className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                      >
+                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
                           {med.name || 'Not specified'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 text-sm text-gray-500">
                           {med.dosage || 'Not specified'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {med.frequency || 'Not specified'}
+                        <td className="px-6 py-4 text-sm text-gray-500">
+                          {getFrequencyTypeLabel(med.frequency) ||
+                            'Not specified'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 text-sm text-gray-500">
                           {med.duration || 'Not specified'}
                         </td>
                       </tr>
@@ -152,22 +201,28 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                 </table>
               </div>
             ) : (
-              <p className="text-sm text-gray-500 py-3">
-                No medications prescribed
-              </p>
+              <div className="bg-gray-50 rounded-lg p-6 text-center border border-dashed border-gray-300">
+                <Pill className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-500">
+                  No medications prescribed
+                </p>
+              </div>
             )}
           </div>
         </div>
 
         {/* Lab Tests */}
         {formData.labTests.length > 0 && (
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-3">
-              Lab Tests
-            </h3>
-            <div className="border-t border-gray-200 pt-3">
-              <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-300">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-amber-50 px-6 py-4 border-b border-amber-100 flex items-center">
+              <RailSymbolIcon className="h-5 w-5 text-amber-600 mr-2" />
+              <h3 className="text-lg font-semibold text-amber-800">
+                Lab Tests
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="overflow-hidden rounded-lg border border-gray-200">
+                <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -180,11 +235,14 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {formData.labTests.map((test, index) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {test.id || 'Not specified'}
+                      <tr
+                        key={index}
+                        className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                      >
+                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                          {test?.name || 'Not specified'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 text-sm text-gray-500">
                           {test.notes || 'No additional details'}
                         </td>
                       </tr>
@@ -198,13 +256,16 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
 
         {/* Ray Tests */}
         {formData.rays.length > 0 && (
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-3">
-              Ray Tests
-            </h3>
-            <div className="border-t border-gray-200 pt-3">
-              <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-300">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-indigo-50 px-6 py-4 border-b border-indigo-100 flex items-center">
+              <RailSymbolIcon className="h-5 w-5 text-indigo-600 mr-2" />
+              <h3 className="text-lg font-semibold text-indigo-800">
+                Ray Tests
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="overflow-hidden rounded-lg border border-gray-200">
+                <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -217,11 +278,14 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {formData.rays.map((ray, index) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {ray.id || 'Not specified'}
+                      <tr
+                        key={index}
+                        className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                      >
+                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                          {ray?.name || 'Not specified'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 text-sm text-gray-500">
                           {ray?.notes || 'No additional details'}
                         </td>
                       </tr>
@@ -235,13 +299,18 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
 
         {/* Notes */}
         {formData.notes && (
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-3">
-              Additional Notes
-            </h3>
-            <div className="border-t border-gray-200 pt-3">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm text-gray-900">{formData.notes}</p>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-cyan-50 px-6 py-4 border-b border-cyan-100 flex items-center">
+              <FileText className="h-5 w-5 text-cyan-600 mr-2" />
+              <h3 className="text-lg font-semibold text-cyan-800">
+                Additional Notes
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <p className="text-sm text-gray-900 whitespace-pre-wrap">
+                  {formData.notes}
+                </p>
               </div>
             </div>
           </div>
@@ -249,46 +318,59 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
 
         {/* Attachments */}
         {formData.attachments && formData.attachments.length > 0 && (
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-3">
-              Attachments
-            </h3>
-            <div className="border-t border-gray-200 pt-3">
-              <ul className="divide-y divide-gray-200">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-rose-50 px-6 py-4 border-b border-rose-100 flex items-center">
+              <svg
+                className="h-5 w-5 text-rose-600 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                />
+              </svg>
+              <h3 className="text-lg font-semibold text-rose-800">
+                Attachments
+              </h3>
+            </div>
+            <div className="p-6">
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {formData.attachments.map((file) => (
                   <li
                     key={file.id}
-                    className="py-3 flex items-center justify-between"
+                    className="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
                   >
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <svg
-                          className="h-8 w-8 text-gray-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">
-                          {file.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {(file.size / 1024 / 1024).toFixed(2)} MB
-                        </p>
-                      </div>
+                    <div className="flex-shrink-0 h-10 w-10 rounded bg-gray-200 flex items-center justify-center">
+                      <svg
+                        className="h-6 w-6 text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3 flex-1">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {file.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
                     </div>
                     <a
                       href={file.url}
                       download={file.name}
-                      className="ml-3 text-sm text-blue-600 hover:text-blue-500"
+                      className="ml-4 flex-shrink-0 px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
                     >
                       Download
                     </a>

@@ -33,10 +33,7 @@ export default function LabTests({
 }: LabTestsProps) {
   const handleAddLabTest = () => {
     // Generate a unique ID for the new lab test
-    const newId = `lab-${Date.now()}-${Math.random()
-      .toString(36)
-      .substr(2, 9)}`;
-    onLabTestsChange([...labTests, { id: newId, notes: '' }]);
+    onLabTestsChange([...labTests, { id: '', notes: '', name: '' }]);
   };
 
   const handleRemoveLabTest = (index: number) => {
@@ -63,7 +60,7 @@ export default function LabTests({
       <div className="space-y-4">
         {labTests.map((test, index) => (
           <div
-            key={test.id}
+            key={`lab-${index}-${Date.now()}`}
             className="p-4 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200"
           >
             <div className="flex justify-between items-center mb-3">
@@ -84,26 +81,48 @@ export default function LabTests({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Controller
-                  name={`labTests.${index}.name`}
+                  name={`labTests.${index}.id`}
                   control={control}
                   render={({ field }) => (
                     <Select
                       label="Lab Test"
+                      required={true}
                       {...field}
                       options={availableTests}
                       placeholder="Select Lab Test"
                       disabled={isLoading}
                       isLoading={isLoading}
                       className="w-full"
+                      {...register(`labTests.${index}.id`, {
+                        required: true,
+                      })}
+                      onChange={(event) => {
+                        field.onChange(event);
+                        // Extract the value from the event object
+                        const value = event.target.value;
+                        // Find the selected option and set the name field with its label
+                        const selectedOption = availableTests.find(
+                          (option) => option.value === value
+                        );
+                        if (selectedOption) {
+                          const newLabs = [...labTests];
+                          newLabs[index] = {
+                            ...newLabs[index],
+                            id: value,
+                            name: selectedOption.label || '',
+                          };
+                          onLabTestsChange(newLabs);
+                        }
+                      }}
                     />
                   )}
                 />
 
                 {errors.labTests &&
                   Array.isArray(errors.labTests) &&
-                  errors.labTests[index]?.name && (
+                  errors.labTests[index]?.id && (
                     <p className="text-xs text-red-500 mt-1">
-                      {(errors.labTests[index]?.name?.message as string) ||
+                      {(errors.labTests[index]?.id?.message as string) ||
                         'Lab test name is required'}
                     </p>
                   )}

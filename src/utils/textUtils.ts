@@ -14,6 +14,7 @@ import {
   VisitType,
 } from '@/lib/api/types/clinic-patient';
 import { ClinicStaffStatus } from '@/lib/api/types/clinic-staff';
+import { VisitStatus } from '@/lib/api/types/treatment';
 
 /**
  * Generates initials from a name string.
@@ -295,6 +296,26 @@ export const getMedicalConditionStatusClass = (
     [MedicalConditionStatus.Critical]: 'bg-red-100 text-red-800',
   };
   return statusMap[status] || 'bg-gray-50 text-gray-400';
+};
+
+export const getVisitStatusLabel = (status: VisitStatus): string => {
+  const visitStatusMap: Record<VisitStatus, string> = {
+    [VisitStatus.Pending]: 'Pending',
+    [VisitStatus.InProgress]: 'In Progress',
+    [VisitStatus.Completed]: 'Completed',
+    [VisitStatus.Cancelled]: 'Cancelled',
+  };
+  return visitStatusMap[status] || 'Unknown';
+};
+
+export const getVisitStatusClass = (status: VisitStatus): string => {
+  const visitStatusMap: Record<VisitStatus, string> = {
+    [VisitStatus.Pending]: 'bg-yellow-100 text-yellow-800',
+    [VisitStatus.InProgress]: 'bg-blue-100 text-blue-800',
+    [VisitStatus.Completed]: 'bg-green-100 text-green-800',
+    [VisitStatus.Cancelled]: 'bg-red-100 text-red-800',
+  };
+  return visitStatusMap[status] || 'bg-gray-50 text-gray-400';
 };
 
 export const getSeverityClass = (severity: Severity): string => {

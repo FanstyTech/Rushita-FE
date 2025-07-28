@@ -29,6 +29,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   hasBorder?: boolean;
   placeholder?: string;
   isLoading?: boolean;
+  required?: boolean;
   onSearch?: (query: string) => void;
   noOptionsMessage?: string;
   startIcon?: React.ReactNode;
@@ -51,6 +52,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
       disabled,
       name,
       isLoading = false,
+      required = false,
       onSearch,
       noOptionsMessage = 'No options found',
       startIcon,
@@ -95,7 +97,10 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <label className="block text-xs font-medium mb-1">{label}</label>
+          <label className="block text-sm font-medium mb-1">
+            {label}
+            {required && <span className="text-red-500 ml-1">*</span>}
+          </label>
         )}
 
         <Popover open={open} onOpenChange={disabled ? undefined : setOpen}>

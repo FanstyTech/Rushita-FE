@@ -38,6 +38,7 @@ import { MedicineListDto } from '@/lib/api/types/medicine';
 import { useVisit } from '@/lib/api/hooks/useVisit';
 import { useDiagnosis } from '@/lib/api/hooks/useDiagnosis';
 import { Button } from '@/components/ui/button';
+import { CreateOrUpdateVisitDto } from '@/lib/api/types/treatment';
 
 // Validation Schemas
 const medicationSchema = z.object({
@@ -50,12 +51,14 @@ const medicationSchema = z.object({
 });
 
 const labTestSchema = z.object({
-  id: z.string(),
+  id: z.string().min(1, 'Lab test name is required'),
+  name: z.string().optional(),
   notes: z.string().optional(),
 });
 
 const rayTestSchema = z.object({
-  id: z.string(),
+  id: z.string().min(1, 'Ray test name is required'),
+  name: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -108,7 +111,7 @@ const INITIAL_MEDICINE_FILTER: FilterState = {
   isActive: undefined,
 };
 
-export default function TreatmentForm() {
+export default function TreatmentForm({ visitId }: { visitId?: string }) {
   // Form State
   const {
     register,
@@ -162,8 +165,6 @@ export default function TreatmentForm() {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   // Form States
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [medicineFilter, setMedicineFilter] = useState<FilterState>(
     INITIAL_MEDICINE_FILTER
   );
@@ -200,10 +201,62 @@ export default function TreatmentForm() {
 
   // API Hooks
   const { useLabTestsForDropdown } = useLabTest();
-  const { createVisit } = useVisit();
+  const { createOrUpdateVisit, getVisitForEdit } = useVisit();
   const { useRadiologyTestsDropdown } = useRadiologyTest();
   const { useMedicinesList } = useMedicine();
   const { usePatientDropdown, usePatientForView } = useClinicPatients();
+
+  // Fetch visit data if visitId is provided
+  const { data: visitData, isLoading: isLoadingVisit } = getVisitForEdit(
+    visitId || ''
+  );
+
+  // Effect to populate form with visit data when available
+  useEffect(() => {
+    if (visitData && visitId) {
+      // Set patient ID and trigger patient data fetch
+      setSelectedPatient(visitData.patientId);
+      setValue('patientId', visitData.patientId);
+
+      // Set form values from visit data
+      setValue('visitType', visitData.type);
+      setValue('symptoms', visitData.symptoms || '');
+      setValue('diagnosis', visitData.diagnosis || '');
+      setValue('notes', visitData.notes || '');
+
+      // Set medications if available
+      if (visitData.medications && visitData.medications.length > 0) {
+        setValue('medications', visitData.medications);
+      }
+
+      // Set lab tests if available
+      if (visitData.labTests && visitData.labTests.length > 0) {
+        setValue('labTests', visitData.labTests);
+      }
+
+      // Set ray tests if available
+      if (visitData.rays && visitData.rays.length > 0) {
+        setValue('rays', visitData.rays);
+      }
+
+      // Set dental procedures if available
+      // if (visitData.dentalProcedures && visitData.dentalProcedures.length > 0) {
+      //   setValue('dentalProcedures', visitData.dentalProcedures);
+      // }
+
+      // // Set selected teeth if available
+      // if (visitData.selectedTeeth && visitData.selectedTeeth.length > 0) {
+      //   setValue('selectedTeeth', visitData.selectedTeeth);
+      // }
+
+      // // Set attachments if available
+      // if (visitData.attachments && visitData.attachments.length > 0) {
+      //   setAttachments(visitData.attachments);
+      //   setValue('attachments', visitData.attachments);
+      // }
+    }
+  }, [visitData, visitId, setValue]);
+
   // Hooks
   const { useDiagnosesTree: getDiagnoses } = useDiagnosis();
   const { data: diagnosesTree } = getDiagnoses();
@@ -264,18 +317,9 @@ export default function TreatmentForm() {
   };
 
   const handleAdvancedSearch = async () => {
-    try {
-      setIsLoading(true);
-      // Implement advanced search logic here
-      setShowAdvancedSearch(false);
-      setShowDropdown(true);
-      setError(null);
-    } catch (err) {
-      setError('Failed to search patients');
-      console.error('Error searching patients:', err);
-    } finally {
-      setIsLoading(false);
-    }
+    // Implement advanced search logic here
+    setShowAdvancedSearch(false);
+    setShowDropdown(true);
   };
 
   const handlePreviewFile = (file: Attachment) => {
@@ -289,220 +333,228 @@ export default function TreatmentForm() {
   };
 
   const onSubmit = async (data: TreatmentFormData) => {
-    try {
-      setIsLoading(true);
-      console.log('Submitting form data:', data);
+    console.log('Submitting form data:', data);
 
-      // API call would go here
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Prepare data for the API
+    const visitData: CreateOrUpdateVisitDto = {
+      id: visitId, // Include the ID for updates
+      patientId: data.patientId,
+      staffId: user?.clinicInfo?.staffId || '',
+      clinicId: user?.clinicInfo?.id || '',
+      type: data.visitType,
+      notes: data.notes || '',
+      symptoms: data.symptoms,
+      followUpInstructions: '',
+      diagnosis: data.diagnosis,
+      medications: data.medications,
 
-      alert('Treatment saved successfully!');
-    } catch (error) {
-      console.error('Error saving treatment:', error);
-      setError('Failed to save treatment');
-    } finally {
-      setIsLoading(false);
-    }
+      labTests: data.labTests,
+
+      rays: data.rays,
+    };
+
+    // Call the mutation
+    await createOrUpdateVisit.mutateAsync(visitData);
   };
 
   return (
     <div className="space-y-6">
-      {error && (
-        <div className="rounded-md bg-red-50 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-red-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          </div>
+      {isLoadingVisit && visitId ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
-      )}
+      ) : (
+        <>
+          {/* Patient Selection Section - Use PatientInfoSection with isReadOnly prop when in edit mode */}
+          <PatientInfoSection
+            patientSearchQuery={patientSearchQuery}
+            setPatientSearchQuery={setPatientSearchQuery}
+            shouldFetchPatients={shouldFetchPatients}
+            patientsData={patientsData || []}
+            patientsLoading={patientsLoading}
+            selectedPatient={selectedPatient}
+            setSelectedPatient={handlePatientSelect}
+            selectedPatientData={selectedPatientData || undefined}
+            selectedPatientLoading={selectedPatientLoading}
+            onShowAdvancedSearch={() => setShowAdvancedSearch(true)}
+            onShowAddPatient={() => setShowAddPatient(true)}
+            register={register}
+            errors={errors}
+            isReadOnly={!!visitId}
+            visitType={visitData?.type}
+          />
 
-      {/* Patient Selection Section */}
-      <PatientInfoSection
-        patientSearchQuery={patientSearchQuery}
-        setPatientSearchQuery={setPatientSearchQuery}
-        shouldFetchPatients={shouldFetchPatients}
-        patientsData={patientsData || []}
-        patientsLoading={patientsLoading}
-        selectedPatient={selectedPatient}
-        setSelectedPatient={handlePatientSelect}
-        selectedPatientData={selectedPatientData || undefined}
-        selectedPatientLoading={selectedPatientLoading}
-        onShowAdvancedSearch={() => setShowAdvancedSearch(true)}
-        onShowAddPatient={() => setShowAddPatient(true)}
-        register={register}
-        errors={errors}
-      />
-
-      {/* Treatment Form Section */}
-      {selectedPatient && (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="border-b border-gray-100 bg-white px-6 py-4">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Treatment Information
-              </h2>
-            </div>
-
-            <div className="p-6 space-y-6">
-              <SymptomsAndDiagnosis
-                diagnosesTree={diagnosesTree || []}
-                register={register}
-                errors={errors}
-                control={control}
-              />
-
-              <Medications
-                medications={formData.medications}
-                onMedicationsChange={(medications) =>
-                  setValue('medications', medications)
-                }
-                onShowMedicationSearch={handleOpenMedicationSearch}
-                register={register}
-                control={control}
-                errors={errors}
-              />
-
-              <LabTests
-                labTests={formData.labTests}
-                availableTests={labTestOptions || []}
-                onLabTestsChange={(labTests) => setValue('labTests', labTests)}
-                register={register}
-                control={control}
-                errors={errors}
-                isLoading={isLoadingLabTests}
-              />
-
-              <RayTests
-                rays={formData.rays}
-                availableRays={rayTestOptions || []}
-                onRaysChange={(rays) => setValue('rays', rays)}
-                register={register}
-                control={control}
-                errors={errors}
-                isLoading={isLoadingRayTests}
-              />
-
-              {formData.visitType === VisitType.Followup && (
-                <DentalChart
-                  selectedTeeth={formData.selectedTeeth || []}
-                  onTeethSelect={(teeth) =>
-                    setValue('selectedTeeth', teeth as number[])
-                  }
-                  procedures={formData.dentalProcedures || []}
-                  onProcedureAdd={async (procedure) => {
-                    const currentProcedures = formData.dentalProcedures || [];
-                    setValue('selectedTeeth', []);
-                    setValue('dentalProcedures', [
-                      ...currentProcedures,
-                      procedure,
-                    ]);
-                  }}
-                  onProcedureRemove={(index) => {
-                    const newProcedures = [
-                      ...(formData.dentalProcedures || []),
-                    ];
-                    newProcedures.splice(index, 1);
-                    setValue('dentalProcedures', newProcedures);
-                  }}
-                />
-              )}
-
-              <Notes register={register} control={control} errors={errors} />
-
-              <Attachments
-                attachments={attachments}
-                onAttachmentsChange={(newAttachments) => {
-                  setAttachments(newAttachments);
-                  setValue('attachments', newAttachments);
-                }}
-                onPreviewFile={handlePreviewFile}
-              />
-
-              {/* Form Actions */}
-              <div className="flex justify-between items-center pt-6 border-t border-gray-200">
-                <button
-                  type="button"
-                  onClick={() => window.history.back()}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                  Previous
-                </button>
-
-                <div className="flex space-x-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowTreatmentDetails(true)}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    Preview
-                  </button>
-                  <Button variant="default" type="submit" disabled={isLoading}>
-                    {isLoading ? 'Saving...' : 'Save Treatment'}
-                  </Button>
+          {/* Treatment Form Section */}
+          {selectedPatient && (
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="border-b border-gray-100 bg-white px-6 py-4">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Treatment Information
+                  </h2>
                 </div>
-              </div>
-            </div>
-          </section>
-        </form>
+
+                <div className="p-6 space-y-6">
+                  <SymptomsAndDiagnosis
+                    diagnosesTree={diagnosesTree || []}
+                    register={register}
+                    errors={errors}
+                    control={control}
+                  />
+
+                  <Medications
+                    medications={formData.medications}
+                    onMedicationsChange={(medications) =>
+                      setValue('medications', medications)
+                    }
+                    onShowMedicationSearch={handleOpenMedicationSearch}
+                    register={register}
+                    control={control}
+                    errors={errors}
+                  />
+
+                  <LabTests
+                    labTests={formData.labTests}
+                    availableTests={labTestOptions || []}
+                    onLabTestsChange={(labTests) =>
+                      setValue('labTests', labTests)
+                    }
+                    register={register}
+                    control={control}
+                    errors={errors}
+                    isLoading={isLoadingLabTests}
+                  />
+
+                  <RayTests
+                    rays={formData.rays}
+                    availableRays={rayTestOptions || []}
+                    onRaysChange={(rays) => setValue('rays', rays)}
+                    register={register}
+                    control={control}
+                    errors={errors}
+                    isLoading={isLoadingRayTests}
+                  />
+
+                  {/* {formData.visitType === VisitType.Followup && (
+                    <DentalChart
+                      selectedTeeth={formData.selectedTeeth || []}
+                      onTeethSelect={(teeth) =>
+                        setValue('selectedTeeth', teeth as number[])
+                      }
+                      procedures={formData.dentalProcedures || []}
+                      onProcedureAdd={async (procedure) => {
+                        const currentProcedures =
+                          formData.dentalProcedures || [];
+                        setValue('selectedTeeth', []);
+                        setValue('dentalProcedures', [
+                          ...currentProcedures,
+                          procedure,
+                        ]);
+                      }}
+                      onProcedureRemove={(index) => {
+                        const newProcedures = [
+                          ...(formData.dentalProcedures || []),
+                        ];
+                        newProcedures.splice(index, 1);
+                        setValue('dentalProcedures', newProcedures);
+                      }}
+                    />
+                  )} */}
+
+                  <Notes
+                    register={register}
+                    control={control}
+                    errors={errors}
+                  />
+
+                  <Attachments
+                    attachments={attachments}
+                    onAttachmentsChange={(newAttachments) => {
+                      setAttachments(newAttachments);
+                      setValue('attachments', newAttachments);
+                    }}
+                    onPreviewFile={handlePreviewFile}
+                  />
+
+                  {/* Form Actions */}
+                  <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+                    <button
+                      type="button"
+                      onClick={() => window.history.back()}
+                      className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      <ArrowLeftIcon className="h-5 w-5 mr-2" />
+                      Previous
+                    </button>
+
+                    <div className="flex space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => setShowTreatmentDetails(true)}
+                        className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
+                        Preview
+                      </button>
+                      <Button
+                        variant="default"
+                        type="submit"
+                        disabled={createOrUpdateVisit.isPending}
+                      >
+                        {createOrUpdateVisit.isPending
+                          ? 'Saving...'
+                          : 'Save Treatment'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </form>
+          )}
+
+          {/* Modals */}
+          {/* <AdvancedSearchModal
+            isOpen={showAdvancedSearch}
+            onClose={() => setShowAdvancedSearch(false)}
+            formData={advancedSearchForm}
+            onFormChange={setAdvancedSearchForm}
+            onSearch={handleAdvancedSearch}
+            isLoading={isLoading}
+          /> */}
+
+          <MedicationSearchModal
+            isOpen={showMedicationSearch}
+            onClose={() => setShowMedicationSearch(false)}
+            medications={medicines}
+            isLoading={isMedicineLoading}
+            searchQuery={medicationSearchQuery}
+            setSearchQuery={setMedicationSearchQuery}
+            filter={medicineFilter}
+            setFilter={setMedicineFilter}
+            onSelectMedication={handleSelectMedication}
+          />
+
+          <AddNewPatientModal
+            isOpen={showAddPatient}
+            onClose={() => setShowAddPatient(false)}
+            onSubmit={() => {}}
+            isSubmitting={isMedicineLoading}
+            title="Add New Patient"
+          />
+
+          <FilePreviewModal
+            isOpen={showPreviewModal}
+            onClose={handleClosePreview}
+            file={previewFile}
+          />
+
+          <TreatmentDetailsModal
+            isOpen={showTreatmentDetails}
+            onClose={() => setShowTreatmentDetails(false)}
+            formData={formData}
+            selectedPatientData={selectedPatientData || undefined}
+          />
+        </>
       )}
-
-      {/* Modals */}
-      {/* <AdvancedSearchModal
-        isOpen={showAdvancedSearch}
-        onClose={() => setShowAdvancedSearch(false)}
-        formData={advancedSearchForm}
-        onFormChange={setAdvancedSearchForm}
-        onSearch={handleAdvancedSearch}
-        isLoading={isLoading}
-      /> */}
-
-      <MedicationSearchModal
-        isOpen={showMedicationSearch}
-        onClose={() => setShowMedicationSearch(false)}
-        medications={medicines}
-        isLoading={isMedicineLoading}
-        searchQuery={medicationSearchQuery}
-        setSearchQuery={setMedicationSearchQuery}
-        filter={medicineFilter}
-        setFilter={setMedicineFilter}
-        onSelectMedication={handleSelectMedication}
-      />
-
-      <AddNewPatientModal
-        isOpen={showAddPatient}
-        onClose={() => setShowAddPatient(false)}
-        onSubmit={() => {}}
-        isSubmitting={isLoading}
-        title="Add New Patient"
-      />
-
-      <FilePreviewModal
-        isOpen={showPreviewModal}
-        onClose={handleClosePreview}
-        file={previewFile}
-      />
-
-      <TreatmentDetailsModal
-        isOpen={showTreatmentDetails}
-        onClose={() => setShowTreatmentDetails(false)}
-        formData={formData}
-        selectedPatientData={selectedPatientData || undefined}
-      />
     </div>
   );
 }

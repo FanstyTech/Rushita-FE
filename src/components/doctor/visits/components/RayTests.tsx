@@ -32,11 +32,7 @@ export default function RayTests({
   isLoading = false,
 }: RayTestsProps) {
   const handleAddRay = () => {
-    // Generate a unique ID for the new ray test
-    const newId = `ray-${Date.now()}-${Math.random()
-      .toString(36)
-      .substr(2, 9)}`;
-    onRaysChange([...rays, { id: newId, notes: '' }]);
+    onRaysChange([...rays, { id: '', notes: '', name: '' }]);
   };
 
   const handleRemoveRay = (index: number) => {
@@ -62,7 +58,7 @@ export default function RayTests({
       <div className="space-y-4">
         {rays.map((ray, index) => (
           <div
-            key={ray.id}
+            key={`ray-${index}-${Date.now()}`}
             className="p-4 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200"
           >
             <div className="flex justify-between items-center mb-3">
@@ -83,7 +79,7 @@ export default function RayTests({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Controller
-                  name={`rays.${index}.name`}
+                  name={`rays.${index}.id`}
                   control={control}
                   render={({ field }) => (
                     <Select
@@ -94,14 +90,32 @@ export default function RayTests({
                       disabled={isLoading}
                       isLoading={isLoading}
                       className="w-full"
+                      onChange={(event) => {
+                        field.onChange(event);
+                        // Extract the value from the event object
+                        const value = event.target.value;
+                        // Find the selected option and set the name field with its label
+                        const selectedOption = availableRays.find(
+                          (option) => option.value === value
+                        );
+                        if (selectedOption) {
+                          const newRays = [...rays];
+                          newRays[index] = {
+                            ...newRays[index],
+                            id: value,
+                            name: selectedOption.label || '',
+                          };
+                          onRaysChange(newRays);
+                        }
+                      }}
                     />
                   )}
                 />
                 {errors.rays &&
                   Array.isArray(errors.rays) &&
-                  errors.rays[index]?.name && (
+                  errors.rays[index]?.id && (
                     <p className="text-xs text-red-500 mt-1">
-                      {(errors.rays[index]?.name?.message as string) ||
+                      {(errors.rays[index]?.id?.message as string) ||
                         'Ray test name is required'}
                     </p>
                   )}

@@ -173,4 +173,18 @@ export const API_ENDPOINTS = {
     DELETE: '/appointment/delete',
     UPDATE_STATUS: '/appointment/updateStatus',
   },
+  VISIT_ENDPOINTS: {
+    LIST: '/visit/getAll',
+    GET_ONE: '/visit/getById',
+    GET_FOR_EDIT: '/visit/getVisitForEdit',
+    CREATE_OR_UPDATE: '/visit/createOrUpdate',
+    DELETE: '/visit/:id',
+    UPDATE_STATUS: '/visit/:id/status',
+    GET_STATUS_HISTORY: '/visit/:id/statusHistory',
+    GET_DIAGNOSES: '/visit/:id/diagnoses',
+    GET_PRESCRIPTIONS: '/visit/:id/prescriptions',
+    GET_LAB_TESTS: '/visit/:id/labTests',
+    GET_RADIOLOGY_TESTS: '/visit/:id/radiologyTests',
+    GET_DENTAL_PROCEDURES: '/visit/:id/dentalProcedures',
+  },
 } as const;

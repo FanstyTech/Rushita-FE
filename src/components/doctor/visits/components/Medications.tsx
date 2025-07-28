@@ -13,7 +13,7 @@ import {
   CreateOrUpdateVisitPrescriptionDto,
   FrequencyType,
 } from '@/lib/api/types/treatment';
-import { Trash, Plus } from 'lucide-react';
+import { Trash, Plus, Search } from 'lucide-react';
 
 interface MedicationsProps {
   medications: CreateOrUpdateVisitPrescriptionDto[];
@@ -95,33 +95,20 @@ export default function Medications({
             </div>
 
             <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-12 md:col-span-3">
+              <div className="col-span-12 md:col-span-4">
                 <Controller
                   name={`medications.${index}.name`}
                   control={control}
                   render={({ field }) => (
                     <Input
                       label="Medication Name"
+                      required={true}
                       placeholder="Search medicine..."
                       value={field.value}
                       onClick={() => onShowMedicationSearch(index)}
                       readOnly
                       className="cursor-pointer w-full"
-                      startIcon={
-                        <svg
-                          className="h-4 w-4 text-gray-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                          />
-                        </svg>
-                      }
+                      startIcon={<Search className="h-4 w-4 " />}
                     />
                   )}
                 />
@@ -138,6 +125,7 @@ export default function Medications({
               <div className="col-span-6 md:col-span-2">
                 <Input
                   label="Dosage"
+                  required={true}
                   placeholder="Dosage"
                   {...register(`medications.${index}.dosage`, {
                     required: true,
@@ -159,6 +147,7 @@ export default function Medications({
                   {...register(`medications.${index}.frequency`, {
                     required: true,
                   })}
+                  required={true}
                   options={Object.entries(FrequencyType)
                     .filter(([key]) => isNaN(Number(key)))
                     .map(([key, value]) => ({
@@ -176,10 +165,11 @@ export default function Medications({
                 />
               </div>
 
-              <div className="col-span-6 md:col-span-2">
+              <div className="col-span-6 md:col-span-3">
                 <Input
                   label="Duration (days)"
                   type="number"
+                  required={true}
                   placeholder="Duration"
                   {...register(`medications.${index}.duration`, {})}
                   className="w-full"

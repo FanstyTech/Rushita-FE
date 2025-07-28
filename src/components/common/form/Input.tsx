@@ -13,6 +13,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   endIcon?: React.ReactNode;
   validation?: z.ZodString;
   hasBorder?: boolean;
+  required?: boolean;
   onValidation?: (isValid: boolean, error?: string) => void;
 }
 
@@ -28,6 +29,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       endIcon,
       validation,
       hasBorder = true,
+      required = false,
       onValidation,
       onChange,
       ...props
@@ -58,8 +60,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <label className="block text-xs font-medium mb-1">{label}</label>
+          <label className="block text-sm font-medium mb-1">
+            {label}
+            {required && <span className="text-red-500 ml-1">*</span>}
+          </label>
         )}
+
         <div className="relative">
           {startIcon && (
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
