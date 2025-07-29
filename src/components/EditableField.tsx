@@ -6,6 +6,8 @@ interface EditableFieldProps {
   label?: string;
   multiline?: boolean;
   className?: string;
+  onBlur?: () => void;
+  istime?: boolean
 }
 
 export default function EditableField({
@@ -14,6 +16,9 @@ export default function EditableField({
   label,
   multiline,
   className,
+  onBlur,
+  istime = false
+
 }: EditableFieldProps) {
   if (multiline) {
     return (
@@ -35,7 +40,9 @@ export default function EditableField({
     <div className="space-y-2">
       {label && <label className="block text-sm text-gray-600">{label}</label>}
       <input
-        type="text"
+        onBlur={onBlur}
+
+        type={`${istime ? "time" : "text"}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={`text-gray-400 w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${className}`}

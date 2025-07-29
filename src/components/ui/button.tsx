@@ -20,12 +20,14 @@ const buttonVariants = cva(
         secondary:
           'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
         ghost:
-          'bg-white text-gray-700 hover:bg-gray-50  dark:hover:bg-accent/50',
+          'bg-white text-gray-700 hover:opacity-90 hover:bg-gray-50  ',
         link: 'text-gray-color/50 underline-offset-4 hover:text-secend  ',
         lineargradian:
           'bg-gradient-to-r from-primary to-secend text-white    hover:opacity-80   ',
         none: 'block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300',
         PlanButton: 'text-white bg-secend',
+        editButton: "text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors backdrop-blur-sm",
+        SaveButton: "bg-blue-600 text-white rounded-xl hover:bg-blue-700"
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

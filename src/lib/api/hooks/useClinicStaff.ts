@@ -31,7 +31,7 @@ export const useClinicStaff = () => {
       retry: false,
       queryKey: ['clinicStaff', 'details', id],
       queryFn: async () => {
-        const response = await clinicStaffService.getOne(id);
+        const response = await clinicStaffService.getDoctordetails(id);
         if (!response.success) {
           throw new Error(response.message);
         }
@@ -40,6 +40,19 @@ export const useClinicStaff = () => {
       enabled: !!id,
     });
 
+      const useDoctorDetails = (id: string) =>
+    useQuery({
+      retry: false,
+      queryKey: ['clinicStaff', 'details', id],
+      queryFn: async () => {
+        const response = await clinicStaffService.getOne(id);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+      enabled: !!id,
+    });
   const useClinicStaffForDropdown = (filter: GetClinicStaffForDropdownInput, options?: { enabled?: boolean }) =>
     useQuery({
       queryKey: ['clinic-staff', 'dropdown', filter],
@@ -121,5 +134,6 @@ export const useClinicStaff = () => {
     createOrUpdateClinicStaff,
     deleteClinicStaff,
     updateClinicStaffStatus,
+    useDoctorDetails
   };
 };

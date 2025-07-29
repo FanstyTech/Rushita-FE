@@ -36,6 +36,16 @@ export const clinicStaffService = {
       },
     });
   },
+   
+  async getDoctordetails(
+    id: string
+  ): Promise<ApiResponse<ClinicStaffDto>> {
+    return apiClient.get(API_ENDPOINTS.CLINIC_STAFF.GET_BY_ID, {
+      params: {
+        id: id,
+      },
+    });
+  },
   async getClinicStaffForDropdown(
     filter: GetClinicStaffForDropdownInput
   ): Promise<ApiResponse<SelectOption<string>[]>> {

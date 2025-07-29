@@ -12,7 +12,6 @@ import {
   Camera,
   Save,
   X,
-  Plus,
 
   Percent,
 } from 'lucide-react';
@@ -21,130 +20,16 @@ import ClinicProfileSkeleton from '@/components/skeletons/ClinicProfileSkeleton'
 import { getDayLabel, getInitials, GetStaffType } from '@/utils/textUtils';
 import { useClinic } from '@/lib/api/hooks/useClinic';
 import { ClinicDto } from '@/lib/api/types/clinic';
+import Select from "react-select";
+import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
+import { Button } from '@/components/ui/button';
 
-// interface ClinicInfo {
-//   name: string;
-//   email: string;
-//   phone: string;
-//   address: string;
-//   hours: {
-//     day: string;
-//     hours: string;
-//   }[];
-//   about: string;
-//   specialties: string[];
-//   staff: {
-//     id: string;
-//     name: string;
-//     role: string;
-//     image: string;
-//     speciality: string;
-//   }[];
-//   services: {
-//     name: string;
-//     description: string;
-//     price: string;
-//   }[];
-//   offers: {
-//     title: string;
-//     description: string;
-//     discount: string;
-//     validUntil: string;
-//   }[];
-//   socialMedia: {
-//     website: string;
-//     facebook: string;
-//     instagram: string;
-//     twitter: string;
-//     linkedin: string;
-//   };
-// }
 
 const EditableField = dynamic(() => import('@/components/EditableField'), {
   ssr: false,
   loading: () => <div className="animate-pulse h-8 bg-gray-200 rounded"></div>,
 });
 
-// const initialData: ClinicInfo = {
-//   name: 'HealthCare Plus Clinic',
-//   email: 'contact@healthcareplus.com',
-//   phone: '+1 (555) 123-4567',
-//   address: '123 Medical Center Drive, Suite 100, San Francisco, CA 94105',
-//   hours: [
-//     { day: 'Monday - Friday', hours: '8:00 AM - 6:00 PM' },
-//     { day: 'Saturday', hours: '9:00 AM - 2:00 PM' },
-//     { day: 'Sunday', hours: 'Closed' },
-//   ],
-//   about:
-//     'HealthCare Plus Clinic is a state-of-the-art medical facility providing comprehensive healthcare services. Our team of experienced medical professionals is dedicated to delivering personalized care with the latest medical technologies.',
-//   specialties: [
-//     'Family Medicine',
-//     'Pediatrics',
-//     'Internal Medicine',
-//     'Cardiology',
-//     'Dermatology',
-//   ],
-//   staff: [
-//     {
-//       id: '1',
-//       name: 'Dr. Sarah Johnson',
-//       role: 'Medical Director',
-//       image: '/images/staff/doctor1.jpg',
-//       speciality: 'Internal Medicine',
-//     },
-//     {
-//       id: '2',
-//       name: 'Dr. Michael Chen',
-//       role: 'Senior Physician',
-//       image: '/images/staff/doctor2.jpg',
-//       speciality: 'Pediatrics',
-//     },
-//     // Add more staff members
-//   ],
-//   services: [
-//     {
-//       name: 'General Consultation',
-//       description: 'Comprehensive medical consultation and examination',
-//       price: '$150',
-//     },
-//     {
-//       name: 'Pediatric Care',
-//       description: 'Specialized healthcare for children and adolescents',
-//       price: '$175',
-//     },
-//     // Add more services
-//   ],
-//   offers: [
-//     {
-//       title: 'Summer Health Check',
-//       description:
-//         'Complete health checkup including blood work, ECG, and consultation.',
-//       discount: '20',
-//       validUntil: '2025-08-31',
-//     },
-//     {
-//       title: 'Family Package',
-//       description:
-//         'Health checkup for family of 4, including dental cleaning and eye examination.',
-//       discount: '25',
-//       validUntil: '2025-06-30',
-//     },
-//     {
-//       title: 'Senior Care',
-//       description:
-//         'Specialized health package for seniors including bone density test and cardiac evaluation.',
-//       discount: '15',
-//       validUntil: '2025-12-31',
-//     },
-//   ],
-//   socialMedia: {
-//     website: '',
-//     facebook: '',
-//     instagram: '',
-//     twitter: '',
-//     linkedin: '',
-//   },
-// };
 
 function ClinicProfileContent() {
 
@@ -155,22 +40,26 @@ function ClinicProfileContent() {
     description: '',
     price: '',
   });
-  const [newSpecialty, setNewSpecialty] = useState('');
-  const [newStaffMember, setNewStaffMember] = useState({
-    id: '',
-    name: '',
-    role: '',
-    image: '/images/staff/placeholder.jpg',
-    speciality: '',
-  });
+  const { useSpecialtiesDropdown: getSpecialtiesForDropdown } = useSpecialty();
+  const { data: specialties } = getSpecialtiesForDropdown();
+
+  // const [newSpecialty, setNewSpecialty] = useState('');
+  // const [errorSpecialty, setErrorSpecialty] = useState<boolean>(false);
+  // const [newStaffMember, setNewStaffMember] = useState({
+  //   id: '',
+  //   name: '',
+  //   role: '',
+  //   image: '/images/staff/placeholder.jpg',
+  //   speciality: '',
+  // });
+
   const [newOffer, setNewOffer] = useState({
     title: '',
     description: '',
     discount: '',
     validUntil: '',
   });
-  const { useClinicDetails } = useClinic();
-
+  const { useClinicDetails, UpdateUserInf } = useClinic();
   const [userId, setUserId] = useState<string | null>(null);
 
 
@@ -203,9 +92,13 @@ function ClinicProfileContent() {
   const [editedData, setEditedData] = useState<ClinicDto>();
 
 
+
+
   const handleSave = () => {
-    // TODO: Implement API call to save changes
     setIsEditing(false);
+    console.log(editedData)
+    if (editedData)
+      UpdateUserInf(editedData);
   };
 
   const handleCancel = () => {
@@ -230,25 +123,23 @@ function ClinicProfileContent() {
   //   });
   // };
 
-  const addSpecialty = () => {
-    if (newSpecialty && editedData) {
-      setEditedData({
-        ...editedData,
-        specialtiess: [...editedData.specialtiess, newSpecialty || ""],
-      });
-      setNewSpecialty('');
-    }
-  };
+  // const addSpecialty = () => {
+  //   if (newSpecialty && editedData) {
+  //     const results = editedData.specialtiess.find(item => item.trim().toLocaleLowerCase() == newSpecialty.trim().toLocaleLowerCase())
+  //     if (results != undefined) {
+  //       setErrorSpecialty(true)
+  //       return;
+  //     }
+  //     setErrorSpecialty(false)
 
-  const removeSpecialty = (specialty: string) => {
-    if (editedData) {
+  //     setEditedData({
+  //       ...editedData,
+  //       specialtiess: [...editedData.specialtiess, newSpecialty.trim() || ""],
+  //     });
+  //     setNewSpecialty('');
+  //   }
+  // };
 
-      setEditedData({
-        ...editedData,
-        specialtiess: editedData?.specialtiess.filter((s) => s !== specialty),
-      });
-    }
-  };
 
   // const addStaffMember = () => {
   //   if (
@@ -275,10 +166,11 @@ function ClinicProfileContent() {
   // };
 
   // const removeStaffMember = (id: string) => {
-  //   setEditedData({
-  //     ...editedData,
-  //     staff: editedData.staff.filter((member) => member.id !== id),
-  //   });
+  //   if (editedData)
+  //     setEditedData({
+  //       ...editedData,
+  //       staffdto: editedData.staffdto.filter((member) => member.id !== id),
+  //     });
   // };
 
   // const addOffer = () => {
@@ -384,20 +276,20 @@ function ClinicProfileContent() {
               <div className="flex gap-2">
                 {isEditing ? (
                   <>
-                    <button
+                    <Button
                       onClick={handleSave}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-200"
+                      variant="SaveButton"
                     >
                       <Save className="w-4 h-4" />
                       Save Changes
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={handleCancel}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors duration-200"
+                      variant="ghost"
                     >
                       <X className="w-4 h-4" />
                       Cancel
-                    </button>
+                    </Button>
                   </>
                 ) : (
                   <button
@@ -413,7 +305,7 @@ function ClinicProfileContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* About Section */}
@@ -722,7 +614,7 @@ function ClinicProfileContent() {
                 Medical Staff
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {data.staffdto.map((member) => (
+                {editedData?.staffdto.map((member) => (
                   <div
                     key={member.id}
                     className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-blue-100 transition-colors duration-200"
@@ -735,49 +627,57 @@ function ClinicProfileContent() {
                         height={64}
                         className="rounded-full"
                       /> */}
-                      {isEditing && (
+                      {/* {isEditing && (
                         <button className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-sm border border-gray-200">
                           <Camera className="w-3 h-3 text-gray-600" />
                         </button>
-                      )}
+                      )} */}
                     </div>
-                    {isEditing ? (
+                    {/* {isEditing ? (
                       <div className="flex-1 space-y-2">
-                        {/* <EditableField
+                        <EditableField
                           value={member.name}
-                          onChange={(value) =>
-                            setEditedData({
-                              ...editedData,
-                              staff: editedData.staff.map((s) =>
-                                s.id === member.id ? { ...s, name: value } : s
-                              ),
-                            })
+                          onChange={(value) => {
+                            if (editedData)
+                              setEditedData({
+                                ...editedData,
+                                staffdto: editedData.staffdto.map((s) =>
+                                  s.id === member.id ? { ...s, name: value } : s
+                                ),
+                              })
+                          }
                           }
                           label="Name"
-                        /> */}
-                        {/* <EditableField
+                        />
+                        <EditableField
                           value={member.id}
-                          onChange={(value) =>
-                            setEditedData({
-                              ...editedData,
-                              staff: editedData.staff.map((s) =>
-                                s.id === member.id ? { ...s, role: value } : s
-                              ),  
-                            })
+                          onChange={(value) => {
+                            if (editedData)
+
+                              setEditedData({
+                                ...editedData,
+                                staffdto: editedData.staffdto.map((s) =>
+                                  s.id === member.id ? { ...s, role: value } : s
+                                ),
+                              })
+                          }
                           }
                           label="Role"
-                        /> */}
-                        {/* <EditableField
+                        />
+                        <EditableField
                           value={member.specialty}
-                          onChange={(value) =>
-                            setEditedData({
-                              ...editedData,
-                              staff: editedData.staff.map((s) =>
-                                s.id === member.id
-                                  ? { ...s, speciality: value }
-                                  : s
-                              ),
-                            })
+                          onChange={(value) => {
+                            if (editedData)
+
+                              setEditedData({
+                                ...editedData,
+                                staffdto: editedData.staffdto.map((s) =>
+                                  s.id === member.id
+                                    ? { ...s, speciality: value }
+                                    : s
+                                ),
+                              })
+                          }
                           }
                           label="Speciality"
                         />
@@ -787,22 +687,22 @@ function ClinicProfileContent() {
                         >
                           <Trash2 className="w-4 h-4" />
                           Remove Staff Member
-                        </button> */}
+                        </button>
                       </div>
-                    ) : (
-                      <div>
-                        <h3 className="font-semibold text-gray-900">
-                          {member.name}
-                        </h3>
-                        <p className="text-gray-600">{GetStaffType(member.staffType)}</p>
-                        <p className="text-sm text-blue-600">
-                          {member.specialty}
-                        </p>
-                      </div>
-                    )}
+                    ) : ( */}
+                    <div>
+                      <h3 className="font-semibold text-gray-900">
+                        {member.name}
+                      </h3>
+                      <p className="text-gray-600">{GetStaffType(member.staffType)}</p>
+                      <p className="text-sm text-blue-600">
+                        {member.specialty}
+                      </p>
+                    </div>
+                    {/* )} */}
                   </div>
                 ))}
-                {isEditing && (
+                {/* {isEditing && (
                   <div className="p-4 rounded-xl border-2 border-dashed border-gray-200">
                     <div className="space-y-3">
                       <div className="flex justify-center mb-4">
@@ -849,10 +749,10 @@ function ClinicProfileContent() {
                       >
                         <Plus className="w-4 h-4" />
                         Add Staff Member
-                      </button> */}
+                      </button> 
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             </motion.div>
           </div>
@@ -1071,27 +971,50 @@ function ClinicProfileContent() {
                   <div key={index} className="flex justify-between">
                     {isEditing ? (
                       <>
-                        <span className="text-gray-600">{getDayLabel(schedule.day)}</span>
+                        <span className="text-gray-600">{getDayLabel(schedule.day).slice(0, 6)}{getDayLabel(schedule.day).length > 6 ? "..." : ""}</span>
 
+                        <div className='flex gap-2  justify-end  w-4/5 overflow-hidden'>
+                          <EditableField
+                            istime
+                            className='w-[90%]'
+                            value={schedule.openTime.slice(0, 5)}
+                            onChange={(value) => {
+                              if (editedData) {
+                                const updatedWorkingHours = editedData.workingHours.map((wh) =>
+                                  wh.day === schedule.day
+                                    ? { ...wh, openTime: normalizeTimeInput(value) }
+                                    : wh
+                                );
+                                setEditedData({
+                                  ...editedData,
+                                  workingHours: updatedWorkingHours
+                                });
+                              }
+                            }}
 
-                        <EditableField
-                          value={schedule.openTime}
-                          onChange={(value) => {
-                            if (editedData) {
-                              const updatedWorkingHours = editedData.workingHours.map((wh) =>
-                                wh.day === schedule.day
-                                  ? { ...wh, openTime: value } // عدّل فقط العنصر اللي يطابق اليوم
-                                  : wh
-                              );
+                          />
+                          <EditableField
+                            istime
+                            className='w-[90%]'
+                            value={schedule.closeTime.slice(0, 5)}
 
-                              setEditedData({
-                                ...editedData,
-                                workingHours: updatedWorkingHours
-                              })
-                            }
-                          }
-                          }
-                        />
+                            onChange={(value) => {
+                              if (editedData) {
+                                const updatedWorkingHours = editedData.workingHours.map((wh) =>
+                                  wh.day === schedule.day
+                                    ? { ...wh, closeTime: normalizeTimeInput(value) }
+                                    : wh
+                                );
+                                setEditedData({
+                                  ...editedData,
+                                  workingHours: updatedWorkingHours
+                                });
+                              }
+                            }}
+
+                          />
+                        </div>
+
                       </>
                     ) : (
                       <>
@@ -1120,38 +1043,84 @@ function ClinicProfileContent() {
                 Specialties
               </h2>
               <div className="flex flex-wrap gap-2">
-                {editedData?.specialtiess.map((specialty) => (
+
+                {isEditing || editedData?.specialtiess.map((specialty) => (
                   <span
-                    key={specialty}
+                    key={specialty.id}
                     className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm group relative"
                   >
-                    {specialty}
-                    {isEditing && (
-                      <button
-                        onClick={() => removeSpecialty(specialty)}
-                        className="ml-2 text-blue-400 hover:text-blue-600"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    )}
+                    {specialty.specialties}
+
                   </span>
                 ))}
                 {isEditing && (
-                  <div className="flex gap-2 items-center">
-                    <input
-                      type="text"
-                      value={newSpecialty}
-                      onChange={(e) => setNewSpecialty(e.target.value)}
-                      placeholder="Add specialty"
-                      className="px-3 py-1 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                    <button
-                      onClick={addSpecialty}
-                      className="p-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  </div>
+                  <>
+                    <div className="flex gap-2 items-center">
+                      <Select
+                        isMulti
+                        options={Array.isArray(specialties) ? specialties : []}
+                        value={
+                          Array.isArray(specialties) && Array.isArray(editedData?.specialtiess)
+                            ? specialties.filter(opt => editedData.specialtiess.some(s => s.specialties === opt.label))
+                            : []
+                        }
+                        onChange={(selected) => {
+                          if (editedData) {
+                            setEditedData({
+                              ...editedData,
+                              specialtiess: Array.isArray(selected)
+                                ? selected.map(opt => ({ id: crypto.randomUUID(), specialties: opt.label }))
+                                : [],
+                            });
+                          }
+                        }}
+                        placeholder="اختر أو اكتب فئات التجارة"
+                        className="w-full"
+                        classNamePrefix="select"
+                        styles={{
+                          control: (base, state) => ({
+                            ...base,
+                            borderRadius: '0.75rem',
+                            borderColor: state.isFocused ? '#2563eb' : '#e5e7eb',
+                            boxShadow: state.isFocused ? '0 0 0 1px #2563eb' : 'none',
+                            minHeight: '2.5rem',
+                          }),
+                          option: (base, state) => ({
+                            ...base,
+                            backgroundColor: state.isSelected
+                              ? '#dbeafe'
+                              : state.isFocused
+                                ? '#f1f5f9'
+                                : 'white',
+                            color: state.isSelected ? '#2563eb' : '#1e293b',
+                            padding: '0.5rem 1rem',
+                          }),
+                          multiValue: (base) => ({
+                            ...base,
+                            backgroundColor: '#dbeafe',
+                            color: '#2563eb',
+                            borderRadius: '9999px',
+                            padding: '0 0.5rem',
+                          }),
+                          multiValueLabel: (base) => ({
+                            ...base,
+                            color: '#2563eb',
+                          }),
+                          multiValueRemove: (base) => ({
+                            ...base,
+                            color: '#2563eb',
+                            transition: '.5s',
+                            ':hover': {
+                              backgroundColor: '#2563eb',
+                              color: 'white',
+                            },
+                          }),
+                        }}
+                        noOptionsMessage={() => "لا توجد خيارات"}
+                      />
+
+                    </div>
+                  </>
                 )}
               </div>
             </motion.div>
@@ -1172,3 +1141,19 @@ export default function ClinicProfile() {
     </Suspense>
   );
 }
+
+const normalizeTimeInput = (input: string) => {
+  // Remove any whitespace
+  input = input.trim();
+  // If input is just a number (e.g., "7" or "12"), convert to "07:00" or "12:00"
+  if (/^\d{1,2}$/.test(input)) {
+    return input.padStart(2, '0') + ':00';
+  }
+  // If input is "7:30" or "12:15", pad hour if needed
+  if (/^\d{1,2}:\d{2}$/.test(input)) {
+    const [h, m] = input.split(':');
+    return h.padStart(2, '0') + ':' + m;
+  }
+  // Otherwise, return as is
+  return input;
+};

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/Toast';
 import { clinicService } from '../services/clinic.service';
 import type {
+  ClinicDto,
   ClinicFilterDto,
   ClinicStatus,
   CreateUpdateClinicDto,
@@ -43,6 +44,17 @@ export const useClinic = () => {
       enabled: !!id,
     });
 
+    const UpdateUserInf = (clinicDetails: ClinicDto) =>
+    useQuery({
+      queryKey: ['UpdateUserInf', clinicDetails],
+      queryFn: async () => {
+        const response = await clinicService.UpdateUserInf(clinicDetails);
+        if (response) {
+        }
+        return response;
+      },
+      enabled: !!clinicDetails,
+    });
   const createOrUpdateClinic = useMutation({
     mutationFn: (data: CreateUpdateClinicDto & { id?: string }) =>
       clinicService.createOrUpdate(data),
@@ -95,5 +107,6 @@ export const useClinic = () => {
     createOrUpdateClinic,
     deleteClinic,
     updateClinicStatus,
+    UpdateUserInf
   };
 };

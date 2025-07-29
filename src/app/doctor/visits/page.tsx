@@ -3,11 +3,10 @@
 import { useState } from 'react';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Table, type Column } from '@/components/common/Table';
-import { ActivitySquare, CalendarDays, Eye, MoreVertical } from 'lucide-react';
+import { ActivitySquare, Eye, MoreVertical } from 'lucide-react';
 import Link from 'next/link';
 import { useVisit } from '@/lib/api/hooks/useVisit';
 import { VisitListDto, VisitStatus } from '@/lib/api/types/treatment';
-import { useAuth } from '@/lib/api/hooks/useAuth';
 import {
   getVisitStatusClass,
   getVisitStatusLabel,
@@ -15,13 +14,10 @@ import {
 } from '@/utils/textUtils';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
 import { useRouter } from 'next/navigation';
-import { SelectOption } from '@/lib/api/types/select-option';
 
 export default function VisitsPage() {
   const router = useRouter();
 
-  const { user } = useAuth();
-  const clinicId = user?.clinicInfo?.id || '';
 
   // States
   const [filter, setFilter] = useState<FilterState>({
@@ -71,8 +67,8 @@ export default function VisitsPage() {
       accessor: 'currentStatus',
       cell: ({ row }) => {
         const status = row.original.currentStatus;
-        let statusClass = getVisitStatusClass(status);
-        let statusText = getVisitStatusLabel(status);
+        const statusClass = getVisitStatusClass(status);
+        const statusText = getVisitStatusLabel(status);
 
         return (
           <span

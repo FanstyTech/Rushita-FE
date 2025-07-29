@@ -45,6 +45,16 @@ async getOne(id: string): Promise<ClinicDto> {
   return response.result; // فقط بيانات العيادة
 }
 
+async UpdateUserInf(clinicDetails: ClinicDto): Promise<boolean> {
+  const response = await apiClient.put<{ success: boolean; message: string; result: boolean }>(
+    `${API_ENDPOINTS.CLINIC.UpdateUserInf}`,
+    {
+        clinicDetails
+   }
+  );
+  return response.result; 
+}
+
   async getForEdit(id: string): Promise<ApiResponse<CreateUpdateClinicDto>> {
     const response = await apiClient.get<ApiResponse<CreateUpdateClinicDto>>(
       `${API_ENDPOINTS.CLINIC.GET_FOR_EDIT}`,
@@ -118,3 +128,11 @@ async getOne(id: string): Promise<ClinicDto> {
 }
 
 export const clinicService = new ClinicService();
+
+export async function updateClinicInfo(id: string, clinicDetails: ClinicDto): Promise<ClinicDto> {
+  const response = await apiClient.put<{ result: ClinicDto }>(
+    `/api/clinics/${id}`,
+    clinicDetails
+  );
+  return response.result;
+}

@@ -132,10 +132,13 @@ export const API_ENDPOINTS = {
     UPLOAD_IMAGE: '/clinic/uploadImage',
     UPDATE_STATUS: '/clinic/updateStatus',
     UPDATE_LOCATION: '/clinic/updateLocation',
+    UpdateUserInf: '/clinic/UpdateUserInf',
+
   },
   CLINIC_STAFF: {
     LIST: '/clinicStaff/getAll',
     CREATE_OR_UPDATE: '/clinicStaff/createOrUpdate',
+    GET_BY_ID: '/clinicStaff/GetById',
     GET_ONE: '/clinicStaff/:id',
     GET_FOR_EDIT: '/clinicStaff/getClinicStaffForEdit',
     GET_FOR_DROPDOWN: '/clinicStaff/getClinicStaffForDropdown',

@@ -18,14 +18,15 @@ export enum StaffType {
 
 export interface ClinicStaffDto {
   id: string;
-  nameL: string;
-  nameF: string;
-  name: string;
   email: string;
+  address: string;
+  name: string;
+  specialization:string;
   phoneNumber: string;
-  specialtyId?: string;
-  imageUrl?: string;
-  status: ClinicStaffStatus;
+  dateOfBirth?: string; 
+  clinicId : string,
+  personId : string,
+  specialtyId:string 
 }
 
 export interface UpdateClinicStaffStatusDto {

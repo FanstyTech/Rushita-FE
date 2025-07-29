@@ -42,8 +42,13 @@ export interface ClinicDto {
   latitude?: number;
   longitude?: number;
   workingHours : WorkingHours[]
-  specialtiess:string[]
+  specialtiess:Specialtiessdto[]
   staffdto:staffdto[]
+}
+
+export interface Specialtiessdto {
+  id: string; 
+  specialties: string;
 }
 export interface staffdto{
   id: string;
