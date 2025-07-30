@@ -41,14 +41,16 @@ export default function RayTests({
   };
 
   return (
-    <div className="bg-gray-50 p-4 rounded-lg mt-4">
+    <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg mt-4">
       <div className="flex justify-between items-center mb-4">
-        <h4 className="text-base font-medium text-gray-800">Ray Tests</h4>
+        <h4 className="text-base font-medium text-gray-800 dark:text-gray-200">
+          Ray Tests
+        </h4>
         <Button
           variant={'ghost'}
           type="button"
           onClick={handleAddRay}
-          className="p-2 text-blue-600 hover:bg-gray-100 rounded"
+          className="p-2 text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="Add Medication"
         >
           <Plus className="h-4 w-4 " />
@@ -58,18 +60,18 @@ export default function RayTests({
       <div className="space-y-4">
         {rays.map((ray, index) => (
           <div
-            key={`ray-${index}-${Date.now()}`}
-            className="p-4 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200"
+            key={ray.id || index}
+            className="p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow duration-200"
           >
             <div className="flex justify-between items-center mb-3">
-              <h4 className="text-sm font-medium text-gray-700">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Ray Test #{index + 1}
               </h4>
               <Button
                 type="button"
                 variant={'ghost'}
                 onClick={() => handleRemoveRay(index)}
-                className="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
                 title="Remove Ray Test"
               >
                 <Trash className="h-4 w-4" />
@@ -141,7 +143,7 @@ export default function RayTests({
         ))}
 
         {rays.length === 0 && (
-          <div className="text-center py-6 text-gray-500 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+          <div className="text-center py-6 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
             <p>No ray tests added yet. Click "Add Ray Test" to begin.</p>
           </div>
         )}

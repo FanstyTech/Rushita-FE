@@ -61,10 +61,10 @@ export default function PatientInfoSection({
   );
 
   return (
-    <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="border-b border-gray-100 bg-white px-6 py-4">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Patient Information {isReadOnly && '(Read Only)'}
+    <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div className="border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Patient Information
         </h2>
       </div>
       <div className="p-6">
@@ -74,18 +74,18 @@ export default function PatientInfoSection({
             {isReadOnly ? (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Patient
                   </label>
-                  <div className="px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-700">
+                  <div className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                     {selectedPatientData?.patientName || 'N/A'}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Visit Type
                   </label>
-                  <div className="px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-700">
+                  <div className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                     {visitType === VisitType.New
                       ? 'New Visit'
                       : 'Follow-up Visit'}
@@ -132,27 +132,27 @@ export default function PatientInfoSection({
 
           {/* Patient Details */}
           {selectedPatient && selectedPatientLoading && (
-            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
               <div className="flex justify-between items-start">
-                <div className="h-5 w-32 bg-gray-200 rounded animate-pulse"></div>
-                <div className="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-5 w-32 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
+                <div className="h-5 w-20 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="h-4 w-12 bg-gray-200 rounded animate-pulse mb-1"></div>
-                  <div className="h-5 w-24 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 w-12 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-1"></div>
+                  <div className="h-5 w-24 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
                 </div>
                 <div>
-                  <div className="h-4 w-12 bg-gray-200 rounded animate-pulse mb-1"></div>
-                  <div className="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 w-12 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-1"></div>
+                  <div className="h-5 w-16 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
                 </div>
                 <div>
-                  <div className="h-4 w-12 bg-gray-200 rounded animate-pulse mb-1"></div>
-                  <div className="h-5 w-10 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 w-12 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-1"></div>
+                  <div className="h-5 w-10 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
                 </div>
                 <div>
-                  <div className="h-4 w-12 bg-gray-200 rounded animate-pulse mb-1"></div>
-                  <div className="h-5 w-24 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 w-12 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-1"></div>
+                  <div className="h-5 w-24 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
                 </div>
               </div>
             </div>
@@ -160,39 +160,47 @@ export default function PatientInfoSection({
           {selectedPatient &&
             !selectedPatientLoading &&
             selectedPatientData && (
-              <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
                 <div className="flex justify-between items-start">
-                  <h3 className="text-sm font-medium text-gray-900">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Patient Details
                   </h3>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100">
                     ID: {selectedPatientData?.patientNumber}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-500">Name</p>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Name
+                    </p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {selectedPatientData?.patientName}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Age</p>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Age
+                    </p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {selectedPatientData?.age} years
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Blood Type</p>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Blood Type
+                    </p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {getBloodTypeLabel(
                         selectedPatientData?.bloodType || BloodType.AB_Negative
                       )}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Phone</p>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Phone
+                    </p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {selectedPatientData?.phoneNumber}
                     </p>
                   </div>

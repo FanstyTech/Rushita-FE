@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { Loader2 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -10,24 +11,23 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700',
+          'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 dark:from-blue-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:to-purple-600',
         destructive:
-          'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+          'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/80 dark:hover:bg-destructive',
         outline:
-          'bg-transparent hover:bg-secend  hover:text-white  text-gray-700 border-gray-700 border',
+          'bg-transparent hover:bg-secend hover:text-white text-gray-700 border-gray-700 border dark:text-gray-300 dark:border-gray-500 dark:hover:bg-secend/80',
         outlinetow:
-          'bg-transparent     text-foreground border-foreground border',
+          'bg-transparent text-foreground border-foreground border dark:text-gray-300 dark:border-gray-500',
         secondary:
-          'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
+          'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 dark:bg-secondary/80 dark:text-secondary-foreground/90 dark:hover:bg-secondary',
         ghost:
-          'bg-white text-gray-700 hover:opacity-90 hover:bg-gray-50  ',
-        link: 'text-gray-color/50 underline-offset-4 hover:text-secend  ',
+          'bg-white text-gray-700 hover:bg-gray-50 dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800',
+        link: 'text-gray-color/50 underline-offset-4 hover:text-secend dark:text-gray-400 dark:hover:text-secend/90',
         lineargradian:
-          'bg-gradient-to-r from-primary to-secend text-white    hover:opacity-80   ',
-        none: 'block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300',
-        PlanButton: 'text-white bg-secend',
-        editButton: "text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors backdrop-blur-sm",
-        SaveButton: "bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+          'bg-gradient-to-r from-primary to-secend text-white hover:opacity-80 dark:from-primary/90 dark:to-secend/90',
+        none: 'block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300 dark:text-gray-300',
+        PlanButton:
+          'text-white bg-secend dark:bg-secend/90 dark:hover:bg-secend',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
@@ -48,10 +48,12 @@ function Button({
   variant,
   size,
   asChild = false,
+  isLoading = false,
   ...props
 }: React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    isLoading?: boolean;
   }) {
   const Comp = asChild ? Slot : 'button';
 
@@ -59,8 +61,15 @@ function Button({
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={isLoading || props.disabled}
       {...props}
-    />
+    >
+      {isLoading ? (
+        <Loader2 className="w-5 h-5 animate-spin" />
+      ) : (
+        props.children
+      )}
+    </Comp>
   );
 }
 

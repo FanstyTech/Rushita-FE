@@ -18,7 +18,13 @@ export default function SymptomsAndDiagnosis({
   control,
 }: SymptomsAndDiagnosisProps) {
   return (
-    <div className="space-y-4">
+    <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
+      <div className="mb-3">
+        <h4 className="text-base font-medium text-gray-800 dark:text-gray-200">
+          Symptoms & Diagnosis
+        </h4>
+      </div>
+
       {/* Symptoms */}
       <TextArea
         {...register(`symptoms`)}

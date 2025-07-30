@@ -55,6 +55,7 @@ export interface ClinicStaffListDto {
   specialtyName: string;
   staffType: StaffType;
   status: ClinicStaffStatus;
+  userId: string;
 }
 
 export interface ClinicStaffFilterDto extends PaginationRequest {

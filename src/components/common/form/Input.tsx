@@ -60,9 +60,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
             {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
+            {required && (
+              <span className="text-red-500 dark:text-red-400 ml-1">*</span>
+            )}
           </label>
         )}
 
@@ -80,7 +82,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               // Base styles
               'block w-full px-4 py-3 rounded-xl transition-all duration-200',
               // Text and placeholder colors
-              'text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500',
+              'text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500',
               // Background colors
               'bg-white dark:bg-gray-800',
               // Border styles
@@ -99,15 +101,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 'focus:border-red-500 dark:focus:border-red-400',
                 'focus:ring-red-500/20 dark:focus:ring-red-400/20',
               ],
-              // Focus states
-              'focus:outline-none focus-visible:outline-none',
-              // Disabled states
-              'disabled:bg-gray-50 dark:disabled:bg-gray-900',
-              'disabled:text-gray-400 dark:disabled:text-gray-600',
-              'disabled:border-gray-200 dark:disabled:border-gray-700',
-              'disabled:cursor-not-allowed',
-              // Shadow for depth
-              hasBorder && 'shadow-2xs dark:shadow-gray-900/10',
+              // Disabled state
+              props.disabled &&
+                'opacity-70 cursor-not-allowed bg-gray-100 dark:bg-gray-700',
+              // Custom classes
               className
             )}
           />
@@ -117,6 +114,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
         </div>
+
         {(error || helperText) && (
           <p
             className={twMerge(

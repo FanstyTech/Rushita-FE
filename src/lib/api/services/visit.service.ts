@@ -15,21 +15,7 @@ import type {
   VisitStatusHistoryDto,
   CreateOrUpdateVisitDto,
 } from '../types/treatment';
-
-// Helper function to convert filter to query parameters
-const convertFilterToParams = (
-  filter: VisitFilterDto
-): Record<string, string> => {
-  const params: Record<string, string> = {};
-
-  Object.entries(filter).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      params[key] = String(value);
-    }
-  });
-
-  return params;
-};
+import { convertFilterToParams, FilterParams } from '@/utils/filter';
 
 export const visitService = {
   // Get paginated list of visits
@@ -37,7 +23,7 @@ export const visitService = {
     filter: VisitFilterDto
   ): Promise<ApiResponse<PaginationResponse<VisitListDto>>> {
     return apiClient.get(API_ENDPOINTS.VISIT_ENDPOINTS.LIST, {
-      params: convertFilterToParams(filter),
+      params: convertFilterToParams(filter as FilterParams),
     });
   },
 

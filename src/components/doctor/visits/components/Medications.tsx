@@ -58,14 +58,16 @@ export default function Medications({
   };
 
   return (
-    <div className="bg-gray-50 p-4 rounded-lg mt-4">
+    <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg mt-4">
       <div className="flex justify-between items-center mb-3">
-        <h4 className="text-sm font-medium text-gray-700">Medications</h4>
+        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Medications
+        </h4>
         <Button
           type="button"
           variant={'ghost'}
           onClick={handleAddMedication}
-          className="p-2 text-blue-600 hover:bg-gray-100 rounded"
+          className="p-2 text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="Add Medication"
         >
           <Plus className="h-4 w-4 " />
@@ -75,10 +77,10 @@ export default function Medications({
         {medications.map((med, index) => (
           <div
             key={med.id || index}
-            className="p-4 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200"
+            className="p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow duration-200"
           >
             <div className="flex justify-between items-center mb-3">
-              <h4 className="text-sm font-medium text-gray-700">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Medication #{index + 1}
               </h4>
               {medications.length > 1 && (
@@ -86,7 +88,7 @@ export default function Medications({
                   type="button"
                   onClick={() => handleRemoveMedication(index)}
                   variant="ghost"
-                  className="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                  className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
                   title="Remove Medication"
                 >
                   <Trash className="h-4 w-4 " />
@@ -115,7 +117,7 @@ export default function Medications({
                 {errors.medications &&
                   Array.isArray(errors.medications) &&
                   errors.medications[index]?.name && (
-                    <p className="text-xs text-red-500 mt-1">
+                    <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                       {(errors.medications[index]?.name?.message as string) ||
                         'Medication name is required'}
                     </p>

@@ -10,11 +10,11 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
 import AppointmentSkeleton from '@/components/skeletons/AppointmentSkeleton';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Card } from '@/components/ui/card';
-import Button from '@/components/common/Button';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useAppointments } from '@/lib/api/hooks/useAppointments';
 import {
   AppointmentListDto,
@@ -165,7 +165,6 @@ export default function AppointmentsPage() {
 
   useEffect(() => {
     if (appointmentForEditData) {
-      console.log(appointmentForEditData);
       const appointmentData = appointmentForEditData;
 
       // Set appointment details
@@ -285,18 +284,23 @@ export default function AppointmentsPage() {
                           <div className="text-sm text-gray-500">
                             {appointment.patientName} -{' '}
                             {VisitType[appointment.type]}
+                            <Badge variant="secondary">
+                              {appointment.staffName}
+                            </Badge>
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-4">
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => handleEditAppointment(appointment)}
                           className="inline-flex items-center p-2 border border-gray-300 rounded-md text-sm font-medium bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
                           <PencilIcon className="h-4 w-4" />
                           <span className="sr-only">Edit</span>
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="ghost"
                           onClick={() => {
                             setShowDeleteConfirm(true);
                             setSelectedAppointmentFoDelete(appointment?.id);
@@ -305,7 +309,7 @@ export default function AppointmentsPage() {
                         >
                           <TrashIcon className="h-4 w-4" />
                           <span className="sr-only">Delete</span>
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </li>

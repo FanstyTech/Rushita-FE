@@ -361,7 +361,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
     <div className="space-y-6">
       {isLoadingVisit && visitId ? (
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
         </div>
       ) : (
         <>
@@ -387,9 +387,9 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
           {/* Treatment Form Section */}
           {selectedPatient && (
             <form onSubmit={handleSubmit(onSubmit)}>
-              <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="border-b border-gray-100 bg-white px-6 py-4">
-                  <h2 className="text-lg font-semibold text-gray-900">
+              <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     Treatment Information
                   </h2>
                 </div>
@@ -435,32 +435,6 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
                     isLoading={isLoadingRayTests}
                   />
 
-                  {/* {formData.visitType === VisitType.Followup && (
-                    <DentalChart
-                      selectedTeeth={formData.selectedTeeth || []}
-                      onTeethSelect={(teeth) =>
-                        setValue('selectedTeeth', teeth as number[])
-                      }
-                      procedures={formData.dentalProcedures || []}
-                      onProcedureAdd={async (procedure) => {
-                        const currentProcedures =
-                          formData.dentalProcedures || [];
-                        setValue('selectedTeeth', []);
-                        setValue('dentalProcedures', [
-                          ...currentProcedures,
-                          procedure,
-                        ]);
-                      }}
-                      onProcedureRemove={(index) => {
-                        const newProcedures = [
-                          ...(formData.dentalProcedures || []),
-                        ];
-                        newProcedures.splice(index, 1);
-                        setValue('dentalProcedures', newProcedures);
-                      }}
-                    />
-                  )} */}
-
                   <Notes
                     register={register}
                     control={control}
@@ -477,11 +451,11 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
                   />
 
                   {/* Form Actions */}
-                  <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+                  <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
                     <button
                       type="button"
                       onClick={() => window.history.back()}
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
                     >
                       <ArrowLeftIcon className="h-5 w-5 mr-2" />
                       Previous
@@ -491,7 +465,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
                       <button
                         type="button"
                         onClick={() => setShowTreatmentDetails(true)}
-                        className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
                       >
                         Preview
                       </button>

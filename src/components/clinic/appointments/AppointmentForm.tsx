@@ -12,6 +12,10 @@ import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import { useClinicStaff } from '@/lib/api/hooks/useClinicStaff';
 import { GetPatientDropdownInput } from '@/lib/api/types/clinic-patient';
 import { GetClinicStaffForDropdownInput } from '@/lib/api/types/clinic-staff';
+import { useAuth } from '@/lib/api/hooks/useAuth';
+import { PermissionKeys } from '@/config/permissions';
+import { hasPermission } from '@/utils/permissions';
+import { Button } from '@/components/ui/button';
 
 interface AppointmentFormProps {
   clinicId: string;
@@ -43,6 +47,9 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   appointmentDetails,
   setAppointmentDetails,
 }) => {
+  // Get user from auth context
+  const { user } = useAuth();
+
   // Patient state
   const [selectedPatient, setSelectedPatient] = useState<{
     value: string;
@@ -61,6 +68,31 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   const [debouncedStaffSearchQuery, setDebouncedStaffSearchQuery] =
     useState('');
 
+  // Check if user has only ManageSelfAppointments permission
+  const userPermissions = user?.permissions || [];
+  const hasManageSelfAppointments = hasPermission(
+    PermissionKeys.MANAGE_SELF_APPOINTMENTS,
+    userPermissions
+  );
+  const hasManageAnyAppointments = hasPermission(
+    PermissionKeys.MANAGE_ANY_APPOINTMENTS,
+    userPermissions
+  );
+  const shouldAutoSelectSelf =
+    hasManageSelfAppointments && !hasManageAnyAppointments;
+
+  // Auto-select staff if user only has ManageSelfAppointments permission
+  useEffect(() => {
+    if (shouldAutoSelectSelf && user?.clinicInfo?.staffId && !selectedStaff) {
+      const selfStaff = {
+        value: user.clinicInfo.staffId,
+        label: user.name,
+      };
+      setSelectedStaff(selfStaff);
+      onStaffChange(selfStaff);
+    }
+  }, [shouldAutoSelectSelf, user, onStaffChange, selectedStaff]);
+
   // Sync initial values with parent component if they change
   useEffect(() => {
     if (initialPatient !== undefined) {
@@ -69,10 +101,10 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   }, [initialPatient]);
 
   useEffect(() => {
-    if (initialStaff !== undefined) {
+    if (initialStaff !== undefined && !shouldAutoSelectSelf) {
       setSelectedStaff(initialStaff);
     }
-  }, [initialStaff]);
+  }, [initialStaff, shouldAutoSelectSelf]);
 
   // API hooks
   const { usePatientDropdown } = useClinicPatients();
@@ -124,7 +156,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   const staffFilter = useMemo<GetClinicStaffForDropdownInput>(
     () => ({
       clinicId,
-      fitler: debouncedStaffSearchQuery, // Note: API expects 'fitler' (typo in API)
+      filter: debouncedStaffSearchQuery, // Note: API expects 'filter'
     }),
     [clinicId, debouncedStaffSearchQuery]
   );
@@ -254,6 +286,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
       label: option.label || '', // Convert null to empty string if needed
     }));
   }, [staffOptions]);
+
   return (
     <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
       {/* Staff Selection */}
@@ -270,6 +303,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
               noOptionsMessage={
                 shouldFetchStaff ? 'No staff found' : 'Type to search for staff'
               }
+              disabled={shouldAutoSelectSelf}
             />
           ) : (
             <div className="flex items-center justify-between bg-green-50 dark:bg-green-950 p-3 rounded-md">
@@ -281,13 +315,17 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   </span>
                 </div>
               </div>
-              <button
-                type="button"
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                onClick={clearSelectedStaff}
-              >
-                <X className="h-4 w-4" />
-              </button>
+              {!shouldAutoSelectSelf && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                  onClick={clearSelectedStaff}
+                  disabled={shouldAutoSelectSelf}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           )}
         </div>
@@ -319,13 +357,14 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   </span>
                 </div>
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 onClick={clearSelectedPatient}
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           )}
         </div>
