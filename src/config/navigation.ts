@@ -20,6 +20,8 @@ import {
   ClipboardDocumentCheckIcon,
   SparklesIcon,
   Cog6ToothIcon,
+  BanknotesIcon,
+  CurrencyDollarIcon,
 } from '@heroicons/react/24/outline';
 import type { NavItem } from '@/types/navigation';
 import { PermissionKeys } from './permissions';
@@ -252,6 +254,7 @@ export const clinicNav: NavItem[] = [
     icon: UserGroupIcon,
     permission: PermissionKeys.VIEW_PATIENTS,
   },
+
   {
     name: 'Staff',
     id: 'clinic-staff',
@@ -325,7 +328,21 @@ export const clinicNav: NavItem[] = [
       },
     ],
   },
-
+  {
+    name: 'Financial',
+    id: 'clinic-financial',
+    icon: BanknotesIcon,
+    permission: PermissionKeys.VIEW_FINANCIALS,
+    children: [
+      {
+        name: 'Service Prices',
+        id: 'clinic-financial-service-prices',
+        href: '/clinic/financial/service-prices',
+        icon: CurrencyDollarIcon,
+        permission: PermissionKeys.MANAGE_SERVICE_PRICES,
+      },
+    ],
+  },
   {
     name: 'Reports',
     id: 'clinic-reports',

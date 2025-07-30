@@ -13,7 +13,6 @@ import { getFrequencyTypeLabel, getVisitTypeLabel } from '@/utils/textUtils';
 import {
   CalendarDays,
   FileText,
-  DotSquare,
   PenLine,
   Pill,
   Stethoscope,

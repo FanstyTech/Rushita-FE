@@ -270,7 +270,7 @@ export default function PatientForm({
                   {...register('bloodType', { valueAsNumber: true })}
                   options={Object.entries(BloodType)
                     .filter(([key]) => isNaN(Number(key)))
-                    .map(([key, value]) => ({
+                    .map(([_, value]) => ({
                       value: value.toString(),
                       label: bloodTypeDisplayNames[value as BloodType],
                     }))}

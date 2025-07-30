@@ -39,51 +39,7 @@ import { useVisit } from '@/lib/api/hooks/useVisit';
 import { useDiagnosis } from '@/lib/api/hooks/useDiagnosis';
 import { Button } from '@/components/ui/button';
 import { CreateOrUpdateVisitDto } from '@/lib/api/types/treatment';
-
-// Validation Schemas
-const medicationSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1, 'Medication name is required'),
-  dosage: z.string().min(1, 'Dosage is required'),
-  frequency: z.coerce.number().min(1, 'Frequency is required'),
-  duration: z.coerce.number().min(1, 'Duration is required'),
-  notes: z.string().optional(),
-});
-
-const labTestSchema = z.object({
-  id: z.string().min(1, 'Lab test name is required'),
-  name: z.string().optional(),
-  notes: z.string().optional(),
-});
-
-const rayTestSchema = z.object({
-  id: z.string().min(1, 'Ray test name is required'),
-  name: z.string().optional(),
-  notes: z.string().optional(),
-});
-
-const dentalProcedureSchema = z.object({
-  teeth: z.array(z.number()),
-  type: z.string().min(1, 'Dental procedure type is required'),
-  notes: z.string().optional(),
-});
-
-const treatmentFormSchema = z.object({
-  patientId: z.string().min(1, 'Patient selection is required'),
-  visitType: z.coerce.number().min(1, 'Visit Type is required'),
-
-  symptoms: z.string().min(1, 'Symptoms are required'),
-  diagnosis: z.string().min(1, 'Diagnosis is required'),
-  medications: z.array(medicationSchema),
-  labTests: z.array(labTestSchema),
-  rays: z.array(rayTestSchema),
-  notes: z.string().optional(),
-  selectedTeeth: z.array(z.number()).optional(),
-  dentalProcedures: z.array(dentalProcedureSchema).optional(),
-  attachments: z.array(z.any()).optional(),
-});
-
-type TreatmentFormData = z.infer<typeof treatmentFormSchema>;
+import { TreatmentFormData, treatmentFormSchema } from './validation';
 
 interface Attachment {
   id: string;
@@ -155,10 +111,8 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
   const [patientSearchQuery, setPatientSearchQuery] = useState('');
   const [debouncedPatientSearchQuery, setDebouncedPatientSearchQuery] =
     useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
 
   // Modal States
-  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [showAddPatient, setShowAddPatient] = useState(false);
   const [showMedicationSearch, setShowMedicationSearch] = useState(false);
   const [showTreatmentDetails, setShowTreatmentDetails] = useState(false);
@@ -316,12 +270,6 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
     setShowMedicationSearch(false);
   };
 
-  const handleAdvancedSearch = async () => {
-    // Implement advanced search logic here
-    setShowAdvancedSearch(false);
-    setShowDropdown(true);
-  };
-
   const handlePreviewFile = (file: Attachment) => {
     setPreviewFile(file);
     setShowPreviewModal(true);
@@ -361,7 +309,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
     <div className="space-y-6">
       {isLoadingVisit && visitId ? (
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
         </div>
       ) : (
         <>
@@ -376,7 +324,6 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
             setSelectedPatient={handlePatientSelect}
             selectedPatientData={selectedPatientData || undefined}
             selectedPatientLoading={selectedPatientLoading}
-            onShowAdvancedSearch={() => setShowAdvancedSearch(true)}
             onShowAddPatient={() => setShowAddPatient(true)}
             register={register}
             errors={errors}
@@ -387,9 +334,9 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
           {/* Treatment Form Section */}
           {selectedPatient && (
             <form onSubmit={handleSubmit(onSubmit)}>
-              <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="border-b border-gray-100 bg-white px-6 py-4">
-                  <h2 className="text-lg font-semibold text-gray-900">
+              <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     Treatment Information
                   </h2>
                 </div>
@@ -435,32 +382,6 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
                     isLoading={isLoadingRayTests}
                   />
 
-                  {/* {formData.visitType === VisitType.Followup && (
-                    <DentalChart
-                      selectedTeeth={formData.selectedTeeth || []}
-                      onTeethSelect={(teeth) =>
-                        setValue('selectedTeeth', teeth as number[])
-                      }
-                      procedures={formData.dentalProcedures || []}
-                      onProcedureAdd={async (procedure) => {
-                        const currentProcedures =
-                          formData.dentalProcedures || [];
-                        setValue('selectedTeeth', []);
-                        setValue('dentalProcedures', [
-                          ...currentProcedures,
-                          procedure,
-                        ]);
-                      }}
-                      onProcedureRemove={(index) => {
-                        const newProcedures = [
-                          ...(formData.dentalProcedures || []),
-                        ];
-                        newProcedures.splice(index, 1);
-                        setValue('dentalProcedures', newProcedures);
-                      }}
-                    />
-                  )} */}
-
                   <Notes
                     register={register}
                     control={control}
@@ -477,11 +398,11 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
                   />
 
                   {/* Form Actions */}
-                  <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+                  <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
                     <button
                       type="button"
                       onClick={() => window.history.back()}
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
                     >
                       <ArrowLeftIcon className="h-5 w-5 mr-2" />
                       Previous
@@ -491,7 +412,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
                       <button
                         type="button"
                         onClick={() => setShowTreatmentDetails(true)}
-                        className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
                       >
                         Preview
                       </button>

@@ -190,4 +190,33 @@ export const API_ENDPOINTS = {
     GET_RADIOLOGY_TESTS: '/visit/:id/radiologyTests',
     GET_DENTAL_PROCEDURES: '/visit/:id/dentalProcedures',
   },
+  FINANCE_ENDPOINTS: {
+    SERVICE_PRICES: {
+      GET_LIST: '/service-price/getAll',
+      GET_ONE: '/service-price/getById',
+      GET_SUMMARY: '/service-price/getSummary',
+      CREATE_OR_UPDATE: '/service-price/createOrUpdate',
+      DELETE: '/service-price/delete',
+    },
+    SERVICES_BY_TYPE: '/servicePrice/getServicePriceByType',
+  },
+  ROLE: {
+    GET_LIST: '/role/getRoles',
+    GET_ONE: '/role/getRole',
+    CREATE: '/role/createOrUpdate',
+    UPDATE: '/role/createOrUpdate',
+    DELETE: '/role/delete',
+    UPDATE_PERMISSIONS: '/role/updatePermissions',
+  },
+  USER_ROLE: {
+    GET_USER_ROLES: '/role/getUserRoles',
+    UPDATE_USER_ROLES: '/role/updateUserRoles',
+    GET_USER_PERMISSIONS: '/role/getUserPermissions',
+    END_SESSION: '/role/endUserSession',
+  },
+  PERMISSION: {
+    GET_LIST: '/permission',
+    GET_MODULES: '/permission/modules',
+    GET_BY_MODULE: '/permission/by-module',
+  },
 } as const;

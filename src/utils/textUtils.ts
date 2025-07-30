@@ -2,7 +2,7 @@
  * Collection of text utility functions for common text operations
  */
 
-import { ClinicStatus, DayEnum,  StaffTypeEnum } from '@/lib/api/types/clinic';
+import { ClinicStatus, DayEnum, StaffTypeEnum } from '@/lib/api/types/clinic';
 import {
   AppointmentStatus,
   BloodType,
@@ -14,6 +14,7 @@ import {
   VisitType,
 } from '@/lib/api/types/clinic-patient';
 import { ClinicStaffStatus } from '@/lib/api/types/clinic-staff';
+import { ServiceType } from '@/lib/api/types/service-price';
 import { VisitStatus } from '@/lib/api/types/treatment';
 
 /**
@@ -371,9 +372,7 @@ export const getAppointmentStatusClass = (
   return statusMap[status] || 'bg-gray-50 text-gray-400';
 };
 
-
 export const getDayLabel = (day: DayEnum): string => {
-
   // Blood type display names mapping
   const dayNames: Record<DayEnum, string> = {
     [DayEnum.Sunday]: 'Sunday',
@@ -385,36 +384,64 @@ export const getDayLabel = (day: DayEnum): string => {
     [DayEnum.Saturday]: 'Saturday',
   };
 
-
-  return dayNames[day] ||"unknown";
+  return dayNames[day] || 'unknown';
 };
 
 export const ConvartDayLabel = (day: string): number => {
-
   // Blood type display names mapping
-  const dayNames: Record< string,DayEnum> = {
-    ["Sunday"]:DayEnum.Sunday,
-     ['Monday']:DayEnum.Monday,
-    ['Tuesday']:DayEnum.Tuesday ,
-    ['Wednesday']:DayEnum.Wednesday ,
-    ['Thursday']:DayEnum.Thursday ,
-    ['Friday']:DayEnum.Friday ,
-    ['Saturday']:DayEnum.Saturday ,
+  const dayNames: Record<string, DayEnum> = {
+    ['Sunday']: DayEnum.Sunday,
+    ['Monday']: DayEnum.Monday,
+    ['Tuesday']: DayEnum.Tuesday,
+    ['Wednesday']: DayEnum.Wednesday,
+    ['Thursday']: DayEnum.Thursday,
+    ['Friday']: DayEnum.Friday,
+    ['Saturday']: DayEnum.Saturday,
   };
 
   return dayNames[day] || day;
 };
 
-export const GetStaffType=(StaffType:StaffTypeEnum):string=>{
-const Type: Record<StaffTypeEnum,string>={
-     [StaffTypeEnum.ClinicAdministrator]: 'ClinicAdministrator',
-     [StaffTypeEnum.Doctor]: 'Doctor',
-     [StaffTypeEnum.Nurse]: 'Nurse',
-     [StaffTypeEnum.Receptionist]: 'Receptionist',
-     [StaffTypeEnum.FinancialStaff]: 'FinancialStaff',
-     [StaffTypeEnum.LabTechnician]: 'LabTechnician',
-     [StaffTypeEnum.Pharmacist]: 'Pharmacist',
+export const GetStaffType = (StaffType: StaffTypeEnum): string => {
+  const Type: Record<StaffTypeEnum, string> = {
+    [StaffTypeEnum.ClinicAdministrator]: 'ClinicAdministrator',
+    [StaffTypeEnum.Doctor]: 'Doctor',
+    [StaffTypeEnum.Nurse]: 'Nurse',
+    [StaffTypeEnum.Receptionist]: 'Receptionist',
+    [StaffTypeEnum.FinancialStaff]: 'FinancialStaff',
+    [StaffTypeEnum.LabTechnician]: 'LabTechnician',
+    [StaffTypeEnum.Pharmacist]: 'Pharmacist',
+  };
+  return Type[StaffType] || 'Unknown';
 };
-return Type[StaffType]||"Unknown"
 
-}
+export const getServiceTypeColor = (type: ServiceType): string => {
+  const typeColorMap: Record<ServiceType, string> = {
+    [ServiceType.Visit]:
+      'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+    [ServiceType.Prescription]:
+      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+    [ServiceType.LabTest]:
+      'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+    [ServiceType.Radiology]:
+      'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300',
+    [ServiceType.Dental]:
+      'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300',
+  };
+
+  return (
+    typeColorMap[type] ||
+    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+  );
+};
+export const getServiceTypeLabel = (type: ServiceType): string => {
+  const typeNameMap: Record<ServiceType, string> = {
+    [ServiceType.Visit]: 'Visit',
+    [ServiceType.Prescription]: 'Prescription',
+    [ServiceType.LabTest]: 'Lab Test',
+    [ServiceType.Radiology]: 'Radiology',
+    [ServiceType.Dental]: 'Dental',
+  };
+
+  return typeNameMap[type] || 'Unknown';
+};

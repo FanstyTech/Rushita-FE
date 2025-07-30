@@ -14,7 +14,9 @@ export const PermissionKeys = {
   VIEW_PATIENT_HISTORY: 'clinic.patients.history.view',
 
   // Appointment Management
-  MANAGE_APPOINTMENTS: 'clinic.appointments.manage',
+
+  MANAGE_ANY_APPOINTMENTS: 'clinic.appointments.manage.any',
+  MANAGE_SELF_APPOINTMENTS: 'clinic.appointments.manage.self',
   VIEW_APPOINTMENTS: 'clinic.appointments.view',
   CANCEL_APPOINTMENTS: 'clinic.appointments.cancel',
 
@@ -22,6 +24,7 @@ export const PermissionKeys = {
   MANAGE_FINANCIALS: 'clinic.financials.manage',
   VIEW_FINANCIALS: 'clinic.financials.view',
   MANAGE_INVOICES: 'clinic.financials.invoices.manage',
+  MANAGE_SERVICE_PRICES: 'clinic.financials.serviceprices.manage',
 
   // Medical Records
   MANAGE_MEDICAL_RECORDS: 'clinic.medical.records.manage',

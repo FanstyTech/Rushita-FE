@@ -1,4 +1,4 @@
-import { PaginationRequest, PaginationResponse } from './pagination';
+import { PaginationRequest } from './pagination';
 
 // Visit status enum (matching backend)
 export enum VisitStatus {
@@ -29,6 +29,7 @@ export enum VisitType {
 export interface VisitDto {
   id: string;
   visitNumber: string;
+  symptoms: string;
   patientId: string;
   patientName: string;
   staffId: string;
@@ -51,7 +52,7 @@ export interface VisitDto {
 export interface VisitDiagnosisDto {
   id?: string;
   visitId: string;
-  diagnosis: string;
+  name: string;
   notes?: string;
   createdAt?: string;
 }

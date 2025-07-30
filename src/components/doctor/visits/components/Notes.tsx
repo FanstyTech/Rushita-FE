@@ -7,11 +7,12 @@ import {
   Control,
   FieldErrors,
 } from 'react-hook-form';
+import { TreatmentFormData } from './validation';
 
 interface NotesProps {
-  register: UseFormRegister<any>;
-  control: Control<any>;
-  errors: FieldErrors;
+  register: UseFormRegister<TreatmentFormData>;
+  control: Control<TreatmentFormData>;
+  errors: FieldErrors<TreatmentFormData>;
 }
 
 export default function Notes({ register, control, errors }: NotesProps) {

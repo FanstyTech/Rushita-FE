@@ -32,6 +32,8 @@ import {
 } from '@/utils/textUtils';
 import ChangeStaffPasswordModal from '@/components/clinic/staff/ChangeStaffPasswordModal';
 import EmptyState from '@/components/common/EmptyState';
+import { ShieldCheck } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
 export default function ClinicStaffPage() {
   // 1. Authentication hook
@@ -163,6 +165,16 @@ export default function ClinicStaffPage() {
     }
   };
 
+  const handleManagePermissions = (staff: ClinicStaffListDto) => {
+    setSelectedStaffId(staff.id);
+  };
+
+  const handleEndSession = () => {
+    window.confirm(
+      "Are you sure you want to end this user's session? They will be logged out immediately."
+    );
+  };
+
   return (
     <PageLayout>
       <div className="space-y-4">
@@ -249,7 +261,7 @@ export default function ClinicStaffPage() {
                       <MenuButton className="p-2 hover:bg-gray-50 rounded-lg transition-colors">
                         <MoreVertical className="w-5 h-5 text-gray-400" />
                       </MenuButton>
-                      <MenuItems className="absolute right-0 mt-2 w-48 origin-top-right bg-white rounded-xl shadow-lg border border-gray-100 focus:outline-none">
+                      <MenuItems className="w-60 absolute right-0 mt-2 origin-top-right bg-white rounded-xl shadow-lg border border-gray-100 focus:outline-none">
                         <div className="py-2">
                           <MenuItem>
                             {({ active }) => (
@@ -274,6 +286,32 @@ export default function ClinicStaffPage() {
                               >
                                 <Key className="w-4 h-4" />
                                 Change Password
+                              </button>
+                            )}
+                          </MenuItem>
+                          <MenuItem>
+                            {({ active }) => (
+                              <button
+                                onClick={() => handleManagePermissions(staff)}
+                                className={`${
+                                  active ? 'bg-blue-50' : ''
+                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-blue-600`}
+                              >
+                                <ShieldCheck className="w-4 h-4" />
+                                Manage Permissions
+                              </button>
+                            )}
+                          </MenuItem>
+                          <MenuItem>
+                            {({ active }) => (
+                              <button
+                                onClick={() => handleEndSession()}
+                                className={`${
+                                  active ? 'bg-orange-50' : ''
+                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-orange-600`}
+                              >
+                                <LogOut className="w-4 h-4" />
+                                End Session
                               </button>
                             )}
                           </MenuItem>
