@@ -1,6 +1,6 @@
 'use client';
 
-import { Input, Select, TextArea } from '@/components/common/form';
+import { Select, TextArea } from '@/components/common/form';
 import { SelectOption } from '@/lib/api/types/select-option';
 import {
   Controller,
@@ -11,14 +11,15 @@ import {
 import { CreateOrUpdateVisitLabTestDto } from '@/lib/api/types/treatment';
 import { Plus, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { TreatmentFormData } from './validation';
 
 interface LabTestsProps {
   labTests: CreateOrUpdateVisitLabTestDto[];
   availableTests: SelectOption<string>[];
   onLabTestsChange: (labTests: CreateOrUpdateVisitLabTestDto[]) => void;
-  register: UseFormRegister<any>;
-  control: Control<any>;
-  errors: FieldErrors;
+  register: UseFormRegister<TreatmentFormData>;
+  control: Control<TreatmentFormData>;
+  errors: FieldErrors<TreatmentFormData>;
   isLoading?: boolean;
 }
 

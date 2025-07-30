@@ -1,70 +1,139 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { permissionService } from '../services/permission.service';
 import { toast } from 'sonner';
+import { PermissionFilterDto } from '../types/permission';
 
-// Hook to get all permissions
-export const usePermissions = () => {
-  return useQuery({
-    queryKey: ['permissions'],
-    queryFn: () => permissionService.getPermissions(),
-  });
-};
+export function usePermission() {
+  const queryClient = useQueryClient();
 
-// Hook to get permission modules
-export const usePermissionModules = () => {
-  return useQuery({
-    queryKey: ['permissionModules'],
-    queryFn: () => permissionService.getModules(),
-  });
-};
+  // Get all permissions
+  const usePermissionsList = () =>
+    useQuery({
+      queryKey: ['permissions'],
+      queryFn: async () => {
+        const response = await permissionService.getPermissions();
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch permissions');
+        }
+        return response.result;
+      },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      retry: false,
+    });
 
-// Hook to get permissions grouped by modules
-export const usePermissionsByModules = () => {
-  return useQuery({
-    queryKey: ['permissionsByModules'],
-    queryFn: () => permissionService.getPermissionsByModules(),
-  });
-};
+  // Get permission modules
+  const usePermissionModules = () =>
+    useQuery({
+      queryKey: ['permissionModules'],
+      queryFn: async () => {
+        const response = await permissionService.getModules();
+        if (!response.success) {
+          throw new Error(
+            response.message || 'Failed to fetch permission modules'
+          );
+        }
+        return response.result;
+      },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      retry: false,
+    });
 
-// Hook to get permissions for a specific module
-export const usePermissionsByModule = (module: string) => {
-  return useQuery({
-    queryKey: ['permissions', 'byModule', module],
-    queryFn: () => permissionService.getPermissionsByModule(module),
-    enabled: !!module,
-  });
-};
+  // Get permissions grouped by modules
+  const usePermissionsByModules = () =>
+    useQuery({
+      queryKey: ['permissionsByModules'],
+      queryFn: async () => {
+        const response = await permissionService.getPermissionsByModules();
+        if (!response.success) {
+          throw new Error(
+            response.message || 'Failed to fetch permissions by modules'
+          );
+        }
+        return response.result;
+      },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      retry: false,
+    });
 
-// Hook to get user permissions
-export const useUserPermissions = (userId: string) => {
-  return useQuery({
-    queryKey: ['userPermissions', userId],
-    queryFn: () => permissionService.getUserPermissions(userId),
-    enabled: !!userId,
-  });
-};
+  // Get permissions for a specific module
+  const usePermissionsByModule = (module: string) =>
+    useQuery({
+      queryKey: ['permissions', 'byModule', module],
+      queryFn: async () => {
+        const response = await permissionService.getPermissionsByModule(module);
+        if (!response.success) {
+          throw new Error(
+            response.message || 'Failed to fetch permissions for module'
+          );
+        }
+        return response.result;
+      },
+      enabled: !!module,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      retry: false,
+    });
 
-// Hook to update user permissions
-export const useUpdateUserPermissions = () => {
-  return useMutation({
-    mutationFn: ({
+  // Get user permissions
+  const useUserPermissions = (userId: string) =>
+    useQuery({
+      queryKey: ['userPermissions', userId],
+      queryFn: async () => {
+        const response = await permissionService.getUserPermissions(userId);
+        if (!response.success) {
+          throw new Error(
+            response.message || 'Failed to fetch user permissions'
+          );
+        }
+        return response.result;
+      },
+      enabled: !!userId,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      retry: false,
+    });
+
+  // Update user permissions mutation
+  const updateUserPermissions = useMutation({
+    mutationFn: async ({
       userId,
       permissionKeys,
     }: {
       userId: string;
       permissionKeys: string[];
-    }) => permissionService.updateUserPermissions(userId, permissionKeys),
-    onSuccess: (response) => {
-      if (response.success) {
-        toast.success('User permissions updated successfully');
-      } else {
-        toast.error(response.message || 'Failed to update user permissions');
-      }
-    },
-    onError: (error: any) => {
-      toast.error(
-        error.message || 'An error occurred while updating user permissions'
+    }) => {
+      const response = await permissionService.updateUserPermissions(
+        userId,
+        permissionKeys
       );
+      if (!response.success) {
+        throw new Error(
+          response.message || 'Failed to update user permissions'
+        );
+      }
+      return response.result;
     },
+    onSuccess: (_, variables) => {
+      toast.success('User permissions updated successfully');
+      queryClient.invalidateQueries({
+        queryKey: ['userPermissions', variables.userId],
+      });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+    retry: false,
   });
-};
+
+  return {
+    usePermissionsList,
+    usePermissionModules,
+    usePermissionsByModules,
+    usePermissionsByModule,
+    useUserPermissions,
+    updateUserPermissions,
+  };
+}

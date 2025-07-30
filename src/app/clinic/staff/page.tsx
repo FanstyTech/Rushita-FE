@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { useClinicStaff } from '@/lib/api/hooks/useClinicStaff';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
-import { useEndUserSession } from '@/lib/api/hooks/useRole';
 import {
   CreateUpdateClinicStaffDto,
   ClinicStaffListDto,
@@ -73,9 +72,6 @@ export default function ClinicStaffPage() {
   } = useClinicStaff();
 
   const { useSpecialtiesDropdown } = useSpecialty();
-
-  const { mutate: endUserSession, isPending: isEndingSession } =
-    useEndUserSession();
 
   // 4. Query hooks
   const { data: staffList, isLoading: staffListLoading } =
@@ -173,20 +169,10 @@ export default function ClinicStaffPage() {
     setSelectedStaffId(staff.id);
   };
 
-  const handleEndSession = (id: string) => {
-    if (
-      window.confirm(
-        "Are you sure you want to end this user's session? They will be logged out immediately."
-      )
-    ) {
-      endUserSession(id, {
-        onSuccess: (response) => {
-          if (response.success) {
-            // toast.success('User session ended successfully');
-          }
-        },
-      });
-    }
+  const handleEndSession = () => {
+    window.confirm(
+      "Are you sure you want to end this user's session? They will be logged out immediately."
+    );
   };
 
   return (
@@ -319,7 +305,7 @@ export default function ClinicStaffPage() {
                           <MenuItem>
                             {({ active }) => (
                               <button
-                                onClick={() => handleEndSession(staff.id)}
+                                onClick={() => handleEndSession()}
                                 className={`${
                                   active ? 'bg-orange-50' : ''
                                 } flex items-center gap-2 w-full px-4 py-2 text-sm text-orange-600`}

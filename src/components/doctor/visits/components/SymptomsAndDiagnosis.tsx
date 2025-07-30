@@ -3,12 +3,13 @@
 import { TextArea, DiagnosisTreeSelector } from '@/components/common/form';
 import { GetDiagnosesTreeDto } from '@/lib/api/types/diagnosis';
 import { UseFormRegister, FieldErrors, Control } from 'react-hook-form';
+import { TreatmentFormData } from './validation';
 
 interface SymptomsAndDiagnosisProps {
   diagnosesTree: GetDiagnosesTreeDto[];
-  register: UseFormRegister<any>;
-  errors: FieldErrors;
-  control: Control<any>;
+  register: UseFormRegister<TreatmentFormData>;
+  errors: FieldErrors<TreatmentFormData>;
+  control: Control<TreatmentFormData>;
 }
 
 export default function SymptomsAndDiagnosis({

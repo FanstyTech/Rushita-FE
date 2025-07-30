@@ -11,14 +11,15 @@ import {
   FieldErrors,
 } from 'react-hook-form';
 import { Plus, Trash } from 'lucide-react';
+import { TreatmentFormData } from './validation';
 
 interface RayTestsProps {
   rays: CreateOrUpdateVisitRadiologyTestDto[];
   availableRays: SelectOption<string>[];
   onRaysChange: (rays: CreateOrUpdateVisitRadiologyTestDto[]) => void;
-  register: UseFormRegister<any>;
-  control: Control<any>;
-  errors: FieldErrors;
+  register: UseFormRegister<TreatmentFormData>;
+  control: Control<TreatmentFormData>;
+  errors: FieldErrors<TreatmentFormData>;
   isLoading?: boolean;
 }
 

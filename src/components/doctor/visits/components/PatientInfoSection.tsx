@@ -22,7 +22,6 @@ interface PatientInfoSectionProps {
   setSelectedPatient: (id: string) => void;
   selectedPatientData: GetPatientForViewDto | undefined;
   selectedPatientLoading: boolean;
-  onShowAdvancedSearch: () => void;
   onShowAddPatient: () => void;
   register: UseFormRegister<any>;
   errors: FieldErrors;
@@ -39,7 +38,6 @@ export default function PatientInfoSection({
   setSelectedPatient,
   selectedPatientData,
   selectedPatientLoading,
-  onShowAdvancedSearch,
   onShowAddPatient,
   register,
   errors,
@@ -211,13 +209,6 @@ export default function PatientInfoSection({
 
         {!isReadOnly && (
           <div className="flex justify-end mt-6 space-x-3">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={onShowAdvancedSearch}
-            >
-              Advanced Search
-            </Button>
             <Button type="button" onClick={onShowAddPatient}>
               Add New Patient
             </Button>

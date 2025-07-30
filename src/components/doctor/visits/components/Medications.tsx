@@ -14,6 +14,7 @@ import {
   FrequencyType,
 } from '@/lib/api/types/treatment';
 import { Trash, Plus, Search } from 'lucide-react';
+import { TreatmentFormData } from './validation';
 
 interface MedicationsProps {
   medications: CreateOrUpdateVisitPrescriptionDto[];
@@ -21,9 +22,9 @@ interface MedicationsProps {
     medications: CreateOrUpdateVisitPrescriptionDto[]
   ) => void;
   onShowMedicationSearch: (index: number) => void;
-  register: UseFormRegister<any>;
-  control: Control<any>;
-  errors: FieldErrors;
+  register: UseFormRegister<TreatmentFormData>;
+  control: Control<TreatmentFormData>;
+  errors: FieldErrors<TreatmentFormData>;
 }
 
 export default function Medications({

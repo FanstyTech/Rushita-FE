@@ -25,11 +25,6 @@ const roles = ['Admin', 'User', 'Manager', 'Analyst'];
 const statuses = ['Active', 'Inactive', 'Suspended', 'Seated', 'Unseated'];
 
 export default function UsersPage() {
-  const [selectedUser] = useState<{
-    id: number;
-    name: string;
-  } | null>(null);
-  const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState({
     search: '',

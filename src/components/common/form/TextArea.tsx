@@ -14,15 +14,7 @@ interface TextAreaProps
 
 const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   (
-    {
-      label,
-      error,
-      helperText,
-      className,
-      fullWidth = true,
-      hasBorder = true,
-      ...props
-    },
+    { label, error, helperText, className, fullWidth = true, ...props },
     ref
   ) => {
     return (

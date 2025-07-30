@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { Calendar } from '@/components/clinic/appointments/Calendar';
 import { format } from 'date-fns';
@@ -105,8 +105,9 @@ export default function AppointmentsPage() {
   const { data: appointmentsData, isLoading: appointmentsLoading } =
     useAppointmentsList(appointmentFilter);
 
-  const { data: appointmentForEditData, isLoading: appointmentForEditLoading } =
-    useAppointmentForEdit(selectedAppointment?.id || '');
+  const { data: appointmentForEditData } = useAppointmentForEdit(
+    selectedAppointment?.id || ''
+  );
 
   // Create or update appointment
   const handleCreateAppointment = async () => {

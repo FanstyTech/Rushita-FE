@@ -45,7 +45,6 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
       className,
       fullWidth = true,
       options,
-      hasBorder = true,
       value,
       onChange,
       placeholder,

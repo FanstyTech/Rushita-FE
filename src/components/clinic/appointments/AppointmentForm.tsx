@@ -35,7 +35,14 @@ interface AppointmentFormProps {
     endTime: string;
     notes: string;
   };
-  setAppointmentDetails: React.Dispatch<React.SetStateAction<any>>;
+  setAppointmentDetails: React.Dispatch<
+    React.SetStateAction<{
+      type: VisitType;
+      startTime: string;
+      endTime: string;
+      notes: string;
+    }>
+  >;
 }
 
 const AppointmentForm: React.FC<AppointmentFormProps> = ({

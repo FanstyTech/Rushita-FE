@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Search, ChevronRight, ChevronDown, Check, X } from 'lucide-react';
+import { Search, ChevronRight, ChevronDown, Check } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import { Input } from '@/components/ui/input';
 import { GetDiagnosesTreeDto } from '@/lib/api/types/diagnosis';

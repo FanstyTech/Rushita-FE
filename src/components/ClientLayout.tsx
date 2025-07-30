@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Loading from '@/components/Splash';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -26,7 +26,7 @@ export default function ClientLayout({
   languages,
 }: ClientLayoutProps) {
   const pathname = usePathname();
-  const { language, direction, isChangingLanguage } = useLanguage();
+  const { isChangingLanguage } = useLanguage();
   const [isMounted, setIsMounted] = useState(false);
 
   // Check if it's a landing page (either root '/' or just a language prefix like '/ar' or '/en')

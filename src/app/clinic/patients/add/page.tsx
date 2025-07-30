@@ -16,52 +16,46 @@ export default function PatientActionPage() {
   const { createOrUpdatePatient } = useClinicPatients();
 
   const handleSubmit = async (data: PatientFormData) => {
-    console.log('Form Data:', data);
-    try {
-      // Validate required fields
-      if (!data.fNameF) {
-        toast.error('First name is required');
-        return;
-      }
+    // Validate required fields
+    if (!data.fNameF) {
+      toast.error('First name is required');
+      return;
+    }
 
-      if (!data.phoneNumber) {
-        toast.error('Phone number is required');
-        return;
-      }
+    if (!data.phoneNumber) {
+      toast.error('Phone number is required');
+      return;
+    }
 
-      if (!data.dateOfBirth) {
-        toast.error('Date of birth is required');
-        return;
-      }
+    if (!data.dateOfBirth) {
+      toast.error('Date of birth is required');
+      return;
+    }
 
-      const formattedData: CreateUpdateClinicPatientDto = {
-        ...data,
-        fNameL: data.fNameL || undefined,
-        sNameF: data.sNameF || undefined,
-        tNameF: data.tNameF || undefined,
-        lNameF: data.lNameF || undefined,
-        sNameL: data.sNameL || undefined,
-        tNameL: data.tNameL || undefined,
-        lNameL: data.lNameL || undefined,
-        email: data.email || undefined,
-        address: data.address || undefined,
-        countryId: data.countryId || undefined,
-        cityId: data.cityId || undefined,
-        bloodType: Number(data.bloodType) || undefined,
-        height: data.height || undefined,
-        weight: data.weight || undefined,
-        gender: Number(data.gender),
-      };
+    const formattedData: CreateUpdateClinicPatientDto = {
+      ...data,
+      fNameL: data.fNameL || undefined,
+      sNameF: data.sNameF || undefined,
+      tNameF: data.tNameF || undefined,
+      lNameF: data.lNameF || undefined,
+      sNameL: data.sNameL || undefined,
+      tNameL: data.tNameL || undefined,
+      lNameL: data.lNameL || undefined,
+      email: data.email || undefined,
+      address: data.address || undefined,
+      countryId: data.countryId || undefined,
+      cityId: data.cityId || undefined,
+      bloodType: Number(data.bloodType) || undefined,
+      height: data.height || undefined,
+      weight: data.weight || undefined,
+      gender: Number(data.gender),
+    };
 
-      const result = await createOrUpdatePatient.mutateAsync(formattedData);
+    const result = await createOrUpdatePatient.mutateAsync(formattedData);
 
-      if (result) {
-        router.push('/clinic/patients');
-        router.refresh();
-      }
-    } catch (error: any) {
-      console.error('Error:', error);
-      toast.error(error?.message || 'Failed to save patient');
+    if (result) {
+      router.push('/clinic/patients');
+      router.refresh();
     }
   };
 

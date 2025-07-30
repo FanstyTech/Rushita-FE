@@ -1,177 +1,223 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import { roleService } from '../services/role.service';
 import {
   CreateRoleDto,
-  RoleDetailDto,
-  RoleDto,
   RoleFilterDto,
   UpdateRoleDto,
   UpdateRolePermissionsDto,
   UpdateUserRolesDto,
 } from '../types/role';
 
-export const useRoles = (filter: RoleFilterDto = {}) => {
-  return useQuery({
-    queryKey: ['roles', filter],
-    queryFn: () => roleService.getRoles(filter),
-    retry: false,
-  });
-};
-
-export const useRole = (id: string) => {
-  return useQuery({
-    queryKey: ['role', id],
-    queryFn: () => roleService.getRole(id),
-    retry: false,
-    enabled: !!id,
-  });
-};
-
-export const useUserRoles = (userId: string) => {
-  return useQuery({
-    queryKey: ['userRoles', userId],
-    queryFn: () => roleService.getUserRoles(userId),
-    retry: false,
-    enabled: !!userId,
-  });
-};
-
-export const useUserPermissions = (userId: string) => {
-  return useQuery({
-    queryKey: ['userPermissions', userId],
-    queryFn: () => roleService.getUserPermissions(userId),
-    retry: false,
-    enabled: !!userId,
-  });
-};
-
-export const useCreateRole = () => {
+export function useRole() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (data: CreateRoleDto) => roleService.createRole(data),
-    onSuccess: (response) => {
-      if (response.success) {
-        toast.success('Role created successfully');
-        queryClient.invalidateQueries({ queryKey: ['roles'] });
-      } else {
-        toast.error(response.message || 'Failed to create role');
+  // Get roles with optional filtering
+  const useRolesList = (filter: RoleFilterDto = {}) =>
+    useQuery({
+      queryKey: ['roles', filter],
+      queryFn: async () => {
+        const response = await roleService.getRoles(filter);
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch roles');
+        }
+        return response.result;
+      },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      retry: false,
+    });
+
+  // Get single role by ID
+  const useRoleDetails = (id: string) =>
+    useQuery({
+      queryKey: ['role', id],
+      queryFn: async () => {
+        const response = await roleService.getRole(id);
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch role');
+        }
+        return response.result;
+      },
+      enabled: !!id,
+      retry: false,
+    });
+
+  // Get user roles
+  const useUserRoles = (userId: string) =>
+    useQuery({
+      queryKey: ['userRoles', userId],
+      queryFn: async () => {
+        const response = await roleService.getUserRoles(userId);
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch user roles');
+        }
+        return response.result;
+      },
+      enabled: !!userId,
+      retry: false,
+    });
+
+  // Get user permissions
+  const useUserPermissions = (userId: string) =>
+    useQuery({
+      queryKey: ['userPermissions', userId],
+      queryFn: async () => {
+        const response = await roleService.getUserPermissions(userId);
+        if (!response.success) {
+          throw new Error(
+            response.message || 'Failed to fetch user permissions'
+          );
+        }
+        return response.result;
+      },
+      enabled: !!userId,
+      retry: false,
+    });
+
+  // Create role mutation
+  const createRole = useMutation({
+    mutationFn: async (data: CreateRoleDto) => {
+      const response = await roleService.createRole(data);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to create role');
       }
+      return response.result;
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to create role');
+    onSuccess: () => {
+      toast.success('Role created successfully');
+      queryClient.invalidateQueries({ queryKey: ['roles'] });
     },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+    retry: false,
   });
-};
 
-export const useUpdateRole = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateRoleDto }) =>
-      roleService.updateRole(id, data),
-    onSuccess: (response, variables) => {
-      if (response.success) {
-        toast.success('Role updated successfully');
-        queryClient.invalidateQueries({ queryKey: ['roles'] });
-        queryClient.invalidateQueries({ queryKey: ['role', variables.id] });
-      } else {
-        toast.error(response.message || 'Failed to update role');
+  // Update role mutation
+  const updateRole = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: UpdateRoleDto }) => {
+      const response = await roleService.updateRole(id, data);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to update role');
       }
+      return response.result;
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to update role');
+    onSuccess: (_, variables) => {
+      toast.success('Role updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['roles'] });
+      queryClient.invalidateQueries({ queryKey: ['role', variables.id] });
     },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+    retry: false,
   });
-};
 
-export const useDeleteRole = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => roleService.deleteRole(id),
-    onSuccess: (response) => {
-      if (response.success) {
-        toast.success('Role deleted successfully');
-        queryClient.invalidateQueries({ queryKey: ['roles'] });
-      } else {
-        toast.error(response.message || 'Failed to delete role');
+  // Delete role mutation
+  const deleteRole = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await roleService.deleteRole(id);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to delete role');
       }
+      return response.result;
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to delete role');
+    onSuccess: () => {
+      toast.success('Role deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ['roles'] });
     },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+    retry: false,
   });
-};
 
-export const useUpdateRolePermissions = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
+  // Update role permissions mutation
+  const updateRolePermissions = useMutation({
+    mutationFn: async ({
       roleId,
       data,
     }: {
       roleId: string;
       data: UpdateRolePermissionsDto;
-    }) => roleService.updateRolePermissions(roleId, data),
-    onSuccess: (response, variables) => {
-      if (response.success) {
-        toast.success('Role permissions updated successfully');
-        queryClient.invalidateQueries({ queryKey: ['role', variables.roleId] });
-      } else {
-        toast.error(response.message || 'Failed to update role permissions');
+    }) => {
+      const response = await roleService.updateRolePermissions(roleId, data);
+      if (!response.success) {
+        throw new Error(
+          response.message || 'Failed to update role permissions'
+        );
       }
+      return response.result;
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to update role permissions');
+    onSuccess: (_, variables) => {
+      toast.success('Role permissions updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['role', variables.roleId] });
     },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+    retry: false,
   });
-};
 
-export const useUpdateUserRoles = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
+  // Update user roles mutation
+  const updateUserRoles = useMutation({
+    mutationFn: async ({
       userId,
       data,
     }: {
       userId: string;
       data: UpdateUserRolesDto;
-    }) => roleService.updateUserRoles(userId, data),
-    onSuccess: (response, variables) => {
-      if (response.success) {
-        toast.success('User roles updated successfully');
-        queryClient.invalidateQueries({
-          queryKey: ['userRoles', variables.userId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['userPermissions', variables.userId],
-        });
-      } else {
-        toast.error(response.message || 'Failed to update user roles');
+    }) => {
+      const response = await roleService.updateUserRoles(userId, data);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to update user roles');
       }
+      return response.result;
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to update user roles');
+    onSuccess: (_, variables) => {
+      toast.success('User roles updated successfully');
+      queryClient.invalidateQueries({
+        queryKey: ['userRoles', variables.userId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['userPermissions', variables.userId],
+      });
     },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+    retry: false,
   });
-};
 
-export const useEndUserSession = () => {
-  return useMutation({
-    mutationFn: (userId: string) => roleService.endUserSession(userId),
-    onSuccess: (response) => {
-      if (response.success) {
-        toast.success('User session ended successfully');
-      } else {
-        toast.error(response.message || 'Failed to end user session');
+  // End user session mutation
+  const endUserSession = useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await roleService.endUserSession(userId);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to end user session');
       }
+      return response.result;
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to end user session');
+    onSuccess: () => {
+      toast.success('User session ended successfully');
     },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+    retry: false,
   });
-};
+
+  return {
+    useRolesList,
+    useRoleDetails,
+    useUserRoles,
+    useUserPermissions,
+    createRole,
+    updateRole,
+    deleteRole,
+    updateRolePermissions,
+    updateUserRoles,
+    endUserSession,
+  };
+}

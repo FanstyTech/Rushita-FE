@@ -49,7 +49,7 @@ export default function ServicePricesPage() {
       clinicId,
       filter: '', // Note: API expects 'filter'
     }),
-    [clinicId, '']
+    [clinicId]
   );
 
   const [filter, setFilter] = useState<FilterState>({
