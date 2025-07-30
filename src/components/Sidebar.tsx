@@ -44,7 +44,7 @@ export function NavigationItem({
             'w-full group flex items-center  px-3 py-2 rounded-lg transition-all duration-200',
             isActive
               ? 'bg-indigo-100 text-indigo-700 font-semibold'
-              : 'text-gray-700 hover:bg-gray-100',
+              : 'dark:hover:bg-card hover:bg-primary-foreground',
             isCollapsed ? 'justify-center' : 'justify-between',
             level > 0 && !isCollapsed ? 'ml-2' : ''
           )}
@@ -100,8 +100,8 @@ export function NavigationItem({
       className={classNames(
         'group flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200',
         isActive
-          ? 'bg-indigo-100 text-indigo-700 font-semibold'
-          : 'text-gray-700 hover:bg-gray-100',
+          ? 'text-red-300'
+          : 'dark:hover:bg-card hover:bg-primary-foreground',
         level > 0 && !isCollapsed ? 'ml-2' : ''
       )}
     >

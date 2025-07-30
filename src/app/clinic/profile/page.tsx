@@ -23,6 +23,8 @@ import { ClinicDto } from '@/lib/api/types/clinic';
 import Select from "react-select";
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 
 const EditableField = dynamic(() => import('@/components/EditableField'), {
@@ -43,15 +45,6 @@ function ClinicProfileContent() {
   const { useSpecialtiesDropdown: getSpecialtiesForDropdown } = useSpecialty();
   const { data: specialties } = getSpecialtiesForDropdown();
 
-  // const [newSpecialty, setNewSpecialty] = useState('');
-  // const [errorSpecialty, setErrorSpecialty] = useState<boolean>(false);
-  // const [newStaffMember, setNewStaffMember] = useState({
-  //   id: '',
-  //   name: '',
-  //   role: '',
-  //   image: '/images/staff/placeholder.jpg',
-  //   speciality: '',
-  // });
 
   const [newOffer, setNewOffer] = useState({
     title: '',
@@ -209,6 +202,7 @@ function ClinicProfileContent() {
   if (data) {
     return (
       <PageLayout>
+
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-8">
           <div className="relative h-48 bg-gradient-to-r from-blue-600 to-purple-600">
             {isEditing && (
@@ -217,7 +211,7 @@ function ClinicProfileContent() {
               </button>
             )}
           </div>
-          <div className="relative px-6 pb-6">
+          <Card className="relative  px-6 pb-6 rounded-none" >
             <div className="flex flex-col md:flex-row md:items-end md:justify-between">
               <div className="flex items-end">
                 <div className="relative -mt-16 mb-4">
@@ -249,14 +243,15 @@ function ClinicProfileContent() {
                         onClick={() => fileInputRef.current?.click()}
                         className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-sm border border-gray-200 hover:bg-gray-50"
                       >
-                        <Camera className="w-4 h-4 text-gray-600" />
+                        <Camera className="w-4 h-4 " />
                       </button>
                     </>
                   )}
                 </div>
-                <div className="ml-4">
+                <div className="rtl:mr-4 ml-4">
                   {isEditing ? (
                     <EditableField
+                      className='mt-3 mb-1'
                       value={editedData?.name || ""}
                       onChange={(value) => {
                         console.log(1)
@@ -266,11 +261,11 @@ function ClinicProfileContent() {
                       }
                     />
                   ) : (
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-2xl font-bold text-card-foreground">
                       {editedData?.name || ""}
                     </h1>
                   )}
-                  <p className="text-gray-600">Healthcare Provider</p>
+                  <p className="text-foreground">Healthcare Provider</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -292,17 +287,17 @@ function ClinicProfileContent() {
                     </Button>
                   </>
                 ) : (
-                  <button
+                  <Button
+                    variant="outlinetow"
                     onClick={() => setIsEditing(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors duration-200"
                   >
                     <Edit className="w-4 h-4" />
                     Edit Profile
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
-          </div>
+          </Card>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -312,24 +307,26 @@ function ClinicProfileContent() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-sm p-6"
+              className="  shadow-sm "
             >
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">About</h2>
-              {isEditing ? (
-                <EditableField
-                  value={editedData?.bio || ""}
-                  onChange={(value) => {
-                    if (editedData)
-                      setEditedData({ ...editedData, bio: value })
-                  }
-                  }
-                  multiline
-                />
-              ) : (
-                <p className="text-gray-600 leading-relaxed">
-                  {editedData?.bio}
-                </p>
-              )}
+              <Card className='p-6 gap-0'>
+                <h2 className="text-xl font-semibold mb-4 ">About</h2>
+                {isEditing ? (
+                  <EditableField
+                    value={editedData?.bio || ""}
+                    onChange={(value) => {
+                      if (editedData)
+                        setEditedData({ ...editedData, bio: value })
+                    }
+                    }
+                    multiline
+                  />
+                ) : (
+                  <p className=" leading-relaxed">
+                    {editedData?.bio}
+                  </p>
+                )}
+              </Card>
             </motion.div>
 
             {/* Services Section */}
@@ -337,13 +334,14 @@ function ClinicProfileContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white rounded-2xl shadow-sm p-6"
+              className=""
             >
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">
-                Services
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* {editedData.services.map((service, index) => (
+              <Card className='p-6'>
+                <h2 className="text-xl font-semibold mb-4 ">
+                  Services
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* {editedData.services.map((service, index) => (
                   <div
                     key={index}
                     className="p-4 rounded-xl border border-gray-100 hover:border-blue-100 transition-colors duration-200"
@@ -397,55 +395,56 @@ function ClinicProfileContent() {
                     ) : (
                       <>
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold text-gray-900">
+                          <h3 className="font-semibold ">
                             {service.name}
                           </h3>
                           <span className="text-blue-600 font-medium">
                             {service.price}
                           </span>
                         </div>
-                        <p className="text-gray-600 text-sm">
+                        <p className=" text-sm">
                           {service.description}
                         </p>
                       </>
                     )}
                   </div>
                 ))} */}
-                {isEditing && (
-                  <div className="p-4 rounded-xl border-2 border-dashed border-gray-200">
-                    <div className="space-y-3">
-                      <EditableField
-                        value={newService.name}
-                        onChange={(value) =>
-                          setNewService({ ...newService, name: value })
-                        }
-                        label="Service Name"
-                      />
-                      <EditableField
-                        value={newService.description}
-                        onChange={(value) =>
-                          setNewService({ ...newService, description: value })
-                        }
-                        label="Description"
-                      />
-                      <EditableField
-                        value={newService.price}
-                        onChange={(value) =>
-                          setNewService({ ...newService, price: value })
-                        }
-                        label="Price"
-                      />
-                      {/* <button
+                  {isEditing && (
+                    <div className="p-4 rounded-xl border-2 border-dashed border-gray-200">
+                      <div className="space-y-3">
+                        <EditableField
+                          value={newService.name}
+                          onChange={(value) =>
+                            setNewService({ ...newService, name: value })
+                          }
+                          label="Service Name"
+                        />
+                        <EditableField
+                          value={newService.description}
+                          onChange={(value) =>
+                            setNewService({ ...newService, description: value })
+                          }
+                          label="Description"
+                        />
+                        <EditableField
+                          value={newService.price}
+                          onChange={(value) =>
+                            setNewService({ ...newService, price: value })
+                          }
+                          label="Price"
+                        />
+                        {/* <button
                         onClick={addService}
                         className="w-full py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center gap-2"
                       >
                         <Plus className="w-4 h-4" />
                         Add Service
                       </button> */}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              </Card>
             </motion.div>
 
             {/* Offers Section */}
@@ -453,13 +452,14 @@ function ClinicProfileContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-2xl shadow-sm p-6"
+              className="shadow-md"
             >
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">
-                Special Offers
-              </h2>
-              <div className="grid grid-cols-1 gap-4">
-                {/* {editedData.offers.map((offer, index) => (
+              <Card className='p-6'>
+                <h2 className="text-xl font-semibold mb-4 ">
+                  Special Offers
+                </h2>
+                <div className="grid grid-cols-1 gap-4">
+                  {/* {editedData.offers.map((offer, index) => (
                   <div
                     key={index}
                     className="p-4 border rounded-xl hover:border-blue-200 transition-colors"
@@ -476,7 +476,7 @@ function ClinicProfileContent() {
                           label="Offer Title"
                         />
                       ) : (
-                        <h3 className="text-lg font-medium text-gray-900">
+                        <h3 className="text-lg font-medium ">
                           {offer.title}
                         </h3>
                       )}
@@ -519,7 +519,7 @@ function ClinicProfileContent() {
                         label="Valid Until"
                       />
                     ) : (
-                      <p className="text-gray-600 text-sm">
+                      <p className=" text-sm">
                         Valid until {offer.validUntil}
                       </p>
                     )}
@@ -547,60 +547,61 @@ function ClinicProfileContent() {
                     )}
                   </div>
                 ))} */}
-                {isEditing && (
-                  <div className="p-4 rounded-xl border-2 border-dashed border-gray-200">
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <EditableField
-                          value={newOffer.title}
-                          onChange={(value) =>
-                            setNewOffer({ ...newOffer, title: value })
-                          }
-                          label="Offer Title"
-                        />
+                  {isEditing && (
+                    <div className="p-4 rounded-xl border-2 border-dashed border-gray-200">
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <EditableField
+                            value={newOffer.title}
+                            onChange={(value) =>
+                              setNewOffer({ ...newOffer, title: value })
+                            }
+                            label="Offer Title"
+                          />
 
-                        <div className="text-right">
-                          <div className="relative">
-                            <Percent className="mt-3 absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                            <EditableField
-                              value={newOffer.discount}
-                              onChange={(value) =>
-                                setNewOffer({ ...newOffer, discount: value })
-                              }
-                              label="Discount"
-                              className="pl-8"
-                            />
+                          <div className="text-right">
+                            <div className="relative">
+                              <Percent className="mt-3 absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                              <EditableField
+                                value={newOffer.discount}
+                                onChange={(value) =>
+                                  setNewOffer({ ...newOffer, discount: value })
+                                }
+                                label="Discount"
+                                className="pl-8"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <EditableField
-                        value={newOffer.validUntil}
-                        onChange={(value) =>
-                          setNewOffer({ ...newOffer, validUntil: value })
-                        }
-                        label="Valid Until"
-                      />
+                        <EditableField
+                          value={newOffer.validUntil}
+                          onChange={(value) =>
+                            setNewOffer({ ...newOffer, validUntil: value })
+                          }
+                          label="Valid Until"
+                        />
 
-                      <EditableField
-                        value={newOffer.description}
-                        onChange={(value) =>
-                          setNewOffer({ ...newOffer, description: value })
-                        }
-                        label="Description"
-                        multiline
-                      />
-                      {/* <button
+                        <EditableField
+                          value={newOffer.description}
+                          onChange={(value) =>
+                            setNewOffer({ ...newOffer, description: value })
+                          }
+                          label="Description"
+                          multiline
+                        />
+                        {/* <button
                         onClick={addOffer}
                         className="w-full py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center gap-2"
                       >
                         <Plus className="w-4 h-4" />
                         Add Offer
                       </button> */}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              </Card>
             </motion.div>
 
             {/* Staff Section */}
@@ -608,152 +609,49 @@ function ClinicProfileContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-2xl shadow-sm p-6"
+              className=""
             >
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">
-                Medical Staff
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {editedData?.staffdto.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-blue-100 transition-colors duration-200"
-                  >
-                    <div className="relative">
-                      {/* <Image
+              <Card className='p-6'>
+
+                <h2 className="text-xl font-semibold mb-4 ">
+                  Medical Staff
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {editedData?.staffdto.map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-blue-100 transition-colors duration-200"
+                    >
+                      <div className="relative">
+                        {/* <Image
                         src={member.image}
                         alt={member.name}
                         width={64}
                         height={64}
                         className="rounded-full"
                       /> */}
-                      {/* {isEditing && (
+                        {/* {isEditing && (
                         <button className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-sm border border-gray-200">
                           <Camera className="w-3 h-3 text-gray-600" />
                         </button>
                       )} */}
-                    </div>
-                    {/* {isEditing ? (
-                      <div className="flex-1 space-y-2">
-                        <EditableField
-                          value={member.name}
-                          onChange={(value) => {
-                            if (editedData)
-                              setEditedData({
-                                ...editedData,
-                                staffdto: editedData.staffdto.map((s) =>
-                                  s.id === member.id ? { ...s, name: value } : s
-                                ),
-                              })
-                          }
-                          }
-                          label="Name"
-                        />
-                        <EditableField
-                          value={member.id}
-                          onChange={(value) => {
-                            if (editedData)
-
-                              setEditedData({
-                                ...editedData,
-                                staffdto: editedData.staffdto.map((s) =>
-                                  s.id === member.id ? { ...s, role: value } : s
-                                ),
-                              })
-                          }
-                          }
-                          label="Role"
-                        />
-                        <EditableField
-                          value={member.specialty}
-                          onChange={(value) => {
-                            if (editedData)
-
-                              setEditedData({
-                                ...editedData,
-                                staffdto: editedData.staffdto.map((s) =>
-                                  s.id === member.id
-                                    ? { ...s, speciality: value }
-                                    : s
-                                ),
-                              })
-                          }
-                          }
-                          label="Speciality"
-                        />
-                        <button
-                          onClick={() => removeStaffMember(member.id)}
-                          className="text-red-500 hover:text-red-600 flex items-center gap-1 mt-2"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          Remove Staff Member
-                        </button>
                       </div>
-                    ) : ( */}
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
-                        {member.name}
-                      </h3>
-                      <p className="text-gray-600">{GetStaffType(member.staffType)}</p>
-                      <p className="text-sm text-blue-600">
-                        {member.specialty}
-                      </p>
-                    </div>
-                    {/* )} */}
-                  </div>
-                ))}
-                {/* {isEditing && (
-                  <div className="p-4 rounded-xl border-2 border-dashed border-gray-200">
-                    <div className="space-y-3">
-                      <div className="flex justify-center mb-4">
-                        <div className="relative">
-                          <Image
-                            src={newStaffMember.image}
-                            alt="New staff member"
-                            width={64}
-                            height={64}
-                            className="rounded-full"
-                          />
-                          <button className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-sm border border-gray-200">
-                            <Camera className="w-3 h-3 text-gray-600" />
-                          </button>
-                        </div>
+                      <div>
+                        <h3 className="font-semibold ">
+                          {member.name}
+                        </h3>
+                        <p className="text-foreground/50">{GetStaffType(member.staffType)}</p>
+                        <p className="text-sm text-blue-600">
+                          {member.specialty}
+                        </p>
                       </div>
-                      <EditableField
-                        value={newStaffMember.name}
-                        onChange={(value) =>
-                          setNewStaffMember({ ...newStaffMember, name: value })
-                        }
-                        label="Name"
-                      />
-                      <EditableField
-                        value={newStaffMember.role}
-                        onChange={(value) =>
-                          setNewStaffMember({ ...newStaffMember, role: value })
-                        }
-                        label="Role"
-                      />
-                      <EditableField
-                        value={newStaffMember.speciality}
-                        onChange={(value) =>
-                          setNewStaffMember({
-                            ...newStaffMember,
-                            speciality: value,
-                          })
-                        }
-                        label="Speciality"
-                      />
-                      {/* <button
-                        onClick={addStaffMember}
-                        className="w-full py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center gap-2"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Add Staff Member
-                      </button> 
+                      {/* )} */}
                     </div>
-                  </div>
-                )} */}
-              </div>
+                  ))}
+
+                </div>
+              </Card>
+
             </motion.div>
           </div>
 
@@ -763,50 +661,51 @@ function ClinicProfileContent() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-sm p-6"
+              className="  shadow-sm "
             >
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">
-                Contact Information
-              </h2>
-              <div className="space-y-4">
-                {isEditing ? (
-                  <>
-                    <EditableField
-                      value={editedData?.email || ""}
-                      onChange={(value) => {
-                        if (editedData) {
-                          setEditedData({ ...editedData, email: value })
+              <Card className='p-6 '>
+                <h2 className="text-xl font-semibold mb-4 ">
+                  Contact Information
+                </h2>
+                <div className="space-y-4">
+                  {isEditing ? (
+                    <>
+                      <EditableField
+                        value={editedData?.email || ""}
+                        onChange={(value) => {
+                          if (editedData) {
+                            setEditedData({ ...editedData, email: value })
+                          }
                         }
-                      }
-                      }
-                      label="Email"
-                    />
-                    <EditableField
-                      value={editedData?.phoneNumber || ""}
-                      onChange={(value) => {
-                        if (editedData) {
+                        }
+                        label="Email"
+                      />
+                      <EditableField
+                        value={editedData?.phoneNumber || ""}
+                        onChange={(value) => {
+                          if (editedData) {
 
-                          setEditedData({ ...editedData, phoneNumber: value })
+                            setEditedData({ ...editedData, phoneNumber: value })
+                          }
                         }
-                      }
-                      }
-                      label="Phone"
-                    />
-                    <EditableField
-                      value={editedData?.address || ""}
-                      onChange={(value) => {
-                        if (editedData) {
-                          setEditedData({ ...editedData, address: value })
                         }
-                      }
-                      }
-                      label="Address"
-                    />
-                    <div className="space-y-3">
-                      <h3 className="text-sm font-medium text-gray-700">
-                        Social Media
-                      </h3>
-                      {/* <EditableField
+                        label="Phone"
+                      />
+                      <EditableField
+                        value={editedData?.address || ""}
+                        onChange={(value) => {
+                          if (editedData) {
+                            setEditedData({ ...editedData, address: value })
+                          }
+                        }
+                        }
+                        label="Address"
+                      />
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-medium text-foreground ">
+                          Social Media
+                        </h3>
+                        {/* <EditableField
                         value={editedData.socialMedia.website}
                         onChange={(value) =>
                           setEditedData({
@@ -871,35 +770,35 @@ function ClinicProfileContent() {
                         }
                         label="LinkedIn"
                       /> */}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-start gap-3">
-                      <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
-                      <div>
-                        <p className="text-sm text-gray-600">Email</p>
-                        <p className="text-gray-900">{editedData?.email}</p>
                       </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
-                      <div>
-                        <p className="text-sm text-gray-600">Phone</p>
-                        <p className="text-gray-900">{editedData?.phoneNumber}</p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-start gap-3">
+                        <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
+                        <div>
+                          <p className="text-sm text-foreground/50">Email</p>
+                          <p className="">{editedData?.email}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
-                      <div>
-                        <p className="text-sm text-gray-600">Address</p>
-                        <p className="text-gray-900">{editedData?.address}</p>
+                      <div className="flex items-start gap-3">
+                        <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
+                        <div>
+                          <p className="text-sm text-foreground/50">Phone</p>
+                          <p className="">{editedData?.phoneNumber}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="pt-2 border-t">
-                      <p className="text-sm text-gray-600 mb-3">Social Media</p>
-                      <div className="flex gap-3">
-                        {/* {editedData.socialMedia.website && (
+                      <div className="flex items-start gap-3">
+                        <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                        <div>
+                          <p className="text-sm text-foreground/50">Address</p>
+                          <p className="">{editedData?.address}</p>
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t">
+                        <p className="text-sm text-foreground mb-3">Social Media</p>
+                        <div className="flex gap-3">
+                          {/* {editedData.socialMedia.website && (
                           <a
                             href={editedData.socialMedia.website}
                             target="_blank"
@@ -949,11 +848,12 @@ function ClinicProfileContent() {
                             <Linkedin className="w-5 h-5" />
                           </a>
                         )} */}
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
-              </div>
+                    </>
+                  )}
+                </div>
+              </Card>
             </motion.div>
 
             {/* Business Hours */}
@@ -961,75 +861,77 @@ function ClinicProfileContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white rounded-2xl shadow-sm p-6"
+              className=" shadow-sm "
             >
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">
-                Business Hours
-              </h2>
-              <div className="space-y-3">
-                {editedData?.workingHours.map((schedule, index) => (
-                  <div key={index} className="flex justify-between">
-                    {isEditing ? (
-                      <>
-                        <span className="text-gray-600">{getDayLabel(schedule.day).slice(0, 6)}{getDayLabel(schedule.day).length > 6 ? "..." : ""}</span>
+              <Card className='p-6'>
+                <h2 className="text-xl font-semibold mb-4 ">
+                  Business Hours
+                </h2>
+                <div className="space-y-3">
+                  {editedData?.workingHours.map((schedule, index) => (
+                    <div key={index} className="flex justify-between">
+                      {isEditing ? (
+                        <>
+                          <span className="">{getDayLabel(schedule.day).slice(0, 6)}{getDayLabel(schedule.day).length > 6 ? "..." : ""}</span>
 
-                        <div className='flex gap-2  justify-end  w-4/5 overflow-hidden'>
-                          <EditableField
-                            istime
-                            className='w-[90%]'
-                            value={schedule.openTime.slice(0, 5)}
-                            onChange={(value) => {
-                              if (editedData) {
-                                const updatedWorkingHours = editedData.workingHours.map((wh) =>
-                                  wh.day === schedule.day
-                                    ? { ...wh, openTime: normalizeTimeInput(value) }
-                                    : wh
-                                );
-                                setEditedData({
-                                  ...editedData,
-                                  workingHours: updatedWorkingHours
-                                });
-                              }
-                            }}
+                          <div className='flex gap-2  justify-end  w-4/5 overflow-hidden'>
+                            <EditableField
+                              istime
+                              className='w-[90%]'
+                              value={schedule.openTime.slice(0, 5)}
+                              onChange={(value) => {
+                                if (editedData) {
+                                  const updatedWorkingHours = editedData.workingHours.map((wh) =>
+                                    wh.day === schedule.day
+                                      ? { ...wh, openTime: normalizeTimeInput(value) }
+                                      : wh
+                                  );
+                                  setEditedData({
+                                    ...editedData,
+                                    workingHours: updatedWorkingHours
+                                  });
+                                }
+                              }}
 
-                          />
-                          <EditableField
-                            istime
-                            className='w-[90%]'
-                            value={schedule.closeTime.slice(0, 5)}
+                            />
+                            <EditableField
+                              istime
+                              className='w-[90%]'
+                              value={schedule.closeTime.slice(0, 5)}
 
-                            onChange={(value) => {
-                              if (editedData) {
-                                const updatedWorkingHours = editedData.workingHours.map((wh) =>
-                                  wh.day === schedule.day
-                                    ? { ...wh, closeTime: normalizeTimeInput(value) }
-                                    : wh
-                                );
-                                setEditedData({
-                                  ...editedData,
-                                  workingHours: updatedWorkingHours
-                                });
-                              }
-                            }}
+                              onChange={(value) => {
+                                if (editedData) {
+                                  const updatedWorkingHours = editedData.workingHours.map((wh) =>
+                                    wh.day === schedule.day
+                                      ? { ...wh, closeTime: normalizeTimeInput(value) }
+                                      : wh
+                                  );
+                                  setEditedData({
+                                    ...editedData,
+                                    workingHours: updatedWorkingHours
+                                  });
+                                }
+                              }}
 
-                          />
-                        </div>
+                            />
+                          </div>
 
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-gray-600">{getDayLabel(schedule.day)}</span>
-                        <span className="text-gray-900 font-medium">
-                          {schedule.openTime?.slice(0, 5)}
-                          -
-                          {schedule.closeTime?.slice(0, 5)}
+                        </>
+                      ) : (
+                        <>
+                          <span className="">{getDayLabel(schedule.day)}</span>
+                          <span className=" font-medium">
+                            {schedule.openTime?.slice(0, 5)}
+                            -
+                            {schedule.closeTime?.slice(0, 5)}
 
-                        </span>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </Card>
             </motion.div>
 
             {/* Specialties */}
@@ -1037,92 +939,97 @@ function ClinicProfileContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-2xl shadow-sm p-6"
+              className="shadow-sm"
             >
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">
-                Specialties
-              </h2>
-              <div className="flex flex-wrap gap-2">
+              <Card className=' p-6'>
+                <h2 className="text-xl font-semibold mb-4 ">
+                  Specialties
+                </h2>
+                <div className="flex flex-wrap gap-2">
 
-                {isEditing || editedData?.specialtiess.map((specialty) => (
-                  <span
-                    key={specialty.id}
-                    className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm group relative"
-                  >
-                    {specialty.specialties}
+                  {isEditing || editedData?.specialtiess.map((specialty) => (
+                    <Badge
+                      key={specialty.id}
+                      className='text-white'
+                    >
+                      {specialty.specialties}
 
-                  </span>
-                ))}
-                {isEditing && (
-                  <>
-                    <div className="flex gap-2 items-center">
-                      <Select
-                        isMulti
-                        options={Array.isArray(specialties) ? specialties : []}
-                        value={
-                          Array.isArray(specialties) && Array.isArray(editedData?.specialtiess)
-                            ? specialties.filter(opt => editedData.specialtiess.some(s => s.specialties === opt.label))
-                            : []
-                        }
-                        onChange={(selected) => {
-                          if (editedData) {
-                            setEditedData({
-                              ...editedData,
-                              specialtiess: Array.isArray(selected)
-                                ? selected.map(opt => ({ id: crypto.randomUUID(), specialties: opt.label }))
-                                : [],
-                            });
+                    </Badge>
+                  ))}
+                  {isEditing && (
+                    <>
+                      <div className="flex gap-2 items-center">
+                        <Select
+                          isMulti
+                          options={Array.isArray(specialties) ? specialties : []}
+                          value={
+                            Array.isArray(specialties) && Array.isArray(editedData?.specialtiess)
+                              ? specialties.filter(opt => editedData.specialtiess.some(s => s.specialties === opt.label))
+                              : []
                           }
-                        }}
-                        placeholder="اختر أو اكتب فئات التجارة"
-                        className="w-full"
-                        classNamePrefix="select"
-                        styles={{
-                          control: (base, state) => ({
-                            ...base,
-                            borderRadius: '0.75rem',
-                            borderColor: state.isFocused ? '#2563eb' : '#e5e7eb',
-                            boxShadow: state.isFocused ? '0 0 0 1px #2563eb' : 'none',
-                            minHeight: '2.5rem',
-                          }),
-                          option: (base, state) => ({
-                            ...base,
-                            backgroundColor: state.isSelected
-                              ? '#dbeafe'
-                              : state.isFocused
-                                ? '#f1f5f9'
-                                : 'white',
-                            color: state.isSelected ? '#2563eb' : '#1e293b',
-                            padding: '0.5rem 1rem',
-                          }),
-                          multiValue: (base) => ({
-                            ...base,
-                            backgroundColor: '#dbeafe',
-                            color: '#2563eb',
-                            borderRadius: '9999px',
-                            padding: '0 0.5rem',
-                          }),
-                          multiValueLabel: (base) => ({
-                            ...base,
-                            color: '#2563eb',
-                          }),
-                          multiValueRemove: (base) => ({
-                            ...base,
-                            color: '#2563eb',
-                            transition: '.5s',
-                            ':hover': {
-                              backgroundColor: '#2563eb',
-                              color: 'white',
-                            },
-                          }),
-                        }}
-                        noOptionsMessage={() => "لا توجد خيارات"}
-                      />
+                          onChange={(selected) => {
+                            if (editedData) {
+                              setEditedData({
+                                ...editedData,
+                                specialtiess: Array.isArray(selected)
+                                  ? selected.map(opt => ({ id: crypto.randomUUID(), specialties: opt.label }))
+                                  : [],
+                              });
+                            }
+                          }}
+                          placeholder="اختر أو اكتب فئات التجارة"
+                          className="w-full"
+                          classNamePrefix="select"
+                          styles={{
+                            control: (base, state) => ({
+                              ...base,
+                              borderRadius: '0.75rem',
+                              borderColor: state.isFocused ? '#2563eb' : '#e5e7eb',
+                              boxShadow: state.isFocused ? '0 0 0 1px #2563eb' : 'none',
+                              minHeight: '2.5rem',
+                              background: 'var(--Card)'
+                            }),
+                            option: (base, state) => ({
+                              ...base,
+                              backgroundColor: state.isSelected
+                                ? '#dbeafe'
+                                : state.isFocused
+                                  ? '#f1f5f9'
+                                  : 'white',
+                              color: state.isSelected ? '#2563eb' : '#1e293b',
+                              padding: '0.5rem 1rem',
+                            }),
+                            multiValue: (base) => ({
+                              ...base,
+                              backgroundColor: '#dbeafe',
 
-                    </div>
-                  </>
-                )}
-              </div>
+                              color: '#2563eb',
+                              borderRadius: '9999px',
+                              padding: '0 0.5rem',
+                            }),
+                            multiValueLabel: (base) => ({
+                              ...base,
+                              color: '#2563eb',
+                            }),
+                            multiValueRemove: (base) => ({
+                              ...base,
+                              color: '#2563eb',
+
+                              transition: '.5s',
+                              ':hover': {
+                                backgroundColor: '#2563eb',
+                                color: 'white',
+                              },
+                            }),
+                          }}
+                          noOptionsMessage={() => "لا توجد خيارات"}
+                        />
+
+                      </div>
+                    </>
+                  )}
+                </div>
+              </Card>
             </motion.div>
           </div>
         </div>

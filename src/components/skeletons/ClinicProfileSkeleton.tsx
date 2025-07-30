@@ -1,39 +1,43 @@
+import { Card } from "../ui/card";
+
 const Skeleton = ({ className = '' }: { className?: string }) => (
-  <div className={`animate-pulse bg-gray-200 rounded ${className}`}></div>
+  <div className={`animate-pulse dark:bg-primary-foreground bg-gray-300  rounded ${className}`}></div>
 );
 
 export default function ClinicProfileSkeleton() {
   return (
     <div className="space-y-8">
       {/* Header Skeleton */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <Skeleton className="h-48 w-full" />
-        <div className="p-6">
+      <Card className=" gap-0 rounded-2xl p-0 shadow-sm overflow-hidden">
+        <Skeleton className="h-48 w-full bg-gradient-to-r from-blue-600 to-purple-600" />
+        <Card className="p-6 border-0 gap-0">
           <div className="flex items-center gap-4">
-            <Skeleton className="w-28 h-28 rounded-2xl" />
+            <div className="relative -mt-16 mb-4   ">
+              <Skeleton className="w-28 h-28 rounded-2xl" />
+            </div>
             <div className="space-y-2">
               <Skeleton className="w-48 h-8" />
-              <Skeleton className="w-32 h-4" />
+              <Skeleton className="w-32 h-8 " />
             </div>
           </div>
-        </div>
-      </div>
+        </Card>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
           {/* About Section */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <Card className=" shadow-sm p-6 gap-0">
             <Skeleton className="w-24 h-6 mb-4" />
             <Skeleton className="w-full h-24" />
-          </div>
+          </Card>
 
           {/* Services Section */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <Card className=" shadow-sm p-6 gap-0">
             <Skeleton className="w-32 h-6 mb-4" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="p-4 border rounded-xl">
+                <div key={i} className="p-4  rounded-xl">
                   <div className="flex justify-between items-start mb-2">
                     <Skeleton className="w-32 h-6" />
                     <Skeleton className="w-20 h-6" />
@@ -42,10 +46,10 @@ export default function ClinicProfileSkeleton() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
 
           {/* Staff Section */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <Card className=" shadow-sm p-6 gap-0">
             <Skeleton className="w-40 h-6 mb-4" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[1, 2].map((i) => (
@@ -62,10 +66,10 @@ export default function ClinicProfileSkeleton() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
 
           {/* Offers Section */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <Card className=" shadow-sm p-6 gap-0">
             <Skeleton className="w-36 h-6 mb-4" />
             <div className="grid grid-cols-1 gap-4">
               {[1, 2, 3].map((i) => (
@@ -83,13 +87,12 @@ export default function ClinicProfileSkeleton() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-8">
-          {/* Contact Info */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <Card className=" shadow-sm p-6 gap-0">
             <Skeleton className="w-40 h-6 mb-4" />
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
@@ -101,7 +104,6 @@ export default function ClinicProfileSkeleton() {
                   </div>
                 </div>
               ))}
-              {/* Social Media */}
               <div className="pt-2 border-t">
                 <Skeleton className="w-24 h-4 mb-3" />
                 <div className="flex gap-3">
@@ -111,10 +113,9 @@ export default function ClinicProfileSkeleton() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
 
-          {/* Hours */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <Card className=" shadow-sm p-6 gap-0">
             <Skeleton className="w-36 h-6 mb-4" />
             <div className="space-y-3">
               {[1, 2, 3, 4, 5].map((i) => (
@@ -124,17 +125,16 @@ export default function ClinicProfileSkeleton() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
 
-          {/* Specialties */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <Card className=" shadow-sm p-6 gap-0">
             <Skeleton className="w-32 h-6 mb-4" />
             <div className="flex flex-wrap gap-2">
               {[1, 2, 3, 4].map((i) => (
                 <Skeleton key={i} className="w-24 h-8 rounded-full" />
               ))}
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </div>
