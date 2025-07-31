@@ -18,7 +18,6 @@ import { useRouter } from 'next/navigation';
 export default function VisitsPage() {
   const router = useRouter();
 
-
   // States
   const [filter, setFilter] = useState<FilterState>({
     pageNumber: 1,
@@ -30,7 +29,7 @@ export default function VisitsPage() {
   });
 
   // Get visits using the hook
-  const { getVisits } = useVisit();
+  const { useVisitList: getVisits } = useVisit();
   const { data: visitsData, isLoading } = getVisits(filter);
 
   const visits = visitsData?.items || [];

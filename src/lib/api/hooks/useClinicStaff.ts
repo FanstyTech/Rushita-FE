@@ -40,7 +40,7 @@ export const useClinicStaff = () => {
       enabled: !!id,
     });
 
-      const useDoctorDetails = (id: string) =>
+  const useDoctorDetails = (id: string) =>
     useQuery({
       retry: false,
       queryKey: ['clinicStaff', 'details', id],
@@ -53,7 +53,10 @@ export const useClinicStaff = () => {
       },
       enabled: !!id,
     });
-  const useClinicStaffForDropdown = (filter: GetClinicStaffForDropdownInput, options?: { enabled?: boolean }) =>
+  const useClinicStaffForDropdown = (
+    filter: GetClinicStaffForDropdownInput,
+    options?: { enabled?: boolean }
+  ) =>
     useQuery({
       queryKey: ['clinic-staff', 'dropdown', filter],
       queryFn: async () => {
@@ -65,7 +68,8 @@ export const useClinicStaff = () => {
         }
         return response.result;
       },
-      enabled: options?.enabled !== undefined ? options.enabled : !!filter.clinicId,
+      enabled:
+        options?.enabled !== undefined ? options.enabled : !!filter.clinicId,
     });
   const useClinicStaffForEdit = (id: string) =>
     useQuery({
@@ -134,6 +138,6 @@ export const useClinicStaff = () => {
     createOrUpdateClinicStaff,
     deleteClinicStaff,
     updateClinicStaffStatus,
-    useDoctorDetails
+    useDoctorDetails,
   };
 };

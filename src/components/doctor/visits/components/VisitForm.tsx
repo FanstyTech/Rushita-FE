@@ -46,7 +46,6 @@ interface Attachment {
   url: string;
 }
 
-
 const INITIAL_MEDICINE_FILTER: FilterState = {
   pageNumber: 1,
   pageSize: 5,
@@ -116,7 +115,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
   const [medicationSearchQuery, setMedicationSearchQuery] = useState('');
   const [currentMedicationIndex, setCurrentMedicationIndex] =
     useState<number>(0);
-  
+
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [previewFile, setPreviewFile] = useState<Attachment | null>(null);
 
@@ -140,7 +139,8 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
 
   // API Hooks
   const { useLabTestsForDropdown } = useLabTest();
-  const { createOrUpdateVisit, getVisitForEdit } = useVisit();
+  const { createOrUpdateClinicVisit, useVisitForEdit: getVisitForEdit } =
+    useVisit();
   const { useRadiologyTestsDropdown } = useRadiologyTest();
   const { useMedicinesList } = useMedicine();
   const { usePatientDropdown, usePatientForView } = useClinicPatients();
@@ -287,7 +287,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
     };
 
     // Call the mutation
-    await createOrUpdateVisit.mutateAsync(visitData);
+    await createOrUpdateClinicVisit.mutateAsync(visitData);
   };
 
   return (
@@ -404,9 +404,9 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
                       <Button
                         variant="default"
                         type="submit"
-                        disabled={createOrUpdateVisit.isPending}
+                        disabled={createOrUpdateClinicVisit.isPending}
                       >
-                        {createOrUpdateVisit.isPending
+                        {createOrUpdateClinicVisit.isPending
                           ? 'Saving...'
                           : 'Save Treatment'}
                       </Button>

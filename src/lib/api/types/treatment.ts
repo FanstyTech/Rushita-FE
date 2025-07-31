@@ -153,6 +153,7 @@ export interface VisitFilterDto extends PaginationRequest {
   visitNumber?: string;
   patientId?: string;
   staffId?: string;
+  clinicId?: string;
   appointmentId?: string;
   type?: VisitType;
   currentStatus?: VisitStatus;

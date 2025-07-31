@@ -45,7 +45,7 @@ const VisitDetailsPage: FC = () => {
   const [showFullNotes, setShowFullNotes] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('details');
 
-  const { getVisit } = useVisit();
+  const { useVisitDetails: getVisit } = useVisit();
   const { data: visit, isLoading, error } = getVisit(visitId);
 
   if (isLoading) {

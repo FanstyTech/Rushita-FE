@@ -11,6 +11,7 @@ import { SelectOption } from '@/lib/api/types/select-option';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { getBloodTypeLabel } from '@/utils/textUtils';
 import { useCallback } from 'react';
+import { TreatmentFormData } from './validation';
 
 interface PatientInfoSectionProps {
   shouldFetchPatients: boolean;
@@ -23,7 +24,7 @@ interface PatientInfoSectionProps {
   selectedPatientData: GetPatientForViewDto | undefined;
   selectedPatientLoading: boolean;
   onShowAddPatient: () => void;
-  register: UseFormRegister<any>;
+  register: UseFormRegister<TreatmentFormData>;
   errors: FieldErrors;
   isReadOnly?: boolean;
   visitType?: VisitType;
