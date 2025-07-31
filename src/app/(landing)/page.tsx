@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import HeroSection from '@/components/LandingPage/HeroSection';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { MoveLeft } from 'lucide-react';
+import { Circle, MoveLeft } from 'lucide-react';
 import NumberDiv from '@/components/LandingPage/NumberDiv';
 import SubscriptionSection from '@/components/LandingPage/SubscriptionSection';
 import CicyleBg from '@/components/LandingPage/CicyleBg';
@@ -38,8 +38,15 @@ export default function Home() {
     setLoading(false)
   }, [])
   if (loading) {
-    return <Card className='w-screen fixed top-0 left-0  z-50 h-screen flex justify-center items-center'>Loading..</Card>
+
+    return <Card className='w-screen fixed top-0 left-0  z-50 h-screen flex justify-center items-center'>
+      <div className='relative'>
+        <Circle className='w-20 h-20 absolute top-0 left-0 ' />
+        <div className='h-20 w-4 rotate-45 absolute top-0 left-[32px] animate-spin bg-white dark:bg-gray-800 '></div>
+      </div>
+    </Card>
   }
+
   return (
     <div
       ref={containerRef}
