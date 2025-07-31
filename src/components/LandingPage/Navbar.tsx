@@ -61,7 +61,7 @@ export const Navbar = () => {
 
   return (
     <nav
-      className={`fixed w-full    z-40 top-0 left-0  transition-colors duration-300`}
+      className={`fixed w-full  z-40 top-0 left-0  transition-colors duration-300`}
     >
       <Card className='p-0 rounded-none border-0'>
         <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">

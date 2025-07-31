@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import HeroSection from '@/components/LandingPage/HeroSection';
 import Image from 'next/image';
@@ -32,8 +32,14 @@ const whatswepost = ["جدولة مواعيد بدون تعقيد. بتعرف م
 const roshtasystem = ["الطبيب يشوف تنبيهات السكرتارية", "المختبر يستلم المطلوب لحاله", "المحاسب يعرف تلقائيًا حالة الفاتورة"]
 export default function Home() {
   const containerRef = useRef(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-
+  useEffect(() => {
+    setLoading(false)
+  }, [])
+  if (loading) {
+    return <Card className='w-screen fixed top-0 left-0  z-50 h-screen flex justify-center items-center'>Loading..</Card>
+  }
   return (
     <div
       ref={containerRef}
