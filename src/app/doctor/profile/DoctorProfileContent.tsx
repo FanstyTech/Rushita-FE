@@ -22,6 +22,7 @@ import { ClinicStaffDto } from '@/lib/api/types/clinic-staff';
 import { Button } from '@/components/ui/button';
 import InputDocto from '@/components/doctor/InputDocto';
 import ContainerInput from '@/components/doctor/ContainerInput';
+import { Card } from '@/components/ui/card';
 
 
 export default function DoctorProfileContent() {
@@ -208,9 +209,10 @@ export default function DoctorProfileContent() {
                       Cancel
                     </Button></>) :
                     <Button
-                      variant="editButton"
+
+                      variant="outlinetow"
                       onClick={() => setIsEditing(!isEditing)}
-                      className=""
+                      className="border-white hover:bg-white hover:text-black text-white"
                     >
                       <Edit2 className="w-4 h-4" />
                       Edit Profile
@@ -223,11 +225,11 @@ export default function DoctorProfileContent() {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="relative group overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <Card className="relative group overflow-hidden  shadow-sm border dark:border-foreground/30 border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300">
+              {/* <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div> */}
               <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">
+                  <p className="text-sm font-medium ">
                     Total Patients
                   </p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">
@@ -238,13 +240,13 @@ export default function DoctorProfileContent() {
                   <Stethoscope className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
-            </div>
+            </Card>
 
-            <div className="relative group overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <Card className="relative group overflow-hidden  shadow-sm border dark:border-foreground/30 border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300">
+              {/* <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div> */}
               <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Experience</p>
+                  <p className="text-sm font-medium ">Experience</p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">
                     {/* {editData.stats.experienceYears} Years */}
                   </p>
@@ -253,13 +255,13 @@ export default function DoctorProfileContent() {
                   <Calendar className="w-6 h-6 text-green-600" />
                 </div>
               </div>
-            </div>
+            </Card>
 
-            <div className="relative group overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <Card className="relative group overflow-hidden  shadow-sm border dark:border-foreground/30 border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300">
+              {/* <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div> */}
               <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">
+                  <p className="text-sm font-medium ">
                     Success Rate
                   </p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">
@@ -270,13 +272,13 @@ export default function DoctorProfileContent() {
                   <Award className="w-6 h-6 text-purple-600" />
                 </div>
               </div>
-            </div>
+            </Card>
 
-            <div className="relative group overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300">
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <Card className="relative group overflow-hidden  shadow-sm border dark:border-foreground/30 border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300">
+              {/* <div className="absolute inset-0 bg-gradient-to-br from-yellow-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div> */}
               <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Rating</p>
+                  <p className="text-sm font-medium ">Rating</p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">
                     {/* {editData.stats.ratings}/5 */}
                   </p>
@@ -285,13 +287,13 @@ export default function DoctorProfileContent() {
                   <Star className="w-6 h-6 text-yellow-600" />
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Education and Certifications */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <Card className="  shadow-sm border border-gray-100 dark:border-foreground/30 p-6">
+              <h2 className="text-xl font-semibold  mb-4">
                 Education
               </h2>
               <ul className="space-y-3">
@@ -305,10 +307,10 @@ export default function DoctorProfileContent() {
                 </li>
               ))} */}
               </ul>
-            </div>
+            </Card>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <Card className="  shadow-sm border border-gray-100 dark:border-foreground/30 p-6">
+              <h2 className="text-xl font-semibold  mb-4">
                 Certifications
               </h2>
               <ul className="space-y-3">
@@ -322,12 +324,12 @@ export default function DoctorProfileContent() {
                 </li>
               ))} */}
               </ul>
-            </div>
+            </Card>
           </div>
 
           {/* Languages */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <Card className="  shadow-sm border border-gray-100 dark:border-foreground/30 p-6">
+            <h2 className="text-xl font-semibold  mb-4">
               Languages
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -340,7 +342,7 @@ export default function DoctorProfileContent() {
               </span>
             ))} */}
             </div>
-          </div>
+          </Card>
         </div>
       </PageLayout >
     );

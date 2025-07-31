@@ -1,3 +1,8 @@
+import { Card } from "../ui/card";
+
+function DivSkeleton({ className }: { className: string }) {
+  return <div className={`animate-pulse dark:bg-primary-foreground bg-gray-300  rounded ${className}`}></div>
+}
 export default function DoctorCardSkeleton() {
   return (
     <div className="space-y-8 animate-pulse">
@@ -7,19 +12,19 @@ export default function DoctorCardSkeleton() {
           <div className="flex flex-col md:flex-row items-center gap-8">
             {/* Profile Image Skeleton */}
             <div className="relative">
-              <div className="w-40 h-40 rounded-2xl bg-gray-300" />
+              <DivSkeleton className="w-40 h-40 rounded-2xl " />
             </div>
 
             {/* Profile Info Skeleton */}
             <div className="flex-1 text-center md:text-left space-y-4">
-              <div className="h-8 w-64 bg-gray-300 rounded" />
-              <div className="h-6 w-48 bg-gray-300 rounded" />
-              <div className="h-6 w-32 bg-gray-300 rounded" />
+              <DivSkeleton className="h-8 w-64  rounded" />
+              <DivSkeleton className="h-6 w-48  rounded" />
+              <DivSkeleton className="h-6 w-32  rounded" />
 
               {/* Contact Grid Skeleton */}
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-12 bg-gray-300 rounded-xl" />
+                  <DivSkeleton key={i} className="h-12  rounded-xl" />
                 ))}
               </div>
             </div>
@@ -30,12 +35,12 @@ export default function DoctorCardSkeleton() {
       {/* Stats Grid Skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white rounded-2xl p-6">
+          <Card key={i} className=" p-6 border-0">
             <div className="space-y-3">
-              <div className="h-4 w-24 bg-gray-300 rounded" />
-              <div className="h-6 w-16 bg-gray-300 rounded" />
+              <DivSkeleton className="h-4 w-24  rounded" />
+              <DivSkeleton className="h-6 w-16  rounded" />
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
@@ -43,28 +48,28 @@ export default function DoctorCardSkeleton() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {[1, 2].map((i) => (
-            <div key={i} className="bg-white rounded-2xl p-6">
-              <div className="h-6 w-32 bg-gray-300 rounded mb-4" />
+            <Card key={i} className=" p-6 border-0">
+              <DivSkeleton className="h-6 w-32  rounded mb-4" />
               <div className="space-y-3">
                 {[1, 2, 3].map((j) => (
-                  <div key={j} className="h-4 w-full bg-gray-300 rounded" />
+                  <DivSkeleton key={j} className="h-4 w-full  rounded" />
                 ))}
               </div>
-            </div>
+            </Card>
           ))}
         </div>
 
         {/* Working Hours & Social Media Skeleton */}
         <div className="space-y-6">
           {[1, 2].map((i) => (
-            <div key={i} className="bg-white rounded-2xl p-6">
-              <div className="h-6 w-32 bg-gray-300 rounded mb-4" />
+            <Card key={i} className=" p-6 border-0">
+              <DivSkeleton className="h-6 w-32  rounded mb-4 " />
               <div className="space-y-3">
                 {[1, 2, 3, 4].map((j) => (
-                  <div key={j} className="h-4 w-full bg-gray-300 rounded" />
+                  <DivSkeleton key={j} className="h-4 w-full  rounded" />
                 ))}
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>

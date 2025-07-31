@@ -29,6 +29,7 @@ const buttonVariants = cva(
         none: 'block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300 dark:text-gray-300',
         PlanButton:
           'text-white bg-secend dark:bg-secend/90 dark:hover:bg-secend',
+        SaveButton: "border-primary border bg-primary"
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

@@ -280,7 +280,7 @@ function ClinicProfileContent() {
                     </Button>
                     <Button
                       onClick={handleCancel}
-                      variant="ghost"
+                      variant="outlinetow"
                     >
                       <X className="w-4 h-4" />
                       Cancel
