@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 // Components
@@ -14,10 +13,8 @@ import LabTests from './LabTests';
 import RayTests from './RayTests';
 import Notes from './Notes';
 import Attachments from './Attachments';
-import { DentalChart } from '@/components/dental/DentalChart';
 
 // Modals
-import AdvancedSearchModal from './modals/AdvancedSearchModal';
 import MedicationSearchModal from './modals/MedicationSearchModal';
 import AddNewPatientModal from '@/components/clinic/patients/PatientFormModal';
 import TreatmentDetailsModal from './modals/TreatmentDetailsModal';
@@ -49,12 +46,6 @@ interface Attachment {
   url: string;
 }
 
-interface AdvancedSearchForm {
-  name: string;
-  id: string;
-  phone: string;
-  email: string;
-}
 
 const INITIAL_MEDICINE_FILTER: FilterState = {
   pageNumber: 1,
@@ -125,13 +116,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
   const [medicationSearchQuery, setMedicationSearchQuery] = useState('');
   const [currentMedicationIndex, setCurrentMedicationIndex] =
     useState<number>(0);
-  const [advancedSearchForm, setAdvancedSearchForm] =
-    useState<AdvancedSearchForm>({
-      name: '',
-      id: '',
-      phone: '',
-      email: '',
-    });
+  
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [previewFile, setPreviewFile] = useState<Attachment | null>(null);
 

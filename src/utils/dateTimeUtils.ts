@@ -2,6 +2,8 @@
  * Utility functions for handling dates and times in forms
  */
 
+import { CreateUpdateAppointmentDto } from "@/lib/api/types/appointment";
+
 /**
  * Convert date string to ISO string for API submission
  */
@@ -107,19 +109,19 @@ export const getTimeDifferenceInMinutes = (
 /**
  * Convert API response data for form display
  */
-export const convertApiDataForForm = (appointment: any) => {
-  return {
-    ...appointment,
-    date: formatDateForInput(appointment.date),
-    startTime: formatTimeForInput(appointment.startTime),
-    endTime: formatTimeForInput(appointment.endTime),
-  };
-};
+// export const convertApiDataForForm = (appointment: any) => {
+//   return {
+//     ...appointment,
+//     date: formatDateForInput(appointment.date),
+//     startTime: formatTimeForInput(appointment.startTime),
+//     endTime: formatTimeForInput(appointment.endTime),
+//   };
+// };
 
 /**
  * Convert form data for API submission
  */
-export const convertFormDataForAPI = (formData: any) => {
+export const convertFormDataForAPI = (formData: CreateUpdateAppointmentDto) => {
   const { date, startTime, endTime } = formatAppointmentDateTime(
     formData.date,
     formData.startTime,

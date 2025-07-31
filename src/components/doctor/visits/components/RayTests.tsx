@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Input, Select, TextArea } from '@/components/common/form';
+import {  Select, TextArea } from '@/components/common/form';
 import { SelectOption } from '@/lib/api/types/select-option';
 import { CreateOrUpdateVisitRadiologyTestDto } from '@/lib/api/types/treatment';
 import {
@@ -145,7 +145,7 @@ export default function RayTests({
 
         {rays.length === 0 && (
           <div className="text-center py-6 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
-            <p>No ray tests added yet. Click "Add Ray Test" to begin.</p>
+            <p>No ray tests added yet. Click {"Add Ray Test"} to begin.</p>
           </div>
         )}
       </div>

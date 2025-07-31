@@ -10,7 +10,7 @@ import { SelectOption } from '@/lib/api/types/select-option';
 import { VisitType } from '@/lib/api/types/appointment';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import { useClinicStaff } from '@/lib/api/hooks/useClinicStaff';
-import { GetPatientDropdownInput } from '@/lib/api/types/clinic-patient';
+import { AppointmentStatus, GetPatientDropdownInput } from '@/lib/api/types/clinic-patient';
 import { GetClinicStaffForDropdownInput } from '@/lib/api/types/clinic-staff';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { PermissionKeys } from '@/config/permissions';
@@ -34,6 +34,7 @@ interface AppointmentFormProps {
     startTime: string;
     endTime: string;
     notes: string;
+    status: AppointmentStatus;
   };
   setAppointmentDetails: React.Dispatch<
     React.SetStateAction<{
@@ -41,6 +42,8 @@ interface AppointmentFormProps {
       startTime: string;
       endTime: string;
       notes: string;
+      status: AppointmentStatus;
+
     }>
   >;
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from '@/components/common/Modal';
+import Image from 'next/image';
 
 interface Attachment {
   id: string;
@@ -31,10 +32,10 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
       <div className="flex justify-center">
         {isPreviewable(file.type) ? (
           file.type.startsWith('image/') ? (
-            <img
+            <Image
               src={file.url}
               alt={file.name}
-              className="max-w-full max-h-[70vh] object-contain"
+              className="max-w-full max-h-[70vh] object-contain relative"
             />
           ) : (
             <iframe

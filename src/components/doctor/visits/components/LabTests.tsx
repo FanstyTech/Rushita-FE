@@ -152,7 +152,7 @@ export default function LabTests({
 
         {labTests.length === 0 && (
           <div className="text-center py-6 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
-            <p>No lab tests added yet. Click "Add Lab Test" to begin.</p>
+            <p>No lab tests added yet. Click {"Add Lab Test"} to begin.</p>
           </div>
         )}
       </div>

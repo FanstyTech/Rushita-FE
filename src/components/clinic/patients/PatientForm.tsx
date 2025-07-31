@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Resolver, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   patientSchema,
@@ -52,16 +52,16 @@ export default function PatientForm({
     reset,
     setValue,
   } = useForm<PatientFormData>({
-    resolver: zodResolver(patientSchema) as any,
+    resolver: zodResolver(patientSchema) as Resolver<PatientFormData>,
     defaultValues: initialData
       ? {
-          ...initialData,
-          gender: initialData.gender?.toString(), // Convert to string
-          bloodType: initialData.bloodType?.toString(), // Convert to string
-          dateOfBirth: initialData.dateOfBirth
-            ? format(new Date(initialData.dateOfBirth), 'yyyy-MM-dd')
-            : undefined,
-        }
+        ...initialData,
+        gender: initialData.gender?.toString(), // Convert to string
+        bloodType: initialData.bloodType?.toString(), // Convert to string
+        dateOfBirth: initialData.dateOfBirth
+          ? format(new Date(initialData.dateOfBirth), 'yyyy-MM-dd')
+          : undefined,
+      }
       : undefined,
   });
 
@@ -270,7 +270,7 @@ export default function PatientForm({
                   {...register('bloodType', { valueAsNumber: true })}
                   options={Object.entries(BloodType)
                     .filter(([key]) => isNaN(Number(key)))
-                    .map(([_, value]) => ({
+                    .map(([, value]) => ({
                       value: value.toString(),
                       label: bloodTypeDisplayNames[value as BloodType],
                     }))}

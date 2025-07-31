@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { permissionService } from '../services/permission.service';
 import { toast } from 'sonner';
-import { PermissionFilterDto } from '../types/permission';
 
 export function usePermission() {
   const queryClient = useQueryClient();

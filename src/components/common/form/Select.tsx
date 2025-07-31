@@ -67,9 +67,6 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     );
     const [searchQuery, setSearchQuery] = useState('');
 
-    useEffect(() => {
-      setSelectedValue(value as string | undefined);
-    }, []);
 
     useEffect(() => {
       setSelectedValue(value as string | undefined);
@@ -124,7 +121,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 'focus:outline-none focus-visible:outline-none focus-visible:ring-0',
                 'hover:bg-transparent hover:text-current',
                 disabled &&
-                  'opacity-70 cursor-not-allowed bg-gray-100 dark:bg-gray-700',
+                'opacity-70 cursor-not-allowed bg-gray-100 dark:bg-gray-700',
                 startIcon && 'pl-10',
                 className
               )}
