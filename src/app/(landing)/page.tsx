@@ -11,6 +11,7 @@ import SubscriptionSection from '@/components/LandingPage/SubscriptionSection';
 import CicyleBg from '@/components/LandingPage/CicyleBg';
 import { ChartPie } from '@/components/LandingPage/ChartPie';
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 
 const whyroshita = [
   {
@@ -41,39 +42,42 @@ export default function Home() {
       <div id='home' className='relative'>
         <HeroSection />
       </div>
-      <div className='max-w-7xl   relative  mx-auto'>
+      <Card className='rounded-none border-0'>
 
-        <h1 className="xxs:text-3xl text-xl max-w-3xl   mx-auto leading-tight font-normal text-center sm:text-4xl  p-4 bg-gradient-to-t from-primary/50 to-[#9612FC] bg-clip-text text-transparent">
-          ليش كل العيادات بتتحوّل لروشيتة؟ لأن الوقت ما بيتحمّل الفوضى.
-        </h1>
-        <CicyleBg className='top-[50%] -right-10' />
+        <div className='max-w-7xl w-full   relative  mx-auto'>
 
-        <p className='text-center mb-3 sm:mb-0'> لماذا روشيتة؟</p>
-        <div className='grid md:grid-cols-3 xsm:grid-cols-2  w-[95%] mx-auto grid-cols-1 lg:gap-0 py-3 gap-5  md:py-10 sm:py-5 '>
-          {whyroshita.map((item, index) => (
-            <div className='relative lg:h-[60vh]   w-full  flex justify-center items-center'
-              key={index}>
-              <div className='w-full flex justify-center items-center'>
-                <div className='relative '
-                >
+          <h1 className="xxs:text-3xl text-xl max-w-3xl w-full   mx-auto leading-tight font-normal text-center sm:text-4xl  p-4 bg-gradient-to-t from-primary/50 to-[#9612FC] bg-clip-text text-transparent">
+            ليش كل العيادات بتتحوّل لروشيتة؟ لأن الوقت ما بيتحمّل الفوضى.
+          </h1>
+          <CicyleBg className='top-[50%] -right-10' />
 
-                  <Image
-                    src={`/images/${item.image}`} fill className='!w-fit !relative object-cover bg-center' alt='' />
-                  <div className='bg-white/50  backdrop-blur p-2 py-3 text-center absolute  bottom-0 left-0'>
-                    {item.Title}
+          <p className='text-center mb-3 sm:mb-0'> لماذا روشيتة؟</p>
+          <div className='grid md:grid-cols-3 xsm:grid-cols-2  w-[95%] mx-auto grid-cols-1  py-3 gap-5  md:py-10 sm:py-5 '>
+            {whyroshita.map((item, index) => (
+              <div className='relative lg:h-[60vh]   w-full  flex justify-center items-center'
+                key={index}>
+                <div className='w-full flex justify-center items-center'>
+                  <div className='relative '
+                  >
+
+                    <Image
+                      src={`/images/${item.image}`} fill className='!w-fit !relative object-cover bg-center' alt='' />
+                    <div className='bg-white/50  backdrop-blur p-2 py-3 text-center absolute  bottom-0 left-0'>
+                      {item.Title}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
+      </Card>
 
-      <div className='md:pb-20 pb-10'>
+      <Card className='md:pb-20 pb-10 rounded-none border-0'>
         <h1 className="xxs:text-3xl text-xl max-w-6xl relative mx-auto leading-tight font-normal text-center sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
           روشيتة خلصتك من كل هالفوضى، بنظام يشوف عنك، يتذكّر عنك، ويرتب لك كل شيء من أول لحظة.</h1>
-      </div>
+      </Card>
 
       <div id='whyroshita' className='py-20 bg-gray-bg relative overflow-hidden'>
         <div className='flex flex-col gap-5 max-w-xl mx-auto justify-center items-center text-center text-white'>
@@ -95,18 +99,17 @@ export default function Home() {
         </div>
         <div className='rounded-full absolute -bottom-10 bg-secend w-24 h-24  -left-10'></div>
       </div>
-      <div className='pt-7'>
+      <Card className=' p-0 pt-7 border-0 rounded-none'>
         <h1 className="xxs:text-3xl text-xl max-w-3xl   mx-auto leading-tight font-normal text-center sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
           لماذا روشيتة؟!
         </h1>
-        <div className='md:mt-10 mt-5 max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto md:min-h-[60vh] '>
+        <div className='md:mt-10 mt-5 max-w-7xl w-full px-4 sm:px-6 lg:px-8 mx-auto md:min-h-[60vh] '>
           <div className='grid  sm:grid-cols-2 grid-cols-1 gap-5 w-full h-full'>
             <div className='flex items-center ltr:ml-auto'>
               <div className=''>
-                <div className='text-black flex
+                <div className=' flex
                       flex-col gap-5 sm:max-w-sm sm:ltr:max-w-lg  sm:text-right text-center'>
                   <div >
-
                     <h1 className=" inline-block text-xl max-w-6xl relative mx-auto leading-tight font-normal text-center lg:text-4xl md:text-2xl sm:text-xl   ">
                       مش مجرد نظام طبي…
                     </h1>
@@ -117,11 +120,11 @@ export default function Home() {
                       إحنا  فاهمين ألم العيادة.
                     </h1>
                   </div>
-                  <p className='text-black/60  md:text-sm text-xs font-semibold'>{`"روشيتة"`} انولد من قلب عيادة.. اشتغلنا مع أطباء، سكرتارية، مرضى سمعنا كل التفاصيل، كل المآسي، وكل آه صغيرة من ضغط يوم العيادة.</p>
+                  <p className='text-foreground/70  md:text-sm text-xs font-semibold'>{`"روشيتة"`} انولد من قلب عيادة.. اشتغلنا مع أطباء، سكرتارية، مرضى سمعنا كل التفاصيل، كل المآسي، وكل آه صغيرة من ضغط يوم العيادة.</p>
                   <p className='text-secend md:text-sm text-xs font-semibold'>ورجعنا صممنا النظام مش عشان يكون {`"جميل"`}وبس! ، لكن عشان يكون مفيد – سريع – واقعي – ذكي.</p>
                 </div>
                 <div className='flex  max-w-2xl   sm:justify-end sm:ltr:justify-start justify-center mt-10'>
-                  <div className='xxs:w-3/5 w-full justify-between flex '>
+                  <div className='xxs:w-3/5 w-full justify-between flex  '>
                     <NumberDiv number='1947' text='موظف' />
                     <NumberDiv number='+60' text='عيادة' />
                   </div>
@@ -132,11 +135,12 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       <div id='projects' className='relative bg-gradient-to-t to-transparent from-gray-50 overflow-hidden'>
         <CicyleBg className='bottom-10 right-0' />
-        <div className='md:mt-10 mt-5 max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto sm:min-h-[60vh] '>
+
+        <Card className='md:pt-10 pt-5 border-0 rounded-none bg-gray-100 dark:bg-gray-700    px-4 sm:px-6 lg:px-8 sm:min-h-[60vh] '>
           <div className='flex md:flex-nowrap flex-col-reverse md:flex-row flex-wrap justify-between w-full h-full'>
             <div className='md:w-1/2 w-full'>
               <div className='relative rounded-4xl lg:w-4/5 w-full md:h-full h-[50vh] bg-center bg-contain bg-no-repeat ' style={{ backgroundImage: "url('/images/image349.png')" }}>
@@ -146,7 +150,7 @@ export default function Home() {
             </div>
             <div className='flex items-center md:w-[45%] w-full'>
               <div className=''>
-                <div className='text-black flex
+                <div className=' flex
                       flex-col gap-5  ltr:sm:text-right sm:text-left text-center'>
                   <div className='ltr:text-left text-right'>
                     <h1 className="xxs:text-3xl  text-xl max-w-3xl   mx-auto leading-tight font-normal  sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
@@ -164,7 +168,7 @@ export default function Home() {
                     </h1>
                   </div>
                   <div>
-                    <ul className='flex-col flex gap-3 text-black/80 sm:text-sm text-xs'>
+                    <ul className='flex-col flex gap-3 text-foreground/70 sm:text-sm text-xs'>
                       {whatswepost.map((item, index) => (
                         <li key={index} className='flex gap-2 '> <div className='min-h-2.5 mt-2 ltr:mt-1 min-w-2.5 max-h-2.5 max-w-2.5   bg-secend rotate-45'></div> {item}</li>
                       ))}
@@ -173,13 +177,13 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
           </div>
-        </div>
+        </Card>
+
       </div>
 
-      <div>
-        <div className='md:mt-32 mt-10 max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto sm:min-h-[60vh] '>
+      <Card className='rounded-none border-0 p-0'>
+        <div className='md:mt-32  mt-10 w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto sm:min-h-[60vh] '>
           <div className='flex md:flex-nowrap flex-col-reverse md:flex-row  flex-wrap justify-between w-full h-full'>
             <div className='md:w-1/2 w-full'>
               <div className='max-w-[540px] flex flex-col gap-5'>
@@ -195,8 +199,8 @@ export default function Home() {
                   </h1>
                 </div>
 
-                <p className='text-black/90 md:text-lg text-sm'>من لحظة دخول المريض، لجدولة الموعد، للتشخيص، للوصفة، للمتابعة.. كل قسم في العيادة يتواصل تلقائيًا مع الثاني.</p>
-                <ul className='flex-col flex gap-3 text-black/80 md:text-sm text-xs'>
+                <p className='text-foreground/70 md:text-lg text-sm'>من لحظة دخول المريض، لجدولة الموعد، للتشخيص، للوصفة، للمتابعة.. كل قسم في العيادة يتواصل تلقائيًا مع الثاني.</p>
+                <ul className='flex-col flex gap-3 text-foreground/80 md:text-sm text-xs'>
                   {roshtasystem.map((item, index) => (
                     <li key={index} className='flex gap-2 '> <div className='min-h-2.5 mt-1 min-w-2.5 max-h-2.5 max-w-2.5   bg-secend rotate-45'></div> {item}</li>
                   ))}
@@ -208,20 +212,19 @@ export default function Home() {
                 <ChartPie />
               </div>
             </div>
-
           </div>
         </div>
-      </div>
-      <div className='bg-gray-100 pt-10 mt-10' id='contact'>
+      </Card>
+      <Card className='bg-gray-100 dark:bg-gray-700 pt-10  rounded-none border-0' id='contact'>
         <h1 className="xxs:text-3xl text-xl max-w-3xl   mx-auto leading-tight font-normal text-center sm:text-5xl  p-4 bg-gradient-to-tr to-secend from-primary bg-clip-text text-transparent">
           نظامك متكامل، ذكي، وما بيضيّع وقت.
         </h1>
 
-        <p className='text-black/70 max-w-5xl mx-auto sm:text-lg xxs:text-base text-sm  text-center leading-8 w-[98%]'>
+        <p className='text-foreground/70 max-w-5xl mx-auto sm:text-lg xxs:text-base text-sm  text-center leading-8 w-[98%]'>
           روشيتة وُلدت من قلب العيادات، بعد سنوات من الاستماع للأطباء، الموظفين، والمرضى. مش بس برنامج… بل شريك رقمي حقيقي، صُمم ليحل التحديات اليومية ويُعيد ترتيب يوم العمل الطبي
         </p>
         <SubscriptionSection />
-      </div>
+      </Card>
     </div>
 
   );

@@ -3,7 +3,13 @@ import { Providers } from '@/providers/Providers';
 import { languages, defaultLanguage } from '@/middleware';
 import ClientLayout from '@/components/ClientLayout';
 import { cookies, headers } from 'next/headers';
+import { Cairo } from 'next/font/google';
 
+const cairo = Cairo({
+  subsets: ['arabic', 'latin'],
+  weight: ['300', '400', '500', '600', '700'], // choose what you need
+  display: 'swap',
+});
 export default async function RootLayout({
   children,
 }: {
@@ -37,7 +43,7 @@ export default async function RootLayout({
 
   return (
     <html lang={initialLang} className='scroll-smooth' dir={initialDir} suppressHydrationWarning>
-      <body className="font-ibm-plex" suppressHydrationWarning>
+      <body className={`${cairo.className} font-ibm-plex`} suppressHydrationWarning>
         <Providers>
           <ClientLayout languages={languages}>{children}</ClientLayout>
         </Providers>

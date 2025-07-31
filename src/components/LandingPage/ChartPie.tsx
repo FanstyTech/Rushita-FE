@@ -52,10 +52,10 @@ export function ChartPie() {
   return (
     <Card className=" flex-col  border-0 gap-0  shadow-none p-0 ">
       <CardContent className="flex-1 pb-0 px-0 relative">
-        <div className="xsm:block hidden rounded-full absolute lg:-top-8 lg:left-0 left-10 top-12 md:top-5 md:left-5  lg:w-80 lg:h-80 md:w-72 md:h-72 w-60 h-60 border-2 border-dashed border-black/5">
+        <div className="xsm:block hidden rounded-full absolute lg:-top-8 lg:left-0 left-10 top-12 md:top-5 md:left-5  lg:w-80 lg:h-80 md:w-72 md:h-72 w-60 h-60 border-2 border-dashed border-foreground/50">
           <RotateImage rotate={0} image="/images/Ellipse7.png" />
         </div>
-        <div className="xsm:block hidden rounded-full absolute lg:-top-8 lg:left-0 left-10 top-12 md:top-5 md:left-5  lg:w-80 lg:h-80 md:w-72 md:h-72 w-60 h-60 border-2 lg:scale-150 scale-125 border-dashed border-black/5">
+        <div className="xsm:block hidden rounded-full absolute lg:-top-8 lg:left-0 left-10 top-12 md:top-5 md:left-5  lg:w-80 lg:h-80 md:w-72 md:h-72 w-60 h-60 border-2 lg:scale-150 scale-125 border-dashed border-foreground/50">
           <RotateImage rotate={-130} image="/images/image.png" />
 
           <RotateImage rotate={70} image="/images/image(1).png" />

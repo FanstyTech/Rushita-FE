@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2, Stethoscope } from 'lucide-react';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import Cookies from 'js-cookie';
+import { Card } from '@/components/ui/card';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -87,93 +88,96 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 animate-fadeIn">
-        {/* Icon */}
-        <div className="flex flex-col items-center">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white shadow-lg">
-            <Stethoscope className="w-8 h-8" />
-          </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Welcome back
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Please sign in to your account
-          </p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
-          {login.error && (
-            <div className="bg-red-50 text-red-700 p-3 rounded-lg text-sm animate-shake">
-              {login.error.message}
+    <div className="">
+      <Card className='min-h-screen flex items-center justify-center rounded-none border-0  py-12 px-4 sm:px-6 lg:px-8'>
+        <div className="max-w-md w-full space-y-8 animate-fadeIn">
+          {/* Icon */}
+          <div className="flex flex-col items-center">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white shadow-lg">
+              <Stethoscope className="w-8 h-8" />
             </div>
-          )}
-
-          <div className="space-y-4 rounded-md">
-            <Input
-              label="Email"
-              type="email"
-              {...register('email')}
-              error={errors.email?.message}
-              placeholder="Enter your email"
-              autoComplete="email"
-            />
-
-            <div className="relative">
-              <Input
-                label="Password"
-                type={showPassword ? 'text' : 'password'}
-                {...register('password')}
-                error={errors.password?.message}
-                placeholder="Enter your password"
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
-              >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
-              </button>
-            </div>
+            <h2 className="mt-6 text-center text-3xl font-extrabold ">
+              Welcome back
+            </h2>
+            <p className="mt-2 text-center text-sm text-foreground/70">
+              Please sign in to your account
+            </p>
           </div>
 
-          <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                {...register('rememberMe')}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-600">Remember me</span>
-            </label>
-
-            <Link
-              href="/auth/forgot-password"
-              className="text-sm font-medium text-blue-600 hover:text-blue-500"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
-          <button
-            type="submit"
-            disabled={login.isPending}
-            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {login.isPending ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              'Sign in'
+          {/* Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
+            {login.error && (
+              <div className="bg-red-50 text-red-700 p-3 rounded-lg text-sm animate-shake">
+                {login.error.message}
+              </div>
             )}
-          </button>
-        </form>
-      </div>
+
+            <div className="space-y-4 rounded-md">
+              <Input
+                label="Email"
+                type="email"
+                {...register('email')}
+                error={errors.email?.message}
+                placeholder="Enter your email"
+                autoComplete="email"
+              />
+
+              <div className="relative">
+                <Input
+                  label="Password"
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password')}
+                  error={errors.password?.message}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute ltr:right-3  rtl:left-3  top-9 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? (
+                    <Eye className="w-5 h-5" />
+                  ) : (
+                    <EyeOff className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  {...register('rememberMe')}
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm text-foreground/70">Remember me</span>
+              </label>
+
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm font-medium text-blue-600 hover:text-blue-500"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={login.isPending}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {login.isPending ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                'Sign in'
+              )}
+            </button>
+          </form>
+        </div>
+      </Card>
     </div>
+
   );
 }
