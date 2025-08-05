@@ -480,7 +480,7 @@ export default function ServicePricesPage() {
               onClick={form.handleSubmit(onSubmit)}
               isLoading={createOrUpdateServicePrice.isPending}
             >
-              {selectedPrice ? 'Save Changes' : 'Add Category'}
+              {selectedPrice ? 'Save Changes' : 'Add service Price'}
             </Button>
           </div>
         }

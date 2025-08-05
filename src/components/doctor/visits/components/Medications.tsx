@@ -9,17 +9,15 @@ import {
   Control,
   FieldErrors,
 } from 'react-hook-form';
-import {
-  CreateOrUpdateVisitPrescriptionDto,
-  FrequencyType,
-} from '@/lib/api/types/treatment';
+import { CreateUpdateVisitPrescriptionDto } from '@/lib/api/types/visit-prescription';
 import { Trash, Plus, Search } from 'lucide-react';
 import { TreatmentFormData } from './validation';
+import { FrequencyType } from '@/lib/api/types/visit-prescription';
 
 interface MedicationsProps {
-  medications: CreateOrUpdateVisitPrescriptionDto[];
+  medications: CreateUpdateVisitPrescriptionDto[];
   onMedicationsChange: (
-    medications: CreateOrUpdateVisitPrescriptionDto[]
+    medications: CreateUpdateVisitPrescriptionDto[]
   ) => void;
   onShowMedicationSearch: (index: number) => void;
   register: UseFormRegister<TreatmentFormData>;
@@ -43,11 +41,13 @@ export default function Medications({
     onMedicationsChange([
       ...medications,
       {
-        id: newId,
+        id: undefined,
+        medicineId: newId,
         name: '',
         duration: 0,
         dosage: '',
         frequency: FrequencyType.Daily,
+        notes: '',
       },
     ]);
   };
@@ -77,7 +77,7 @@ export default function Medications({
       <div className="space-y-4">
         {medications.map((med, index) => (
           <div
-            key={med.id || index}
+            key={med.medicineId || index}
             className="p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow duration-200"
           >
             <div className="flex justify-between items-center mb-3">
@@ -128,6 +128,7 @@ export default function Medications({
               <div className="col-span-6 md:col-span-2">
                 <Input
                   label="Dosage"
+                  type="number"
                   required={true}
                   placeholder="Dosage"
                   {...register(`medications.${index}.dosage`, {
@@ -150,6 +151,7 @@ export default function Medications({
                   {...register(`medications.${index}.frequency`, {
                     required: true,
                   })}
+                  value={String(med.frequency)}
                   required={true}
                   options={Object.entries(FrequencyType)
                     .filter(([key]) => isNaN(Number(key)))

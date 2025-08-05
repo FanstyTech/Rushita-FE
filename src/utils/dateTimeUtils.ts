@@ -2,7 +2,9 @@
  * Utility functions for handling dates and times in forms
  */
 
-import { CreateUpdateAppointmentDto } from "@/lib/api/types/appointment";
+import { CreateUpdateAppointmentDto } from '@/lib/api/types/appointment';
+import { format } from 'date-fns';
+import { enUS } from 'date-fns/locale';
 
 /**
  * Convert date string to ISO string for API submission
@@ -134,4 +136,11 @@ export const convertFormDataForAPI = (formData: CreateUpdateAppointmentDto) => {
     startTime,
     endTime,
   };
+};
+export const formatDate = (dateString: string) => {
+  return format(new Date(dateString), 'PPP', { locale: enUS });
+};
+
+export const formatTime = (dateString: string) => {
+  return format(new Date(dateString), 'p', { locale: enUS });
 };

@@ -1,9 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import {  Select, TextArea } from '@/components/common/form';
+import { Select, TextArea } from '@/components/common/form';
 import { SelectOption } from '@/lib/api/types/select-option';
-import { CreateOrUpdateVisitRadiologyTestDto } from '@/lib/api/types/treatment';
+import { CreateUpdateVisitRadiologyTestDto } from '@/lib/api/types/visit-radiology-test';
 import {
   Controller,
   UseFormRegister,
@@ -14,9 +14,9 @@ import { Plus, Trash } from 'lucide-react';
 import { TreatmentFormData } from './validation';
 
 interface RayTestsProps {
-  rays: CreateOrUpdateVisitRadiologyTestDto[];
+  rays: CreateUpdateVisitRadiologyTestDto[];
   availableRays: SelectOption<string>[];
-  onRaysChange: (rays: CreateOrUpdateVisitRadiologyTestDto[]) => void;
+  onRaysChange: (rays: CreateUpdateVisitRadiologyTestDto[]) => void;
   register: UseFormRegister<TreatmentFormData>;
   control: Control<TreatmentFormData>;
   errors: FieldErrors<TreatmentFormData>;
@@ -33,7 +33,7 @@ export default function RayTests({
   isLoading = false,
 }: RayTestsProps) {
   const handleAddRay = () => {
-    onRaysChange([...rays, { id: '', notes: '', name: '' }]);
+    onRaysChange([...rays, { radiologyTestId: '', notes: '', testName: '' }]);
   };
 
   const handleRemoveRay = (index: number) => {
@@ -82,7 +82,7 @@ export default function RayTests({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Controller
-                  name={`rays.${index}.id`}
+                  name={`rays.${index}.radiologyTestId`}
                   control={control}
                   render={({ field }) => (
                     <Select
@@ -106,7 +106,7 @@ export default function RayTests({
                           newRays[index] = {
                             ...newRays[index],
                             id: value,
-                            name: selectedOption.label || '',
+                            testName: selectedOption.label || '',
                           };
                           onRaysChange(newRays);
                         }
@@ -145,7 +145,7 @@ export default function RayTests({
 
         {rays.length === 0 && (
           <div className="text-center py-6 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
-            <p>No ray tests added yet. Click {"Add Ray Test"} to begin.</p>
+            <p>No ray tests added yet. Click {'Add Ray Test'} to begin.</p>
           </div>
         )}
       </div>

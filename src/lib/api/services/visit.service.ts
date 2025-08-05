@@ -9,13 +9,13 @@ import type {
   VisitStatus,
   VisitDiagnosisDto,
   VisitPrescriptionDto,
-  VisitLabTestDto,
-  VisitRadiologyTestDto,
   VisitDentalProcedureDto,
   VisitStatusHistoryDto,
   CreateOrUpdateVisitDto,
-} from '../types/treatment';
+} from '../types/visit';
 import { convertFilterToParams, FilterParams } from '@/utils/filter';
+import { VisitLabTestDto } from '../types/visit-lab-test';
+import { VisitRadiologyTestDto } from '../types/visit-radiology-test';
 
 export const visitService = {
   // Get paginated list of visits
@@ -52,9 +52,9 @@ export const visitService = {
 
   // Delete visit
   async delete(id: string): Promise<ApiResponse<boolean>> {
-    return apiClient.delete(
-      API_ENDPOINTS.VISIT_ENDPOINTS.DELETE.replace(':id', id)
-    );
+    return apiClient.delete(API_ENDPOINTS.VISIT_ENDPOINTS.DELETE, {
+      id,
+    });
   },
 
   // Update visit status

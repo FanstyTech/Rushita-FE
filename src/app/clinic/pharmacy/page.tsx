@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Table, type Column } from '@/components/common/Table';
-import { ActivitySquare, Eye, Pencil, Trash2 } from 'lucide-react';
+import { ActivitySquare, Eye, MoreVertical } from 'lucide-react';
+import Link from 'next/link';
 import { useVisit } from '@/lib/api/hooks/useVisit';
 import { VisitListDto, VisitStatus } from '@/lib/api/types/visit';
 import {
@@ -12,13 +13,9 @@ import {
   getVisitTypeLabel,
 } from '@/utils/textUtils';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/api/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { ConfirmationModal } from '@/components/common';
 
-export default function VisitsPage() {
-  const router = useRouter();
+export default function PharmacyPage() {
   const { user } = useAuth();
   const clinicId = user?.clinicInfo?.id || '';
   // States
@@ -29,28 +26,16 @@ export default function VisitsPage() {
     sortDirection: '',
     searchValue: '',
     isActive: undefined as boolean | undefined,
+    forPharmcy: true,
     clinicId: clinicId,
   });
 
   // Get visits using the hook
-  const { useVisitList: getVisits, deleteVisit } = useVisit();
+  const { useVisitList: getVisits } = useVisit();
   const { data: visitsData, isLoading } = getVisits(filter);
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedVisit, setSelectedVisit] = useState<VisitListDto | null>(null);
   const visits = visitsData?.items || [];
 
-  const handleDelete = async (price: VisitListDto) => {
-    setSelectedVisit(price);
-    setIsDeleteModalOpen(true);
-  };
-  const confirmDelete = async () => {
-    if (selectedVisit) {
-      await deleteVisit.mutateAsync(selectedVisit.id);
-      setIsDeleteModalOpen(false);
-      setSelectedVisit(null);
-    }
-  };
   const columns: Column<VisitListDto>[] = [
     {
       header: 'Visit #',
@@ -100,33 +85,20 @@ export default function VisitsPage() {
       accessor: 'id',
       cell: ({ row }) => (
         <div className="flex items-center justify-end gap-2">
-          <Button
-            onClick={() => router.push(`/doctor/visits/${row.original.id}`)}
-            variant="ghost"
-            className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-            title="View visit details"
+          <Link
+            href={`/doctor/visits/${row.original.id}`}
+            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            title="View details"
           >
-            <Eye className="w-4 h-4 " />
-          </Button>
-          <Button
-            onClick={() =>
-              router.push(`/doctor/visits/${row.original.id}/edit`)
-            }
-            variant="ghost"
-            className="p-1 text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300 transition-colors"
-            title="Edit visit details"
+            <Eye className="w-4 h-4 text-gray-600" />
+          </Link>
+          <Link
+            href={`/doctor/visits/${row.original.id}/edit`}
+            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Edit visit"
           >
-            <Pencil className="w-4 h-4" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            onClick={() => handleDelete(row.original)}
-            className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
-            title="Delete"
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
+            <MoreVertical className="w-4 h-4 text-gray-600" />
+          </Link>
         </div>
       ),
       className: 'w-20',
@@ -170,7 +142,6 @@ export default function VisitsPage() {
                 })),
             },
           ]}
-          onAddNew={() => router.push('/doctor/visits/add')}
         />
 
         {/* Table */}
@@ -185,19 +156,6 @@ export default function VisitsPage() {
             onPageChange: (page: number) =>
               setFilter((prev) => ({ ...prev, pageNumber: page + 1 })),
           }}
-        />
-
-        {/* Delete Confirmation Modal */}
-        <ConfirmationModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => setIsDeleteModalOpen(false)}
-          onConfirm={confirmDelete}
-          title="Delete visit"
-          message="Are you sure you want to delete this visit?"
-          secondaryMessage="This action cannot be undone."
-          variant="error"
-          confirmText="Delete"
-          isLoading={deleteVisit.isPending}
         />
       </div>
     </PageLayout>

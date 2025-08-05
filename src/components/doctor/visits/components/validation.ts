@@ -2,23 +2,26 @@ import z from 'zod';
 
 // Validation Schemas
 const medicationSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  medicineId: z.string().min(1, 'Medication ID is required'),
   name: z.string().min(1, 'Medication name is required'),
-  dosage: z.string().min(1, 'Dosage is required'),
+  dosage: z.coerce.number().min(1, 'Dosage is required'),
   frequency: z.coerce.number().min(1, 'Frequency is required'),
   duration: z.coerce.number().min(1, 'Duration is required'),
   notes: z.string().optional(),
 });
 
 const labTestSchema = z.object({
-  id: z.string().min(1, 'Lab test name is required'),
-  name: z.string().optional(),
+  id: z.string().optional(),
+  labTestId: z.string().min(1, 'Lab test name is required'),
+  testName: z.string().optional(),
   notes: z.string().optional(),
 });
 
 const rayTestSchema = z.object({
-  id: z.string().min(1, 'Ray test name is required'),
-  name: z.string().optional(),
+  id: z.string().optional(),
+  radiologyTestId: z.string().min(1, 'Ray test name is required'),
+  testName: z.string().optional(),
   notes: z.string().optional(),
 });
 

@@ -22,6 +22,10 @@ import {
 } from 'lucide-react';
 import { useVisit } from '@/lib/api/hooks/useVisit';
 import {
+  getFrequencyTypeClass,
+  getFrequencyTypeLabel,
+  getTestStatusColor,
+  getTestStatusLabel,
   getVisitStatusClass,
   getVisitStatusLabel,
   getVisitTypeLabel,
@@ -423,13 +427,15 @@ const VisitDetailsPage: FC = () => {
                           <div className="flex flex-col">
                             <div className="flex justify-between">
                               <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                                {medication.medicationName}
+                                {medication.medicineName}
                               </h4>
                               <Badge
                                 variant="outline"
-                                className="bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700"
+                                className={getFrequencyTypeClass(
+                                  medication.frequency
+                                )}
                               >
-                                {medication.frequency}
+                                {getFrequencyTypeLabel(medication.frequency)}
                               </Badge>
                             </div>
                             <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
@@ -493,46 +499,22 @@ const VisitDetailsPage: FC = () => {
                           >
                             <div className="flex justify-between">
                               <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                                {test.testName}
+                                {test.labTestName}
                               </h4>
                               <Badge
                                 variant="outline"
-                                className={
-                                  test.status === 0
-                                    ? 'bg-yellow-50 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-700'
-                                    : test.status === 1
-                                    ? 'bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700'
-                                    : test.status === 2
-                                    ? 'bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700'
-                                    : 'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600'
-                                }
+                                className={getTestStatusColor(test.status)}
                               >
-                                {test.status === 0
-                                  ? 'Pending'
-                                  : test.status === 1
-                                  ? 'In Progress'
-                                  : test.status === 2
-                                  ? 'Completed'
-                                  : 'Unknown'}
+                                {getTestStatusLabel(test.status)}
                               </Badge>
                             </div>
-                            {test.details && (
+                            {test.notes && (
                               <div className="mt-2 text-sm">
                                 <span className="text-gray-500 dark:text-gray-400">
                                   Details:
                                 </span>{' '}
                                 <span className="text-gray-700 dark:text-gray-300">
-                                  {test.details}
-                                </span>
-                              </div>
-                            )}
-                            {test.results && (
-                              <div className="mt-2 text-sm">
-                                <span className="text-gray-500 dark:text-gray-400">
-                                  Results:
-                                </span>{' '}
-                                <span className="text-gray-700 dark:text-gray-300">
-                                  {test.results}
+                                  {test.notes}
                                 </span>
                               </div>
                             )}
@@ -565,46 +547,22 @@ const VisitDetailsPage: FC = () => {
                           >
                             <div className="flex justify-between">
                               <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                                {test.testName}
+                                {test.radiologyTestName}
                               </h4>
                               <Badge
                                 variant="outline"
-                                className={
-                                  test.status === 0
-                                    ? 'bg-yellow-50 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-700'
-                                    : test.status === 1
-                                    ? 'bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700'
-                                    : test.status === 2
-                                    ? 'bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700'
-                                    : 'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600'
-                                }
+                                className={getTestStatusColor(test.status)}
                               >
-                                {test.status === 0
-                                  ? 'Pending'
-                                  : test.status === 1
-                                  ? 'In Progress'
-                                  : test.status === 2
-                                  ? 'Completed'
-                                  : 'Unknown'}
+                                {getTestStatusLabel(test.status)}
                               </Badge>
                             </div>
-                            {test.details && (
+                            {test.notes && (
                               <div className="mt-2 text-sm">
                                 <span className="text-gray-500 dark:text-gray-400">
                                   Details:
                                 </span>{' '}
                                 <span className="text-gray-700 dark:text-gray-300">
-                                  {test.details}
-                                </span>
-                              </div>
-                            )}
-                            {test.results && (
-                              <div className="mt-2 text-sm">
-                                <span className="text-gray-500 dark:text-gray-400">
-                                  Results:
-                                </span>{' '}
-                                <span className="text-gray-700 dark:text-gray-300">
-                                  {test.results}
+                                  {test.notes}
                                 </span>
                               </div>
                             )}

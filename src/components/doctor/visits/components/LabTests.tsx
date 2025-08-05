@@ -8,15 +8,15 @@ import {
   Control,
   FieldErrors,
 } from 'react-hook-form';
-import { CreateOrUpdateVisitLabTestDto } from '@/lib/api/types/treatment';
+import { CreateUpdateVisitLabTestDto } from '@/lib/api/types/visit-lab-test';
 import { Plus, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TreatmentFormData } from './validation';
 
 interface LabTestsProps {
-  labTests: CreateOrUpdateVisitLabTestDto[];
+  labTests: CreateUpdateVisitLabTestDto[];
   availableTests: SelectOption<string>[];
-  onLabTestsChange: (labTests: CreateOrUpdateVisitLabTestDto[]) => void;
+  onLabTestsChange: (labTests: CreateUpdateVisitLabTestDto[]) => void;
   register: UseFormRegister<TreatmentFormData>;
   control: Control<TreatmentFormData>;
   errors: FieldErrors<TreatmentFormData>;
@@ -34,7 +34,7 @@ export default function LabTests({
 }: LabTestsProps) {
   const handleAddLabTest = () => {
     // Generate a unique ID for the new lab test
-    onLabTestsChange([...labTests, { id: '', notes: '', name: '' }]);
+    onLabTestsChange([...labTests, { labTestId: '', notes: '', testName: '' }]);
   };
 
   const handleRemoveLabTest = (index: number) => {
@@ -84,7 +84,7 @@ export default function LabTests({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Controller
-                  name={`labTests.${index}.id`}
+                  name={`labTests.${index}.labTestId`}
                   control={control}
                   render={({ field }) => (
                     <Select
@@ -96,7 +96,7 @@ export default function LabTests({
                       disabled={isLoading}
                       isLoading={isLoading}
                       className="w-full"
-                      {...register(`labTests.${index}.id`, {
+                      {...register(`labTests.${index}.labTestId`, {
                         required: true,
                       })}
                       onChange={(event) => {
@@ -112,7 +112,7 @@ export default function LabTests({
                           newLabs[index] = {
                             ...newLabs[index],
                             id: value,
-                            name: selectedOption.label || '',
+                            testName: selectedOption.label || '',
                           };
                           onLabTestsChange(newLabs);
                         }
@@ -152,7 +152,7 @@ export default function LabTests({
 
         {labTests.length === 0 && (
           <div className="text-center py-6 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
-            <p>No lab tests added yet. Click {"Add Lab Test"} to begin.</p>
+            <p>No lab tests added yet. Click {'Add Lab Test'} to begin.</p>
           </div>
         )}
       </div>

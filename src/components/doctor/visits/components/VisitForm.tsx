@@ -35,7 +35,7 @@ import { MedicineListDto } from '@/lib/api/types/medicine';
 import { useVisit } from '@/lib/api/hooks/useVisit';
 import { useDiagnosis } from '@/lib/api/hooks/useDiagnosis';
 import { Button } from '@/components/ui/button';
-import { CreateOrUpdateVisitDto } from '@/lib/api/types/treatment';
+import { CreateOrUpdateVisitDto } from '@/lib/api/types/visit';
 import { TreatmentFormData, treatmentFormSchema } from './validation';
 
 interface Attachment {
@@ -77,7 +77,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
         {
           id: '',
           name: '',
-          dosage: '',
+          dosage: 0,
           frequency: 0,
           duration: 0,
           notes: '',
@@ -248,7 +248,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
     const newMedications = [...formData.medications];
     newMedications[currentMedicationIndex] = {
       ...newMedications[currentMedicationIndex],
-      id: medication.id,
+      medicineId: medication.id,
       name: medication.name,
     };
     setValue('medications', newMedications);
@@ -266,8 +266,6 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
   };
 
   const onSubmit = async (data: TreatmentFormData) => {
-    console.log('Submitting form data:', data);
-
     // Prepare data for the API
     const visitData: CreateOrUpdateVisitDto = {
       id: visitId, // Include the ID for updates
@@ -280,9 +278,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
       followUpInstructions: '',
       diagnosis: data.diagnosis,
       medications: data.medications,
-
       labTests: data.labTests,
-
       rays: data.rays,
     };
 
@@ -408,7 +404,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
                       >
                         {createOrUpdateClinicVisit.isPending
                           ? 'Saving...'
-                          : 'Save Treatment'}
+                          : 'Save Visit'}
                       </Button>
                     </div>
                   </div>

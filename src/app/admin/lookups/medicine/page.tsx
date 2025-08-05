@@ -10,7 +10,11 @@ import { Column, Table } from '@/components/common/Table';
 import PageLayout from '@/components/layouts/PageLayout';
 import { useMedicine } from '@/lib/api/hooks/useMedicine';
 import { useMedicationType } from '@/lib/api/hooks/useMedicationType';
-import { MedicineListDto } from '@/lib/api/types/medicine';
+import {
+  DosageForm,
+  MedicineListDto,
+  MedicineStrength,
+} from '@/lib/api/types/medicine';
 import { SelectOption } from '@/lib/api/types/select-option';
 import {
   MedicineFormData,
@@ -76,6 +80,8 @@ export default function MedicinePage() {
       description: formData.description,
       medicationTypeId: formData.medicationTypeId,
       isActive: formData.isActive === 'true',
+      dosageForm: formData.dosageForm,
+      strength: formData.strength,
       ...(selectedMedicine && { id: selectedMedicine.id }),
     };
 
@@ -98,9 +104,11 @@ export default function MedicinePage() {
       nameL: medicine.nameL,
       nameF: medicine.nameF,
       scientificName: medicine.scientificName,
-      description: '',
-      medicationTypeId: medicine.id, // This is a temporary fix since we don't have medicationTypeId in the list DTO
+      description: medicine.description,
+      medicationTypeId: medicine.medicationTypeId,
       isActive: medicine.isActive ? 'true' : 'false',
+      dosageForm: medicine.dosageForm,
+      strength: medicine.strength,
     });
     setIsModalOpen(true);
   };
@@ -128,6 +136,8 @@ export default function MedicinePage() {
       description: '',
       medicationTypeId: '',
       isActive: 'true',
+      dosageForm: 0,
+      strength: 0,
     });
     setIsModalOpen(true);
   };
@@ -276,32 +286,33 @@ export default function MedicinePage() {
       >
         <form className="space-y-4">
           <Input
+            required={true}
             label="Code"
             {...form.register('code')}
             error={form.formState.errors.code?.message}
           />
           <Input
+            required={true}
             label="Local Name"
             {...form.register('nameL')}
             error={form.formState.errors.nameL?.message}
           />
           <Input
+            required={true}
             label="Foreign Name"
             {...form.register('nameF')}
             error={form.formState.errors.nameF?.message}
           />
           <Input
+            required={true}
             label="Scientific Name"
             {...form.register('scientificName')}
             error={form.formState.errors.scientificName?.message}
           />
-          <TextArea
-            label="Description"
-            {...form.register('description')}
-            error={form.formState.errors.description?.message}
-          />
           <Select
+            required={true}
             label="Medication Type"
+            value={String(form.watch('medicationTypeId'))}
             {...form.register('medicationTypeId')}
             error={form.formState.errors.medicationTypeId?.message}
             options={[
@@ -313,6 +324,34 @@ export default function MedicinePage() {
             ]}
           />
           <Select
+            required={true}
+            value={String(form.watch('dosageForm'))}
+            label="Dosage Form"
+            {...form.register('dosageForm')}
+            error={form.formState.errors.dosageForm?.message}
+            options={Object.entries(DosageForm)
+              .filter(([key]) => isNaN(Number(key)))
+              .map(([key, value]) => ({
+                value: value.toString(),
+                label: key,
+              }))}
+          />
+          <Select
+            required={true}
+            value={String(form.watch('strength'))}
+            label="Strength"
+            {...form.register('strength')}
+            error={form.formState.errors.strength?.message}
+            options={Object.entries(MedicineStrength)
+              .filter(([key]) => isNaN(Number(key)))
+              .map(([key, value]) => ({
+                value: value.toString(),
+                label: key,
+              }))}
+          />
+          <Select
+            required={true}
+            value={String(form.watch('isActive'))}
             label="Status"
             {...form.register('isActive')}
             error={form.formState.errors.isActive?.message}
@@ -320,6 +359,11 @@ export default function MedicinePage() {
               { value: 'true', label: 'Active' },
               { value: 'false', label: 'Inactive' },
             ]}
+          />{' '}
+          <TextArea
+            label="Description"
+            {...form.register('description')}
+            error={form.formState.errors.description?.message}
           />
         </form>
       </Modal>

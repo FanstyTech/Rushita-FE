@@ -14,8 +14,11 @@ import {
   VisitType,
 } from '@/lib/api/types/clinic-patient';
 import { ClinicStaffStatus } from '@/lib/api/types/clinic-staff';
+import { DosageForm, MedicineStrength } from '@/lib/api/types/medicine';
 import { ServiceType } from '@/lib/api/types/service-price';
-import { VisitStatus } from '@/lib/api/types/treatment';
+import { VisitStatus } from '@/lib/api/types/visit';
+import { TestStatus } from '@/lib/api/types/visit-lab-test';
+import { PrescriptionStatus } from '@/lib/api/types/visit-prescription';
 
 /**
  * Generates initials from a name string.
@@ -444,4 +447,96 @@ export const getServiceTypeLabel = (type: ServiceType): string => {
   };
 
   return typeNameMap[type] || 'Unknown';
+};
+export const getTestStatusLabel = (status: TestStatus): string => {
+  const statusLabelMap: Record<TestStatus, string> = {
+    [TestStatus.Pending]: 'Pending',
+    [TestStatus.InProgress]: 'In Progress',
+    [TestStatus.Completed]: 'Completed',
+    [TestStatus.Cancelled]: 'Cancelled',
+    [TestStatus.Failed]: 'Failed',
+  };
+
+  return statusLabelMap[status] || 'Unknown';
+};
+
+export const getTestStatusColor = (status: TestStatus): string => {
+  const statusColorMap: Record<TestStatus, string> = {
+    [TestStatus.Pending]:
+      'bg-yellow-50 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
+    [TestStatus.InProgress]:
+      'bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+    [TestStatus.Completed]:
+      'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-300',
+    [TestStatus.Cancelled]:
+      'bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+    [TestStatus.Failed]:
+      'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-300',
+  };
+
+  return (
+    statusColorMap[status] ||
+    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+  );
+};
+export const getPrescriptionStatusColor = (
+  status: PrescriptionStatus
+): string => {
+  const statusColorMap: Record<PrescriptionStatus, string> = {
+    [PrescriptionStatus.Pending]:
+      'bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+    [PrescriptionStatus.PartiallyDispensed]:
+      'bg-yellow-50 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
+    [PrescriptionStatus.FullyDispensed]:
+      'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-300',
+    [PrescriptionStatus.Cancelled]:
+      'bg-red-500 text-red-700 dark:bg-red-900 dark:text-red-300',
+    [PrescriptionStatus.Expired]:
+      'bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+  };
+
+  return (
+    statusColorMap[status] ||
+    'bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+  );
+};
+export const getPrescriptionStatusLabel = (
+  status: PrescriptionStatus
+): string => {
+  const statusLabelMap: Record<PrescriptionStatus, string> = {
+    [PrescriptionStatus.Pending]: 'Pending',
+    [PrescriptionStatus.PartiallyDispensed]: 'Partially Dispensed',
+    [PrescriptionStatus.FullyDispensed]: 'Fully Dispensed',
+    [PrescriptionStatus.Cancelled]: 'Cancelled',
+    [PrescriptionStatus.Expired]: 'Expired',
+  };
+
+  return statusLabelMap[status] || 'Unknown';
+};
+
+export const getDosageFormLabel = (form: DosageForm): string => {
+  const dosageFormLabelMap: Record<DosageForm, string> = {
+    [DosageForm.Tablet]: 'Tablets',
+    [DosageForm.Capsule]: 'Capsules',
+    [DosageForm.Syrup]: 'Syrup',
+    [DosageForm.Injection]: 'Injection',
+    [DosageForm.Cream]: 'Cream',
+    [DosageForm.Drops]: 'Drops',
+    [DosageForm.Inhaler]: 'Inhaler',
+    [DosageForm.Other]: 'Other',
+  };
+
+  return dosageFormLabelMap[form] || 'Unknown';
+};
+export const getMedicineStrengthLabel = (
+  strength: MedicineStrength
+): string => {
+  const medicineStrengthLabelMap: Record<MedicineStrength, string> = {
+    [MedicineStrength.Mg250]: 'Mg 250',
+    [MedicineStrength.Mg500]: 'Mg 500',
+    [MedicineStrength.Mg1000]: 'Mg 1000',
+    [MedicineStrength.Other]: 'Other',
+  };
+
+  return medicineStrengthLabelMap[strength] || 'Unknown';
 };

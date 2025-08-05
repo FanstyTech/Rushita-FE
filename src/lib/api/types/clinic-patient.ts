@@ -1,4 +1,5 @@
 import { PaginationRequest } from './pagination';
+import { FrequencyType } from './visit-prescription';
 
 // Enums
 export enum Gender {
@@ -16,16 +17,6 @@ export enum Severity {
   Mild = 1,
   Moderate = 2,
   Severe = 3,
-}
-
-export enum FrequencyType {
-  Daily = 1,
-  BID = 2,
-  TID = 3,
-  QID = 4,
-  Weekly = 5,
-  Monthly = 6,
-  AsNeeded = 7,
 }
 
 export enum Relationship {
@@ -287,3 +278,4 @@ export interface GetPatientForViewDto {
   bloodType?: BloodType;
   gender?: Gender;
 }
+export { FrequencyType };

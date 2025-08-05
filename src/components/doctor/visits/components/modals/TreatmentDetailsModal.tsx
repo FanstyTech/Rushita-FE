@@ -4,11 +4,9 @@ import {
   GetPatientForViewDto,
   VisitType,
 } from '@/lib/api/types/clinic-patient';
-import {
-  CreateOrUpdateVisitLabTestDto,
-  CreateOrUpdateVisitPrescriptionDto,
-  CreateOrUpdateVisitRadiologyTestDto,
-} from '@/lib/api/types/treatment';
+import { CreateUpdateVisitLabTestDto } from '@/lib/api/types/visit-lab-test';
+import { CreateUpdateVisitRadiologyTestDto } from '@/lib/api/types/visit-radiology-test';
+import { CreateUpdateVisitPrescriptionDto } from '@/lib/api/types/visit-prescription';
 import { getFrequencyTypeLabel, getVisitTypeLabel } from '@/utils/textUtils';
 import {
   CalendarDays,
@@ -24,9 +22,9 @@ interface TreatmentFormData {
   visitType: VisitType;
   symptoms: string;
   diagnosis: string;
-  medications: CreateOrUpdateVisitPrescriptionDto[];
-  labTests: CreateOrUpdateVisitLabTestDto[];
-  rays: CreateOrUpdateVisitRadiologyTestDto[];
+  medications: CreateUpdateVisitPrescriptionDto[];
+  labTests: CreateUpdateVisitLabTestDto[];
+  rays: CreateUpdateVisitRadiologyTestDto[];
   notes?: string;
   attachments?: Array<{
     id: string;
@@ -239,7 +237,7 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                         className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                       >
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          {test?.name || 'Not specified'}
+                          {test?.testName || 'Not specified'}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
                           {test.notes || 'No additional details'}
@@ -282,7 +280,7 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                         className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                       >
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          {ray?.name || 'Not specified'}
+                          {ray?.testName || 'Not specified'}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
                           {ray?.notes || 'No additional details'}

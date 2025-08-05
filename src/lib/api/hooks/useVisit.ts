@@ -5,7 +5,7 @@ import type {
   VisitFilterDto,
   VisitStatus,
   CreateOrUpdateVisitDto,
-} from '../types/treatment';
+} from '../types/visit';
 
 export const useVisit = () => {
   const queryClient = useQueryClient();

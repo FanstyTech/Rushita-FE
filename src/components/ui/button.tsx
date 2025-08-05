@@ -15,7 +15,7 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/80 dark:hover:bg-destructive',
         outline:
-          'bg-transparent   text text-foreground border-foreground border',
+          'bg-transparent border text-xs border-gray-300 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300',
         outlinetow:
           'bg-transparent  hover:bg-foreground hover:text-primary-foreground text-foreground border-foreground border',
 
@@ -29,7 +29,7 @@ const buttonVariants = cva(
         none: 'block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300 dark:text-gray-300',
         PlanButton:
           'text-white bg-secend dark:bg-secend/90 dark:hover:bg-secend',
-        SaveButton: "border-primary border bg-primary"
+        SaveButton: 'border-primary border bg-primary',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

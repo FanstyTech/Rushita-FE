@@ -1,4 +1,4 @@
-import { CreateOrUpdateVisitLabTestDto } from '@/lib/api/types/treatment';
+import { CreateOrUpdateVisitLabTestDto } from '@/lib/api/types/visit';
 
 export interface AdvancedSearchForm {
   name: string;

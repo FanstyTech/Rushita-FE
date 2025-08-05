@@ -1,3 +1,4 @@
+import { DosageForm, MedicineStrength } from '@/lib/api/types/medicine';
 import { z } from 'zod';
 
 export const medicineSchema = z.object({
@@ -29,6 +30,27 @@ export const medicineSchema = z.object({
     required_error: 'Status is required',
     invalid_type_error: 'Status must be either active or inactive',
   }),
+  dosageForm: z.coerce
+    .number({
+      required_error: 'Dosage Form is required',
+      invalid_type_error: 'Dosage Form must be a number',
+    })
+    .refine((val) => Object.values(DosageForm).includes(val as DosageForm), {
+      message: 'Dosage Form is required',
+    }),
+
+  strength: z.coerce
+    .number({
+      required_error: 'Strength  is required',
+      invalid_type_error: 'Strength must be a number',
+    })
+    .refine(
+      (val) =>
+        Object.values(MedicineStrength).includes(val as MedicineStrength),
+      {
+        message: 'Strength is required',
+      }
+    ),
 });
 
 export type MedicineFormData = z.infer<typeof medicineSchema>;
