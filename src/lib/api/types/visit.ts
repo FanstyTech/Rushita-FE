@@ -8,6 +8,7 @@ import {
   CreateUpdateVisitRadiologyTestDto,
   VisitRadiologyTestDto,
 } from './visit-radiology-test';
+import { AttachmentDto } from './attachment';
 
 // Visit status enum (matching backend)
 export enum VisitStatus {
@@ -116,30 +117,6 @@ export interface VisitFilterDto extends PaginationRequest {
   forPharmcy?: boolean;
 }
 
-// Prescription DTO
-// export interface CreateOrUpdateVisitPrescriptionDto {
-//   id: string;
-//   name: string;
-//   dosage: string;
-//   frequency: FrequencyType;
-//   duration: number;
-//   notes?: string;
-// }
-
-// Lab Test DTO
-// export interface CreateOrUpdateVisitLabTestDto {
-//   id: string;
-//   name?: string;
-//   notes?: string;
-// }
-
-// Radiology Test DTO
-// export interface CreateOrUpdateVisitRadiologyTestDto {
-//   id: string;
-//   name?: string;
-//   notes?: string;
-//   rayName: string;
-// }
 
 // Main Visit DTO
 export interface CreateOrUpdateVisitDto {
@@ -159,5 +136,6 @@ export interface CreateOrUpdateVisitDto {
   labTests?: CreateUpdateVisitLabTestDto[];
   rays?: CreateUpdateVisitRadiologyTestDto[];
   dentalProcedures?: VisitDentalProcedureDto[];
-  attachments?: VisitPrescriptionDto[];
+  attachments?: AttachmentDto[];
+  attachmentIds?: string[];
 }

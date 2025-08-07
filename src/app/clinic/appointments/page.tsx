@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/lib/api/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 import { Calendar } from '@/components/clinic/appointments/Calendar';
 import { format } from 'date-fns';
 import Modal from '@/components/common/Modal';
@@ -9,6 +10,7 @@ import {
   CalendarIcon,
   PencilIcon,
   TrashIcon,
+  ClipboardIcon,
 } from '@heroicons/react/24/outline';
 import AppointmentSkeleton from '@/components/skeletons/AppointmentSkeleton';
 import PageLayout from '@/components/layouts/PageLayout';
@@ -36,6 +38,7 @@ import { ConfirmationModal } from '@/components/common';
 
 export default function AppointmentsPage() {
   const { user } = useAuth();
+  const router = useRouter();
 
   // Extract clinicId and staffId directly from user
   const clinicId = user?.clinicInfo?.id || '';
@@ -291,14 +294,22 @@ export default function AppointmentsPage() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-2">
                         <Button
                           variant="ghost"
                           onClick={() => handleEditAppointment(appointment)}
-                          className="inline-flex items-center p-2 border border-gray-300 rounded-md text-sm font-medium bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
                           <PencilIcon className="h-4 w-4" />
                           <span className="sr-only">Edit</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          onClick={() =>
+                            router.push(`/doctor/visits/${appointment?.id}`)
+                          }
+                        >
+                          <ClipboardIcon className="h-4 w-4" />
+                          <span className="sr-only">Open Visit</span>
                         </Button>
                         <Button
                           variant="ghost"
@@ -306,7 +317,6 @@ export default function AppointmentsPage() {
                             setShowDeleteConfirm(true);
                             setSelectedAppointmentFoDelete(appointment?.id);
                           }}
-                          className="inline-flex items-center p-2 border border-gray-300 rounded-md text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                         >
                           <TrashIcon className="h-4 w-4" />
                           <span className="sr-only">Delete</span>

@@ -46,7 +46,7 @@ export const visitService = {
   // Create new or update existing visit
   async createOrUpdate(
     data: CreateOrUpdateVisitDto
-  ): Promise<ApiResponse<VisitDto>> {
+  ): Promise<ApiResponse<string>> {
     return apiClient.post(API_ENDPOINTS.VISIT_ENDPOINTS.CREATE_OR_UPDATE, data);
   },
 

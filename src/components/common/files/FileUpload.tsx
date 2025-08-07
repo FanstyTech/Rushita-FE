@@ -23,8 +23,8 @@ import {
   EntityType,
   FileUploadProgress,
 } from '@/lib/api/types/attachment';
-import { toast } from '@/components/ui/Toast';
-import LoadingSpinner from './LoadingSpinner';
+import LoadingSpinner from '../LoadingSpinner';
+import AttachmentsList from './AttachmentsList';
 
 export interface FileUploadProps {
   onFileUpload?: (file: File) => void;
@@ -44,6 +44,7 @@ export interface FileUploadProps {
   description?: string; // Optional description for the attachment
   specificPath?: string; // Optional specific path for the attachment
   showSuccessMsg?: boolean; // Whether to show success message after upload
+  attachments?: AttachmentDto[]; // Whether to show success message after upload
 }
 
 /**
@@ -63,6 +64,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
   required = false,
   entityId,
   entityType,
+  uploadedBy,
+  description,
+  specificPath,
+  attachments,
+  showSuccessMsg = true,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -71,6 +77,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [newAttachments, setNewAttachments] = useState<AttachmentDto[]>(
+    attachments || []
+  );
 
   const { uploadFile, uploadMultipleFiles } = useAttachment();
 
@@ -265,18 +274,29 @@ const FileUpload: React.FC<FileUploadProps> = ({
       try {
         if (multiple && filesToUpload.length > 1) {
           // Upload multiple files
-          await uploadMultipleFiles.mutateAsync({
-            showSuccessMsg: true,
+          const result = await uploadMultipleFiles.mutateAsync({
+            showSuccessMsg,
             files: filesToUpload,
             createDto: {
               entityId,
               entityType,
               uploadedBy: uploadedBy || '',
-              description,
-              specificPath,
+              description: description || '',
+              specificPath: specificPath || '',
+              isTemp: true,
             },
             onProgress: handleProgress,
           });
+
+          if (result && Array.isArray(result) && onFileUploaded) {
+            // Handle multiple uploads
+            setNewAttachments((prev) => [...prev, ...result]);
+
+            // Trigger callback for each uploaded file
+            result.forEach((file) => {
+              onFileUploaded(file);
+            });
+          }
         } else {
           // Upload single file
           const file = filesToUpload[0];
@@ -286,13 +306,15 @@ const FileUpload: React.FC<FileUploadProps> = ({
               entityId,
               entityType,
               uploadedBy: uploadedBy || '',
-              description,
-              specificPath,
+              description: description || '',
+              specificPath: specificPath || '',
+              isTemp: true,
             },
             onProgress: handleProgress,
           });
 
           if (result && onFileUploaded) {
+            setNewAttachments((prev) => [...prev, result]);
             onFileUploaded(result);
           }
         }
@@ -325,6 +347,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       uploadedBy,
       description,
       specificPath,
+      showSuccessMsg,
       onFileUploaded,
       onError,
       handleProgress,
@@ -517,6 +540,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </div>
         )}
       </div>
+      {/* Attachments List */}
+      <AttachmentsList
+        attachments={newAttachments}
+        title="Uploaded Files"
+        showDeleteButton={true}
+        // onDelete={handleAttachmentDelete}
+      />
     </div>
   );
 };

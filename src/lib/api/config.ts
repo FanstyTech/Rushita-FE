@@ -201,6 +201,18 @@ export const API_ENDPOINTS = {
     UPDATE_STATUS: '/visitLabTest/updateStatus',
     UPDATE_RESULT: '/visitLabTest/updateResult',
   },
+  visitRadiologyTest: {
+    LIST: '/visitRadiologyTest/getAll',
+    CREATE_OR_UPDATE: '/visitRadiologyTest/CreateOrUpdate',
+    DELETE: '/visitRadiologyTest/Delete',
+    GET_ONE: '/visitRadiologyTest/:id',
+    GET_BY_VISIT_ID: '/visitRadiologyTest/getByVisitId',
+    GET_BY_RADIOLOGY_TEST_ID: '/visitRadiologyTest/getByRadiologyTestId',
+    GET_VISITS_WITH_RADIOLOGY_TESTS: '/visitRadiologyTest/getVisitsWithRadiologyTests',
+    GET_SUMMARY: '/visitRadiologyTest/getSummary',
+    UPDATE_STATUS: '/visitRadiologyTest/updateStatus',
+    UPDATE_RESULT: '/visitRadiologyTest/updateResult',
+  },
   visitPrescription: {
     LIST: '/visitPrescription/getAll',
     CREATE_OR_UPDATE: '/visitPrescription/CreateOrUpdate',

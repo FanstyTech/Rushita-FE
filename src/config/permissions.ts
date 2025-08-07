@@ -25,6 +25,7 @@ export const PermissionKeys = {
   VIEW_FINANCIALS: 'clinic.financials.view',
   MANAGE_INVOICES: 'clinic.financials.invoices.manage',
   MANAGE_SERVICE_PRICES: 'clinic.financials.serviceprices.manage',
+  VIEW_SERVICE_PRICES: 'clinic.financials.serviceprices.view',
 
   // Medical Records
   MANAGE_MEDICAL_RECORDS: 'clinic.medical.records.manage',
@@ -37,6 +38,10 @@ export const PermissionKeys = {
   // Laboratory
   MANAGE_LAB_TESTS: 'laboratory.manage',
   VIEW_LAB_TESTS: 'laboratory.view',
+
+  // Radiology
+  MANAGE_RADIOLOGY: 'radiology.manage',
+  VIEW_RADIOLOGY: 'radiology.view',
 
   // Pharmacy
   MANAGE_PRESCRIPTIONS: 'pharmacy.prescriptions.manage',

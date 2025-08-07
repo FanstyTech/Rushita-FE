@@ -1,7 +1,8 @@
 import './globals.css';
 import { Providers } from '@/providers/Providers';
 import { languages, defaultLanguage } from '@/middleware';
-import ClientLayout from '@/components/ClientLayout';
+import ConditionalLayout from '@/components/ConditionalLayout';
+
 import { cookies, headers } from 'next/headers';
 import { Cairo } from 'next/font/google';
 
@@ -42,10 +43,20 @@ export default async function RootLayout({
   const initialDir = initialLang === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={initialLang} className='scroll-smooth' dir={initialDir} suppressHydrationWarning>
-      <body className={`${cairo.className} font-ibm-plex`} suppressHydrationWarning>
+    <html
+      lang={initialLang}
+      className="scroll-smooth"
+      dir={initialDir}
+      suppressHydrationWarning
+    >
+      <body
+        className={`${cairo.className} font-ibm-plex`}
+        suppressHydrationWarning
+      >
         <Providers>
-          <ClientLayout languages={languages}>{children}</ClientLayout>
+          <ConditionalLayout languages={languages}>
+            {children}
+          </ConditionalLayout>
         </Providers>
       </body>
     </html>

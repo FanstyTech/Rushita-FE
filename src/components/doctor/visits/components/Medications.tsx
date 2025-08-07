@@ -45,7 +45,7 @@ export default function Medications({
         medicineId: newId,
         name: '',
         duration: 0,
-        dosage: '',
+        dosage: 0,
         frequency: FrequencyType.Daily,
         notes: '',
       },

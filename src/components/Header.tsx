@@ -24,10 +24,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { FaBars } from 'react-icons/fa';
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
+import { cn } from '@/lib/utils';
 
 export default function Header() {
   const { logout, user } = useAuth();
@@ -112,7 +109,7 @@ export default function Header() {
                         <button
                           onClick={() => setLanguage(lang as Language)}
                           disabled={isChangingLanguage}
-                          className={classNames(
+                          className={cn(
                             'block w-full px-4 py-2 text-start text-sm text-gray-700 dark:text-gray-300',
                             language === lang
                               ? 'bg-gray-50 dark:bg-gray-700/50'
@@ -163,7 +160,7 @@ export default function Header() {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <MenuItems
-                  className={classNames(
+                  className={cn(
                     'absolute z-10 mt-2 w-56 divide-y divide-gray-100 dark:divide-gray-700 rounded-lg  bg-popover py-1 shadow-lg ring-1 ring-black ring-opacity-5  outline-none',
                     direction === 'rtl'
                       ? 'left-0 right-auto origin-top-left'
@@ -184,7 +181,7 @@ export default function Header() {
                       {({ active }) => (
                         <a
                           href="/admin/profile"
-                          className={classNames(
+                          className={cn(
                             active ? 'bg-gray-100 dark:bg-gray-700' : '',
                             'group flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300'
                           )}
@@ -210,7 +207,7 @@ export default function Header() {
                       {({ active }) => (
                         <a
                           href="/admin/settings"
-                          className={classNames(
+                          className={cn(
                             active ? 'bg-gray-100 dark:bg-gray-700' : '',
                             'group flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300'
                           )}
@@ -250,7 +247,7 @@ export default function Header() {
                         return (
                           <button
                             onClick={handleLogout}
-                            className={classNames(
+                            className={cn(
                               active ? 'bg-gray-100 dark:bg-gray-700' : '',
                               'group flex w-full items-center px-4 py-2 text-sm text-red-700 dark:text-red-500'
                             )}

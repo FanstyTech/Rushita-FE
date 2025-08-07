@@ -12,13 +12,15 @@ import Medications from './Medications';
 import LabTests from './LabTests';
 import RayTests from './RayTests';
 import Notes from './Notes';
-import Attachments from './Attachments';
+
+// File Components
+import FileUpload from '@/components/common/files/FileUpload';
+import AttachmentsList from '@/components/common/files/AttachmentsList';
 
 // Modals
 import MedicationSearchModal from './modals/MedicationSearchModal';
 import AddNewPatientModal from '@/components/clinic/patients/PatientFormModal';
 import TreatmentDetailsModal from './modals/TreatmentDetailsModal';
-import FilePreviewModal from './modals/FilePreviewModal';
 
 // Hooks and Types
 import { useLabTest } from '@/lib/api/hooks/useLabTest';
@@ -37,14 +39,8 @@ import { useDiagnosis } from '@/lib/api/hooks/useDiagnosis';
 import { Button } from '@/components/ui/button';
 import { CreateOrUpdateVisitDto } from '@/lib/api/types/visit';
 import { TreatmentFormData, treatmentFormSchema } from './validation';
-
-interface Attachment {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  url: string;
-}
+import { AttachmentDto, EntityType } from '@/lib/api/types/attachment';
+import { toast } from 'sonner';
 
 const INITIAL_MEDICINE_FILTER: FilterState = {
   pageNumber: 1,
@@ -75,7 +71,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
       diagnosis: '',
       medications: [
         {
-          id: '',
+          id: undefined,
           name: '',
           dosage: 0,
           frequency: 0,
@@ -101,12 +97,14 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
   const [patientSearchQuery, setPatientSearchQuery] = useState('');
   const [debouncedPatientSearchQuery, setDebouncedPatientSearchQuery] =
     useState('');
+  const [currentVisitId, setCurrentVisitId] = useState<string | undefined>(
+    visitId
+  );
 
   // Modal States
   const [showAddPatient, setShowAddPatient] = useState(false);
   const [showMedicationSearch, setShowMedicationSearch] = useState(false);
   const [showTreatmentDetails, setShowTreatmentDetails] = useState(false);
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   // Form States
   const [medicineFilter, setMedicineFilter] = useState<FilterState>(
@@ -116,8 +114,8 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
   const [currentMedicationIndex, setCurrentMedicationIndex] =
     useState<number>(0);
 
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
-  const [previewFile, setPreviewFile] = useState<Attachment | null>(null);
+  // Attachments State
+  const [attachments, setAttachments] = useState<AttachmentDto[]>([]);
 
   // Debounce patient search query
   useEffect(() => {
@@ -178,21 +176,11 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
         setValue('rays', visitData.rays);
       }
 
-      // Set dental procedures if available
-      // if (visitData.dentalProcedures && visitData.dentalProcedures.length > 0) {
-      //   setValue('dentalProcedures', visitData.dentalProcedures);
-      // }
-
-      // // Set selected teeth if available
-      // if (visitData.selectedTeeth && visitData.selectedTeeth.length > 0) {
-      //   setValue('selectedTeeth', visitData.selectedTeeth);
-      // }
-
-      // // Set attachments if available
-      // if (visitData.attachments && visitData.attachments.length > 0) {
-      //   setAttachments(visitData.attachments);
-      //   setValue('attachments', visitData.attachments);
-      // }
+      // Set attachments if available
+      if (visitData.attachments && visitData.attachments.length > 0) {
+        setAttachments(visitData?.attachments as AttachmentDto[]);
+        // setValue('attachments', visitData.attachmentIds);
+      }
     }
   }, [visitData, visitId, setValue]);
 
@@ -255,20 +243,23 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
     setShowMedicationSearch(false);
   };
 
-  const handlePreviewFile = (file: Attachment) => {
-    setPreviewFile(file);
-    setShowPreviewModal(true);
+  // File upload handlers
+  const handleFileUploaded = (attachment: AttachmentDto) => {
+    setAttachments((prev) => [...prev, attachment]);
+    setValue('attachments', [...attachments, attachment]);
   };
 
-  const handleClosePreview = () => {
-    setShowPreviewModal(false);
-    setPreviewFile(null);
+  const handleFileUploadError = (error: string) => {
+    toast.error(error);
   };
 
   const onSubmit = async (data: TreatmentFormData) => {
+    // Extract attachment IDs from attachments
+    const attachmentIds = attachments.map((attachment) => attachment.id);
+
     // Prepare data for the API
     const visitData: CreateOrUpdateVisitDto = {
-      id: visitId, // Include the ID for updates
+      id: currentVisitId, // Include the ID for updates
       patientId: data.patientId,
       staffId: user?.clinicInfo?.staffId || '',
       clinicId: user?.clinicInfo?.id || '',
@@ -280,10 +271,14 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
       medications: data.medications,
       labTests: data.labTests,
       rays: data.rays,
+      attachmentIds: attachmentIds, // Add attachment IDs
     };
 
     // Call the mutation
-    await createOrUpdateClinicVisit.mutateAsync(visitData);
+    var response = await createOrUpdateClinicVisit.mutateAsync(visitData);
+    if (response?.result) {
+      setCurrentVisitId(response.result);
+    }
   };
 
   return (
@@ -369,14 +364,32 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
                     errors={errors}
                   />
 
-                  <Attachments
-                    attachments={attachments}
-                    onAttachmentsChange={(newAttachments) => {
-                      setAttachments(newAttachments);
-                      setValue('attachments', newAttachments);
-                    }}
-                    onPreviewFile={handlePreviewFile}
-                  />
+                  {/* Attachments Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Attachments
+                      </h3>
+                    </div>
+
+                    {/* File Upload */}
+                    <FileUpload
+                      entityId={currentVisitId || undefined}
+                      entityType={EntityType.Visit}
+                      uploadedBy={user?.id || ''}
+                      description="Visit attachment"
+                      multiple={true}
+                      accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx"
+                      maxSize={10}
+                      label=""
+                      helperText="Upload visit-related files, images, or documents"
+                      showSuccessMsg={false}
+                      onFileUploaded={handleFileUploaded}
+                      onError={handleFileUploadError}
+                      disabled={createOrUpdateClinicVisit.isPending}
+                      attachments={attachments}
+                    />
+                  </div>
 
                   {/* Form Actions */}
                   <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
@@ -414,15 +427,6 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
           )}
 
           {/* Modals */}
-          {/* <AdvancedSearchModal
-            isOpen={showAdvancedSearch}
-            onClose={() => setShowAdvancedSearch(false)}
-            formData={advancedSearchForm}
-            onFormChange={setAdvancedSearchForm}
-            onSearch={handleAdvancedSearch}
-            isLoading={isLoading}
-          /> */}
-
           <MedicationSearchModal
             isOpen={showMedicationSearch}
             onClose={() => setShowMedicationSearch(false)}
@@ -441,12 +445,6 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
             onSubmit={() => {}}
             isSubmitting={isMedicineLoading}
             title="Add New Patient"
-          />
-
-          <FilePreviewModal
-            isOpen={showPreviewModal}
-            onClose={handleClosePreview}
-            file={previewFile}
           />
 
           <TreatmentDetailsModal

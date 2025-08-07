@@ -9,17 +9,22 @@ import {
   File,
   Download,
   Eye,
+  Trash2,
 } from 'lucide-react';
 import { AttachmentDto } from '@/lib/api/types/attachment';
 import { formatDate } from '@/utils/dateTimeUtils';
 import { attachmentService } from '@/lib/api/services/attachment.service';
 import { useAttachment } from '@/lib/api/hooks/useAttachment';
-import FilePreviewModal from './FilePreviewModal';
+import FilePreviewModal from '../FilePreviewModal';
+import { ConfirmationModal } from '../ConfirmationModal';
+import { toast } from 'sonner';
 
 interface AttachmentsListProps {
   attachments: AttachmentDto[];
   title?: string;
   className?: string;
+  onDelete?: (attachmentId: string) => Promise<void>;
+  showDeleteButton?: boolean;
 }
 
 /**
@@ -30,11 +35,19 @@ const AttachmentsList: React.FC<AttachmentsListProps> = ({
   attachments,
   title = 'Attachments',
   className = '',
+  onDelete,
+  showDeleteButton = false,
 }) => {
-  const { downloadAttachment } = useAttachment();
+  const { downloadAttachment, deleteAttachment } = useAttachment();
   const [previewAttachment, setPreviewAttachment] =
     useState<AttachmentDto | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [deletingAttachmentId, setDeletingAttachmentId] = useState<
+    string | null
+  >(null);
+  const [attachmentToDelete, setAttachmentToDelete] =
+    useState<AttachmentDto | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // No attachments to display
   if (!attachments || attachments.length === 0) {
@@ -69,6 +82,38 @@ const AttachmentsList: React.FC<AttachmentsListProps> = ({
   // Close preview modal
   const handleClosePreview = () => {
     setIsPreviewOpen(false);
+  };
+
+  // Open delete confirmation modal
+  const handleDeleteClick = (attachment: AttachmentDto) => {
+    setAttachmentToDelete(attachment);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Close delete confirmation modal
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setAttachmentToDelete(null);
+  };
+
+  // Handle attachment deletion confirmation
+  const handleConfirmDelete = async () => {
+    if (!attachmentToDelete?.id) return;
+
+    setDeletingAttachmentId(attachmentToDelete.id);
+
+    try {
+      if (onDelete) {
+        // Use custom delete handler if provided
+        await onDelete(attachmentToDelete.id);
+      } else {
+        // Use default delete handler
+        await deleteAttachment.mutateAsync({ id: attachmentToDelete.id });
+      }
+    } finally {
+      setDeletingAttachmentId(null);
+      handleCloseDeleteModal();
+    }
   };
 
   return (
@@ -107,6 +152,7 @@ const AttachmentsList: React.FC<AttachmentsListProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
+                  type="button"
                   className="h-8 text-xs gap-1 border-gray-300 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300"
                   onClick={() => handlePreview(attachment)}
                 >
@@ -116,6 +162,7 @@ const AttachmentsList: React.FC<AttachmentsListProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
+                  type="button"
                   className="h-8 text-xs gap-1 border-gray-300 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300"
                   onClick={() => {
                     if (attachment.downloadUrl) {
@@ -128,6 +175,27 @@ const AttachmentsList: React.FC<AttachmentsListProps> = ({
                   <Download className="h-3.5 w-3.5" />
                   <span>Download</span>
                 </Button>
+                {showDeleteButton && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    type="button"
+                    className="h-8 text-xs gap-1 border-red-300 dark:border-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300"
+                    onClick={() => handleDeleteClick(attachment)}
+                    disabled={deletingAttachmentId === attachment.id}
+                  >
+                    {deletingAttachmentId === attachment.id ? (
+                      <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+                    ) : (
+                      <Trash2 className="h-3.5 w-3.5" />
+                    )}
+                    <span>
+                      {deletingAttachmentId === attachment.id
+                        ? 'Deleting...'
+                        : 'Delete'}
+                    </span>
+                  </Button>
+                )}
               </div>
             </div>
           ))}
@@ -140,6 +208,19 @@ const AttachmentsList: React.FC<AttachmentsListProps> = ({
         onClose={handleClosePreview}
         attachment={previewAttachment}
         attachments={attachments}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        title="Delete Attachment"
+        message={`Are you sure you want to delete "${attachmentToDelete?.fileName}"?`}
+        secondaryMessage="This action cannot be undone."
+        variant="error"
+        confirmText="Delete"
+        isLoading={deletingAttachmentId === attachmentToDelete?.id}
       />
     </>
   );

@@ -114,6 +114,7 @@ export default function PatientInfoSection({
 
                 <div>
                   <Select
+                    value={visitType}
                     {...register(`visitType`)}
                     label="Visit Type"
                     options={Object.entries(VisitType)

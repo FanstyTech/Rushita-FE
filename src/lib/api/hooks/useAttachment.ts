@@ -97,12 +97,10 @@ export function useAttachment() {
   const deleteAttachment = useMutation({
     mutationFn: async ({
       id,
-      deletedBy,
     }: {
       id: string;
-      deletedBy: string;
     }) => {
-      const response = await attachmentService.delete(id, deletedBy);
+      const response = await attachmentService.delete(id);
       if (!response.success) {
         throw new Error(response.message || 'Failed to delete attachment');
       }

@@ -1,0 +1,94 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import {
+  Card,
+  CardContent,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Stethoscope } from 'lucide-react';
+
+interface Specialty {
+  id: string;
+  name: string;
+}
+
+interface SpecialtySelectionProps {
+  specialties: Specialty[];
+  selectedSpecialty: string | null;
+  onSpecialtySelect: (specialtyId: string) => void;
+  onPrevStep: () => void;
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
+export function SpecialtySelection({ 
+  specialties, 
+  selectedSpecialty, 
+  onSpecialtySelect, 
+  onPrevStep 
+}: SpecialtySelectionProps) {
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-4"
+    >
+      <h2 className="text-xl font-semibold">اختر التخصص الطبي</h2>
+      {specialties.length > 0 ? (
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {specialties.map((specialty) => (
+            <motion.div key={specialty.id} variants={itemVariants}>
+              <Card
+                className={cn(
+                  'cursor-pointer transition-all duration-200 hover:shadow-md backdrop-blur-sm',
+                  selectedSpecialty === specialty.id
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border/50 bg-card/80'
+                )}
+                onClick={() => onSpecialtySelect(specialty.id)}
+              >
+                <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+                  <div className="rounded-full p-3 mb-3 bg-green-100 dark:bg-green-900/50">
+                    <Stethoscope className="h-8 w-8 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h3 className="font-medium">{specialty.name}</h3>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <Card className="backdrop-blur-sm bg-card/80 border border-border/50">
+          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+            <Stethoscope className="h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium">
+              لم يتم العثور على تخصصات
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              يرجى اختيار عيادة أولاً لعرض التخصصات المتاحة
+            </p>
+            <Button className="mt-4" onClick={onPrevStep}>
+              العودة لاختيار العيادة
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+    </motion.div>
+  );
+}

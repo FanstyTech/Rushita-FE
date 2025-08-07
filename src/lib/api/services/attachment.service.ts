@@ -76,7 +76,7 @@ export const attachmentService = {
     files: File[],
     dto: Omit<CreateMultipleAttachmentsDto, 'files'>,
     onProgress?: (progress: FileUploadProgress) => void
-  ): Promise<ApiResponse<string[]>> {
+  ): Promise<ApiResponse<AttachmentDto[]>> {
     const formData = appendFormData(dto, files);
     const token = Cookies.get('auth-token');
 
@@ -86,9 +86,9 @@ export const attachmentService = {
     } as any);
   },
 
-  async delete(id: string, deletedBy: string): Promise<ApiResponse<void>> {
+  async delete(id: string): Promise<ApiResponse<void>> {
     return apiClient.delete(API_ENDPOINTS.ATTACHMENT.DELETE, {
-      params: { id, deletedBy },
+      id,
     });
   },
 

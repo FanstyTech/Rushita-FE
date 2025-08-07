@@ -4,16 +4,16 @@ import Modal from '@/components/common/Modal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, FileText, User, Printer } from 'lucide-react';
-import { TestItemDto } from '@/lib/api/types/visit-lab-test';
+import { RadiologyTestItemDto } from '@/lib/api/types/visit-radiology-test';
 import { getTestStatusColor, getTestStatusLabel } from '@/utils/textUtils';
 import { cn } from '@/lib/utils';
 import { formatDate, formatTime } from '@/utils/dateTimeUtils';
-import AttachmentsList from '@/components/common/AttachmentsList';
+import AttachmentsList from '@/components/common/files/AttachmentsList';
 
 interface TestDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  test: TestItemDto;
+  test: RadiologyTestItemDto;
 }
 
 const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
@@ -127,11 +127,24 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
           </div>
         )}
 
+        {/* Test Results */}
+        {test.results && (
+          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+              Test Results
+            </h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+              {test.results}
+            </p>
+          </div>
+        )}
+
         {/* Test Attachments */}
         {test.attachments && test.attachments.length > 0 && (
           <AttachmentsList
             title="Test Attachments"
             attachments={test.attachments}
+            showDeleteButton={true}
           />
         )}
       </div>

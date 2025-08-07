@@ -144,11 +144,12 @@ export const useVisit = () => {
     retry: false,
     mutationFn: (data: CreateOrUpdateVisitDto) =>
       visitService.createOrUpdate(data),
-    onSuccess: (_, data) => {
+    onSuccess: (response, data) => {
       queryClient.invalidateQueries({ queryKey: ['visit'] });
       toast.success(
         `Visit has been successfully ${data.id ? 'updated' : 'created'}`
       );
+      return response.result; // Return the visit ID from the API response
     },
   });
   const deleteVisit = useMutation({

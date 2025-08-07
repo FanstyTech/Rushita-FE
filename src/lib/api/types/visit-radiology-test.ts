@@ -1,6 +1,9 @@
-import { PaginationRequest } from './pagination';
+import { AttachmentDto } from './attachment';
+import { PaginationRequest, PaginationResponse } from './pagination';
+import { VisitStatus } from './visit';
 import { TestStatus } from './visit-lab-test';
 
+// Base VisitRadiologyTest DTO
 export interface VisitRadiologyTestDto {
   id: string;
   visitId: string;
@@ -10,33 +13,45 @@ export interface VisitRadiologyTestDto {
   radiologyTestCode: string;
   radiologyTestCategoryName: string;
   specialtyName: string;
-  notes: string;
+  notes?: string;
+  result?: string;
   createdAt: string;
+  updatedAt?: string;
   status: TestStatus;
 }
+
+// Create/Update DTO
 export interface CreateUpdateVisitRadiologyTestDto {
-  id?: string;
+  id?: string; // Optional for create operations
   visitId?: string;
   radiologyTestId: string;
   notes?: string;
   testName?: string;
 }
+
+// List DTO (optimized for table display)
 export interface VisitRadiologyTestListDto {
   id: string;
   visitNumber: string;
   radiologyTestName: string;
   radiologyTestCode: string;
   radiologyTestCategoryName: string;
-  notes: string;
+  notes?: string;
   createdAt: string;
 }
+
+// Filter DTO for search and filtering
 export interface VisitRadiologyTestFilterDto extends PaginationRequest {
   visitId?: string;
   radiologyTestId?: string;
   radiologyTestCategoryId?: string;
   specialtyId?: string;
+  doctorId?: string;
+  clinicId?: string;
 }
-export interface VisitRadiologyTestItemDto {
+
+// Test item DTO for visit with tests
+export interface RadiologyTestItemDto {
   id: string;
   visitId: string;
   patientId: string;
@@ -44,32 +59,50 @@ export interface VisitRadiologyTestItemDto {
   testName: string;
   details?: string;
   results?: string;
-  status: number; // Assuming status is a number
+  status: TestStatus;
   createdAt: string;
-  tempId: string; // Temporary ID for client-side operations
+  tempId: string;
+  attachments?: AttachmentDto[];
 }
 
+export interface RadiologySummaryStatsDto {
+  count: number;
+  testStatus: TestStatus;
+}
+
+export interface RadiologySummaryStatsInput {
+  clinicId?: string;
+  doctorId?: string;
+}
+
+// Visit with tests DTO
 export interface VisitWithRadiologyTestsDto {
   id: string;
   patientId: string;
   patientName: string;
-  visitNumber: string;
-  radiologyTests: VisitRadiologyTestItemDto[];
-  createdAt: string;
+  visitDate: string;
+  status: VisitStatus;
+  tests: RadiologyTestItemDto[];
 }
-export interface VisitRadiologyTestStatusHistoryDto {
-  id?: string;
-  visitId: string;
-  radiologyTestId: string;
-  status: number; // Assuming status is a number
-  notes?: string;
-  createdAt?: string;
-}
-// Input DTO for getting visits with lab tests
-export interface GetVisitsWithRadiologyTestsInput {
+
+// Input DTO for getting visits with radiology tests
+export interface GetVisitsWithRadiologyTestsInput extends PaginationRequest {
   patientId?: string;
+  doctorId?: string;
+  clinicId?: string;
   fromDate?: string;
   toDate?: string;
   visitId?: string;
   testStatus?: TestStatus;
+}
+
+export interface UpdateVisitRadiologyTestStatusDto {
+  id: string;
+  status: TestStatus;
+}
+
+export interface UpdateVisitRadiologyTestResultDto {
+  id: string;
+  result?: string;
+  attachmentIds?: string[];
 }

@@ -18,9 +18,9 @@ import {
   ClipboardCheck,
   Loader2,
 } from 'lucide-react';
-import TestResultUploadModal from '../components/TestResultUploadModal';
-import TestDetailsModal from '../components/TestDetailsModal';
-import TestStatusUpdateModal from '../components/TestStatusUpdateModal';
+import TestResultUploadModal from '@/components/clinic/laboratory/TestResultUploadModal';
+import TestDetailsModal from '@/components/clinic/laboratory/TestDetailsModal';
+import TestStatusUpdateModal from '@/components/clinic/laboratory/TestStatusUpdateModal';
 import { cn } from '@/lib/utils';
 import { useVisitLabTest } from '@/lib/api/hooks/useVisitLabTest';
 import { useClinicStaff } from '@/lib/api/hooks/useClinicStaff';
