@@ -25,7 +25,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   error?: string;
   helperText?: string;
   fullWidth?: boolean;
-  options: { value: string; label: string | null }[];
+  options: { value: string; label: string | null | React.ReactNode }[];
   hasBorder?: boolean;
   placeholder?: string;
   isLoading?: boolean;
@@ -134,7 +134,18 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
 
               <span className="flex-grow text-left truncate text-gray-900 dark:text-gray-100">
                 {selectedValue
-                  ? options.find((item) => item.value === selectedValue)?.label
+                  ? (() => {
+                      const selectedOption = options.find((item) => item.value === selectedValue);
+                      if (!selectedOption) return placeholder || `Select ${label || ''}...`;
+                      
+                      const selectedLabel = selectedOption.label;
+                      if (typeof selectedLabel === 'string' || selectedLabel === null) {
+                        return selectedLabel || `Select ${label || ''}...`;
+                      } else {
+                        // For ReactNode labels, render them directly
+                        return selectedLabel;
+                      }
+                    })()
                   : placeholder || `Select ${label || ''}...`}
               </span>
               {endIcon ? (
@@ -184,7 +195,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                           onSelect={handleSelect}
                           className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100"
                         >
-                          {option.label}
+                          {typeof option.label === 'string' || option.label === null ? (
+                            option.label
+                          ) : (
+                            <div className="flex items-center">{option.label}</div>
+                          )}
                           <Check
                             className={twMerge(
                               'ml-auto h-4 w-4 text-blue-600 dark:text-blue-400',
@@ -231,7 +246,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </option>
           {options.map((option) => (
             <option key={String(option.value)} value={String(option.value)}>
-              {option.label}
+              {typeof option.label === 'string' || option.label === null 
+                ? option.label 
+                : String(option.value)}
             </option>
           ))}
         </select>

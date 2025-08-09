@@ -45,7 +45,6 @@ export default function ClientLayout({
   if (isChangingLanguage) {
     return <Loading />;
   }
-
   // For landing and auth pages, render without sidebar/header
   if (isLandingPage || isAuthPage) {
     return <main>{children}</main>;

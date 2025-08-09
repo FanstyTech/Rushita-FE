@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import ClientLayout from '@/components/ClientLayout';
-import Testsss from '@/components/Testsss';
+import PatientPortalLayout from '@/components/PatientPortalLayout';
 
 interface ConditionalLayoutProps {
   children: React.ReactNode;
@@ -22,7 +22,11 @@ export default function ConditionalLayout({
     pathname.includes('/patient-portal');
 
   if (isPatientPortal) {
-    return <Testsss>{children}</Testsss>;
+    return (
+      <PatientPortalLayout languages={languages}>
+        {children}
+      </PatientPortalLayout>
+    );
   }
 
   return <ClientLayout languages={languages}>{children}</ClientLayout>;

@@ -1,20 +1,32 @@
 'use client';
 
 import { forwardRef, useState, useEffect, useRef } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { AlertCircle, Smartphone } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import { SelectOption } from '@/lib/api/types/select-option';
+import { Label } from '@/components/ui/label';
+import { motion } from 'framer-motion';
+import { Select } from '@/components/common/form';
+
+// Extend SelectOption to include flag property
+interface PhoneCodeOption extends SelectOption<string> {
+  flag?: string;
+}
 
 interface PhoneInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
-  phoneCodeOptions: SelectOption<string>[];
+  phoneCodeOptions: PhoneCodeOption[];
   selectedPhoneCode: string;
   onPhoneCodeChange: (value: string) => void;
+  onPhoneNumberChange: (value: string) => void;
   phoneCodeName: string;
   fullWidth?: boolean;
   phoneCodeError?: string;
   className?: string;
+  showFlags?: boolean;
+  required?: boolean;
+  darkMode?: boolean;
 }
 
 const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
@@ -26,9 +38,13 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
       phoneCodeOptions,
       selectedPhoneCode,
       onPhoneCodeChange,
+      onPhoneNumberChange,
       phoneCodeName,
       fullWidth = true,
       className,
+      showFlags = true,
+      required = false,
+      darkMode = false,
       ...props
     },
     ref
@@ -38,7 +54,7 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
 
     const selectedOption = phoneCodeOptions.find(
       (opt) => opt.value === selectedPhoneCode
-    );
+    ) as PhoneCodeOption | undefined;
 
     const handleClickOutside = (e: MouseEvent) => {
       if (selectRef.current && !selectRef.current.contains(e.target as Node)) {
@@ -52,91 +68,102 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
         document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    const errorMessage = phoneCodeError || error;
+
     return (
-      <div className={twMerge('relative', fullWidth && 'w-full', className)}>
+      <motion.div
+        className={twMerge('space-y-3', fullWidth && 'w-full', className)}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            {label}
-          </label>
-        )}
-        <div className="relative flex h-[52px]">
-          {/* Phone Code Dropdown */}
-          <div className="relative h-full" ref={selectRef}>
-            <button
-              type="button"
-              className={twMerge(
-                'flex items-center justify-between h-full px-4 rounded-l-xl border-2 border-gray-100 text-gray-900',
-                'border border-gray-300 focus:outline-none focus-visible:ring-0'
-              )}
-              onClick={() => setIsOpen(!isOpen)}
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor={props.id || 'phoneNumber'}
+              className="text-gray-700 dark:text-gray-300 font-medium"
             >
-              <div className="flex flex-col text-left">
-                <span className="text-sm font-medium">
-                  {selectedOption?.label || 'Select'}
-                </span>
-                <span className="text-xs text-gray-500 leading-3">
-                  {/* {selectedOption?.value} */}
-                </span>
-              </div>
-              <ChevronDown
-                className={`w-4 h-4 transition-transform ${
-                  isOpen ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
+              {label} {required && <span className="text-destructive">*</span>}
+            </Label>
+          </div>
+        )}
 
-            {isOpen && (
-              <div className="absolute z-10 w-64 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-                {phoneCodeOptions.map((option) => (
-                  <div
-                    key={option.value}
-                    className={twMerge(
-                      'px-3 py-2 text-sm cursor-pointer hover:bg-gray-100',
-                      option.value === selectedPhoneCode &&
-                        'bg-blue-50 text-blue-600 font-medium'
+        <div
+          className={`flex items-center bg-white ${
+            darkMode ? 'dark:bg-gray-800' : ''
+          } rounded-xl overflow-hidden border-2 shadow-sm ${
+            errorMessage
+              ? 'border-destructive shadow-destructive/10'
+              : 'border-gray-200 dark:border-gray-700'
+          } focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-600`}
+        >
+          {/* Phone Code Dropdown */}
+          <div className="relative min-w-[100px] border-left" ref={selectRef}>
+            <Select
+              options={phoneCodeOptions.map((option) => ({
+                value: option.value,
+                label: (
+                  <div className="flex items-center gap-2">
+                    {showFlags && option.flag && (
+                      <div className="w-6 h-4 overflow-hidden rounded-sm flex items-center justify-center shadow-sm">
+                        <img
+                          src={`https://flagcdn.com/w20/${option.flag}.png`}
+                          alt={option.label || ''}
+                          className="max-w-full max-h-full object-cover"
+                        />
+                      </div>
                     )}
-                    onClick={() => {
-                      onPhoneCodeChange(option.value);
-                      setIsOpen(false);
-                    }}
-                  >
-                    <div className="flex justify-between">
-                      <span>{option.label}</span>
-                    </div>
+                    <span className="font-medium">{option.value}</span>
                   </div>
-                ))}
-              </div>
-            )}
-
-            {/* Hidden input for react-hook-form */}
-            <input
-              type="hidden"
-              name={phoneCodeName}
+                ),
+              }))}
               value={selectedPhoneCode}
+              onChange={(e) => onPhoneCodeChange(e.target.value)}
+              name={phoneCodeName}
+              className="border-0 shadow-none focus:ring-0 bg-transparent font-medium"
             />
           </div>
 
+          <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-2"></div>
+
           {/* Phone Number Input */}
-          <div className="flex-1 h-full">
-            <input
-              type="tel"
-              ref={ref}
-              {...props}
-              className={twMerge(
-                'block w-full h-full px-4 rounded-r-xl border-2 border-gray-100 text-gray-900 placeholder-gray-400',
-                'border border-gray-300 focus:outline-none focus-visible:ring-0',
-                error && 'border-red-500'
-              )}
-              placeholder="576 908 413"
-            />
+          <input
+            type="tel"
+            inputMode="numeric"
+            ref={ref}
+            {...props}
+            className="flex-1 bg-transparent border-0 focus:ring-0 outline-none py-4 px-3 text-lg font-medium placeholder:text-gray-400 dark:placeholder:text-gray-500"
+            placeholder={props.placeholder || 'XXX-XXX-XXXX'}
+            onChange={(e) => onPhoneNumberChange(e.target.value)}
+          />
+
+          <div className="px-4">
+            <motion.div
+              whileHover={{ rotate: 15, scale: 1.1 }}
+              className={`${
+                errorMessage
+                  ? 'text-destructive'
+                  : 'text-gray-400 dark:text-gray-500'
+              } transition-colors`}
+            >
+              <Smartphone className="h-5 w-5" />
+            </motion.div>
           </div>
         </div>
 
         {/* Error Message */}
-        {(phoneCodeError || error) && (
-          <p className="mt-1 text-sm text-red-500">{phoneCodeError || error}</p>
+        {errorMessage && (
+          <motion.div
+            className="flex items-center gap-2 text-destructive text-sm mt-1"
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <AlertCircle className="h-4 w-4" />
+            <p>{errorMessage}</p>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     );
   }
 );

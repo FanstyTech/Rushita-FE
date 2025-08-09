@@ -1,4 +1,5 @@
 import { PaginationRequest } from './pagination';
+import { SelectOption } from './select-option';
 
 export interface CountryDto {
   id: string;
@@ -32,4 +33,7 @@ export interface CountryFilterDto extends PaginationRequest {
   nameF?: string;
   code?: string;
   isActive?: boolean;
+}
+export interface PhoneCodeOption extends SelectOption<string> {
+  flag: string;
 }

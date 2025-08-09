@@ -10,6 +10,7 @@ const publicPaths = [
   '/auth/login',
   '/auth/register',
   '/auth/forgot-password',
+  '/patient-portal/auth', // Patient portal auth page
   '/images', // Public images
   '/fonts', // Public fonts
   '/favicon.ico', // Favicon
@@ -73,8 +74,16 @@ export function middleware(request: NextRequest) {
 
     // If the path requires authentication and no token exists, redirect to login
     if (!isPublicPath && !token) {
+      // Check if current path is patient portal
+      const isPatientPortal =
+        pathWithoutLanguage.startsWith('/patient-portal') ||
+        pathWithoutLanguage.startsWith('/portal') ||
+        pathWithoutLanguage.includes('/patient-portal');
+      
+      // If it's a patient portal path
+      const basePath = isPatientPortal ? '/patient-portal/auth' : '/auth/login';
       const loginUrl = new URL(
-        `/${pathname.split('/')[1]}/auth/login`,
+        `/${pathname.split('/')[1]}${basePath}`,
         request.url
       );
       // Store the current URL to redirect back after login
@@ -123,10 +132,20 @@ export function middleware(request: NextRequest) {
 
     // Get the token from cookies
     const token = request.cookies.get('auth-token')?.value;
+    // Check if current path is patient portal
+    const isPatientPortal =
+      pathname.startsWith('/patient-portal') ||
+      pathname.startsWith('/portal') ||
+      pathname.includes('/patient-portal');
 
+    console.log('isPatientPortal', isPatientPortal);
     // If the path requires authentication and no token exists, redirect to login
     if (!isPublicPath && !token) {
-      const loginUrl = new URL(`/${language}/auth/login`, request.url);
+      const languagePrefix = `/${language}`;
+      // If it's a patient portal path
+      const basePath = isPatientPortal ? '/patient-portal/auth' : '/auth/login';
+      // Create the login URL with language prefix
+      const loginUrl = new URL(`${languagePrefix}${basePath}`, request.url);
       // Store the current URL to redirect back after login
       loginUrl.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(loginUrl);

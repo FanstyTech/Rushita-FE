@@ -3,6 +3,7 @@ import {
   CreateUpdateCountryDto,
   CountryListDto,
   CountryFilterDto,
+  PhoneCodeOption,
 } from '../types/country';
 import type { SelectOption } from '../types/select-option';
 import type { PaginationResponse } from '../types/pagination';
@@ -29,7 +30,7 @@ export const countryService = {
     return apiClient.get(API_ENDPOINTS.country.GET_COUNTRY_FOR_DROPDOWN);
   },
 
-  async getCountryPhoneCodes(): Promise<ApiResponse<SelectOption<string>[]>> {
+  async getCountryPhoneCodes(): Promise<ApiResponse<PhoneCodeOption[]>> {
     return apiClient.get(API_ENDPOINTS.country.GET_PHONE_CODES_DROPDOWN);
   },
 

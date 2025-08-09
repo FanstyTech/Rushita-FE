@@ -1,485 +1,406 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/api/hooks/useAuth';
+import { useLanguage } from '@/i18n/LanguageProvider';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
+import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Eye, EyeOff, Mail, Lock, Phone } from 'lucide-react';
+import LanguageToggle from '@/components/LanguageToggle';
+import { ArrowLeft } from 'lucide-react';
+import { RegistrationForm } from './components/RegistrationForm';
+import { VerificationForm } from './components/VerificationForm';
+import { PhoneInputForm } from './components/PhoneInputForm';
+import { LoginForm } from './components/LoginForm';
+
+// Authentication steps
+enum AuthStep {
+  PHONE_INPUT = 'phone_input',
+  PASSWORD_INPUT = 'password_input',
+  VERIFICATION_CODE = 'verification_code',
+  REGISTRATION_FORM = 'registration_form',
+}
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      when: 'beforeChildren',
+      staggerChildren: 0.1,
+      duration: 0.3,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.2 },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: 'spring', stiffness: 300, damping: 24 },
+  },
+  exit: {
+    y: -20,
+    opacity: 0,
+    transition: { duration: 0.2 },
+  },
+};
+
+const slideVariants = {
+  hidden: { x: 50, opacity: 0 },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: { type: 'spring', stiffness: 300, damping: 24 },
+  },
+  exit: {
+    x: -50,
+    opacity: 0,
+    transition: { duration: 0.2 },
+  },
+};
+
+const phoneCodes = [
+  { value: '+966', label: 'Saudi Arabia', flag: 'sa' },
+  { value: '+971', label: 'United Arab Emirates', flag: 'ae' },
+  { value: '+974', label: 'Qatar', flag: 'qa' },
+  { value: '+973', label: 'Bahrain', flag: 'bh' },
+  { value: '+965', label: 'Kuwait', flag: 'kw' },
+  { value: '+968', label: 'Oman', flag: 'om' },
+  { value: '+962', label: 'Jordan', flag: 'jo' },
+  { value: '+20', label: 'Egypt', flag: 'eg' },
+  { value: '+961', label: 'Lebanon', flag: 'lb' },
+  { value: '+1', label: 'United States', flag: 'us' },
+  { value: '+44', label: 'United Kingdom', flag: 'gb' },
+];
 
 export default function AuthPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const { language } = useLanguage();
+
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
+  const [currentStep, setCurrentStep] = useState<AuthStep>(
+    AuthStep.PHONE_INPUT
+  );
+  const [isExistingUser, setIsExistingUser] = useState<boolean | null>(null);
+  const [verificationCodeSent, setVerificationCodeSent] = useState(false);
+  const [resendDisabled, setResendDisabled] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const [isInvalidCode, setIsInvalidCode] = useState(false);
 
-  // Login form state
-  const [loginForm, setLoginForm] = useState({
-    email: '',
+  // Form state
+  const [phoneForm, setPhoneForm] = useState({
+    phoneCode: '+966', // Default to Saudi Arabia
+    phoneNumber: '',
+  });
+
+  const [passwordForm, setPasswordForm] = useState({
     password: '',
   });
 
-  // Register form state
-  const [registerForm, setRegisterForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    fileNumber: '', // Medical file number to link with existing records
+  const [verificationForm, setVerificationForm] = useState({
+    code: '',
   });
 
   // Form errors
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Handle countdown for resend code
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendCountdown > 0) {
+      timer = setTimeout(() => {
+        setResendCountdown(resendCountdown - 1);
+      }, 1000);
+    } else {
+      setResendDisabled(false);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [resendCountdown]);
+
+  // Handle phone submission
+  const handlePhoneSubmit = async (phoneCode: string, phoneNumber: string) => {
     setErrors({});
-
-    // Basic validation
-    if (!loginForm.email) {
-      setErrors((prev) => ({ ...prev, email: 'البريد الإلكتروني مطلوب' }));
-      return;
-    }
-
-    if (!loginForm.password) {
-      setErrors((prev) => ({ ...prev, password: 'كلمة المرور مطلوبة' }));
-      return;
-    }
-
+    setPhoneForm({ phoneCode, phoneNumber });
     try {
       setIsLoading(true);
-      // In a real app, this would call the actual login API
-      // For now, we'll simulate a successful login after a delay
+      // In a real app, this would call the API to check if the user exists
+      // For now, we'll simulate a response after a delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Simulate successful login
-      console.log('Login with:', loginForm);
-
-      // Navigate to dashboard after successful login
-      router.push('/patient-portal/dashboard');
+      // Simulate checking if user exists (random for demo)
+      const userExists = false;
+      if (userExists) {
+        // If user exists, go to password step
+        setCurrentStep(AuthStep.PASSWORD_INPUT);
+      } else {
+        // If user doesn't exist, send verification code and go to verification step
+        await sendVerificationCode();
+        setCurrentStep(AuthStep.VERIFICATION_CODE);
+      }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Phone verification error:', error);
       setErrors((prev) => ({
         ...prev,
-        form: 'فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.',
+        form: 'حدث خطأ أثناء التحقق من رقم الهاتف. يرجى المحاولة مرة أخرى.',
       }));
     } finally {
       setIsLoading(false);
     }
   };
-
-  const handleRegisterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-
-    // Basic validation
-    if (!registerForm.name) {
-      setErrors((prev) => ({ ...prev, name: 'الاسم مطلوب' }));
-      return;
-    }
-
-    if (!registerForm.email) {
-      setErrors((prev) => ({ ...prev, email: 'البريد الإلكتروني مطلوب' }));
-      return;
-    }
-
-    if (!registerForm.phone) {
-      setErrors((prev) => ({ ...prev, phone: 'رقم الهاتف مطلوب' }));
-      return;
-    }
-
-    if (!registerForm.password) {
-      setErrors((prev) => ({ ...prev, password: 'كلمة المرور مطلوبة' }));
-      return;
-    }
-
-    if (registerForm.password !== registerForm.confirmPassword) {
-      setErrors((prev) => ({
-        ...prev,
-        confirmPassword: 'كلمات المرور غير متطابقة',
-      }));
-      return;
-    }
-
-    if (!registerForm.fileNumber) {
-      setErrors((prev) => ({ ...prev, fileNumber: 'رقم الملف الطبي مطلوب' }));
-      return;
-    }
-
+  // Send verification code
+  const sendVerificationCode = async () => {
     try {
-      setIsLoading(true);
-      // In a real app, this would call the actual registration API
-      // For now, we'll simulate a successful registration after a delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Simulate successful registration
-      console.log('Register with:', registerForm);
-
-      // Switch to login tab after successful registration
-      setActiveTab('login');
-      setLoginForm({
-        email: registerForm.email,
-        password: registerForm.password,
-      });
+      // In a real app, this would call the API to send a verification code
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setVerificationCodeSent(true);
+      setResendDisabled(true);
+      setResendCountdown(60); // 60 seconds countdown
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('Error sending verification code:', error);
       setErrors((prev) => ({
         ...prev,
-        form: 'فشل التسجيل. يرجى المحاولة مرة أخرى.',
+        form: 'فشل إرسال رمز التحقق. يرجى المحاولة مرة أخرى.',
       }));
-    } finally {
-      setIsLoading(false);
     }
   };
+
+  // Handle verification code submission
+  const handleVerificationSubmit = (otp: string) => {
+    setIsLoading(true);
+    // Simulate API call to verify code
+    setTimeout(() => {
+      // For demo: if code is 123456, consider it valid
+      if (otp === '123456') {
+        // Reset invalid state
+        setIsInvalidCode(false);
+
+        if (isExistingUser) {
+          router.push('/patient-portal/dashboard');
+        } else {
+          // New user - go to registration step
+          setCurrentStep(AuthStep.REGISTRATION_FORM);
+        }
+      } else {
+        // Invalid code - set invalid state instead of error
+        setIsInvalidCode(true);
+      }
+      setIsLoading(false);
+    }, 1500);
+  };
+
+  // Go back to previous step
+  const goBack = () => {
+    if (
+      currentStep === AuthStep.PASSWORD_INPUT ||
+      currentStep === AuthStep.VERIFICATION_CODE
+    ) {
+      setCurrentStep(AuthStep.PHONE_INPUT);
+    } else if (currentStep === AuthStep.REGISTRATION_FORM) {
+      setCurrentStep(AuthStep.VERIFICATION_CODE);
+    }
+  };
+
+  // Render step title and description
+  // Translations for page content
+  const translations = {
+    ar: {
+      login: 'تسجيل الدخول',
+      enterPhone: 'أدخل رقم هاتفك للمتابعة',
+      enterPassword: 'أدخل كلمة المرور',
+      enterPasswordDesc: 'يرجى إدخال كلمة المرور الخاصة بك',
+      verificationCode: 'رمز التحقق',
+      verificationCodeSent: (phoneCode: string, phoneNumber: string) =>
+        `تم إرسال رمز التحقق إلى ${phoneCode}${phoneNumber}`,
+      createAccount: 'إنشاء حساب',
+      completePersonalInfo: 'أكمل معلوماتك الشخصية',
+      appDescription: 'إدارة صحتك بسهولة ومتابعة حالتك الطبية',
+      copyright: (year: number) =>
+        `${year} Rushita Health. جميع الحقوق محفوظة.`,
+    },
+    en: {
+      login: 'Login',
+      enterPhone: 'Enter your phone number to continue',
+      enterPassword: 'Enter Password',
+      enterPasswordDesc: 'Please enter your password',
+      verificationCode: 'Verification Code',
+      verificationCodeSent: (phoneCode: string, phoneNumber: string) =>
+        `Verification code sent to ${phoneCode}${phoneNumber}`,
+      createAccount: 'Create Account',
+      completePersonalInfo: 'Complete your personal information',
+      appDescription:
+        'Manage your health easily and track your medical condition',
+      copyright: (year: number) =>
+        `${year} Rushita Health. All rights reserved.`,
+    },
+    es: {
+      login: 'Iniciar sesión',
+      enterPhone: 'Ingrese su número de teléfono para continuar',
+      enterPassword: 'Ingrese su contraseña',
+      enterPasswordDesc: 'Por favor ingrese su contraseña',
+      verificationCode: 'Código de verificación',
+      verificationCodeSent: (phoneCode: string, phoneNumber: string) =>
+        `Código de verificación enviado a ${phoneCode}${phoneNumber}`,
+      createAccount: 'Crear cuenta',
+      completePersonalInfo: 'Complete su información personal',
+      appDescription:
+        'Gestione su salud fácilmente y haga seguimiento de su condición médica',
+      copyright: (year: number) =>
+        `${year} Rushita Health. Todos los derechos reservados.`,
+    },
+  };
+
+  const t =
+    translations[language as keyof typeof translations] || translations.ar;
+
+  const renderStepHeader = () => {
+    switch (currentStep) {
+      case AuthStep.PHONE_INPUT:
+        return {
+          title: t.login,
+          description: t.enterPhone,
+        };
+      case AuthStep.PASSWORD_INPUT:
+        return {
+          title: t.enterPassword,
+          description: t.enterPasswordDesc,
+        };
+      case AuthStep.VERIFICATION_CODE:
+        return {
+          title: t.verificationCode,
+          description: t.verificationCodeSent(
+            phoneForm.phoneCode,
+            phoneForm.phoneNumber
+          ),
+        };
+      case AuthStep.REGISTRATION_FORM:
+        return {
+          title: t.createAccount,
+          description: t.completePersonalInfo,
+        };
+      default:
+        return {
+          title: t.login,
+          description: t.enterPhone,
+        };
+    }
+  };
+
+  const { title, description } = renderStepHeader();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
-      <div className="absolute top-4 right-4">
+    <motion.div
+      className="min-h-screen flex flex-col items-center justify-center bg-background p-4"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <LanguageToggle />
         <ThemeToggle />
       </div>
-
-      <div className="w-full max-w-md space-y-6">
+      <motion.div className="w-full max-w-md space-y-6" variants={itemVariants}>
         {/* Logo and title */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center">
             <span className="text-3xl font-bold text-primary">Rushita</span>
             <span className="text-3xl font-medium ml-1">Health</span>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            بورتل المرضى
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            إدارة صحتك بسهولة ومتابعة حالتك الطبية
-          </p>
+
+          <p className="text-sm text-muted-foreground">{t.appDescription}</p>
         </div>
 
-        {/* Auth tabs */}
-        <Tabs
-          defaultValue="login"
-          value={activeTab}
-          onValueChange={(value) => setActiveTab(value as 'login' | 'register')}
-          className="w-full"
-        >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">تسجيل الدخول</TabsTrigger>
-            <TabsTrigger value="register">إنشاء حساب</TabsTrigger>
-          </TabsList>
-
-          {/* Login tab */}
-          <TabsContent value="login">
-            <Card>
-              <CardHeader>
-                <CardTitle>تسجيل الدخول</CardTitle>
-                <CardDescription>
-                  أدخل بيانات الدخول للوصول إلى حسابك
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleLoginSubmit}>
-                <CardContent className="space-y-4">
-                  {errors.form && (
-                    <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
-                      {errors.form}
-                    </div>
-                  )}
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email">البريد الإلكتروني</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="your@email.com"
-                        className={`pl-8 ${
-                          errors.email ? 'border-destructive' : ''
-                        }`}
-                        value={loginForm.email}
-                        onChange={(e) =>
-                          setLoginForm({ ...loginForm, email: e.target.value })
-                        }
-                        dir="ltr"
-                      />
-                    </div>
-                    {errors.email && (
-                      <p className="text-destructive text-xs">{errors.email}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <Label htmlFor="password">كلمة المرور</Label>
-                      <a
-                        href="#"
-                        className="text-xs text-primary hover:underline"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          // Handle forgot password
-                        }}
-                      >
-                        نسيت كلمة المرور؟
-                      </a>
-                    </div>
-                    <div className="relative">
-                      <Lock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        className={`pl-8 pr-10 ${
-                          errors.password ? 'border-destructive' : ''
-                        }`}
-                        value={loginForm.password}
-                        onChange={(e) =>
-                          setLoginForm({
-                            ...loginForm,
-                            password: e.target.value,
-                          })
-                        }
-                        dir="ltr"
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-2 top-2.5 text-muted-foreground hover:text-foreground"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                    {errors.password && (
-                      <p className="text-destructive text-xs">
-                        {errors.password}
-                      </p>
-                    )}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <span className="animate-spin mr-2 h-4 w-4 border-2 border-current border-t-transparent rounded-full"></span>
-                        جاري تسجيل الدخول...
-                      </>
-                    ) : (
-                      'تسجيل الدخول'
-                    )}
+        {/* Auth Card */}
+        <motion.div className="w-full" variants={slideVariants}>
+          <Card className="w-full">
+            <CardHeader>
+              <div className="flex items-center">
+                {currentStep !== AuthStep.PHONE_INPUT && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={goBack}
+                    className={`${language === 'ar' ? 'ml-2' : 'mr-2'} h-8 w-8`}
+                  >
+                    <ArrowLeft
+                      className={`h-4 w-4 ${
+                        language === 'ar' ? 'rotate-180' : ''
+                      }`}
+                    />
                   </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
+                )}
+                <div>
+                  <CardTitle>{title}</CardTitle>
+                  <CardDescription>{description}</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
 
-          {/* Register tab */}
-          <TabsContent value="register">
-            <Card>
-              <CardHeader>
-                <CardTitle>إنشاء حساب جديد</CardTitle>
-                <CardDescription>
-                  أدخل بياناتك لإنشاء حساب في بورتل المرضى
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleRegisterSubmit}>
-                <CardContent className="space-y-4">
-                  {errors.form && (
-                    <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
-                      {errors.form}
-                    </div>
-                  )}
+            {errors.form && (
+              <div className="px-6 -mt-2">
+                <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                  {errors.form}
+                </div>
+              </div>
+            )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="name">الاسم الكامل</Label>
-                    <Input
-                      id="name"
-                      placeholder="الاسم الكامل"
-                      className={errors.name ? 'border-destructive' : ''}
-                      value={registerForm.name}
-                      onChange={(e) =>
-                        setRegisterForm({
-                          ...registerForm,
-                          name: e.target.value,
-                        })
-                      }
-                    />
-                    {errors.name && (
-                      <p className="text-destructive text-xs">{errors.name}</p>
-                    )}
-                  </div>
+            {/* Phone Input Step */}
+            {currentStep === AuthStep.PHONE_INPUT && (
+              <PhoneInputForm
+                phoneCodes={phoneCodes}
+                isLoading={isLoading}
+                onSubmit={handlePhoneSubmit}
+              />
+            )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="register-email">البريد الإلكتروني</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="register-email"
-                        type="email"
-                        placeholder="your@email.com"
-                        className={`pl-8 ${
-                          errors.email ? 'border-destructive' : ''
-                        }`}
-                        value={registerForm.email}
-                        onChange={(e) =>
-                          setRegisterForm({
-                            ...registerForm,
-                            email: e.target.value,
-                          })
-                        }
-                        dir="ltr"
-                      />
-                    </div>
-                    {errors.email && (
-                      <p className="text-destructive text-xs">{errors.email}</p>
-                    )}
-                  </div>
+            {/* Password Input Step */}
+            {currentStep === AuthStep.PASSWORD_INPUT && (
+              <LoginForm
+                phoneNumber={phoneForm.phoneNumber}
+                phoneCode={phoneForm.phoneCode}
+              />
+            )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">رقم الهاتف</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="05xxxxxxxx"
-                        className={`pl-8 ${
-                          errors.phone ? 'border-destructive' : ''
-                        }`}
-                        value={registerForm.phone}
-                        onChange={(e) =>
-                          setRegisterForm({
-                            ...registerForm,
-                            phone: e.target.value,
-                          })
-                        }
-                        dir="ltr"
-                      />
-                    </div>
-                    {errors.phone && (
-                      <p className="text-destructive text-xs">{errors.phone}</p>
-                    )}
-                  </div>
+            {/* Verification Code Step */}
+            {currentStep === AuthStep.VERIFICATION_CODE && (
+              <VerificationForm
+                phoneNumber={phoneForm.phoneNumber}
+                phoneCode={phoneForm.phoneCode}
+                onSubmit={handleVerificationSubmit}
+                onResendCode={sendVerificationCode}
+                isInvalidCode={isInvalidCode}
+                isLoading={isLoading}
+              />
+            )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="fileNumber">رقم الملف الطبي</Label>
-                    <Input
-                      id="fileNumber"
-                      placeholder="أدخل رقم ملفك الطبي"
-                      className={errors.fileNumber ? 'border-destructive' : ''}
-                      value={registerForm.fileNumber}
-                      onChange={(e) =>
-                        setRegisterForm({
-                          ...registerForm,
-                          fileNumber: e.target.value,
-                        })
-                      }
-                      dir="ltr"
-                    />
-                    {errors.fileNumber && (
-                      <p className="text-destructive text-xs">
-                        {errors.fileNumber}
-                      </p>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                      يمكنك الحصول على رقم الملف الطبي من استقبال العيادة
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="register-password">كلمة المرور</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="register-password"
-                        type={showPassword ? 'text' : 'password'}
-                        className={`pl-8 pr-10 ${
-                          errors.password ? 'border-destructive' : ''
-                        }`}
-                        value={registerForm.password}
-                        onChange={(e) =>
-                          setRegisterForm({
-                            ...registerForm,
-                            password: e.target.value,
-                          })
-                        }
-                        dir="ltr"
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-2 top-2.5 text-muted-foreground hover:text-foreground"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                    {errors.password && (
-                      <p className="text-destructive text-xs">
-                        {errors.password}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">تأكيد كلمة المرور</Label>
-                    <Input
-                      id="confirm-password"
-                      type={showPassword ? 'text' : 'password'}
-                      className={
-                        errors.confirmPassword ? 'border-destructive' : ''
-                      }
-                      value={registerForm.confirmPassword}
-                      onChange={(e) =>
-                        setRegisterForm({
-                          ...registerForm,
-                          confirmPassword: e.target.value,
-                        })
-                      }
-                      dir="ltr"
-                    />
-                    {errors.confirmPassword && (
-                      <p className="text-destructive text-xs">
-                        {errors.confirmPassword}
-                      </p>
-                    )}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <span className="animate-spin mr-2 h-4 w-4 border-2 border-current border-t-transparent rounded-full"></span>
-                        جاري إنشاء الحساب...
-                      </>
-                    ) : (
-                      'إنشاء حساب'
-                    )}
-                  </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
-        </Tabs>
+            {/* Registration Form Step - تم تحديثه لاستخدام React Hook Form مع Zod للتحقق من الصحة */}
+            {currentStep === AuthStep.REGISTRATION_FORM && (
+              <RegistrationForm
+                phoneNumber={phoneForm.phoneNumber}
+                phoneCode={phoneForm.phoneCode}
+              />
+            )}
+          </Card>
+        </motion.div>
 
         <div className="text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Rushita Health. جميع الحقوق محفوظة.
+          &copy; {t.copyright(new Date().getFullYear())}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

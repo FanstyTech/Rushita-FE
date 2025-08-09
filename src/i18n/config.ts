@@ -199,13 +199,14 @@ const resources = {
             personalInfo: 'Personal Information',
             medicalInfo: 'Medical Information',
             insuranceInfo: 'Insurance Information',
-            healthIndicators: 'Health Indicators'
+            healthIndicators: 'Health Indicators',
           },
           validation: {
-            pleaseCorrectErrors: 'Please correct the errors in the form to continue',
+            pleaseCorrectErrors:
+              'Please correct the errors in the form to continue',
             personalInfo: {
               firstNameRequired: 'First name is required',
-              fatherNameRequired: 'Father\'s name is required',
+              fatherNameRequired: "Father's name is required",
               familyNameRequired: 'Family name is required',
               fullNameRequired: 'Full name is required',
               dateOfBirthRequired: 'Date of birth is required',
@@ -218,18 +219,18 @@ const resources = {
               addressRequired: 'Address is required',
               preferredLanguageRequired: 'Preferred language is required',
               idTypeRequired: 'ID type is required',
-              idNumberRequired: 'ID number is required'
+              idNumberRequired: 'ID number is required',
             },
             emergencyContact: {
               nameRequired: 'Emergency contact name is required',
               relationRequired: 'Relationship is required',
-              phoneMinLength: 'Phone number must be at least 9 digits'
+              phoneMinLength: 'Phone number must be at least 9 digits',
             },
             medicalInfo: {
               bloodTypeRequired: 'Blood type is required',
               heightRequired: 'Height is required',
-              weightRequired: 'Weight is required'
-            }
+              weightRequired: 'Weight is required',
+            },
           },
           // Profile Header
           header: {
@@ -456,7 +457,6 @@ const resources = {
       },
 
       // Validation
-  
     },
   },
   ar: {
@@ -651,43 +651,43 @@ const resources = {
             personalInfo: 'المعلومات الشخصية',
             medicalInfo: 'المعلومات الطبية',
             insuranceInfo: 'معلومات التأمين',
-            healthIndicators: 'المؤشرات الصحية'
+            healthIndicators: 'المؤشرات الصحية',
           },
           validation: {
             pleaseCorrectErrors: 'يرجى تصحيح الأخطاء في النموذج للمتابعة',
             // Personal Information Validation
             personalInfo: {
-            firstNameRequired: 'الاسم الأول مطلوب',
-            fatherNameRequired: 'اسم الأب مطلوب',
-            familyNameRequired: 'اسم العائلة مطلوب',
-            fullNameRequired: 'الاسم الكامل مطلوب',
-            dateOfBirthRequired: 'تاريخ الميلاد مطلوب',
-            genderRequired: 'الجنس مطلوب',
-            emailInvalid: 'البريد الإلكتروني غير صالح',
-            countryCodeRequired: 'رمز الدولة مطلوب',
-            phoneMinLength: 'رقم الهاتف يجب أن يكون 9 أرقام على الأقل',
-            countryRequired: 'الدولة مطلوبة',
-            cityRequired: 'المدينة مطلوبة',
-            addressRequired: 'العنوان مطلوب',
-            preferredLanguageRequired: 'اللغة المفضلة مطلوبة',
-            idTypeRequired: 'نوع الهوية مطلوب',
-            idNumberRequired: 'رقم الهوية مطلوب'
+              firstNameRequired: 'الاسم الأول مطلوب',
+              fatherNameRequired: 'اسم الأب مطلوب',
+              familyNameRequired: 'اسم العائلة مطلوب',
+              fullNameRequired: 'الاسم الكامل مطلوب',
+              dateOfBirthRequired: 'تاريخ الميلاد مطلوب',
+              genderRequired: 'الجنس مطلوب',
+              emailInvalid: 'البريد الإلكتروني غير صالح',
+              countryCodeRequired: 'رمز الدولة مطلوب',
+              phoneMinLength: 'رقم الهاتف يجب أن يكون 9 أرقام على الأقل',
+              countryRequired: 'الدولة مطلوبة',
+              cityRequired: 'المدينة مطلوبة',
+              addressRequired: 'العنوان مطلوب',
+              preferredLanguageRequired: 'اللغة المفضلة مطلوبة',
+              idTypeRequired: 'نوع الهوية مطلوب',
+              idNumberRequired: 'رقم الهوية مطلوب',
+            },
+
+            // Emergency Contact Validation
+            emergencyContact: {
+              nameRequired: 'اسم جهة الاتصال مطلوب',
+              relationRequired: 'صلة القرابة مطلوبة',
+              phoneMinLength: 'رقم الهاتف يجب أن يكون 9 أرقام على الأقل',
+            },
+
+            // Medical Information Validation
+            medicalInfo: {
+              bloodTypeRequired: 'فصيلة الدم مطلوبة',
+              heightRequired: 'الطول مطلوب',
+              weightRequired: 'الوزن مطلوب',
+            },
           },
-          
-          // Emergency Contact Validation
-          emergencyContact: {
-            nameRequired: 'اسم جهة الاتصال مطلوب',
-            relationRequired: 'صلة القرابة مطلوبة',
-            phoneMinLength: 'رقم الهاتف يجب أن يكون 9 أرقام على الأقل'
-          },
-          
-          // Medical Information Validation
-          medicalInfo: {
-            bloodTypeRequired: 'فصيلة الدم مطلوبة',
-            heightRequired: 'الطول مطلوب',
-            weightRequired: 'الوزن مطلوب'
-          }
-        },
           // Profile Header
           header: {
             medicalFileNumber: 'رقم الملف الطبي',
@@ -911,8 +911,6 @@ const resources = {
           deleted: 'تم الحذف بنجاح',
         },
       },
-
-   
     },
   },
   es: {
@@ -1102,8 +1100,6 @@ const resources = {
               description:
                 'Estás saludable y no hay alertas que requieran tu atención',
             },
-
-          
           },
         },
         // Patient Portal Profile
@@ -1112,10 +1108,11 @@ const resources = {
             personalInfo: 'Información Personal',
             medicalInfo: 'Información Médica',
             insuranceInfo: 'Información de Seguro',
-            healthIndicators: 'Indicadores de Salud'
+            healthIndicators: 'Indicadores de Salud',
           },
           validation: {
-            pleaseCorrectErrors: 'Por favor corrija los errores en el formulario para continuar',
+            pleaseCorrectErrors:
+              'Por favor corrija los errores en el formulario para continuar',
             // Personal Information Validation
             personalInfo: {
               firstNameRequired: 'El nombre es requerido',
@@ -1126,28 +1123,30 @@ const resources = {
               genderRequired: 'El género es requerido',
               emailInvalid: 'Dirección de correo electrónico inválida',
               countryCodeRequired: 'El código de país es requerido',
-              phoneMinLength: 'El número de teléfono debe tener al menos 9 dígitos',
+              phoneMinLength:
+                'El número de teléfono debe tener al menos 9 dígitos',
               countryRequired: 'El país es requerido',
               cityRequired: 'La ciudad es requerida',
               addressRequired: 'La dirección es requerida',
               preferredLanguageRequired: 'El idioma preferido es requerido',
               idTypeRequired: 'El tipo de identificación es requerido',
-              idNumberRequired: 'El número de identificación es requerido'
+              idNumberRequired: 'El número de identificación es requerido',
             },
-            
+
             // Emergency Contact Validation
             emergencyContact: {
               nameRequired: 'El nombre del contacto de emergencia es requerido',
               relationRequired: 'La relación es requerida',
-              phoneMinLength: 'El número de teléfono debe tener al menos 9 dígitos'
+              phoneMinLength:
+                'El número de teléfono debe tener al menos 9 dígitos',
             },
-            
+
             // Medical Information Validation
             medicalInfo: {
               bloodTypeRequired: 'El tipo de sangre es requerido',
               heightRequired: 'La altura es requerida',
-              weightRequired: 'El peso es requerido'
-            }
+              weightRequired: 'El peso es requerido',
+            },
           },
           // Profile Header
           header: {
@@ -1295,6 +1294,7 @@ const resources = {
             noCurrentMedications: 'Sin medicamentos actuales',
           },
         },
+
         // Patient Portal Sidebar
         sidebar: {
           title: 'Portal del Paciente',
@@ -1373,8 +1373,6 @@ const resources = {
           deleted: 'Eliminado con éxito',
         },
       },
-
-    
     },
   },
 };

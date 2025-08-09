@@ -9,6 +9,15 @@ export const API_ENDPOINTS = {
     resetPassword: '/auth/reset-password',
     forgotPassword: '/auth/forgot-password',
   },
+  otp: {
+    SEND: '/otp/send',
+    VERIFY: '/otp/verify',
+    COMPLETE_REGISTRATION: '/otp/complete-registration',
+    RESEND: '/otp/resend',
+    VALIDATE: '/otp/validate/:otpId/:code',
+    INVALIDATE: '/otp/invalidate/:otpId',
+    CHECK_USER: '/otp/check-user',
+  },
   doctors: {
     list: '/doctors',
     details: (id: string) => `/doctors/${id}`,
