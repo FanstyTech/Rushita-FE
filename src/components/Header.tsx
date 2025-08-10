@@ -241,7 +241,7 @@ export default function Header() {
                     <MenuItem>
                       {({ active }) => {
                         const handleLogout = () => {
-                          logout.mutate();
+                          logout.mutate('/auth/login');
                         };
 
                         return (

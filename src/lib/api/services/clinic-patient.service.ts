@@ -8,15 +8,21 @@ import {
   ClinicPatientFilterDto,
   ClinicPatientListDto,
   CreateOrUpdateAllergyDto,
+  CreateOrUpdateEmergencyContactDto,
   CreateOrUpdateFamilyHistoryDto,
   CreateOrUpdateMedicalConditionDto,
   CreateUpdateClinicPatientDto,
+  EmergencyContactDto,
   FamilyHistoryDto,
   GetPatientDropdownInput,
   GetPatientForViewDto,
   MedicalConditionDto,
+  PatientHealthMetricDto,
+  PatientPortalProfileDto,
   PatientProfileDto,
   PatientStatus,
+  UpdatePatientHealthMetricDto,
+  UpdatePatientPortalProfileDto,
 } from '../types/clinic-patient';
 import { PaginationResponse } from '../types/pagination';
 import { SelectOption } from '../types/select-option';
@@ -109,6 +115,62 @@ class ClinicPatientService {
     return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_PROFILE, {
       params: { id },
     });
+  }
+
+  // Get patient portal profile
+  async getPatientPortalProfile(): Promise<
+    ApiResponse<PatientPortalProfileDto>
+  > {
+    return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_PORTAL_PROFILE);
+  }
+
+  // Update patient portal profile
+  async updatePatientPortalProfile(
+    data: UpdatePatientPortalProfileDto
+  ): Promise<ApiResponse<PatientPortalProfileDto>> {
+    return apiClient.put(
+      API_ENDPOINTS.CLINIC_PATIENTS.UPDATE_PORTAL_PROFILE,
+      data
+    );
+  }
+
+  // Get patient health metrics
+  async getPatientHealthMetrics(
+    id: string
+  ): Promise<ApiResponse<PatientHealthMetricDto>> {
+    return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_HEALTH_METRICS, {
+      params: { id },
+    });
+  }
+
+  // Update patient health metrics
+  async updatePatientHealthMetrics(
+    data: UpdatePatientHealthMetricDto
+  ): Promise<ApiResponse<PatientHealthMetricDto>> {
+    return apiClient.post(
+      API_ENDPOINTS.CLINIC_PATIENTS.UPDATE_HEALTH_METRICS,
+      data
+    );
+  }
+
+  // Create or update emergency contact
+  async createOrUpdateEmergencyContact(
+    data: CreateOrUpdateEmergencyContactDto
+  ): Promise<ApiResponse<EmergencyContactDto>> {
+    return apiClient.post(
+      API_ENDPOINTS.CLINIC_PATIENTS.CREATE_OR_UPDATE_EMERGENCY_CONTACT,
+      data
+    );
+  }
+
+  // Delete emergency contact
+  async deleteEmergencyContact(id: string): Promise<ApiResponse<void>> {
+    return apiClient.delete(
+      API_ENDPOINTS.CLINIC_PATIENTS.DELETE_EMERGENCY_CONTACT,
+      {
+        params: { id },
+      }
+    );
   }
 }
 

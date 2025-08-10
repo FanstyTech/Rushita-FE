@@ -2,21 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Bell,
-  Search,
-  Menu,
-  LogOut,
-  Settings,
-  User,
-  Sun,
-  Moon,
-  X,
-} from 'lucide-react';
-import { useAuth } from '@/lib/api/hooks/useAuth';
+import { Bell, Menu, LogOut, Settings, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,17 +16,16 @@ import {
 import { cn } from '@/lib/utils';
 import ThemeToggle from '../ThemeToggle';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
-import { languages } from '@/middleware';
 import { t } from 'i18next';
-import { Language } from '@/config/languages';
-import { useLanguage } from '@/i18n/LanguageProvider';
+import { useLanguage, Language } from '@/i18n/LanguageProvider';
+import { AuthenticationUserResult } from '@/lib/api/types/auth';
+import { languages } from '@/middleware';
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void;
 }
 
 export function Header({ setSidebarOpen }: HeaderProps) {
-  const { user, logout } = useAuth();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -270,59 +257,6 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                 >
                   عرض كل الإشعارات
                 </Button>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* User menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    'rounded-full hover:bg-primary/10 transition-all',
-                    scrolled ? 'h-8 w-8' : 'h-9 w-9'
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary shadow-sm border border-primary/10 transition-all',
-                      scrolled ? 'h-7 w-7 text-xs' : 'h-8 w-8 text-sm'
-                    )}
-                  >
-                    {user?.name?.charAt(0) || 'U'}
-                  </div>
-                  <span className="sr-only">قائمة المستخدم</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="rounded-xl border-border/50 shadow-lg"
-              >
-                <DropdownMenuLabel>حسابي</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => router.push('/patient-portal/profile')}
-                  className="rounded-lg cursor-pointer"
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  <span>الملف الشخصي</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => router.push('/patient-portal/settings')}
-                  className="rounded-lg cursor-pointer"
-                >
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>الإعدادات</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={handleLogout}
-                  className="rounded-lg cursor-pointer text-destructive hover:text-destructive"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>تسجيل الخروج</span>
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

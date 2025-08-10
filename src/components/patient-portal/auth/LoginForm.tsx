@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Eye, EyeOff, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,51 +10,22 @@ import { CardContent, CardFooter } from '@/components/ui/card';
 interface LoginFormProps {
   phoneNumber: string;
   phoneCode: string;
+  handleLoginSubmit: (e: string) => void;
+  isLoading: boolean;
 }
 
-export function LoginForm({ phoneNumber, phoneCode }: LoginFormProps) {
-  const router = useRouter();
+export function LoginForm({ handleLoginSubmit, isLoading }: LoginFormProps) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Basic validation
-    if (!password || password.length < 8) {
-      setError('يرجى إدخال كلمة مرور صحيحة');
-      return;
-    }
-
-    setError(null);
-    setIsLoading(true);
-
-    try {
-      // In a real app, this would call the actual login API
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Simulate successful login
-      console.log('Login with:', {
-        phoneNumber: `${phoneCode}${phoneNumber}`,
-        password,
-      });
-
-      // Navigate to dashboard after successful login
-      router.push('/patient-portal/dashboard');
-    } catch (error) {
-      console.error('Login error:', error);
-      setError(
-        'فشل تسجيل الدخول. يرجى التحقق من كلمة المرور والمحاولة مرة أخرى.'
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    handleLoginSubmit(password);
   };
 
   return (
-    <form onSubmit={handleLoginSubmit}>
+    <form onSubmit={handleLogin}>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="relative">

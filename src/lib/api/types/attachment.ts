@@ -26,7 +26,7 @@ export interface CreateAttachmentDto {
   entityId: string;
   entityType: EntityType;
   description?: string;
-  uploadedBy: string;
+  uploadedBy?: string;
   specificPath?: string;
   isTemp: boolean;
 }

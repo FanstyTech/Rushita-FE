@@ -11,6 +11,9 @@ import { Input } from '@/components/common/form';
 import { Button } from '@/components/ui/button';
 import { GenderSelector } from './GenderSelector';
 import { CardContent, CardFooter } from '@/components/ui/card';
+import { useOtp } from '@/lib/api/hooks/useOtp';
+import { Gender } from '@/lib/api/types/otp';
+import { useLanguage } from '@/i18n/LanguageProvider';
 
 // Zod schema for registration form validation
 export const registrationSchema = z
@@ -25,11 +28,14 @@ export const registrationSchema = z
       .min(2, { message: 'الاسم الأخير مطلوب' }),
     gender: z.string().min(1, { message: 'الجنس مطلوب' }),
     dateOfBirth: z.string().min(1, { message: 'تاريخ الميلاد مطلوب' }),
-    email: z.string().email({ message: 'يرجى إدخال بريد إلكتروني صحيح' }),
+    email: z
+      .string()
+      .email({ message: 'يرجى إدخال بريد إلكتروني صحيح' })
+      .min(1, { message: 'البريد الإلكتروني مطلوب' }),
     password: z
       .string()
       .min(8, { message: 'كلمة المرور يجب أن تكون 8 أحرف على الأقل' }),
-    confirmPassword: z.string(),
+    confirmPassword: z.string().min(1, { message: 'تأكيد كلمة المرور مطلوب' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'كلمات المرور غير متطابقة',
@@ -41,14 +47,17 @@ export type RegistrationFormData = z.infer<typeof registrationSchema>;
 interface RegistrationFormProps {
   phoneNumber: string;
   phoneCode: string;
+  countryCodeId: string;
 }
 
 export function RegistrationForm({
   phoneNumber,
   phoneCode,
+  countryCodeId,
 }: RegistrationFormProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { completeRegistration } = useOtp();
+  const { language } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -74,24 +83,42 @@ export function RegistrationForm({
   // Handle registration form submission with React Hook Form
   const onRegistrationSubmit = handleSubmit(
     async (data: RegistrationFormData) => {
-      try {
-        setIsLoading(true);
-        // In a real app, this would call the actual registration API
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        // Simulate successful registration
-        console.log('Register with:', {
-          phoneNumber: `${phoneCode}${phoneNumber}`,
-          ...data,
-        });
-
-        // Navigate to dashboard after successful registration
-        router.push('/patient-portal/dashboard');
-      } catch (error) {
-        console.error('Registration error:', error);
-      } finally {
-        setIsLoading(false);
+      // Get the stored OTP code from localStorage
+      const storedOtpCode = localStorage.getItem('currentOtpCode');
+      if (!storedOtpCode) {
+        throw new Error(
+          'OTP code not found. Please verify your phone number again.'
+        );
       }
+
+      // Map gender string to Gender enum
+      const getGenderEnum = (gender: string): Gender => {
+        switch (gender.toLowerCase()) {
+          case 'male':
+          case 'ذكر':
+            return Gender.Male;
+          case 'female':
+          case 'أنثى':
+            return Gender.Female;
+          default:
+            return Gender.Other;
+        }
+      };
+
+      // Call the completeRegistration API
+      await completeRegistration.mutateAsync({
+        countryCodeId: countryCodeId,
+        phoneNumber: phoneNumber,
+        otpCode: storedOtpCode,
+        fNameL: data.firstName,
+        lNameL: data.lastName,
+        dateOfBirth: data.dateOfBirth,
+        gender: getGenderEnum(data.gender),
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        preferredLanguage: language, // Use the form's selected language
+      });
     }
   );
 
@@ -204,14 +231,18 @@ export function RegistrationForm({
           <Button
             type="submit"
             className="w-full relative overflow-hidden group h-12"
-            disabled={isLoading}
+            disabled={completeRegistration.isPending}
           >
             <motion.div
               className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               initial={false}
-              animate={isLoading ? { opacity: 0.2 } : { opacity: 0 }}
+              animate={
+                completeRegistration.isPending
+                  ? { opacity: 0.2 }
+                  : { opacity: 0 }
+              }
             />
-            {isLoading ? (
+            {completeRegistration.isPending ? (
               <div className="flex items-center justify-center gap-2">
                 <motion.span
                   className="h-4 w-4 border-2 border-current border-t-transparent rounded-full"

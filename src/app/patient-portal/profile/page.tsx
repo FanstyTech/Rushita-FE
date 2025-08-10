@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { useTranslation } from 'react-i18next';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,13 +10,8 @@ import { motion } from 'framer-motion';
 import {
   EmergencyContactCard,
   HealthIndicatorsCard,
-  InsuranceCoverageDetailsCard,
-  InsuranceInformationCard,
   MedicalInformationCard,
   MedicationHistoryCard,
-  mockHealthIndicators,
-  mockInsuranceInfo,
-  mockPatientData,
   PersonalInformationCard,
   ProfileHeader,
   ProfileSkeleton,
@@ -29,6 +23,15 @@ import {
   findErrorSection,
   ProfileFormValues,
 } from './validation';
+import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
+import {
+  Gender,
+  IdentificationType,
+  UpdatePatientPortalProfileDto,
+} from '@/lib/api/types/clinic-patient';
+import { useCountry } from '@/lib/api/hooks/useCountry';
+import { useCity } from '@/lib/api/hooks/useCity';
+import { AttachmentDto } from '@/lib/api/types/attachment';
 
 // Animation variants
 const containerVariants = {
@@ -46,81 +49,22 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
-// Dummy patient data
-const patientData = {
-  id: 'p-12345',
-  name: 'محمد أحمد العلي',
-  email: 'mohammed@example.com',
-  phone: '966501234567',
-  dateOfBirth: '1985-05-15',
-  gender: 'male',
-  bloodType: 'O+',
-  height: 175,
-  weight: 80,
-  allergies: 'البنسلين، المكسرات',
-  chronicDiseases: 'ضغط الدم المرتفع',
-  medications: 'أتينولول 50 مجم مرة واحدة يومياً',
-  medicalFileNumber: 'MF-98765',
-  nationalId: '1098765432',
-  address: 'حي النزهة، شارع الملك فهد، الرياض',
-  emergencyContact: {
-    name: 'أحمد محمد العلي',
-    relation: 'أخ',
-    phone: '966509876543',
-  },
-  insuranceInfo: {
-    provider: 'شركة التأمين الصحي المتحدة',
-    policyNumber: 'INS-123456',
-    expiryDate: '2026-12-31',
-    coverageType: 'شاملة',
-    copayment: 10,
-    annualLimit: 10000,
-    exclusions: 'لا توجد استثناءات',
-    notes: 'لا توجد ملاحظات',
-  },
-  medicalHistory: {
-    allergies: ['البنسلين', 'المكسرات'],
-    chronicDiseases: ['ضغط الدم المرتفع'],
-    surgeries: [{ name: 'استئصال الزائدة الدودية', date: '2010-03-20' }],
-    familyHistory: 'السكري من النوع الثاني في العائلة',
-  },
-  registrationDate: '2023-01-15',
-  healthMetrics: {
-    bloodPressure: {
-      systolic: 125,
-      diastolic: 82,
-      status: 'elevated',
-      lastUpdated: '2025-07-15',
-      trend: 'stable',
-    },
-    bloodSugar: {
-      value: 95,
-      status: 'normal',
-      lastUpdated: '2025-07-15',
-      trend: 'improving',
-    },
-    heartRate: {
-      value: 72,
-      status: 'normal',
-      lastUpdated: '2025-07-15',
-      trend: 'stable',
-    },
-    cholesterol: {
-      total: 190,
-      hdl: 55,
-      ldl: 120,
-      status: 'normal',
-      lastUpdated: '2025-06-20',
-      trend: 'stable',
-    },
-  },
-};
-
 export default function ProfilePage() {
   const { t } = useTranslation();
+
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(true);
+
+  // API hooks
+  const { usePatientPortalProfile, updatePatientPortalProfile } =
+    useClinicPatients();
+  const { useCitiesDropdown } = useCity();
+  const { useCountryPhoneCodes, useCountryDropdown } = useCountry();
+
+  // Fetch patient profile data
+  const { data: patientProfile, isLoading, error } = usePatientPortalProfile();
+
+  const { data: phoneCodes } = useCountryPhoneCodes();
 
   // Initialize form with React Hook Form and Zod validation
   const {
@@ -134,72 +78,150 @@ export default function ProfilePage() {
     control,
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
-    defaultValues: {
-      // Personal Information
-      name: patientData.name,
-      email: patientData.email,
-      phone: patientData.phone,
-      address: patientData.address,
-      Gender: patientData.gender,
-      DateOfBirth: patientData.dateOfBirth,
-      // We would populate these from API in a real scenario
-      FNameF: '',
-      SNameF: '',
-      TNameF: '',
-      LNameF: '',
-      FNameL: '',
-      SNameL: '',
-      TNameL: '',
-      LNameL: '',
-      CountryCodeId: '1', // Default Saudi Arabia
-      CountryId: '1',
-      CityId: '1',
-      PreferredLanguage: 'ar',
-      IdType: 'nationalId',
-      IdNum: patientData.nationalId,
-
-      // Emergency Contact
-      emergencyContactName: patientData.emergencyContact.name,
-      emergencyContactRelation: patientData.emergencyContact.relation,
-      emergencyContactPhone: patientData.emergencyContact.phone,
-
-      // Medical Information
-      bloodType: patientData.bloodType,
-      height: patientData.height,
-      weight: patientData.weight,
-      allergies: patientData.allergies,
-      chronicDiseases: patientData.chronicDiseases,
-      medications: patientData.medications,
-
-      // Insurance Information
-      insuranceProvider: patientData.insuranceInfo.provider,
-      insurancePolicyNumber: patientData.insuranceInfo.policyNumber,
-      insuranceExpiryDate: patientData.insuranceInfo.expiryDate,
-      insuranceCoverage: patientData.insuranceInfo.coverageType,
-
-      // Health metrics
-      bloodPressureSystolic: patientData.healthMetrics.bloodPressure.systolic,
-      bloodPressureDiastolic: patientData.healthMetrics.bloodPressure.diastolic,
-      bloodPressureStatus: patientData.healthMetrics.bloodPressure.status,
-      bloodSugarValue: patientData.healthMetrics.bloodSugar.value,
-      bloodSugarStatus: patientData.healthMetrics.bloodSugar.status,
-      heartRateValue: patientData.healthMetrics.heartRate.value,
-      heartRateStatus: patientData.healthMetrics.heartRate.status,
-      cholesterolTotal: patientData.healthMetrics.cholesterol.total,
-      cholesterolHDL: patientData.healthMetrics.cholesterol.hdl,
-      cholesterolLDL: patientData.healthMetrics.cholesterol.ldl,
-      cholesterolStatus: patientData.healthMetrics.cholesterol.status,
-    },
   });
 
-  useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+  const { data: countries = [] } = useCountryDropdown();
+  const { data: cities = [] } = useCitiesDropdown({
+    countryId: watch('countryId'),
+  });
 
-    return () => clearTimeout(timer);
-  }, []);
+  // Populate form when data is loaded
+  useEffect(() => {
+    if (patientProfile) {
+      // Personal Information
+      setValue('email', patientProfile.personalInfo.email || '');
+      setValue('phone', patientProfile.personalInfo.phoneNumber || '');
+      setValue('address', patientProfile.personalInfo.address || '');
+      setValue('gender', patientProfile.personalInfo.gender || Gender.Male);
+      if (patientProfile.personalInfo.dateOfBirth) {
+        const dateObj = new Date(patientProfile.personalInfo.dateOfBirth);
+        const formattedDate = dateObj.toISOString().split('T')[0];
+        setValue('dateOfBirth', formattedDate);
+      }
+      setValue('fNameF', patientProfile.personalInfo.fNameF || '');
+      setValue('sNameF', patientProfile.personalInfo.sNameF || '');
+      setValue('tNameF', patientProfile.personalInfo.tNameF || '');
+      setValue('lNameF', patientProfile.personalInfo.lNameF || '');
+      setValue('fNameL', patientProfile.personalInfo.fNameL || '');
+      setValue('sNameL', patientProfile.personalInfo.sNameL || '');
+      setValue('tNameL', patientProfile.personalInfo.tNameL || '');
+      setValue('lNameL', patientProfile.personalInfo.lNameL || '');
+      setValue(
+        'countryCodeId',
+        patientProfile.personalInfo.countryCodeId || ''
+      );
+      setValue('countryId', patientProfile.personalInfo.countryId || '');
+      setValue('cityId', patientProfile.personalInfo.cityId || '');
+      setValue(
+        'preferredLanguage',
+        patientProfile.personalInfo.preferredLanguage || ''
+      );
+      setValue(
+        'idType',
+        patientProfile.personalInfo.idType || IdentificationType.NationalID
+      );
+      setValue('idNum', patientProfile.personalInfo.idNum || '');
+
+      // Emergency Contact
+      setValue(
+        'emergencyContactName',
+        patientProfile.emergencyContact.name || ''
+      );
+      setValue(
+        'emergencyContactRelation',
+        patientProfile.emergencyContact.relationship || ''
+      );
+      setValue(
+        'emergencyContactPhone',
+        patientProfile.emergencyContact.phone || ''
+      );
+
+      // Medical Information
+      setValue('bloodType', patientProfile.medicalInfo.bloodType || '');
+      setValue('height', patientProfile.medicalInfo.height || 0);
+      setValue('weight', patientProfile.medicalInfo.weight || 0);
+      setValue(
+        'allergies',
+        patientProfile.medicalInfo.allergies.map((a) => a.name).join(', ') || ''
+      );
+      setValue(
+        'chronicDiseases',
+        patientProfile.medicalInfo.medicalConditions
+          .map((c) => c.name)
+          .join(', ') || ''
+      );
+      setValue(
+        'medications',
+        patientProfile.medicalInfo.currentMedications
+          .map((m) => m.name)
+          .join(', ') || ''
+      );
+
+      // Insurance Information
+      // setValue(
+      //   'insuranceProvider',
+      //   patientProfile.insuranceInfo.provider || ''
+      // );
+      // setValue(
+      //   'insurancePolicyNumber',
+      //   patientProfile.insuranceInfo.policyNumber || ''
+      // );
+      // setValue(
+      //   'insuranceExpiryDate',
+      //   patientProfile.insuranceInfo.expiryDate || ''
+      // );
+      // setValue(
+      //   'insuranceCoverage',
+      //   patientProfile.insuranceInfo.coverageType || ''
+      // );
+
+      // Health metrics
+      setValue(
+        'bloodPressureSystolic',
+        patientProfile.healthIndicators.bloodPressure.systolic || 0
+      );
+      setValue(
+        'bloodPressureDiastolic',
+        patientProfile.healthIndicators.bloodPressure.diastolic || 0
+      );
+      setValue(
+        'bloodPressureStatus',
+        patientProfile.healthIndicators.bloodPressure.status?.toString() || ''
+      );
+      setValue(
+        'bloodSugarValue',
+        patientProfile.healthIndicators.bloodSugar.value || 0
+      );
+      setValue(
+        'bloodSugarStatus',
+        patientProfile.healthIndicators.bloodSugar.status?.toString() || ''
+      );
+      setValue(
+        'heartRateValue',
+        patientProfile.healthIndicators.heartRate.value || 0
+      );
+      setValue(
+        'heartRateStatus',
+        patientProfile.healthIndicators.heartRate.status?.toString() || ''
+      );
+      setValue(
+        'cholesterolTotal',
+        patientProfile.healthIndicators.cholesterol.total || 0
+      );
+      setValue(
+        'cholesterolHDL',
+        patientProfile.healthIndicators.cholesterol.hdl || 0
+      );
+      setValue(
+        'cholesterolLDL',
+        patientProfile.healthIndicators.cholesterol.ldl || 0
+      );
+      setValue(
+        'cholesterolStatus',
+        patientProfile.healthIndicators.cholesterol.status?.toString() || ''
+      );
+    }
+  }, [patientProfile, setValue]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -210,16 +232,90 @@ export default function ProfilePage() {
     setIsEditing(true);
   };
 
+  const onImageChange = (attachment: AttachmentDto) => {
+    setValue('attachmentId', attachment.id);
+  };
+
   const handleCancel = () => {
     // Reset form to initial values
     reset();
     setIsEditing(false);
   };
 
-  const handleSave = (data: ProfileFormValues) => {
-    // Here you would typically send the updated data to the server
-    console.log('Form data to submit:', data);
-    setIsEditing(false);
+  const handleSave = async (data: ProfileFormValues) => {
+    if (!patientProfile) return;
+
+    try {
+      const updateData: UpdatePatientPortalProfileDto = {
+        id: patientProfile.id,
+        personalInfo: {
+          fNameF: data.fNameF,
+          sNameF: data.sNameF,
+          tNameF: data.tNameF,
+          lNameF: data.lNameF,
+          fNameL: data.fNameL,
+          sNameL: data.sNameL,
+          tNameL: data.tNameL,
+          lNameL: data.lNameL,
+          dateOfBirth: data.dateOfBirth,
+          gender: data.gender,
+          email: data.email,
+          phoneNumber: data.phone,
+          address: data.address,
+          countryCodeId: data.countryCodeId,
+          countryId: data.countryId,
+          cityId: data.cityId,
+          preferredLanguage: data.preferredLanguage,
+          idType: data.idType,
+          idNum: data.idNum,
+          imageId: data.attachmentId,
+        },
+        emergencyContact: {
+          id: patientProfile?.emergencyContact?.id || undefined,
+          patientId: patientProfile.id,
+          name: data.emergencyContactName,
+          phone: data.emergencyContactPhone,
+          relationship: data.emergencyContactRelation,
+          isPrimary: true,
+        },
+        medicalInfo: {
+          bloodType: data.bloodType,
+          height: data.height,
+          weight: data.weight,
+          allergies: patientProfile.medicalInfo.allergies,
+          medicalConditions: patientProfile.medicalInfo.medicalConditions,
+          currentMedications: patientProfile.medicalInfo.currentMedications,
+        },
+        // insuranceInfo: {
+        //   provider: data.insuranceProvider,
+        //   policyNumber: data.insurancePolicyNumber,
+        //   expiryDate: data.insuranceExpiryDate,
+        //   coverageType: data.insuranceCoverage,
+        // },
+        healthIndicators: {
+          bloodPressure: {
+            systolic: data.bloodPressureSystolic,
+            diastolic: data.bloodPressureDiastolic,
+          },
+          bloodSugar: {
+            value: data.bloodSugarValue,
+          },
+          heartRate: {
+            value: data.heartRateValue,
+          },
+          cholesterol: {
+            total: data.cholesterolTotal,
+            hdl: data.cholesterolHDL,
+            ldl: data.cholesterolLDL,
+          },
+        },
+      };
+
+      await updatePatientPortalProfile.mutateAsync(updateData);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
   };
 
   // Add a custom submission handler that checks for errors and navigates to the appropriate tab
@@ -241,10 +337,35 @@ export default function ProfilePage() {
     }
   );
 
-  if (loading) {
+  if (isLoading || updatePatientPortalProfile.isPending) {
     return <ProfileSkeleton />;
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">
+            Error loading profile: {error.message}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!patientProfile) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-gray-500">No profile data found</p>
+      </div>
+    );
+  }
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -254,18 +375,15 @@ export default function ProfilePage() {
     >
       {/* Profile header */}
       <ProfileHeader
-        patientData={{
-          name: mockPatientData.name,
-          medicalFileNumber: mockPatientData.medicalFileNumber,
-          registrationDate: mockPatientData.registrationDate,
-          bloodType: mockPatientData.bloodType,
-        }}
+        patientData={patientProfile}
         isEditing={isEditing}
         onEdit={handleEdit}
         onSave={onSubmit}
         onCancel={handleCancel}
         formatDate={formatDate}
+        onImageChange={onImageChange}
       />
+
       {/* Profile content */}
       <Tabs
         defaultValue="personal"
@@ -286,12 +404,6 @@ export default function ProfilePage() {
           >
             {t('patientPortal.profile.tabs.medicalInfo')}
           </TabsTrigger>
-          {/* <TabsTrigger
-            value="insurance"
-            className="py-3 data-[state=active]:shadow-sm"
-          >
-            {t('patientPortal.profile.tabs.insuranceInfo')}
-          </TabsTrigger> */}
           <TabsTrigger
             value="healthIndicators"
             className="py-3 data-[state=active]:shadow-sm"
@@ -309,30 +421,30 @@ export default function ProfilePage() {
             className="space-y-6"
           >
             <PersonalInformationCard
-              patientData={patientData}
+              patientData={patientProfile?.personalInfo}
+              phoneCodes={phoneCodes || []}
+              countries={countries || []}
+              cities={cities || []}
               isEditing={isEditing}
               formData={watch()}
-              onInputChange={handleInputChange}
               variants={itemVariants}
               register={register}
               errors={errors}
-              control={control}
               setValue={setValue}
             />
 
             <EmergencyContactCard
-              emergencyContact={patientData.emergencyContact}
+              emergencyContact={patientProfile.emergencyContact}
               isEditing={isEditing}
               formData={watch()}
               onInputChange={handleInputChange}
               variants={itemVariants}
               register={register}
               errors={errors}
-              control={control}
-              setValue={setValue}
             />
           </motion.div>
         </TabsContent>
+
         {/* Medical Information Tab */}
         <TabsContent value="medical">
           <motion.div
@@ -342,19 +454,19 @@ export default function ProfilePage() {
             className="space-y-6"
           >
             <MedicalInformationCard
-              patientData={mockPatientData}
+              patientData={patientProfile.medicalInfo}
               isEditing={isEditing}
               formData={watch()}
               onInputChange={handleInputChange}
               variants={itemVariants}
               register={register}
               errors={errors}
-              control={control}
-              setValue={setValue}
             />
 
             <MedicationHistoryCard
-              medications={mockPatientData.medications}
+              medications={patientProfile.medicalInfo.currentMedications
+                .map((m) => m.name)
+                .join(', ')}
               isEditing={isEditing}
               formData={watch()}
               onInputChange={handleInputChange}
@@ -366,32 +478,7 @@ export default function ProfilePage() {
             />
           </motion.div>
         </TabsContent>
-        {/* Insurance Tab */}
-        <TabsContent value="insurance">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="space-y-6"
-          >
-            <InsuranceInformationCard
-              insuranceInfo={mockInsuranceInfo}
-              isEditing={isEditing}
-              formData={watch()}
-              onInputChange={handleInputChange}
-              variants={itemVariants}
-              register={register}
-              errors={errors}
-              control={control}
-              setValue={setValue}
-            />
 
-            <InsuranceCoverageDetailsCard
-              insuranceInfo={mockInsuranceInfo}
-              variants={itemVariants}
-            />
-          </motion.div>
-        </TabsContent>
         {/* Health Indicators Tab */}
         <TabsContent value="healthIndicators">
           <motion.div
@@ -401,14 +488,11 @@ export default function ProfilePage() {
             className="space-y-6"
           >
             <HealthIndicatorsCard
-              healthIndicators={mockHealthIndicators}
+              healthIndicators={patientProfile.healthIndicators}
               variants={itemVariants}
               isEditing={isEditing}
               register={register}
               errors={errors}
-              control={control}
-              setValue={setValue}
-              formData={watch()}
             />
           </motion.div>
         </TabsContent>

@@ -31,12 +31,7 @@ import {
   formatDate,
   formatRelativeTime,
 } from '@/components/patient-portal/dashboard';
-import {
-  calculateBMI,
-  containerVariants,
-  getBMICategory,
-  itemVariants,
-} from '@/utils/patientPortalUtils';
+import { containerVariants, itemVariants } from '@/utils/patientPortalUtils';
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -127,8 +122,6 @@ export default function DashboardPage() {
             <HealthMetricsCard
               metrics={healthMetrics}
               variants={itemVariants}
-              calculateBMI={calculateBMI}
-              getBMICategory={getBMICategory}
             />
           </motion.div>
         </TabsContent>

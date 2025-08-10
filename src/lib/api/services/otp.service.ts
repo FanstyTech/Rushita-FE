@@ -4,20 +4,19 @@ import {
   VerifyOtpRequestDto,
   VerifyOtpResponseDto,
   CompleteRegistrationRequestDto,
-  CompleteRegistrationResponseDto,
   ResendOtpRequestDto,
-  ValidateOtpRequestDto,
-  InvalidateOtpRequestDto,
   CheckUserRequestDto,
-  CheckUserResponseDto,
 } from '../types/otp';
 import type { ApiResponse } from '../types/api';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../config';
+import { AuthenticationResult } from '../types/auth';
 
 export const otpService = {
   // Send OTP
-  async sendOtp(data: SendOtpRequestDto): Promise<ApiResponse<SendOtpResponseDto>> {
+  async sendOtp(
+    data: SendOtpRequestDto
+  ): Promise<ApiResponse<SendOtpResponseDto>> {
     return apiClient.post<ApiResponse<SendOtpResponseDto>>(
       API_ENDPOINTS.otp.SEND,
       data
@@ -25,7 +24,9 @@ export const otpService = {
   },
 
   // Verify OTP
-  async verifyOtp(data: VerifyOtpRequestDto): Promise<ApiResponse<VerifyOtpResponseDto>> {
+  async verifyOtp(
+    data: VerifyOtpRequestDto
+  ): Promise<ApiResponse<VerifyOtpResponseDto>> {
     return apiClient.post<ApiResponse<VerifyOtpResponseDto>>(
       API_ENDPOINTS.otp.VERIFY,
       data
@@ -35,15 +36,17 @@ export const otpService = {
   // Complete Registration
   async completeRegistration(
     data: CompleteRegistrationRequestDto
-  ): Promise<ApiResponse<CompleteRegistrationResponseDto>> {
-    return apiClient.post<ApiResponse<CompleteRegistrationResponseDto>>(
+  ): Promise<ApiResponse<AuthenticationResult>> {
+    return apiClient.post<ApiResponse<AuthenticationResult>>(
       API_ENDPOINTS.otp.COMPLETE_REGISTRATION,
       data
     );
   },
 
   // Resend OTP
-  async resendOtp(data: ResendOtpRequestDto): Promise<ApiResponse<SendOtpResponseDto>> {
+  async resendOtp(
+    data: ResendOtpRequestDto
+  ): Promise<ApiResponse<SendOtpResponseDto>> {
     return apiClient.post<ApiResponse<SendOtpResponseDto>>(
       API_ENDPOINTS.otp.RESEND,
       data
@@ -51,18 +54,22 @@ export const otpService = {
   },
 
   // Validate OTP
-  async validateOtp(otpId: string, code: string): Promise<ApiResponse<boolean>> {
-    const endpoint = API_ENDPOINTS.otp.VALIDATE
-      .replace(':otpId', otpId)
-      .replace(':code', code);
-    
+  async validateOtp(
+    otpId: string,
+    code: string
+  ): Promise<ApiResponse<boolean>> {
+    const endpoint = API_ENDPOINTS.otp.VALIDATE.replace(
+      ':otpId',
+      otpId
+    ).replace(':code', code);
+
     return apiClient.get<ApiResponse<boolean>>(endpoint);
   },
 
   // Invalidate OTP
   async invalidateOtp(otpId: string): Promise<ApiResponse<boolean>> {
     const endpoint = API_ENDPOINTS.otp.INVALIDATE.replace(':otpId', otpId);
-    
+
     return apiClient.delete<ApiResponse<boolean>>(endpoint);
   },
 

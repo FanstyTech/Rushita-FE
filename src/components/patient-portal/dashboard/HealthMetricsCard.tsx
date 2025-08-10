@@ -68,15 +68,11 @@ interface HealthMetrics {
 interface HealthMetricsCardProps {
   metrics: HealthMetrics;
   variants: any;
-  calculateBMI: (weight: number, height: number) => number;
-  getBMICategory: (bmi: number) => string;
 }
 
 export function HealthMetricsCard({
   metrics,
   variants,
-  calculateBMI,
-  getBMICategory,
 }: HealthMetricsCardProps) {
   const { t } = useTranslation();
 
@@ -88,7 +84,9 @@ export function HealthMetricsCard({
             <Activity className="h-5 w-5 text-primary mr-2" />
             {t('patientPortal.dashboard.healthMetrics.title')}
           </CardTitle>
-          <CardDescription>{t('patientPortal.dashboard.healthMetrics.description')}</CardDescription>
+          <CardDescription>
+            {t('patientPortal.dashboard.healthMetrics.description')}
+          </CardDescription>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -99,7 +97,11 @@ export function HealthMetricsCard({
                   <div className="rounded-full bg-red-100 p-2 dark:bg-red-900/50">
                     <Heart className="h-4 w-4 text-red-600 dark:text-red-400" />
                   </div>
-                  <h4 className="font-medium">{t('patientPortal.dashboard.healthMetrics.bloodPressure.title')}</h4>
+                  <h4 className="font-medium">
+                    {t(
+                      'patientPortal.dashboard.healthMetrics.bloodPressure.title'
+                    )}
+                  </h4>
                 </div>
                 <Badge
                   variant={
@@ -112,10 +114,16 @@ export function HealthMetricsCard({
                   className="text-xs"
                 >
                   {metrics.bloodPressure.status === 'normal'
-                    ? t('patientPortal.dashboard.healthMetrics.bloodPressure.normal')
+                    ? t(
+                        'patientPortal.dashboard.healthMetrics.bloodPressure.normal'
+                      )
                     : metrics.bloodPressure.status === 'elevated'
-                    ? t('patientPortal.dashboard.healthMetrics.bloodPressure.elevated')
-                    : t('patientPortal.dashboard.healthMetrics.bloodPressure.high')}
+                    ? t(
+                        'patientPortal.dashboard.healthMetrics.bloodPressure.elevated'
+                      )
+                    : t(
+                        'patientPortal.dashboard.healthMetrics.bloodPressure.high'
+                      )}
                 </Badge>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -128,12 +136,18 @@ export function HealthMetricsCard({
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground">
-                {t('patientPortal.dashboard.healthMetrics.bloodPressure.lastUpdate')}{' '}
+                {t(
+                  'patientPortal.dashboard.healthMetrics.bloodPressure.lastUpdate'
+                )}{' '}
                 {formatDate(metrics?.bloodPressure?.lastUpdated || '')}
               </div>
               <div className="mt-3">
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span>{t('patientPortal.dashboard.healthMetrics.bloodPressure.trend')}</span>
+                  <span>
+                    {t(
+                      'patientPortal.dashboard.healthMetrics.bloodPressure.trend'
+                    )}
+                  </span>
                 </div>
                 <div className="h-10 flex items-end gap-1">
                   {metrics.bloodPressure.history.map((reading, index) => (
@@ -166,7 +180,11 @@ export function HealthMetricsCard({
                   <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900/50">
                     <Droplets className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <h4 className="font-medium">{t('patientPortal.dashboard.healthMetrics.bloodSugar.title')}</h4>
+                  <h4 className="font-medium">
+                    {t(
+                      'patientPortal.dashboard.healthMetrics.bloodSugar.title'
+                    )}
+                  </h4>
                 </div>
                 <Badge
                   variant={
@@ -179,10 +197,16 @@ export function HealthMetricsCard({
                   className="text-xs"
                 >
                   {metrics.bloodSugar.status === 'normal'
-                    ? t('patientPortal.dashboard.healthMetrics.bloodSugar.normal')
+                    ? t(
+                        'patientPortal.dashboard.healthMetrics.bloodSugar.normal'
+                      )
                     : metrics.bloodSugar.status === 'elevated'
-                    ? t('patientPortal.dashboard.healthMetrics.bloodSugar.elevated')
-                    : t('patientPortal.dashboard.healthMetrics.bloodSugar.high')}
+                    ? t(
+                        'patientPortal.dashboard.healthMetrics.bloodSugar.elevated'
+                      )
+                    : t(
+                        'patientPortal.dashboard.healthMetrics.bloodSugar.high'
+                      )}
                 </Badge>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -196,11 +220,18 @@ export function HealthMetricsCard({
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground">
-                {t('patientPortal.dashboard.healthMetrics.bloodSugar.lastUpdate')} {formatDate(metrics.bloodSugar.lastUpdated)}
+                {t(
+                  'patientPortal.dashboard.healthMetrics.bloodSugar.lastUpdate'
+                )}{' '}
+                {formatDate(metrics.bloodSugar.lastUpdated)}
               </div>
               <div className="mt-3">
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span>{t('patientPortal.dashboard.healthMetrics.bloodSugar.trend')}</span>
+                  <span>
+                    {t(
+                      'patientPortal.dashboard.healthMetrics.bloodSugar.trend'
+                    )}
+                  </span>
                 </div>
                 <div className="h-10 flex items-end gap-1">
                   {metrics.bloodSugar.history.map((reading, index) => (
@@ -224,7 +255,9 @@ export function HealthMetricsCard({
                   <div className="rounded-full bg-green-100 p-2 dark:bg-green-900/50">
                     <Scale className="h-4 w-4 text-green-600 dark:text-green-400" />
                   </div>
-                  <h4 className="font-medium">{t('patientPortal.dashboard.healthMetrics.weight.title')}</h4>
+                  <h4 className="font-medium">
+                    {t('patientPortal.dashboard.healthMetrics.weight.title')}
+                  </h4>
                 </div>
                 <Badge
                   variant="outline"
@@ -239,8 +272,12 @@ export function HealthMetricsCard({
                   {metrics.weight.trend === 'stable'
                     ? t('patientPortal.dashboard.healthMetrics.weight.stable')
                     : metrics.weight.trend === 'increasing'
-                    ? t('patientPortal.dashboard.healthMetrics.weight.increasing')
-                    : t('patientPortal.dashboard.healthMetrics.weight.decreasing')}
+                    ? t(
+                        'patientPortal.dashboard.healthMetrics.weight.increasing'
+                      )
+                    : t(
+                        'patientPortal.dashboard.healthMetrics.weight.decreasing'
+                      )}
                 </Badge>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -254,11 +291,14 @@ export function HealthMetricsCard({
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground">
-                {t('patientPortal.dashboard.healthMetrics.weight.lastUpdate')} {formatDate(metrics.weight.lastUpdated)}
+                {t('patientPortal.dashboard.healthMetrics.weight.lastUpdate')}{' '}
+                {formatDate(metrics.weight.lastUpdated)}
               </div>
               <div className="mt-3">
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span>{t('patientPortal.dashboard.healthMetrics.weight.trend')}</span>
+                  <span>
+                    {t('patientPortal.dashboard.healthMetrics.weight.trend')}
+                  </span>
                 </div>
                 <div className="h-10 flex items-end gap-1">
                   {metrics.weight.history.map((reading, index) => (
@@ -282,7 +322,9 @@ export function HealthMetricsCard({
                   <div className="rounded-full bg-purple-100 p-2 dark:bg-purple-900/50">
                     <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                   </div>
-                  <h4 className="font-medium">{t('patientPortal.dashboard.healthMetrics.heartRate.title')}</h4>
+                  <h4 className="font-medium">
+                    {t('patientPortal.dashboard.healthMetrics.heartRate.title')}
+                  </h4>
                 </div>
                 <Badge
                   variant={
@@ -293,8 +335,12 @@ export function HealthMetricsCard({
                   className="text-xs"
                 >
                   {metrics.heartRate.status === 'normal'
-                    ? t('patientPortal.dashboard.healthMetrics.heartRate.normal')
-                    : t('patientPortal.dashboard.healthMetrics.heartRate.abnormal')}
+                    ? t(
+                        'patientPortal.dashboard.healthMetrics.heartRate.normal'
+                      )
+                    : t(
+                        'patientPortal.dashboard.healthMetrics.heartRate.abnormal'
+                      )}
                 </Badge>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -308,11 +354,16 @@ export function HealthMetricsCard({
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground">
-                {t('patientPortal.dashboard.healthMetrics.heartRate.lastUpdate')} {formatDate(metrics.heartRate.lastUpdated)}
+                {t(
+                  'patientPortal.dashboard.healthMetrics.heartRate.lastUpdate'
+                )}{' '}
+                {formatDate(metrics.heartRate.lastUpdated)}
               </div>
               <div className="mt-3">
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span>{t('patientPortal.dashboard.healthMetrics.heartRate.trend')}</span>
+                  <span>
+                    {t('patientPortal.dashboard.healthMetrics.heartRate.trend')}
+                  </span>
                 </div>
                 <div className="h-10 flex items-end gap-1">
                   {metrics.heartRate.history.map((reading, index) => (
@@ -336,7 +387,11 @@ export function HealthMetricsCard({
                   <div className="rounded-full bg-amber-100 p-2 dark:bg-amber-900/50">
                     <TrendingUp className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                   </div>
-                  <h4 className="font-medium">{t('patientPortal.dashboard.healthMetrics.cholesterol.title')}</h4>
+                  <h4 className="font-medium">
+                    {t(
+                      'patientPortal.dashboard.healthMetrics.cholesterol.title'
+                    )}
+                  </h4>
                 </div>
                 <Badge
                   variant={
@@ -346,14 +401,22 @@ export function HealthMetricsCard({
                   }
                   className="text-xs"
                 >
-                  {metrics.cholesterol.status === 'normal' 
-                    ? t('patientPortal.dashboard.healthMetrics.cholesterol.normal') 
-                    : t('patientPortal.dashboard.healthMetrics.cholesterol.high')}
+                  {metrics.cholesterol.status === 'normal'
+                    ? t(
+                        'patientPortal.dashboard.healthMetrics.cholesterol.normal'
+                      )
+                    : t(
+                        'patientPortal.dashboard.healthMetrics.cholesterol.high'
+                      )}
                 </Badge>
               </div>
               <div className="space-y-2 mt-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs">{t('patientPortal.dashboard.healthMetrics.cholesterol.total')}</span>
+                  <span className="text-xs">
+                    {t(
+                      'patientPortal.dashboard.healthMetrics.cholesterol.total'
+                    )}
+                  </span>
                   <span className="text-sm font-medium">
                     {metrics.cholesterol.total} {metrics.cholesterol.unit}
                   </span>
@@ -372,7 +435,10 @@ export function HealthMetricsCard({
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground">
-                {t('patientPortal.dashboard.healthMetrics.cholesterol.lastUpdate')} {formatDate(metrics.cholesterol.lastUpdated)}
+                {t(
+                  'patientPortal.dashboard.healthMetrics.cholesterol.lastUpdate'
+                )}{' '}
+                {formatDate(metrics.cholesterol.lastUpdated)}
               </div>
             </div>
 
@@ -383,9 +449,11 @@ export function HealthMetricsCard({
                   <div className="rounded-full bg-cyan-100 p-2 dark:bg-cyan-900/50">
                     <Star className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
                   </div>
-                  <h4 className="font-medium">{t('patientPortal.dashboard.healthMetrics.bmi.title')}</h4>
+                  <h4 className="font-medium">
+                    {t('patientPortal.dashboard.healthMetrics.bmi.title')}
+                  </h4>
                 </div>
-                <Badge
+                {/* <Badge
                   variant={
                     getBMICategory(calculateBMI(metrics.weight.value, 170)) ===
                     'normal'
@@ -410,14 +478,17 @@ export function HealthMetricsCard({
                       ) === 'overweight'
                     ? t('patientPortal.dashboard.healthMetrics.bmi.overweight')
                     : t('patientPortal.dashboard.healthMetrics.bmi.obese')}
-                </Badge>
+                </Badge> */}
               </div>
               <div className="flex items-center justify-between text-sm">
                 <div>
                   <span className="font-bold text-xl">
-                    {calculateBMI(metrics.weight.value, 170).toFixed(1)}
+                    {/* {calculateBMI(metrics.weight.value, 170).toFixed(1)} */}
                   </span>
-                  <span className="text-xs text-muted-foreground"> {t('patientPortal.dashboard.healthMetrics.bmi.unit')}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {' '}
+                    {t('patientPortal.dashboard.healthMetrics.bmi.unit')}
+                  </span>
                 </div>
               </div>
               <div className="mt-3">
@@ -425,14 +496,14 @@ export function HealthMetricsCard({
                   <div className="flex mb-2 items-center justify-between">
                     <div>
                       <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-cyan-600 bg-cyan-200 dark:bg-cyan-900 dark:text-cyan-300">
-                        {getBMICategory(
+                        {/* {getBMICategory(
                           calculateBMI(metrics.weight.value, 170)
-                        )}
+                        )} */}
                       </span>
                     </div>
                   </div>
                   <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
-                    <div
+                    {/* <div
                       style={{
                         width: `${Math.min(
                           100,
@@ -454,7 +525,7 @@ export function HealthMetricsCard({
                           calculateBMI(metrics.weight.value, 170)
                         ) === 'obese' && 'bg-red-500'
                       )}
-                    ></div>
+                    ></div> */}
                   </div>
                 </div>
               </div>

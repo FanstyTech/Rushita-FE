@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   Home,
   Calendar,
@@ -14,17 +14,13 @@ import {
   Video,
   X,
   Menu,
-  ChevronLeft,
   LogOut,
   Settings,
   ChevronDown,
-  CalendarCheck,
   CalendarClock,
   CalendarPlus,
-  CalendarX,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/lib/api/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
@@ -32,16 +28,22 @@ import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTranslation } from 'react-i18next'; // Add this import
+import { AuthenticationUserResult } from '@/lib/api/types/auth';
 
 interface SidebarProps {
   isOpen: boolean;
+  user: AuthenticationUserResult | null;
   setIsOpen: (open: boolean) => void;
+  handleLogout: () => void;
 }
 
-export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
+export function Sidebar({
+  isOpen,
+  user,
+  setIsOpen,
+  handleLogout,
+}: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, logout } = useAuth();
   const [mounted, setMounted] = useState(false);
   const { direction } = useLanguage();
   const { t } = useTranslation(); // Add this hook
@@ -49,15 +51,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const handleLogout = async () => {
-    try {
-      // await logout();
-      router.push('/patient-portal/auth');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
 
   // Group navigation items by category
   const mainNavigation = [
@@ -338,11 +331,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           <div className="flex items-center gap-3 px-2">
             <Avatar className="h-12 w-12 border-2 border-primary/20 shadow-sm">
               <AvatarImage
-                // src={user?.avatar || ''}
+                src={user?.imageUrl || ''}
                 alt={user?.name || t('patientPortal.sidebar.user.user')}
               />
               <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-medium">
-                {user?.name?.charAt(0) || t('patientPortal.sidebar.user.user').charAt(0)}
+                {user?.name?.charAt(0) ||
+                  t('patientPortal.sidebar.user.user').charAt(0)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
@@ -415,7 +409,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     >
                       <Calendar className="h-4 w-4 flex-shrink-0" />
                     </div>
-                    <span className="flex-1">{t('patientPortal.sidebar.calendar')}</span>
+                    <span className="flex-1">
+                      {t('patientPortal.sidebar.calendar')}
+                    </span>
                     <ChevronDown
                       className={cn(
                         'h-4 w-4 transition-transform',

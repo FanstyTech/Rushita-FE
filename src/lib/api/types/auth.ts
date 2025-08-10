@@ -14,6 +14,8 @@ export interface AuthenticationUserResult {
   id: string;
   name: string;
   email: string;
+  phoneNumber?: string;
+  imageUrl?: string;
   clinicInfo?: UserClinicInfoDto;
   roles: string[];
   permissions: UserPermissionDto[];
@@ -26,7 +28,9 @@ export interface AuthenticationResult {
 }
 
 export interface LoginRequest {
-  email: string;
+  email?: string;
+  phoneNumber?: string;
+  countryCodeId?: string;
   password: string;
   rememberMe?: boolean;
 }

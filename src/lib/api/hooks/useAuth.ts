@@ -39,41 +39,52 @@ export const useAuth = () => {
     retry: false, // Disable retries for login
     onSuccess: (response: AuthenticationResult, variables) => {
       toast.success('Login successfully');
-
-      // Set the auth token in cookies
-      Cookies.set('auth-token', response.accessToken, {
-        expires: variables.rememberMe ? 30 : 1,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-      });
-
-      // Store refresh token securely
-      Cookies.set('refresh-token', response.refreshToken, {
-        expires: variables.rememberMe ? 30 : 1,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-      });
-
-      // Store user data
-      localStorage.setItem('user', JSON.stringify(response.user));
-
-      // Update user state
-      setUser(response.user);
-
-      // Redirect to dashboard or home
-      router.push('/admin/dashboard');
+      saveCookies(response, variables);
     },
   });
 
+  const saveCookies = (
+    data: AuthenticationResult,
+    variables?: LoginRequest
+  ) => {
+    // Set the auth token in cookies
+    Cookies.set('auth-token', data.accessToken, {
+      expires: variables?.rememberMe ? 30 : 1,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
+    // Store refresh token securely
+    Cookies.set('refresh-token', data.refreshToken, {
+      expires: variables?.rememberMe ? 30 : 1,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
+    // Store user data
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    // Update user state
+    setUser(data.user);
+  };
+
+  // Helper function to get user's profile image
+  const getUserProfileImage = () => {
+    if (!user) return null;
+    return user.imageUrl || null;
+  };
+
   const logout = useMutation({
-    mutationFn: () => authService.logout(),
-    onSuccess: () => {
+    mutationFn: (loginURL?: string) =>
+      authService.logout().then(() => loginURL),
+    onSuccess: (loginURL) => {
       // Clear auth token
       Cookies.remove('auth-token');
       Cookies.remove('refresh-token');
       localStorage.removeItem('user');
       setUser(null);
-      router.push('/auth/login');
+
+      router.push(loginURL || '/auth/login');
     },
     onError: () => {
       toast.error('Failed to logout');
@@ -82,7 +93,9 @@ export const useAuth = () => {
 
   return {
     login,
+    saveCookies,
     logout,
     user,
+    getUserProfileImage,
   };
 };

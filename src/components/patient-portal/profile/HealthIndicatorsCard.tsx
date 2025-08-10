@@ -19,71 +19,29 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/common/form';
 import { formatDate } from '@/utils/dateTimeUtils';
-import {
-  UseFormRegister,
-  FieldErrors,
-  Control,
-  UseFormSetValue,
-} from 'react-hook-form';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { ProfileFormValues } from '@/app/patient-portal/profile/validation';
+import {
+  HealthIndicatorsDto,
+  HealthTrend,
+  MetricStatus,
+} from '@/lib/api/types/clinic-patient';
 
 interface HealthIndicatorsCardProps {
-  healthIndicators: {
-    bloodPressure: {
-      systolic: number;
-      diastolic: number;
-      status: string;
-      lastUpdated: string;
-      trend: string;
-    };
-    heartRate: {
-      value: number;
-      status: string;
-      lastUpdated: string;
-      trend: string;
-    };
-    bloodSugar: {
-      value: number;
-      status: string;
-      lastUpdated: string;
-      trend: string;
-    };
-    weight: {
-      value: number;
-      change: number;
-      lastUpdated: string;
-      trend: string;
-    };
-    cholesterol: {
-      total: number;
-      hdl: number;
-      ldl: number;
-      status: string;
-      trend: string;
-      lastUpdated: string;
-    };
-  };
+  healthIndicators: HealthIndicatorsDto;
   variants: any;
   isEditing: boolean;
-  formData?: ProfileFormValues;
   // React Hook Form props
   register?: UseFormRegister<ProfileFormValues>;
   errors?: FieldErrors<ProfileFormValues>;
-  control?: Control<ProfileFormValues>;
-  setValue?: UseFormSetValue<ProfileFormValues>;
-  onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function HealthIndicatorsCard({
   healthIndicators,
   variants,
   isEditing,
-  formData,
   register,
   errors,
-  control,
-  setValue,
-  onInputChange,
 }: HealthIndicatorsCardProps) {
   const { t } = useTranslation(); // Add this hook
 
@@ -112,24 +70,37 @@ export function HealthIndicatorsCard({
                   <div className="rounded-full bg-red-100 p-2 dark:bg-red-900/50">
                     <Heart className="h-4 w-4 text-red-600 dark:text-red-400" />
                   </div>
-                  <h4 className="font-medium">{t('patientPortal.profile.healthIndicators.bloodPressure.title')}</h4>
+                  <h4 className="font-medium">
+                    {t(
+                      'patientPortal.profile.healthIndicators.bloodPressure.title'
+                    )}
+                  </h4>
                 </div>
 
                 <Badge
                   variant={
-                    healthIndicators.bloodPressure.status === 'normal'
+                    healthIndicators.bloodPressure.status ===
+                    MetricStatus.Normal
                       ? 'outline'
-                      : healthIndicators.bloodPressure.status === 'elevated'
+                      : healthIndicators.bloodPressure.status ===
+                        MetricStatus.Elevated
                       ? 'secondary'
                       : 'destructive'
                   }
                   className="text-xs"
                 >
-                  {healthIndicators.bloodPressure.status === 'normal'
-                    ? t('patientPortal.profile.healthIndicators.bloodPressure.normal')
-                    : healthIndicators.bloodPressure.status === 'elevated'
-                    ? t('patientPortal.profile.healthIndicators.bloodPressure.elevated')
-                    : t('patientPortal.profile.healthIndicators.bloodPressure.high')}
+                  {healthIndicators.bloodPressure.status === MetricStatus.Normal
+                    ? t(
+                        'patientPortal.profile.healthIndicators.bloodPressure.normal'
+                      )
+                    : healthIndicators.bloodPressure.status ===
+                      MetricStatus.Elevated
+                    ? t(
+                        'patientPortal.profile.healthIndicators.bloodPressure.elevated'
+                      )
+                    : t(
+                        'patientPortal.profile.healthIndicators.bloodPressure.high'
+                      )}
                 </Badge>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -177,11 +148,15 @@ export function HealthIndicatorsCard({
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="text-xs text-muted-foreground">
-                    {formatDate(healthIndicators.bloodPressure.lastUpdated)}
+                    {/* {formatDate(
+                      healthIndicators.bloodPressure?.lastUpdated || ''
+                    )} */}
                   </span>
-                  {healthIndicators.bloodPressure.trend === 'up' ? (
+                  {healthIndicators.bloodPressure.trend ===
+                  HealthTrend.Improving ? (
                     <TrendingUp className="h-3 w-3 text-destructive" />
-                  ) : healthIndicators.bloodPressure.trend === 'down' ? (
+                  ) : healthIndicators.bloodPressure.trend ===
+                    HealthTrend.Worsening ? (
                     <TrendingUp className="h-3 w-3 text-green-500 transform rotate-180" />
                   ) : null}
                 </div>
@@ -203,23 +178,35 @@ export function HealthIndicatorsCard({
                   <div className="rounded-full bg-pink-100 p-2 dark:bg-pink-900/50">
                     <HeartPulse className="h-4 w-4 text-pink-600 dark:text-pink-400" />
                   </div>
-                  <h4 className="font-medium">{t('patientPortal.profile.healthIndicators.heartRate.title')}</h4>
+                  <h4 className="font-medium">
+                    {t(
+                      'patientPortal.profile.healthIndicators.heartRate.title'
+                    )}
+                  </h4>
                 </div>
                 <Badge
                   variant={
-                    healthIndicators.heartRate.status === 'normal'
+                    healthIndicators.heartRate.status === MetricStatus.Normal
                       ? 'outline'
-                      : healthIndicators.heartRate.status === 'elevated'
+                      : healthIndicators.heartRate.status ===
+                        MetricStatus.Elevated
                       ? 'secondary'
                       : 'destructive'
                   }
                   className="text-xs"
                 >
-                  {healthIndicators.heartRate.status === 'normal'
-                    ? t('patientPortal.profile.healthIndicators.heartRate.normal')
-                    : healthIndicators.heartRate.status === 'elevated'
-                    ? t('patientPortal.profile.healthIndicators.heartRate.elevated')
-                    : t('patientPortal.profile.healthIndicators.heartRate.high')}
+                  {healthIndicators.heartRate.status === MetricStatus.Normal
+                    ? t(
+                        'patientPortal.profile.healthIndicators.heartRate.normal'
+                      )
+                    : healthIndicators.heartRate.status ===
+                      MetricStatus.Elevated
+                    ? t(
+                        'patientPortal.profile.healthIndicators.heartRate.elevated'
+                      )
+                    : t(
+                        'patientPortal.profile.healthIndicators.heartRate.high'
+                      )}
                 </Badge>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -248,11 +235,13 @@ export function HealthIndicatorsCard({
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="text-xs text-muted-foreground">
-                    {formatDate(healthIndicators.heartRate.lastUpdated)}
+                    {/* {formatDate(healthIndicators.heartRate?.lastUpdated || '')} */}
                   </span>
-                  {healthIndicators.heartRate.trend === 'up' ? (
+                  {healthIndicators.heartRate.trend ===
+                  HealthTrend.Improving ? (
                     <TrendingUp className="h-3 w-3 text-destructive" />
-                  ) : healthIndicators.heartRate.trend === 'down' ? (
+                  ) : healthIndicators.heartRate.trend ===
+                    HealthTrend.Worsening ? (
                     <TrendingUp className="h-3 w-3 text-green-500 transform rotate-180" />
                   ) : null}
                 </div>
@@ -271,23 +260,35 @@ export function HealthIndicatorsCard({
                   <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900/50">
                     <Droplets className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <h4 className="font-medium">{t('patientPortal.profile.healthIndicators.bloodSugar.title')}</h4>
+                  <h4 className="font-medium">
+                    {t(
+                      'patientPortal.profile.healthIndicators.bloodSugar.title'
+                    )}
+                  </h4>
                 </div>
                 <Badge
                   variant={
-                    healthIndicators.bloodSugar.status === 'normal'
+                    healthIndicators.bloodSugar.status === MetricStatus.Normal
                       ? 'outline'
-                      : healthIndicators.bloodSugar.status === 'elevated'
+                      : healthIndicators.bloodSugar.status ===
+                        MetricStatus.Elevated
                       ? 'secondary'
                       : 'destructive'
                   }
                   className="text-xs"
                 >
-                  {healthIndicators.bloodSugar.status === 'normal'
-                    ? t('patientPortal.profile.healthIndicators.bloodSugar.normal')
-                    : healthIndicators.bloodSugar.status === 'elevated'
-                    ? t('patientPortal.profile.healthIndicators.bloodSugar.elevated')
-                    : t('patientPortal.profile.healthIndicators.bloodSugar.high')}
+                  {healthIndicators.bloodSugar.status === MetricStatus.Normal
+                    ? t(
+                        'patientPortal.profile.healthIndicators.bloodSugar.normal'
+                      )
+                    : healthIndicators.bloodSugar.status ===
+                      MetricStatus.Elevated
+                    ? t(
+                        'patientPortal.profile.healthIndicators.bloodSugar.elevated'
+                      )
+                    : t(
+                        'patientPortal.profile.healthIndicators.bloodSugar.high'
+                      )}
                 </Badge>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -320,11 +321,13 @@ export function HealthIndicatorsCard({
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="text-xs text-muted-foreground">
-                    {formatDate(healthIndicators.bloodSugar.lastUpdated)}
+                    {/* {formatDate(healthIndicators.bloodSugar?.lastUpdated || '')} */}
                   </span>
-                  {healthIndicators.bloodSugar.trend === 'up' ? (
+                  {healthIndicators.bloodSugar.trend ===
+                  HealthTrend.Improving ? (
                     <TrendingUp className="h-3 w-3 text-destructive" />
-                  ) : healthIndicators.bloodSugar.trend === 'down' ? (
+                  ) : healthIndicators.bloodSugar.trend ===
+                    HealthTrend.Worsening ? (
                     <TrendingUp className="h-3 w-3 text-green-500 transform rotate-180" />
                   ) : null}
                 </div>
@@ -343,30 +346,45 @@ export function HealthIndicatorsCard({
                   <div className="rounded-full bg-yellow-100 p-2 dark:bg-yellow-900/50">
                     <Activity className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                   </div>
-                  <h4 className="font-medium">{t('patientPortal.profile.healthIndicators.cholesterol.title')}</h4>
+                  <h4 className="font-medium">
+                    {t(
+                      'patientPortal.profile.healthIndicators.cholesterol.title'
+                    )}
+                  </h4>
                 </div>
                 <Badge
                   variant={
-                    healthIndicators.cholesterol.status === 'normal'
+                    healthIndicators.cholesterol.status === MetricStatus.Normal
                       ? 'outline'
-                      : healthIndicators.cholesterol.status === 'elevated'
+                      : healthIndicators.cholesterol.status ===
+                        MetricStatus.Elevated
                       ? 'secondary'
                       : 'destructive'
                   }
                   className="text-xs"
                 >
-                  {healthIndicators.cholesterol.status === 'normal'
-                    ? t('patientPortal.profile.healthIndicators.cholesterol.normal')
-                    : healthIndicators.cholesterol.status === 'elevated'
-                    ? t('patientPortal.profile.healthIndicators.cholesterol.elevated')
-                    : t('patientPortal.profile.healthIndicators.cholesterol.high')}
+                  {healthIndicators.cholesterol.status === MetricStatus.Normal
+                    ? t(
+                        'patientPortal.profile.healthIndicators.cholesterol.normal'
+                      )
+                    : healthIndicators.cholesterol.status ===
+                      MetricStatus.Elevated
+                    ? t(
+                        'patientPortal.profile.healthIndicators.cholesterol.elevated'
+                      )
+                    : t(
+                        'patientPortal.profile.healthIndicators.cholesterol.high'
+                      )}
                 </Badge>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground">
-                      {t('patientPortal.profile.healthIndicators.cholesterol.total')}:
+                      {t(
+                        'patientPortal.profile.healthIndicators.cholesterol.total'
+                      )}
+                      :
                     </span>
                     {isEditing ? (
                       <Input
@@ -419,7 +437,9 @@ export function HealthIndicatorsCard({
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">
-                    {formatDate(healthIndicators.cholesterol.lastUpdated)}
+                    {/* {formatDate(
+                      healthIndicators.cholesterol?.lastUpdated || ''
+                    )} */}
                   </span>
                   <span className="text-muted-foreground">mg/dL</span>
                 </div>

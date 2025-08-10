@@ -18,35 +18,25 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/common/form';
+import { Input, Select } from '@/components/common/form';
 import { Badge } from '@/components/ui/badge';
-import { calculateBMI, getBMICategory } from '@/utils/patientPortalUtils';
-import {
-  UseFormRegister,
-  FieldErrors,
-  Control,
-  UseFormSetValue,
-} from 'react-hook-form';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { ProfileFormValues } from '@/app/patient-portal/profile/validation';
+import {
+  BloodType,
+  MedicalInformationDto,
+} from '@/lib/api/types/clinic-patient';
+import { getBloodTypeLabel, getBMICategoryLabel } from '@/utils/textUtils';
 
 interface MedicalInformationCardProps {
-  patientData: {
-    bloodType: string;
-    height: number;
-    weight: number;
-    allergies: string;
-    chronicDiseases: string;
-  };
+  patientData: MedicalInformationDto;
   isEditing: boolean;
   formData: ProfileFormValues;
   onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   variants: any;
   // React Hook Form props
-  register?: UseFormRegister<ProfileFormValues>;
+  register: UseFormRegister<ProfileFormValues>;
   errors?: FieldErrors<ProfileFormValues>;
-  control?: Control<ProfileFormValues>;
-  setValue?: UseFormSetValue<ProfileFormValues>;
 }
 
 export function MedicalInformationCard({
@@ -57,8 +47,6 @@ export function MedicalInformationCard({
   variants,
   register,
   errors,
-  control,
-  setValue,
 }: MedicalInformationCardProps) {
   const { t } = useTranslation(); // Add this hook
 
@@ -81,113 +69,60 @@ export function MedicalInformationCard({
         <CardContent className="p-6">
           {isEditing ? (
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="bloodType">{t('patientPortal.profile.medicalInfo.bloodType')}</Label>
-                <Input
-                  id="bloodType"
-                  {...(register
-                    ? register('bloodType')
-                    : {
-                        name: 'bloodType',
-                        value: formData.bloodType,
-                        onChange: onInputChange,
-                      })}
-                  className={`border-border/50 focus-visible:ring-primary/20 ${
-                    errors?.bloodType ? 'border-red-500' : ''
-                  }`}
-                />
-                {errors?.bloodType && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.bloodType.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="height">{t('patientPortal.profile.medicalInfo.height')} ({t('patientPortal.profile.medicalInfo.cm')})</Label>
-                <Input
-                  id="height"
-                  type="number"
-                  {...(register
-                    ? register('height', { valueAsNumber: true })
-                    : {
-                        name: 'height',
-                        value: formData.height,
-                        onChange: onInputChange,
-                      })}
-                  className={`border-border/50 focus-visible:ring-primary/20 ${
-                    errors?.height ? 'border-red-500' : ''
-                  }`}
-                />
-                {errors?.height && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.height.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="weight">{t('patientPortal.profile.medicalInfo.weight')} ({t('patientPortal.profile.medicalInfo.kg')})</Label>
-                <Input
-                  id="weight"
-                  type="number"
-                  {...(register
-                    ? register('weight', { valueAsNumber: true })
-                    : {
-                        name: 'weight',
-                        value: formData.weight,
-                        onChange: onInputChange,
-                      })}
-                  className={`border-border/50 focus-visible:ring-primary/20 ${
-                    errors?.weight ? 'border-red-500' : ''
-                  }`}
-                />
-                {errors?.weight && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.weight.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="allergies">{t('patientPortal.profile.medicalInfo.allergies')}</Label>
-                <Input
-                  id="allergies"
-                  {...(register
-                    ? register('allergies')
-                    : {
-                        name: 'allergies',
-                        value: formData.allergies,
-                        onChange: onInputChange,
-                      })}
-                  className={`border-border/50 focus-visible:ring-primary/20 ${
-                    errors?.allergies ? 'border-red-500' : ''
-                  }`}
-                />
-                {errors?.allergies && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.allergies.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="chronicDiseases">{t('patientPortal.profile.medicalInfo.chronicDiseases')}</Label>
-                <Input
-                  id="chronicDiseases"
-                  {...(register
-                    ? register('chronicDiseases')
-                    : {
-                        name: 'chronicDiseases',
-                        value: formData.chronicDiseases,
-                        onChange: onInputChange,
-                      })}
-                  className={`border-border/50 focus-visible:ring-primary/20 ${
-                    errors?.chronicDiseases ? 'border-red-500' : ''
-                  }`}
-                />
-                {errors?.chronicDiseases && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.chronicDiseases.message}
-                  </p>
-                )}
-              </div>
+              <Select
+                label={t('patientPortal.profile.medicalInfo.bloodType')}
+                value={formData?.bloodType?.toString()}
+                error={errors?.bloodType?.message}
+                {...register('bloodType', {
+                  valueAsNumber: true,
+                })}
+                options={Object.entries(BloodType)
+                  .filter(([key]) => isNaN(Number(key)))
+                  .map(([key, value]) => ({
+                    value: value.toString(),
+                    label: key,
+                  }))}
+              />
+
+              <Input
+                label={
+                  t('patientPortal.profile.medicalInfo.height') +
+                  ' (' +
+                  t('patientPortal.profile.medicalInfo.cm') +
+                  ')'
+                }
+                type="number"
+                error={errors?.height?.message}
+                {...register('height', {
+                  valueAsNumber: true,
+                })}
+              />
+
+              <Input
+                label={
+                  t('patientPortal.profile.medicalInfo.weight') +
+                  ' (' +
+                  t('patientPortal.profile.medicalInfo.kg') +
+                  ')'
+                }
+                type="number"
+                error={errors?.weight?.message}
+                {...register('weight', {
+                  valueAsNumber: true,
+                })}
+              />
+
+              <Input
+                label={t('patientPortal.profile.medicalInfo.allergies')}
+                {...register('allergies')}
+                error={errors?.allergies?.message}
+              />
+
+              <Input
+                label={t('patientPortal.profile.medicalInfo.chronicDiseases')}
+                {...register('chronicDiseases')}
+                error={errors?.chronicDiseases?.message}
+              />
             </div>
           ) : (
             <div className="grid gap-5 md:grid-cols-2">
@@ -197,7 +132,10 @@ export function MedicalInformationCard({
                 </div>
                 <div className="flex items-center gap-2">
                   <Droplets className="h-4 w-4 text-primary/70" />
-                  <span className="font-medium">{patientData.bloodType}</span>
+                  <span className="font-medium">
+                    {patientData.bloodType &&
+                      getBloodTypeLabel(patientData.bloodType)}
+                  </span>
                 </div>
               </div>
               <div className="space-y-2 p-3 rounded-lg border border-border/50 hover:bg-accent/50 transition-colors">
@@ -207,18 +145,14 @@ export function MedicalInformationCard({
                 <div className="flex items-center gap-2">
                   <Activity className="h-4 w-4 text-primary/70" />
                   <span className="font-medium">
-                    {calculateBMI(
-                      patientData.height,
-                      patientData.weight
-                    ).toFixed(1)}
+                    {patientData.bmiValue?.toFixed(1)}
                   </span>
                   <Badge
                     variant="outline"
                     className="bg-primary/10 text-primary border-primary/20"
                   >
-                    {getBMICategory(
-                      calculateBMI(patientData.height, patientData.weight)
-                    )}
+                    {patientData.bmiCategory &&
+                      getBMICategoryLabel(patientData.bmiCategory)}
                   </Badge>
                 </div>
               </div>
@@ -228,7 +162,10 @@ export function MedicalInformationCard({
                 </div>
                 <div className="flex items-center gap-2">
                   <Ruler className="h-4 w-4 text-primary/70" />
-                  <span className="font-medium">{patientData.height} {t('patientPortal.profile.medicalInfo.cm')}</span>
+                  <span className="font-medium">
+                    {patientData.height}{' '}
+                    {t('patientPortal.profile.medicalInfo.cm')}
+                  </span>
                 </div>
               </div>
               <div className="space-y-2 p-3 rounded-lg border border-border/50 hover:bg-accent/50 transition-colors">
@@ -237,7 +174,10 @@ export function MedicalInformationCard({
                 </div>
                 <div className="flex items-center gap-2">
                   <Scale className="h-4 w-4 text-primary/70" />
-                  <span className="font-medium">{patientData.weight} {t('patientPortal.profile.medicalInfo.kg')}</span>
+                  <span className="font-medium">
+                    {patientData.weight}{' '}
+                    {t('patientPortal.profile.medicalInfo.kg')}
+                  </span>
                 </div>
               </div>
               <div className="space-y-2 p-3 rounded-lg border border-border/50 hover:bg-accent/50 transition-colors">
@@ -247,7 +187,8 @@ export function MedicalInformationCard({
                 <div className="flex items-start gap-2">
                   <AlertCircle className="h-4 w-4 text-primary/70 mt-0.5" />
                   <span className="font-medium">
-                    {patientData.allergies || t('patientPortal.profile.medicalInfo.noAllergies')}
+                    {patientData.allergies?.map((a) => a.name).join(', ') ||
+                      t('patientPortal.profile.medicalInfo.noAllergies')}
                   </span>
                 </div>
               </div>
@@ -258,7 +199,10 @@ export function MedicalInformationCard({
                 <div className="flex items-start gap-2">
                   <Stethoscope className="h-4 w-4 text-primary/70 mt-0.5" />
                   <span className="font-medium">
-                    {patientData.chronicDiseases || t('patientPortal.profile.medicalInfo.noChronicDiseases')}
+                    {patientData.medicalConditions
+                      ?.map((c) => c.name)
+                      .join(', ') ||
+                      t('patientPortal.profile.medicalInfo.noChronicDiseases')}
                   </span>
                 </div>
               </div>

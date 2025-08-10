@@ -2,35 +2,35 @@ import * as z from 'zod';
 
 // Personal Information Schema
 export const personalInfoSchema = z.object({
-  FNameF: z.string().min(1, { message: 'الاسم الأول مطلوب' }),
-  SNameF: z.string().min(1, { message: 'اسم الأب مطلوب' }),
-  TNameF: z.string().optional(),
-  LNameF: z.string().min(1, { message: 'اسم العائلة مطلوب' }),
-  FNameL: z.string().min(1, { message: 'الاسم الأول مطلوب' }),
-  SNameL: z.string().min(1, { message: 'اسم الأب مطلوب' }),
-  TNameL: z.string().optional(),
-  LNameL: z.string().min(1, { message: 'اسم العائلة مطلوب' }),
-  name: z.string().min(1, { message: 'الاسم الكامل مطلوب' }),
-  DateOfBirth: z.string().min(1, { message: 'تاريخ الميلاد مطلوب' }),
-  Gender: z.string().min(1, { message: 'الجنس مطلوب' }),
+  fNameF: z.string().min(1, { message: 'الاسم الأول مطلوب' }),
+  sNameF: z.string().min(1, { message: 'اسم الأب مطلوب' }),
+  tNameF: z.string().optional(),
+  lNameF: z.string().min(1, { message: 'اسم العائلة مطلوب' }),
+  fNameL: z.string().min(1, { message: 'الاسم الأول مطلوب' }),
+  sNameL: z.string().min(1, { message: 'اسم الأب مطلوب' }),
+  tNameL: z.string().optional(),
+  lNameL: z.string().min(1, { message: 'اسم العائلة مطلوب' }),
+  dateOfBirth: z.string().min(1, { message: 'تاريخ الميلاد مطلوب' }),
+  gender: z.coerce.number().min(1, 'Gender is required'),
   email: z.string().email({ message: 'البريد الإلكتروني غير صالح' }),
-  CountryCodeId: z.string().min(1, { message: 'رمز الدولة مطلوب' }),
+  countryCodeId: z.string().min(1, { message: 'رمز الدولة مطلوب' }),
   phone: z
     .string()
     .min(9, { message: 'رقم الهاتف يجب أن يكون 9 أرقام على الأقل' }),
-  CountryId: z.string().min(1, { message: 'الدولة مطلوبة' }),
-  CityId: z.string().min(1, { message: 'المدينة مطلوبة' }),
+  countryId: z.string().min(1, { message: 'الدولة مطلوبة' }),
+  cityId: z.string().min(1, { message: 'المدينة مطلوبة' }),
   address: z.string().min(1, { message: 'العنوان مطلوب' }),
-  PreferredLanguage: z.string().min(1, { message: 'اللغة المفضلة مطلوبة' }),
-  IdType: z.string().min(1, { message: 'نوع الهوية مطلوب' }),
-  IdNum: z.string().min(1, { message: 'رقم الهوية مطلوب' }),
+  preferredLanguage: z.string().min(1, { message: 'اللغة المفضلة مطلوبة' }),
+  idType: z.coerce.number().min(1, { message: 'نوع الهوية مطلوب' }),
+  idNum: z.string().min(1, { message: 'رقم الهوية مطلوب' }),
+  attachmentId: z.string().optional(),
 });
 
 // Emergency Contact Schema
 export const emergencyContactSchema = z.object({
   emergencyContactName: z.string().min(1, { message: 'اسم جهة الاتصال مطلوب' }),
-  emergencyContactRelation: z
-    .string()
+  emergencyContactRelation: z.coerce
+    .number()
     .min(1, { message: 'صلة القرابة مطلوبة' }),
   emergencyContactPhone: z
     .string()
@@ -39,7 +39,7 @@ export const emergencyContactSchema = z.object({
 
 // Medical Information Schema
 export const medicalInfoSchema = z.object({
-  bloodType: z.string().min(1, { message: 'فصيلة الدم مطلوبة' }),
+  bloodType: z.coerce.number().min(1, { message: 'فصيلة الدم مطلوبة' }),
   height: z.number().min(1, { message: 'الطول مطلوب' }),
   weight: z.number().min(1, { message: 'الوزن مطلوب' }),
   allergies: z.string().optional(),

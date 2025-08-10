@@ -10,13 +10,13 @@ export const API_ENDPOINTS = {
     forgotPassword: '/auth/forgot-password',
   },
   otp: {
-    SEND: '/otp/send',
-    VERIFY: '/otp/verify',
-    COMPLETE_REGISTRATION: '/otp/complete-registration',
-    RESEND: '/otp/resend',
+    SEND: '/otp/sendOtp',
+    VERIFY: '/otp/verifyOtp',
+    COMPLETE_REGISTRATION: '/otp/completeRegistration',
+    RESEND: '/otp/resendOtp',
     VALIDATE: '/otp/validate/:otpId/:code',
-    INVALIDATE: '/otp/invalidate/:otpId',
-    CHECK_USER: '/otp/check-user',
+    INVALIDATE: '/otp/invalidateOtp',
+    CHECK_USER: '/otp/checkUser',
   },
   doctors: {
     list: '/doctors',
@@ -175,6 +175,14 @@ export const API_ENDPOINTS = {
     CREATE_OR_UPDATE_CONDITION: '/patient/createOrUpdateMedicalCondition',
     CREATE_OR_UPDATE_ALLERGY: '/patient/createOrUpdateAllergy',
     CREATE_OR_UPDATE_FAMILY_HISTORY: '/patient/createOrUpdateFamilyHistory',
+    
+    // New Patient Portal Profile endpoints
+    GET_PORTAL_PROFILE: '/patient/getPatientPortalProfile',
+    UPDATE_PORTAL_PROFILE: '/patient/updatePatientPortalProfile',
+    GET_HEALTH_METRICS: '/patient/getPatientHealthMetrics',
+    UPDATE_HEALTH_METRICS: '/patient/updatePatientHealthMetrics',
+    CREATE_OR_UPDATE_EMERGENCY_CONTACT: '/patient/createOrUpdateEmergencyContact',
+    DELETE_EMERGENCY_CONTACT: '/patient/deleteEmergencyContact',
   },
   APPOINTMENT: {
     LIST: '/appointment/getAll',
@@ -217,7 +225,8 @@ export const API_ENDPOINTS = {
     GET_ONE: '/visitRadiologyTest/:id',
     GET_BY_VISIT_ID: '/visitRadiologyTest/getByVisitId',
     GET_BY_RADIOLOGY_TEST_ID: '/visitRadiologyTest/getByRadiologyTestId',
-    GET_VISITS_WITH_RADIOLOGY_TESTS: '/visitRadiologyTest/getVisitsWithRadiologyTests',
+    GET_VISITS_WITH_RADIOLOGY_TESTS:
+      '/visitRadiologyTest/getVisitsWithRadiologyTests',
     GET_SUMMARY: '/visitRadiologyTest/getSummary',
     UPDATE_STATUS: '/visitRadiologyTest/updateStatus',
     UPDATE_RESULT: '/visitRadiologyTest/updateResult',

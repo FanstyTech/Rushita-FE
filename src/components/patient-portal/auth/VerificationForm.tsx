@@ -11,6 +11,7 @@ import { ArrowLeft } from 'lucide-react';
 interface VerificationFormProps {
   phoneNumber: string;
   phoneCode: string;
+  phoneCodeLabel: string;
   onSubmit: (otp: string) => void;
   onResendCode: () => Promise<void>;
   isInvalidCode: boolean;
@@ -20,6 +21,7 @@ interface VerificationFormProps {
 export function VerificationForm({
   phoneNumber,
   phoneCode,
+  phoneCodeLabel,
   onSubmit,
   onResendCode,
   isInvalidCode,
@@ -81,11 +83,11 @@ export function VerificationForm({
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="text-center mb-4">
+          <div className="text-center mb-4" dir="rtl">
             <p className="text-sm text-muted-foreground">
               تم إرسال رمز التحقق إلى{' '}
-              <span className="font-medium text-foreground">
-                {phoneCode} {phoneNumber}
+              <span className="font-medium text-foreground" dir="ltr">
+                {phoneCodeLabel} {phoneNumber}
               </span>
             </p>
           </div>

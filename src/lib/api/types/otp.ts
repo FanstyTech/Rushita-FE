@@ -79,21 +79,12 @@ export interface CompleteRegistrationRequestDto {
   otpCode: string;
   fNameL: string;
   lNameL: string;
-  dateOfBirth: string;
+  dateOfBirth: string; // Will be converted to Date in backend
   gender: Gender;
-  email?: string;
+  email: string;
   password: string;
+  confirmPassword: string;
   preferredLanguage?: string;
-}
-
-// Complete Registration Response DTO
-export interface CompleteRegistrationResponseDto {
-  success: boolean;
-  message: string;
-  userId: string;
-  personId: string;
-  token: string;
-  refreshToken: string;
 }
 
 // Resend OTP Request DTO

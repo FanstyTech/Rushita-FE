@@ -6,6 +6,7 @@ import { ClinicStatus, DayEnum, StaffTypeEnum } from '@/lib/api/types/clinic';
 import {
   AppointmentStatus,
   BloodType,
+  BMICategory,
   FrequencyType,
   Gender,
   MedicalConditionStatus,
@@ -246,9 +247,14 @@ export const getFrequencyTypeLabel = (frequency: FrequencyType): string => {
 
 export const getRelationshipLabel = (relationship: Relationship): string => {
   const relationshipMap: Record<Relationship, string> = {
-    [Relationship.Father]: 'Father',
-    [Relationship.Mother]: 'Mother',
+    [Relationship.Parent]: 'Parent',
+    [Relationship.Spouse]: 'Spouse',
     [Relationship.Sibling]: 'Sibling',
+    [Relationship.Child]: 'Child',
+    [Relationship.Relative]: 'Relative',
+    [Relationship.Friend]: 'Friend',
+    [Relationship.Neighbor]: 'Neighbor',
+    [Relationship.Other]: 'Other',
   };
   return relationshipMap[relationship] || 'Unknown';
 };
@@ -346,9 +352,14 @@ export const getFrequencyTypeClass = (frequency: FrequencyType): string => {
 
 export const getRelationshipClass = (relationship: Relationship): string => {
   const relationshipMap: Record<Relationship, string> = {
-    [Relationship.Father]: 'bg-blue-100 text-blue-800',
-    [Relationship.Mother]: 'bg-pink-100 text-pink-800',
+    [Relationship.Parent]: 'bg-blue-100 text-blue-800',
+    [Relationship.Spouse]: 'bg-pink-100 text-pink-800',
     [Relationship.Sibling]: 'bg-yellow-100 text-yellow-800',
+    [Relationship.Child]: 'bg-green-100 text-green-800',
+    [Relationship.Relative]: 'bg-purple-100 text-purple-800',
+    [Relationship.Friend]: 'bg-teal-100 text-teal-800',
+    [Relationship.Neighbor]: 'bg-cyan-100 text-cyan-800',
+    [Relationship.Other]: 'bg-gray-100 text-gray-800',
   };
   return relationshipMap[relationship] || 'bg-gray-50 text-gray-400';
 };
@@ -539,4 +550,14 @@ export const getMedicineStrengthLabel = (
   };
 
   return medicineStrengthLabelMap[strength] || 'Unknown';
+};
+export const getBMICategoryLabel = (category: BMICategory): string => {
+  const bmiCategoryLabelMap: Record<BMICategory, string> = {
+    [BMICategory.Underweight]: 'Underweight',
+    [BMICategory.Normal]: 'Normal',
+    [BMICategory.Overweight]: 'Overweight',
+    [BMICategory.Obese]: 'Obese',
+  };
+
+  return bmiCategoryLabelMap[category] || 'Unknown';
 };

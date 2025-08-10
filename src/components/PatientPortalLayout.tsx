@@ -17,7 +17,7 @@ export default function PatientPortalLayout({
   children: React.ReactNode;
   languages: string[];
 }) {
-  const { user } = useAuth();
+  const { logout, user } = useAuth();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -35,7 +35,9 @@ export default function PatientPortalLayout({
   useEffect(() => {
     setIsClient(true);
   }, []);
-
+  console.log('PatientPortalLayout rendered', {
+    user,
+  });
   // Redirect to login if not authenticated - only run on client
   useEffect(() => {
     if (isClient && !user) {
@@ -61,12 +63,23 @@ export default function PatientPortalLayout({
   if (isAuthPage) {
     return <main>{children}</main>;
   }
+  const handleLogout = () => {
+    // Remove any darkMode attribute from DOM before logout
+    document.documentElement.removeAttribute('darkmode');
+    document.documentElement.removeAttribute('darkMode');
 
+    logout.mutate('/patient-portal/auth');
+  };
   // Full component rendered only on client after hydration
   return (
     <div className="min-h-screen bg-background overflow-hidden">
       {/* Sidebar for navigation - positioned based on language direction */}
-      <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <Sidebar
+        isOpen={sidebarOpen}
+        setIsOpen={setSidebarOpen}
+        handleLogout={handleLogout}
+        user={user}
+      />
 
       {/* Main content area with proper spacing for floating header and sidebar */}
       <div

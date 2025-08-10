@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { useOtp } from '@/lib/api/hooks/useOtp';
+import { useCountry } from '@/lib/api/hooks/useCountry';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -11,10 +13,11 @@ import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import ThemeToggle from '@/components/ThemeToggle';
 import LanguageToggle from '@/components/LanguageToggle';
 import { ArrowLeft } from 'lucide-react';
-import { RegistrationForm } from './components/RegistrationForm';
-import { VerificationForm } from './components/VerificationForm';
-import { PhoneInputForm } from './components/PhoneInputForm';
-import { LoginForm } from './components/LoginForm';
+import { RegistrationForm } from '../../../components/patient-portal/auth/RegistrationForm';
+import { VerificationForm } from '../../../components/patient-portal/auth/VerificationForm';
+import { PhoneInputForm } from '../../../components/patient-portal/auth/PhoneInputForm';
+import { LoginForm } from '../../../components/patient-portal/auth/LoginForm';
+import { OtpType } from '@/lib/api/types/otp';
 
 // Authentication steps
 enum AuthStep {
@@ -69,24 +72,16 @@ const slideVariants = {
   },
 };
 
-const phoneCodes = [
-  { value: '+966', label: 'Saudi Arabia', flag: 'sa' },
-  { value: '+971', label: 'United Arab Emirates', flag: 'ae' },
-  { value: '+974', label: 'Qatar', flag: 'qa' },
-  { value: '+973', label: 'Bahrain', flag: 'bh' },
-  { value: '+965', label: 'Kuwait', flag: 'kw' },
-  { value: '+968', label: 'Oman', flag: 'om' },
-  { value: '+962', label: 'Jordan', flag: 'jo' },
-  { value: '+20', label: 'Egypt', flag: 'eg' },
-  { value: '+961', label: 'Lebanon', flag: 'lb' },
-  { value: '+1', label: 'United States', flag: 'us' },
-  { value: '+44', label: 'United Kingdom', flag: 'gb' },
-];
-
 export default function AuthPage() {
   const router = useRouter();
-  const { login } = useAuth();
   const { language } = useLanguage();
+  const { login } = useAuth();
+  const { useCountryPhoneCodes } = useCountry();
+  const { checkUser, sendOtp, verifyOtp, completeRegistration } = useOtp();
+
+  // Fetch country phone codes
+  const { data: countryPhoneCodes, isLoading: isLoadingCountries } =
+    useCountryPhoneCodes();
 
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -103,6 +98,7 @@ export default function AuthPage() {
   const [phoneForm, setPhoneForm] = useState({
     phoneCode: '+966', // Default to Saudi Arabia
     phoneNumber: '',
+    countryCodeId: '', // Will be set when country codes are loaded
   });
 
   const [passwordForm, setPasswordForm] = useState({
@@ -116,6 +112,18 @@ export default function AuthPage() {
   // Form errors
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Set default country code when country codes are loaded
+  useEffect(() => {
+    if (countryPhoneCodes && countryPhoneCodes.length > 0) {
+      const defaultCountry =
+        countryPhoneCodes.find((c) => c.label === '+966') ||
+        countryPhoneCodes[0];
+      setPhoneForm((prev) => ({
+        ...prev,
+        countryCodeId: defaultCountry.value,
+      }));
+    }
+  }, [countryPhoneCodes]);
   // Handle countdown for resend code
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -134,72 +142,144 @@ export default function AuthPage() {
   // Handle phone submission
   const handlePhoneSubmit = async (phoneCode: string, phoneNumber: string) => {
     setErrors({});
-    setPhoneForm({ phoneCode, phoneNumber });
+
+    // Find the country code ID for the selected phone code
+    const selectedCountry = countryPhoneCodes?.find(
+      (c) => c.value === phoneCode
+    );
+    if (!selectedCountry) {
+      setErrors({ form: 'Invalid country code selected' });
+      return;
+    }
+
+    setPhoneForm({
+      phoneCode,
+      phoneNumber,
+      countryCodeId: selectedCountry.value || '',
+    });
+
     try {
       setIsLoading(true);
-      // In a real app, this would call the API to check if the user exists
-      // For now, we'll simulate a response after a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Simulate checking if user exists (random for demo)
-      const userExists = false;
+      // Check if user exists
+      const userExists = await checkUser.mutateAsync({
+        countryCodeId: selectedCountry.value,
+        phoneNumber: phoneNumber,
+      });
+
+      setIsExistingUser(userExists);
+
       if (userExists) {
         // If user exists, go to password step
         setCurrentStep(AuthStep.PASSWORD_INPUT);
       } else {
         // If user doesn't exist, send verification code and go to verification step
-        await sendVerificationCode();
+        await sendVerificationCode(selectedCountry.value, phoneNumber);
         setCurrentStep(AuthStep.VERIFICATION_CODE);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Phone verification error:', error);
       setErrors((prev) => ({
         ...prev,
-        form: 'حدث خطأ أثناء التحقق من رقم الهاتف. يرجى المحاولة مرة أخرى.',
+        form:
+          error.message ||
+          'حدث خطأ أثناء التحقق من رقم الهاتف. يرجى المحاولة مرة أخرى.',
       }));
     } finally {
       setIsLoading(false);
     }
   };
+
   // Send verification code
-  const sendVerificationCode = async () => {
+  const sendVerificationCode = async (
+    countryCodeId: string,
+    phoneNumber: string
+  ) => {
     try {
-      // In a real app, this would call the API to send a verification code
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await sendOtp.mutateAsync({
+        countryCodeId: countryCodeId,
+        phoneNumber: phoneNumber,
+        type: OtpType.Registration,
+      });
+
       setVerificationCodeSent(true);
       setResendDisabled(true);
       setResendCountdown(60); // 60 seconds countdown
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending verification code:', error);
       setErrors((prev) => ({
         ...prev,
-        form: 'فشل إرسال رمز التحقق. يرجى المحاولة مرة أخرى.',
+        form: error.message || 'فشل إرسال رمز التحقق. يرجى المحاولة مرة أخرى.',
       }));
     }
   };
 
   // Handle verification code submission
-  const handleVerificationSubmit = (otp: string) => {
+  const handleVerificationSubmit = async (otp: string) => {
     setIsLoading(true);
-    // Simulate API call to verify code
-    setTimeout(() => {
-      // For demo: if code is 123456, consider it valid
-      if (otp === '123456') {
-        // Reset invalid state
-        setIsInvalidCode(false);
+    setIsInvalidCode(false);
 
-        if (isExistingUser) {
-          router.push('/patient-portal/dashboard');
-        } else {
-          // New user - go to registration step
-          setCurrentStep(AuthStep.REGISTRATION_FORM);
-        }
+    try {
+      const result = await verifyOtp.mutateAsync({
+        countryCodeId: phoneForm.countryCodeId,
+        phoneNumber: phoneForm.phoneNumber,
+        code: otp,
+        type: OtpType.Registration,
+      });
+
+      if (result?.isNewUser) {
+        // Store the OTP code for registration
+        localStorage.setItem('currentOtpCode', otp);
+        // New user - go to registration step
+        setCurrentStep(AuthStep.REGISTRATION_FORM);
       } else {
-        // Invalid code - set invalid state instead of error
-        setIsInvalidCode(true);
+        // Existing user - login successful, redirect to dashboard
+        if (result?.token) {
+          // Store tokens and redirect
+          localStorage.setItem('accessToken', result.token);
+          if (result.refreshToken) {
+            localStorage.setItem('refreshToken', result.refreshToken);
+          }
+          router.push('/patient-portal/dashboard');
+        }
       }
+    } catch (error: any) {
+      console.error('Verification error:', error);
+      setIsInvalidCode(true);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
+  };
+  const handleLoginSubmit = async (password: string) => {
+    const data = {
+      countryCodeId: phoneForm.countryCodeId,
+      phoneNumber: phoneForm.phoneNumber,
+      password: password,
+    };
+
+    // Call the login mutation from the useAuth hook
+    await login.mutateAsync(data, {
+      onSuccess: (response) => {
+        // Get the user's role and redirect to appropriate dashboard
+        const roles = response?.user?.roles || [];
+        let dashboardPath = '/patient-portal/dashboard';
+
+        // Get the current language from cookie or use default
+        const getCookie = (name: string) => {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2)
+            return parts.pop()?.split(';').shift() || 'en';
+          return 'en';
+        };
+
+        const currentLang = getCookie('language');
+
+        // Add language prefix to dashboard path
+        const languagePrefixedPath = `/${currentLang}${dashboardPath}`;
+        router.push(languagePrefixedPath);
+      },
+    });
   };
 
   // Go back to previous step
@@ -265,6 +345,13 @@ export default function AuthPage() {
 
   const t =
     translations[language as keyof typeof translations] || translations.ar;
+  // Transform country codes for the phone input component
+  const phoneCodes =
+    countryPhoneCodes?.map((country) => ({
+      value: country.value,
+      label: country.label,
+      flag: country.flag?.toLowerCase(),
+    })) || [];
 
   const renderStepHeader = () => {
     switch (currentStep) {
@@ -282,7 +369,8 @@ export default function AuthPage() {
         return {
           title: t.verificationCode,
           description: t.verificationCodeSent(
-            phoneForm.phoneCode,
+            phoneCodes?.find((c) => c.value === phoneForm.countryCodeId)
+              ?.label || phoneForm.phoneCode,
             phoneForm.phoneNumber
           ),
         };
@@ -313,7 +401,10 @@ export default function AuthPage() {
         <LanguageToggle />
         <ThemeToggle />
       </div>
-      <motion.div className="w-full max-w-md space-y-6" variants={itemVariants}>
+      <motion.div
+        className="w-full max-w-md space-y-6 "
+        variants={itemVariants}
+      >
         {/* Logo and title */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center">
@@ -362,8 +453,9 @@ export default function AuthPage() {
             {currentStep === AuthStep.PHONE_INPUT && (
               <PhoneInputForm
                 phoneCodes={phoneCodes}
-                isLoading={isLoading}
+                countryCodeId={phoneForm.countryCodeId}
                 onSubmit={handlePhoneSubmit}
+                isLoading={isLoading || isLoadingCountries}
               />
             )}
 
@@ -372,6 +464,8 @@ export default function AuthPage() {
               <LoginForm
                 phoneNumber={phoneForm.phoneNumber}
                 phoneCode={phoneForm.phoneCode}
+                handleLoginSubmit={handleLoginSubmit}
+                isLoading={login.isPending}
               />
             )}
 
@@ -380,8 +474,17 @@ export default function AuthPage() {
               <VerificationForm
                 phoneNumber={phoneForm.phoneNumber}
                 phoneCode={phoneForm.phoneCode}
+                phoneCodeLabel={
+                  phoneCodes.find((c) => c.value === phoneForm.countryCodeId)
+                    ?.label || phoneForm.phoneCode
+                }
                 onSubmit={handleVerificationSubmit}
-                onResendCode={sendVerificationCode}
+                onResendCode={() =>
+                  sendVerificationCode(
+                    phoneForm.countryCodeId,
+                    phoneForm.phoneNumber
+                  )
+                }
                 isInvalidCode={isInvalidCode}
                 isLoading={isLoading}
               />
@@ -392,6 +495,7 @@ export default function AuthPage() {
               <RegistrationForm
                 phoneNumber={phoneForm.phoneNumber}
                 phoneCode={phoneForm.phoneCode}
+                countryCodeId={phoneForm.countryCodeId}
               />
             )}
           </Card>

@@ -8,8 +8,12 @@ import type {
   CheckUserRequestDto,
 } from '../types/otp';
 import { toast } from '@/components/ui/Toast';
+import { useRouter } from 'next/navigation';
+import { useAuth } from './useAuth'; // Import the saveCookies function from useAuth
 
 export function useOtp() {
+  const router = useRouter();
+  const { saveCookies } = useAuth();
   const queryClient = useQueryClient();
 
   // Query keys for cache management
@@ -40,6 +44,7 @@ export function useOtp() {
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to send OTP');
     },
+    retry: false,
   });
 
   // Verify OTP mutation
@@ -52,18 +57,40 @@ export function useOtp() {
       return response.result;
     },
     onSuccess: (data) => {
+      // Handle the success and message from VerifyOtpResponseDto
+      if (data?.success === false) {
+        toast.error(data.message || 'OTP verification failed');
+        return;
+      }
+
       if (data?.isNewUser) {
-        toast.success('OTP verified successfully. Please complete your registration.');
+        toast.success(
+          data?.message ||
+            'OTP verified successfully. Please complete your registration.'
+        );
+        // Store the OTP code for registration (we'll get it from the request)
+        // Note: We need to store this when the verification is called, not here
       } else {
-        toast.success('OTP verified successfully');
-        // Clear OTP data from localStorage
+        toast.success(data?.message || 'OTP verified successfully');
+        // Clear OTP data from localStorage for existing users
         localStorage.removeItem('currentOtpId');
         localStorage.removeItem('otpExpiresAt');
+        localStorage.removeItem('currentOtpCode');
+        // Store authentication tokens for existing users
+        if (data?.token) {
+          localStorage.setItem('accessToken', data.token);
+        }
+        if (data?.refreshToken) {
+          localStorage.setItem('refreshToken', data.refreshToken);
+        }
+        // Invalidate auth-related queries
+        queryClient.invalidateQueries({ queryKey: ['auth'] });
       }
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to verify OTP');
     },
+    retry: false,
   });
 
   // Complete Registration mutation
@@ -75,25 +102,19 @@ export function useOtp() {
       }
       return response.result;
     },
-    onSuccess: (data) => {
-      toast.success('Registration completed successfully');
+    onSuccess: (response) => {
       // Clear OTP data from localStorage
       localStorage.removeItem('currentOtpId');
       localStorage.removeItem('otpExpiresAt');
-      
-      // Store authentication tokens
-      if (data?.token) {
-        localStorage.setItem('accessToken', data.token);
-      }
-      if (data?.refreshToken) {
-        localStorage.setItem('refreshToken', data.refreshToken);
-      }
-      
+      localStorage.removeItem('currentOtpCode');
+
+      toast.success('Registration completed successfully');
+      if (response) saveCookies(response);
+      // Redirect to dashboard or home
+      router.push('/patient-portal/dashboard');
+
       // Invalidate auth-related queries
       queryClient.invalidateQueries({ queryKey: ['auth'] });
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to complete registration');
     },
   });
 
@@ -115,6 +136,7 @@ export function useOtp() {
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to resend OTP');
     },
+    retry: false,
   });
 
   // Validate OTP mutation
@@ -129,6 +151,7 @@ export function useOtp() {
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to validate OTP');
     },
+    retry: false,
   });
 
   // Invalidate OTP mutation
@@ -149,6 +172,7 @@ export function useOtp() {
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to invalidate OTP');
     },
+    retry: false,
   });
 
   // Check user existence mutation
@@ -163,13 +187,15 @@ export function useOtp() {
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to check user');
     },
+    retry: false,
   });
 
   // Helper function to get current OTP data from localStorage
   const getCurrentOtpData = () => {
     const otpId = localStorage.getItem('currentOtpId');
     const expiresAt = localStorage.getItem('otpExpiresAt');
-    
+    const otpCode = localStorage.getItem('currentOtpCode');
+
     if (!otpId || !expiresAt) {
       return null;
     }
@@ -179,11 +205,13 @@ export function useOtp() {
       // OTP has expired, clear from localStorage
       localStorage.removeItem('currentOtpId');
       localStorage.removeItem('otpExpiresAt');
+      localStorage.removeItem('currentOtpCode');
       return null;
     }
 
     return {
       otpId,
+      otpCode,
       expiresAt: expiryDate,
       remainingTime: Math.max(0, expiryDate.getTime() - new Date().getTime()),
     };
@@ -195,10 +223,13 @@ export function useOtp() {
     if (!otpData) {
       return true; // No OTP exists, can send new one
     }
-    
+
     // Check if enough time has passed (1 minute cooldown)
     const cooldownTime = 60 * 1000; // 60 seconds
-    return otpData.remainingTime < (otpData.expiresAt.getTime() - new Date().getTime() - cooldownTime);
+    return (
+      otpData.remainingTime <
+      otpData.expiresAt.getTime() - new Date().getTime() - cooldownTime
+    );
   };
 
   return {
@@ -210,11 +241,11 @@ export function useOtp() {
     validateOtp,
     invalidateOtp,
     checkUser,
-    
+
     // Helper functions
     getCurrentOtpData,
     canResendOtp,
-    
+
     // Query keys (for manual cache management)
     queryKeys,
   };

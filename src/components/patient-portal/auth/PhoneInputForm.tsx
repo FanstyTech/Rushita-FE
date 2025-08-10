@@ -6,27 +6,29 @@ import { Button } from '@/components/ui/button';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
 import { PhoneInput } from '@/components/common';
+import { PhoneCodeOption } from '@/lib/api/types/country';
 
 interface PhoneInputFormProps {
   onSubmit: (phoneCode: string, phoneNumber: string) => Promise<void>;
-  phoneCodes: Array<{ value: string; label: string; flag: string }>;
+  phoneCodes: PhoneCodeOption[];
+  countryCodeId: string;
   isLoading: boolean;
 }
 
 export function PhoneInputForm({
   onSubmit,
   phoneCodes,
+  countryCodeId,
   isLoading,
 }: PhoneInputFormProps) {
   const [phoneForm, setPhoneForm] = useState({
-    phoneCode: '',
+    phoneCode: countryCodeId,
     phoneNumber: '',
   });
   const [error, setError] = useState<string | null>(null);
 
   const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     // Basic validation
     if (!phoneForm.phoneNumber || phoneForm.phoneNumber.length < 9) {
       setError('يرجى إدخال رقم هاتف صحيح');
@@ -225,13 +227,11 @@ export function PhoneInputForm({
           <PhoneInput
             label="Phone Number"
             phoneCodeOptions={phoneCodes}
-            selectedPhoneCode="+966"
+            selectedPhoneCode={countryCodeId}
             onPhoneCodeChange={(e) => {
-              console.log(e);
               setPhoneForm({ ...phoneForm, phoneCode: e });
             }}
             onPhoneNumberChange={(e) => {
-              console.log(e);
               setPhoneForm({ ...phoneForm, phoneNumber: e });
             }}
             phoneCodeName="phoneCode"

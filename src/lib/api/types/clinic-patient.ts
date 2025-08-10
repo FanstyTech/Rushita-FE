@@ -6,6 +6,18 @@ export enum Gender {
   Male = 1,
   Female = 2,
 }
+export enum BMICategory {
+  Underweight = 1,
+  Normal,
+  Overweight,
+  Obese,
+}
+export enum IdentificationType {
+  NationalID = 1,
+  Passport,
+  DriverLicense,
+  Other,
+}
 
 export enum MedicalConditionStatus {
   Controlled = 1,
@@ -20,9 +32,14 @@ export enum Severity {
 }
 
 export enum Relationship {
-  Father = 1,
-  Mother = 2,
+  Parent = 1,
+  Spouse = 2,
   Sibling = 3,
+  Child = 4,
+  Relative = 5,
+  Friend = 6,
+  Neighbor = 7,
+  Other = 99,
 }
 export enum FamilyHistoryStatus {
   Living = 1,
@@ -279,3 +296,202 @@ export interface GetPatientForViewDto {
   gender?: Gender;
 }
 export { FrequencyType };
+
+// New types for Patient Portal Profile
+export interface PatientPortalProfileDto {
+  id: string;
+  userId?: string;
+  patientNumber: string;
+  registrationDate: string;
+
+  // Personal Information
+  personalInfo: PersonalInformationDto;
+
+  // Emergency Contact
+  emergencyContact: EmergencyContactDto;
+
+  // Medical Information
+  medicalInfo: MedicalInformationDto;
+
+  // Insurance Information
+  insuranceInfo: InsuranceInformationDto;
+
+  // Health Indicators
+  healthIndicators: HealthIndicatorsDto;
+}
+
+export interface PersonalInformationDto {
+  imageUrl?: string;
+  // Names
+  fNameF?: string;
+  sNameF?: string;
+  tNameF?: string;
+  lNameF?: string;
+  fNameL?: string;
+  sNameL?: string;
+  tNameL?: string;
+  lNameL?: string;
+  shortName?: string;
+
+  // Basic Info
+  dateOfBirth?: string;
+  gender?: Gender;
+  email?: string;
+  phoneNumber?: string;
+  phoneNumberWithCode?: string;
+  address?: string;
+
+  // Location
+  countryCodeId?: string;
+  countryId?: string;
+  cityId?: string;
+
+  // Additional
+  preferredLanguage: string;
+  idType?: IdentificationType;
+  idNum?: string;
+}
+
+export interface EmergencyContactDto {
+  id?: string;
+  patientId?: string;
+  name: string;
+  phone: string;
+  relationship: Relationship;
+  isPrimary: boolean;
+}
+
+export interface MedicalInformationDto {
+  bloodType: BloodType;
+  height: number; // in cm
+  weight: number; // in kg
+  bmiValue?: number;
+  bmiCategory?: BMICategory;
+  allergies: AllergyDto[];
+  medicalConditions: MedicalConditionDto[];
+  currentMedications: MedicationDto[];
+}
+
+export interface InsuranceInformationDto {
+  provider?: string;
+  policyNumber?: string;
+  expiryDate?: string;
+  coverageType?: string;
+  copayment?: number;
+  annualLimit?: number;
+  exclusions?: string;
+  notes?: string;
+}
+
+export interface HealthIndicatorsDto {
+  bloodPressure: BloodPressureDto;
+  bloodSugar: BloodSugarDto;
+  heartRate: HeartRateDto;
+  cholesterol: CholesterolDto;
+}
+
+export interface BloodPressureDto {
+  systolic?: number;
+  diastolic?: number;
+  status?: MetricStatus;
+  lastUpdated?: string;
+  trend?: HealthTrend;
+}
+
+export interface BloodSugarDto {
+  value?: number;
+  status?: MetricStatus;
+  lastUpdated?: string;
+  trend?: HealthTrend;
+}
+
+export interface HeartRateDto {
+  value?: number;
+  status?: MetricStatus;
+  lastUpdated?: string;
+  trend?: HealthTrend;
+}
+
+export interface CholesterolDto {
+  total?: number;
+  hdl?: number;
+  ldl?: number;
+  status?: MetricStatus;
+  lastUpdated?: string;
+  trend?: HealthTrend;
+}
+
+// Update DTO for Patient Portal Profile
+export interface UpdatePatientPortalProfileDto {
+  id: string;
+  personalInfo: PersonalInformationDto;
+  emergencyContact: EmergencyContactDto;
+  medicalInfo: MedicalInformationDto;
+  insuranceInfo?: InsuranceInformationDto;
+  healthIndicators: HealthIndicatorsDto;
+}
+
+// Health Metrics DTOs
+export interface PatientHealthMetricDto {
+  id: string;
+  patientId: string;
+
+  // Blood Pressure
+  systolic?: number;
+  diastolic?: number;
+
+  // Blood Sugar
+  bloodSugar?: number;
+
+  // Heart Rate
+  heartRate?: number;
+
+  // Cholesterol
+  cholesterolTotal?: number;
+  cholesterolHDL?: number;
+  cholesterolLDL?: number;
+
+  // Calculated Properties
+  bloodPressureStatus: MetricStatus;
+  bloodSugarStatus: MetricStatus;
+  heartRateStatus: MetricStatus;
+  cholesterolStatus: MetricStatus;
+}
+
+export interface UpdatePatientHealthMetricDto {
+  patientId: string;
+  systolic?: number;
+  diastolic?: number;
+  bloodSugar?: number;
+  heartRate?: number;
+  cholesterolTotal?: number;
+  cholesterolHDL?: number;
+  cholesterolLDL?: number;
+}
+
+export interface CreateOrUpdateEmergencyContactDto {
+  id?: string;
+  patientId: string;
+  name: string;
+  phone: string;
+  relationship: Relationship;
+  isPrimary: boolean;
+}
+
+// Enums for Health Metrics
+export enum MetricStatus {
+  Unknown = 0,
+  Low = 1,
+  Normal = 2,
+  Elevated = 3,
+  High = 4,
+  Critical = 5,
+  Borderline = 6,
+}
+
+export enum HealthTrend {
+  Unknown = 0,
+  Improving = 1,
+  Stable = 2,
+  Worsening = 3,
+}
