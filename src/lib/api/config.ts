@@ -183,6 +183,14 @@ export const API_ENDPOINTS = {
     UPDATE_HEALTH_METRICS: '/patient/updatePatientHealthMetrics',
     CREATE_OR_UPDATE_EMERGENCY_CONTACT: '/patient/createOrUpdateEmergencyContact',
     DELETE_EMERGENCY_CONTACT: '/patient/deleteEmergencyContact',
+    
+    // New Patient Portal Dashboard, Appointments, Visits, and Prescriptions endpoints
+    GET_PORTAL_DASHBOARD: '/patient/getPatientPortalDashboard',
+    GET_PATIENT_APPOINTMENTS: '/patient/getPatientAppointments',
+    UPDATE_PATIENT_APPOINTMENT: '/patient/updatePatientAppointment',
+    GET_PATIENT_VISITS: '/patient/getPatientVisits',
+    GET_PATIENT_PRESCRIPTIONS: '/patient/getPatientPrescriptions',
+    UPDATE_PATIENT_PRESCRIPTION: '/patient/updatePatientPrescription',
   },
   APPOINTMENT: {
     LIST: '/appointment/getAll',

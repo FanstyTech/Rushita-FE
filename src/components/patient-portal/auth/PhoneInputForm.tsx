@@ -26,7 +26,6 @@ export function PhoneInputForm({
     phoneNumber: '',
   });
   const [error, setError] = useState<string | null>(null);
-
   const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Basic validation
@@ -38,7 +37,12 @@ export function PhoneInputForm({
     setError(null);
 
     try {
-      await onSubmit(phoneForm.phoneCode, phoneForm.phoneNumber);
+      console.log('countryCodeId', countryCodeId);
+
+      await onSubmit(
+        phoneForm.phoneCode || countryCodeId,
+        phoneForm.phoneNumber
+      );
     } catch (error) {
       setError('حدث خطأ أثناء التحقق من رقم الهاتف');
     }

@@ -21,36 +21,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
-interface Visit {
-  id: string;
-  doctorName: string;
-  doctorAvatar: string;
-  specialty: string;
-  clinic: string;
-  date: string;
-  diagnosis?: string;
-  treatment?: string;
-  followUp: boolean;
-  followUpDate?: string;
-  documents: number;
-  tests: number;
-  reason?: string;
-  type?: string;
-}
+import { PatientPortalVisitsDto } from '@/lib/api/types/clinic-patient';
+import { formatDate } from '@/utils/dateTimeUtils';
 
 interface RecentVisitsCardProps {
-  visits: Visit[];
+  visits: PatientPortalVisitsDto[];
   variants: any;
-  formatDate: (date: string) => string;
-  // formatRelativeTime: (date: string) => string;
 }
 
-export function RecentVisitsCard({
-  visits,
-  variants,
-  formatDate,
-}: RecentVisitsCardProps) {
+export function RecentVisitsCard({ visits, variants }: RecentVisitsCardProps) {
   const { t } = useTranslation(); // Add this hook
 
   return (
@@ -65,7 +44,8 @@ export function RecentVisitsCard({
               {t('patientPortal.dashboard.recentVisits.title')}
             </CardTitle>
             <Badge variant="outline" className="font-normal">
-              {visits.length} {t('patientPortal.dashboard.recentVisits.visitsCount')}
+              {visits.length}{' '}
+              {t('patientPortal.dashboard.recentVisits.visitsCount')}
             </Badge>
           </div>
           <CardDescription className="text-muted-foreground text-sm">
@@ -84,7 +64,7 @@ export function RecentVisitsCard({
                     <div className="flex items-center gap-3">
                       <Avatar className="h-11 w-11 border-2 border-primary/10 shadow-sm">
                         <AvatarImage
-                          src={visit.doctorAvatar}
+                          // src={visit.doctorAvatar}
                           alt={visit.doctorName}
                         />
                         <AvatarFallback className="bg-primary/10 text-primary font-medium">
@@ -96,7 +76,8 @@ export function RecentVisitsCard({
                           {visit.doctorName}
                         </h4>
                         <p className="text-sm text-muted-foreground">
-                          {visit.specialty} - {visit.clinic}
+                          {/* {visit.specialty}  */}
+                          todo - {visit.clinicName}
                         </p>
                       </div>
                     </div>
@@ -105,16 +86,16 @@ export function RecentVisitsCard({
                         {/* {formatRelativeTime(visit.date)} */}
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {formatDate(visit.date)}
+                        {formatDate(visit.createdAt)}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {visit.reason && (
+                    {visit.symptoms && (
                       <div className="text-xs px-2 py-0.5 rounded-full bg-muted flex items-center">
                         <FileText className="h-3 w-3 mr-1" />
-                        <span>{visit.reason}</span>
+                        <span>{visit.symptoms}</span>
                       </div>
                     )}
                     {visit.type && (
@@ -125,17 +106,24 @@ export function RecentVisitsCard({
                     )}
                   </div>
 
-                  {visit.diagnosis && (
+                  {visit.diagnoses && (
                     <div className="mt-2 text-xs bg-muted/50 p-2 rounded-md text-muted-foreground">
-                      <span className="font-medium">{t('patientPortal.dashboard.recentVisits.diagnosis')}</span>{' '}
-                      {visit.diagnosis}
+                      <span className="font-medium">
+                        {t('patientPortal.dashboard.recentVisits.diagnosis')}
+                      </span>{' '}
+                      {visit.diagnoses
+                        .map((diagnosis) => diagnosis.description)
+                        .join(', ')}
                     </div>
                   )}
 
-                  {visit.followUp && visit.followUpDate && (
+                  {visit.nextVisitDate && visit.nextVisitDate && (
                     <div className="mt-1 text-xs flex items-center text-primary">
                       <Calendar className="h-3 w-3 mr-1" />
-                      <span>{t('patientPortal.dashboard.recentVisits.followUp')} {formatDate(visit.followUpDate)}</span>
+                      <span>
+                        {t('patientPortal.dashboard.recentVisits.followUp')}{' '}
+                        {formatDate(visit.nextVisitDate)}
+                      </span>
                     </div>
                   )}
 

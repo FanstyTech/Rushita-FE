@@ -195,23 +195,15 @@ export default function AuthPage() {
     countryCodeId: string,
     phoneNumber: string
   ) => {
-    try {
-      await sendOtp.mutateAsync({
-        countryCodeId: countryCodeId,
-        phoneNumber: phoneNumber,
-        type: OtpType.Registration,
-      });
+    await sendOtp.mutateAsync({
+      countryCodeId: countryCodeId,
+      phoneNumber: phoneNumber,
+      type: OtpType.Registration,
+    });
 
-      setVerificationCodeSent(true);
-      setResendDisabled(true);
-      setResendCountdown(60); // 60 seconds countdown
-    } catch (error: any) {
-      console.error('Error sending verification code:', error);
-      setErrors((prev) => ({
-        ...prev,
-        form: error.message || 'فشل إرسال رمز التحقق. يرجى المحاولة مرة أخرى.',
-      }));
-    }
+    setVerificationCodeSent(true);
+    setResendDisabled(true);
+    setResendCountdown(60); // 60 seconds countdown
   };
 
   // Handle verification code submission

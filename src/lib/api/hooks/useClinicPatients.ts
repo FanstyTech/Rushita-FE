@@ -9,6 +9,11 @@ import {
   CreateOrUpdateAllergyDto,
   CreateOrUpdateFamilyHistoryDto,
   GetPatientDropdownInput,
+  PatientAppointmentFilterDto,
+  PatientVisitFilterDto,
+  PatientPrescriptionFilterDto,
+  UpdatePatientAppointmentDto,
+  UpdatePatientPrescriptionDto,
 } from '../types/clinic-patient';
 // Replace the problematic query keys section with this:
 const patientPortalQueryKeys = {
@@ -344,6 +349,110 @@ export function useClinicPatients() {
     },
   });
 
+  // Patient Portal Dashboard
+  const usePatientPortalDashboard = () =>
+    useQuery({
+      queryKey: ['clinic-patients', 'portal-dashboard'],
+      queryFn: async () => {
+        const response = await clinicPatientService.getPatientPortalDashboard();
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch dashboard');
+        }
+        return response.result;
+      },
+      retry: false,
+    });
+
+  // Patient Portal Appointments
+  const usePatientAppointments = (filters: PatientAppointmentFilterDto) =>
+    useQuery({
+      queryKey: ['clinic-patients', 'appointments', filters],
+      queryFn: async () => {
+        const response = await clinicPatientService.getPatientAppointments(filters);
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch appointments');
+        }
+        return response.result;
+      },
+      retry: false,
+    });
+
+  const updatePatientAppointment = useMutation({
+    mutationFn: async (data: UpdatePatientAppointmentDto) => {
+      const response = await clinicPatientService.updatePatientAppointment(data);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to update appointment');
+      }
+      return response.result;
+    },
+    onSuccess: (data) => {
+      toast.success('Appointment updated successfully');
+      if (data?.id) {
+        queryClient.invalidateQueries({ 
+          queryKey: ['clinic-patients', 'appointments'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['clinic-patients', 'portal-dashboard'],
+        });
+      }
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+  // Patient Portal Visits
+  const usePatientVisits = (filters: PatientVisitFilterDto) =>
+    useQuery({
+      queryKey: ['clinic-patients', 'visits', filters],
+      queryFn: async () => {
+        const response = await clinicPatientService.getPatientVisits(filters);
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch visits');
+        }
+        return response.result;
+      },
+      retry: false,
+    });
+
+  // Patient Portal Prescriptions
+  const usePatientPrescriptions = (filters: PatientPrescriptionFilterDto) =>
+    useQuery({
+      queryKey: ['clinic-patients', 'prescriptions', filters],
+      queryFn: async () => {
+        const response = await clinicPatientService.getPatientPrescriptions(filters);
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch prescriptions');
+        }
+        return response.result;
+      },
+      retry: false,
+    });
+
+  const updatePatientPrescription = useMutation({
+    mutationFn: async (data: UpdatePatientPrescriptionDto) => {
+      const response = await clinicPatientService.updatePatientPrescription(data);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to update prescription');
+      }
+      return response.result;
+    },
+    onSuccess: (data) => {
+      toast.success('Prescription updated successfully');
+      if (data?.id) {
+        queryClient.invalidateQueries({ 
+          queryKey: ['clinic-patients', 'prescriptions'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['clinic-patients', 'portal-dashboard'],
+        });
+      }
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
   return {
     usePatientsList,
     usePatientForEdit,
@@ -364,5 +473,13 @@ export function useClinicPatients() {
     updatePatientHealthMetrics,
     createOrUpdateEmergencyContact,
     deleteEmergencyContact,
+
+    // New patient portal dashboard, appointments, visits, and prescriptions methods
+    usePatientPortalDashboard,
+    usePatientAppointments,
+    updatePatientAppointment,
+    usePatientVisits,
+    usePatientPrescriptions,
+    updatePatientPrescription,
   };
 }

@@ -1,3 +1,4 @@
+import { AppointmentStatus } from './appointment';
 import { PaginationRequest } from './pagination';
 import { FrequencyType } from './visit-prescription';
 
@@ -51,14 +52,6 @@ export enum VisitType {
   Followup = 2,
 }
 
-export enum AppointmentStatus {
-  Scheduled = 1,
-  Confirmed = 2,
-  InProgress = 3,
-  Completed = 4,
-  Cancelled = 5,
-  NoShow = 6,
-}
 export enum PatientStatus {
   Active = 1,
   Inactive = 2,
@@ -396,6 +389,11 @@ export interface BloodPressureDto {
   status?: MetricStatus;
   lastUpdated?: string;
   trend?: HealthTrend;
+  history?: BloodPressureHistoryDto[];
+}
+export interface BloodPressureHistoryDto {
+  systolic?: number;
+  diastolic?: number;
 }
 
 export interface BloodSugarDto {
@@ -403,6 +401,7 @@ export interface BloodSugarDto {
   status?: MetricStatus;
   lastUpdated?: string;
   trend?: HealthTrend;
+  history?: number[];
 }
 
 export interface HeartRateDto {
@@ -410,6 +409,7 @@ export interface HeartRateDto {
   status?: MetricStatus;
   lastUpdated?: string;
   trend?: HealthTrend;
+  history?: number[];
 }
 
 export interface CholesterolDto {
@@ -480,13 +480,13 @@ export interface CreateOrUpdateEmergencyContactDto {
 
 // Enums for Health Metrics
 export enum MetricStatus {
-  Unknown = 0,
   Low = 1,
   Normal = 2,
   Elevated = 3,
   High = 4,
   Critical = 5,
   Borderline = 6,
+  Unknown = 7,
 }
 
 export enum HealthTrend {
@@ -494,4 +494,164 @@ export enum HealthTrend {
   Improving = 1,
   Stable = 2,
   Worsening = 3,
+}
+
+// Patient Portal Dashboard Types
+export interface PatientPortalDashboardDto {
+  id: string;
+  recentAppointments: PatientPortalAppointmentsDto[];
+  recentVisits: PatientPortalVisitsDto[];
+  activePrescriptionsList: PatientPortalPrescriptionsDto[];
+  healthIndicators?: HealthIndicatorsDto;
+  medicalInfo?: MedicalInformationDto;
+}
+
+// Patient Portal Appointments Types
+export interface PatientPortalAppointmentsDto {
+  id: string;
+  appointmentNumber: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  type: string;
+  status: AppointmentStatus;
+  cancellationReason?: string;
+  notes?: string;
+  doctorName: string;
+  clinicName: string;
+  clinicAddress: string;
+  doctorSpecialization?: string;
+  isUpcoming: boolean;
+  isToday: boolean;
+  timeRange: string;
+  statusDisplay: string;
+}
+
+export interface PatientAppointmentFilterDto {
+  pageNumber?: number;
+  pageSize?: number;
+  fromDate?: string;
+  toDate?: string;
+  status?: string;
+  type?: string;
+  clinicId?: string;
+  staffId?: string;
+  isUpcoming?: boolean;
+}
+
+// Patient Portal Visits Types
+export interface PatientPortalVisitsDto {
+  id: string;
+  visitNumber: string;
+  createdAt: string;
+  type: string;
+  currentStatus: string;
+  symptoms?: string;
+  followUpInstructions?: string;
+  nextVisitDate?: string;
+  notes?: string;
+  doctorName: string;
+  clinicName: string;
+  appointmentNumber?: string;
+  diagnoses: VisitDiagnosisDto[];
+  prescriptions: VisitPrescriptionDto[];
+  labTests: VisitLabTestDto[];
+  radiologyTests: VisitRadiologyTestDto[];
+}
+
+export interface PatientVisitFilterDto {
+  pageNumber?: number;
+  pageSize?: number;
+  fromDate?: string;
+  toDate?: string;
+  status?: string;
+  type?: string;
+  clinicId?: string;
+  staffId?: string;
+}
+
+export interface VisitDiagnosisDto {
+  id: string;
+  description: string;
+  diagnosisCode: string;
+}
+
+export interface VisitPrescriptionDto {
+  id: string;
+  medicineId: string;
+  medicineName: string;
+  dosage: number;
+  frequency: string;
+  duration: number;
+  status: string;
+  notes?: string;
+}
+
+export interface VisitLabTestDto {
+  id: string;
+  labTestId: string;
+  testName: string;
+  status: string;
+  notes?: string;
+}
+
+export interface VisitRadiologyTestDto {
+  id: string;
+  radiologyTestId: string;
+  testName: string;
+  status: string;
+  notes?: string;
+}
+
+// Patient Portal Prescriptions Types
+export interface PatientPortalPrescriptionsDto {
+  id: string;
+  visitId: string;
+  visitNumber: string;
+  createdAt: string;
+  medicineName: string;
+  medicineCode: string;
+  scientificName?: string;
+  description?: string;
+  dosageForm?: string;
+  strength?: string;
+  dosage: number;
+  frequency: string;
+  frequencyNotes?: string;
+  duration: number;
+  durationUnit: string;
+  status: string;
+  route?: string;
+  instructions?: string;
+  notes?: string;
+  quantity: number;
+  dispensedQuantity: number;
+  expiryDate?: string;
+  lastDispensedDate?: string;
+  prescribeDate?: string;
+  prescribedByName: string;
+}
+
+export interface PatientPrescriptionFilterDto {
+  pageNumber?: number;
+  pageSize?: number;
+  fromDate?: string;
+  toDate?: string;
+  status?: string;
+  visitId?: string;
+  medicineId?: string;
+  isActive?: boolean;
+}
+
+// Update DTOs
+export interface UpdatePatientAppointmentDto {
+  id: string;
+  cancellationReason?: string;
+  notes?: string;
+}
+
+export interface UpdatePatientPrescriptionDto {
+  id: string;
+  notes?: string;
+  instructions?: string;
 }

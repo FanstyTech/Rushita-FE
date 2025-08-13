@@ -18,7 +18,6 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/common/form';
-import { formatDate } from '@/utils/dateTimeUtils';
 import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { ProfileFormValues } from '@/app/patient-portal/profile/validation';
 import {

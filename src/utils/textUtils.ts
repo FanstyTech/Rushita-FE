@@ -2,14 +2,15 @@
  * Collection of text utility functions for common text operations
  */
 
+import { AppointmentStatus } from '@/lib/api/types/appointment';
 import { ClinicStatus, DayEnum, StaffTypeEnum } from '@/lib/api/types/clinic';
 import {
-  AppointmentStatus,
   BloodType,
   BMICategory,
   FrequencyType,
   Gender,
   MedicalConditionStatus,
+  MetricStatus,
   Relationship,
   Severity,
   VisitType,
@@ -271,6 +272,7 @@ export const getAppointmentStatusLabel = (
   status: AppointmentStatus
 ): string => {
   const statusMap: Record<AppointmentStatus, string> = {
+    [AppointmentStatus.Pending]: 'Pending',
     [AppointmentStatus.Scheduled]: 'Scheduled',
     [AppointmentStatus.Confirmed]: 'Confirmed',
     [AppointmentStatus.InProgress]: 'In Progress',
@@ -376,10 +378,11 @@ export const getAppointmentStatusClass = (
   status: AppointmentStatus
 ): string => {
   const statusMap: Record<AppointmentStatus, string> = {
+    [AppointmentStatus.Pending]: 'bg-gray-100 text-gray-800',
     [AppointmentStatus.Scheduled]: 'bg-blue-100 text-blue-800',
     [AppointmentStatus.Confirmed]: 'bg-green-100 text-green-800',
     [AppointmentStatus.InProgress]: 'bg-yellow-100 text-yellow-800',
-    [AppointmentStatus.Completed]: 'bg-gray-100 text-gray-800',
+    [AppointmentStatus.Completed]: 'bg-green-100 text-green-800',
     [AppointmentStatus.Cancelled]: 'bg-red-100 text-red-800',
     [AppointmentStatus.NoShow]: 'bg-orange-100 text-orange-800',
   };
@@ -560,4 +563,38 @@ export const getBMICategoryLabel = (category: BMICategory): string => {
   };
 
   return bmiCategoryLabelMap[category] || 'Unknown';
+};
+export const getBMICategoryClass = (category: BMICategory): string => {
+  const statusMap: Record<BMICategory, string> = {
+    [BMICategory.Normal]: 'bg-green-100 text-green-800',
+    [BMICategory.Obese]: 'bg-red-100 text-red-800',
+    [BMICategory.Overweight]: 'bg-yellow-100 text-yellow-800',
+    [BMICategory.Underweight]: 'bg-red-100 text-red-800',
+  };
+  return statusMap[category] || 'bg-gray-50 text-gray-400';
+};
+
+export const getMetricStatusClass = (status: MetricStatus): string => {
+  const statusMap: Record<MetricStatus, string> = {
+    [MetricStatus.Low]: 'bg-yellow-100 text-yellow-800',
+    [MetricStatus.Normal]: 'bg-green-100 text-green-800',
+    [MetricStatus.Elevated]: 'bg-yellow-100 text-yellow-800',
+    [MetricStatus.High]: 'bg-red-100 text-red-800',
+    [MetricStatus.Critical]: 'bg-red-100 text-red-800',
+    [MetricStatus.Borderline]: 'bg-yellow-100 text-yellow-800',
+    [MetricStatus.Unknown]: 'bg-gray-50 text-gray-400',
+  };
+  return statusMap[status] || 'bg-gray-50 text-gray-400';
+};
+export const getMetricStatusLabel = (status: MetricStatus): string => {
+  const statusMap: Record<MetricStatus, string> = {
+    [MetricStatus.Low]: 'Low',
+    [MetricStatus.Normal]: 'Normal',
+    [MetricStatus.Elevated]: 'Elevated',
+    [MetricStatus.High]: 'High',
+    [MetricStatus.Critical]: 'Critical',
+    [MetricStatus.Borderline]: 'Border line',
+    [MetricStatus.Unknown]: 'Unknown',
+  };
+  return statusMap[status] || 'Unknown';
 };

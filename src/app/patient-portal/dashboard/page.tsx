@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 
 // Import components
 import {
@@ -17,17 +18,13 @@ import {
   NotificationsCard,
   HealthAlertsCard,
   DashboardSkeleton,
+  healthMetrics,
 } from '@/components/patient-portal/dashboard';
-
 // Import data and utils
 import {
   quickActions,
-  upcomingAppointments,
-  activeMedications,
-  recentVisits,
   notifications,
   healthAlerts,
-  healthMetrics,
   formatDate,
   formatRelativeTime,
 } from '@/components/patient-portal/dashboard';
@@ -37,19 +34,29 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+  // API hooks
+  const { usePatientPortalDashboard } = useClinicPatients();
+  const { data: dashboardData, isLoading, error } = usePatientPortalDashboard();
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <DashboardSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-red-500 mb-2">Failed to load dashboard data</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -92,22 +99,18 @@ export default function DashboardPage() {
             className="space-y-6"
           >
             <AppointmentsCard
-              appointments={upcomingAppointments}
+              appointments={dashboardData?.recentAppointments || []}
               variants={itemVariants}
-              formatDate={formatDate}
             />
 
             <MedicationsCard
-              medications={activeMedications}
+              medications={dashboardData?.activePrescriptionsList || []}
               variants={itemVariants}
-              formatDate={formatDate}
             />
 
             <RecentVisitsCard
-              visits={recentVisits}
+              visits={dashboardData?.recentVisits || []}
               variants={itemVariants}
-              formatDate={formatDate}
-              // formatRelativeTime={formatRelativeTime}
             />
           </motion.div>
         </TabsContent>
@@ -119,10 +122,12 @@ export default function DashboardPage() {
             initial="hidden"
             animate="show"
           >
-            <HealthMetricsCard
-              metrics={healthMetrics}
-              variants={itemVariants}
-            />
+            {dashboardData && (
+              <HealthMetricsCard
+                metrics={dashboardData}
+                variants={itemVariants}
+              />
+            )}
           </motion.div>
         </TabsContent>
 

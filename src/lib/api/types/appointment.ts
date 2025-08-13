@@ -7,12 +7,13 @@ export enum VisitType {
 }
 
 export enum AppointmentStatus {
-  Scheduled = 1,
-  Confirmed,
-  InProgress,
-  Completed,
-  Cancelled,
-  NoShow,
+  Pending = 1,
+  Scheduled = 2,
+  Confirmed = 3,
+  InProgress = 4,
+  Completed = 5,
+  Cancelled = 6,
+  NoShow = 7,
 }
 
 export interface AppointmentDto {

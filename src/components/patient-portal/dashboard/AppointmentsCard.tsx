@@ -15,27 +15,23 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
-interface Appointment {
-  id: string;
-  doctorName: string;
-  doctorAvatar: string;
-  specialty: string;
-  clinic: string;
-  date: string;
-  time: string;
-  status: 'confirmed' | 'pending';
-  type: string;
-  notes?: string;
-}
+import { PatientPortalAppointmentsDto } from '@/lib/api/types/clinic-patient';
+import { formatDate } from '@/utils/dateTimeUtils';
+import {
+  getAppointmentStatusClass,
+  getAppointmentStatusLabel,
+} from '@/utils/textUtils';
+import { cn } from '@/lib/utils';
 
 interface AppointmentsCardProps {
-  appointments: Appointment[];
+  appointments: PatientPortalAppointmentsDto[];
   variants: any;
-  formatDate: (date: string) => string;
 }
 
-export function AppointmentsCard({ appointments, variants, formatDate }: AppointmentsCardProps) {
+export function AppointmentsCard({
+  appointments,
+  variants,
+}: AppointmentsCardProps) {
   const { t } = useTranslation();
 
   return (
@@ -50,7 +46,8 @@ export function AppointmentsCard({ appointments, variants, formatDate }: Appoint
               {t('patientPortal.dashboard.appointments.title')}
             </CardTitle>
             <Badge variant="outline" className="font-normal">
-              {appointments.length} {t('patientPortal.dashboard.appointments.appointmentsCount')}
+              {appointments.length}{' '}
+              {t('patientPortal.dashboard.appointments.appointmentsCount')}
             </Badge>
           </div>
           <CardDescription className="text-muted-foreground text-sm">
@@ -68,7 +65,7 @@ export function AppointmentsCard({ appointments, variants, formatDate }: Appoint
                   <div className="flex items-center gap-3">
                     <Avatar className="h-11 w-11 border-2 border-primary/10 shadow-sm">
                       <AvatarImage
-                        src={appointment.doctorAvatar}
+                        // src={appointment.doctorAvatar}
                         alt={appointment.doctorName}
                       />
                       <AvatarFallback className="bg-primary/10 text-primary font-medium">
@@ -82,20 +79,15 @@ export function AppointmentsCard({ appointments, variants, formatDate }: Appoint
                             {appointment.doctorName}
                           </h4>
                           <p className="text-sm text-muted-foreground">
-                            {appointment.specialty}
+                            {appointment.doctorSpecialization}
                           </p>
                         </div>
                         <Badge
-                          variant={
-                            appointment.status === 'confirmed'
-                              ? 'default'
-                              : 'secondary'
-                          }
-                          className="text-xs font-normal"
+                          className={cn(
+                            getAppointmentStatusClass(appointment.status)
+                          )}
                         >
-                          {appointment.status === 'confirmed'
-                            ? t('patientPortal.dashboard.appointments.confirmed')
-                            : t('patientPortal.dashboard.appointments.pending')}
+                          {getAppointmentStatusLabel(appointment.status)}
                         </Badge>
                       </div>
                     </div>
@@ -109,17 +101,19 @@ export function AppointmentsCard({ appointments, variants, formatDate }: Appoint
                       </div>
                       <div className="flex items-center">
                         <Clock className="h-3.5 w-3.5 mr-1.5 text-primary/70" />
-                        <span>{appointment.time}</span>
+                        <span>{appointment.startTime}</span>
                       </div>
                     </div>
                     <div className="text-xs px-2 py-0.5 rounded-full bg-muted">
-                      {appointment.clinic}
+                      {appointment.clinicName}
                     </div>
                   </div>
 
                   {appointment.notes && (
                     <div className="mt-1 text-xs bg-muted/50 p-2 rounded-md text-muted-foreground">
-                      <span className="font-medium">{t('patientPortal.dashboard.appointments.notes')}</span>{' '}
+                      <span className="font-medium">
+                        {t('patientPortal.dashboard.appointments.notes')}
+                      </span>{' '}
                       {appointment.notes}
                     </div>
                   )}
@@ -148,11 +142,15 @@ export function AppointmentsCard({ appointments, variants, formatDate }: Appoint
                 {t('patientPortal.dashboard.appointments.noAppointments.title')}
               </h3>
               <p className="text-sm text-muted-foreground max-w-xs">
-                {t('patientPortal.dashboard.appointments.noAppointments.description')}
+                {t(
+                  'patientPortal.dashboard.appointments.noAppointments.description'
+                )}
               </p>
               <Button className="mt-4" size="sm" asChild>
                 <Link href="/patient-portal/appointments/book">
-                  {t('patientPortal.dashboard.appointments.noAppointments.button')}
+                  {t(
+                    'patientPortal.dashboard.appointments.noAppointments.button'
+                  )}
                 </Link>
               </Button>
             </div>

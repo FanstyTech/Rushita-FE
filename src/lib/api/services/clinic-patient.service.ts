@@ -17,11 +17,20 @@ import {
   GetPatientDropdownInput,
   GetPatientForViewDto,
   MedicalConditionDto,
+  PatientAppointmentFilterDto,
   PatientHealthMetricDto,
+  PatientPortalAppointmentsDto,
+  PatientPortalDashboardDto,
+  PatientPortalPrescriptionsDto,
   PatientPortalProfileDto,
+  PatientPortalVisitsDto,
+  PatientPrescriptionFilterDto,
   PatientProfileDto,
   PatientStatus,
+  PatientVisitFilterDto,
+  UpdatePatientAppointmentDto,
   UpdatePatientHealthMetricDto,
+  UpdatePatientPrescriptionDto,
   UpdatePatientPortalProfileDto,
 } from '../types/clinic-patient';
 import { PaginationResponse } from '../types/pagination';
@@ -170,6 +179,64 @@ class ClinicPatientService {
       {
         params: { id },
       }
+    );
+  }
+
+  // Patient Portal Dashboard
+  async getPatientPortalDashboard(): Promise<
+    ApiResponse<PatientPortalDashboardDto>
+  > {
+    return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_PORTAL_DASHBOARD);
+  }
+
+  // Patient Portal Appointments
+  async getPatientAppointments(
+    filter: PatientAppointmentFilterDto
+  ): Promise<ApiResponse<PaginationResponse<PatientPortalAppointmentsDto>>> {
+    return apiClient.get(
+      API_ENDPOINTS.CLINIC_PATIENTS.GET_PATIENT_APPOINTMENTS,
+      {
+        params: convertFilterToParams(filter as FilterParams),
+      }
+    );
+  }
+
+  async updatePatientAppointment(
+    data: UpdatePatientAppointmentDto
+  ): Promise<ApiResponse<PatientPortalAppointmentsDto>> {
+    return apiClient.put(
+      API_ENDPOINTS.CLINIC_PATIENTS.UPDATE_PATIENT_APPOINTMENT,
+      data
+    );
+  }
+
+  // Patient Portal Visits
+  async getPatientVisits(
+    filter: PatientVisitFilterDto
+  ): Promise<ApiResponse<PaginationResponse<PatientPortalVisitsDto>>> {
+    return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_PATIENT_VISITS, {
+      params: convertFilterToParams(filter as FilterParams),
+    });
+  }
+
+  // Patient Portal Prescriptions
+  async getPatientPrescriptions(
+    filter: PatientPrescriptionFilterDto
+  ): Promise<ApiResponse<PaginationResponse<PatientPortalPrescriptionsDto>>> {
+    return apiClient.get(
+      API_ENDPOINTS.CLINIC_PATIENTS.GET_PATIENT_PRESCRIPTIONS,
+      {
+        params: convertFilterToParams(filter as FilterParams),
+      }
+    );
+  }
+
+  async updatePatientPrescription(
+    data: UpdatePatientPrescriptionDto
+  ): Promise<ApiResponse<PatientPortalPrescriptionsDto>> {
+    return apiClient.put(
+      API_ENDPOINTS.CLINIC_PATIENTS.UPDATE_PATIENT_PRESCRIPTION,
+      data
     );
   }
 }

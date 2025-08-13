@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/lib/api/hooks/useAuth';
+import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import {
   AppointmentsHeader,
   AppointmentsFilters,
   AppointmentsList,
   Pagination,
-  mockAppointments,
   filterAppointments,
   Appointment,
   FormData,
@@ -25,8 +25,6 @@ export default function AppointmentsPage() {
   const [editingAppointmentId, setEditingAppointmentId] = useState<
     string | null
   >(null);
-  const [appointmentsData, setAppointmentsData] = useState(mockAppointments);
-  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<FormData>({
     id: '',
     doctorName: '',
@@ -40,14 +38,38 @@ export default function AppointmentsPage() {
     createdAt: '',
   });
 
-  // Simulate loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+  // API hooks
+  const { usePatientAppointments, updatePatientAppointment } = useClinicPatients();
+  
+  // Filter state
+  const [filters, setFilters] = useState({
+    pageNumber: 1,
+    pageSize: 10,
+    isUpcoming: true,
+  });
 
-    return () => clearTimeout(timer);
-  }, []);
+  // Fetch appointments
+  const { data: appointmentsResponse, isLoading, error } = usePatientAppointments(filters);
+
+  // Transform API data to component format
+  const transformAppointments = (appointments: any[]) => {
+    return appointments.map(apt => ({
+      id: apt.id,
+      doctorName: apt.doctorName,
+      doctorAvatar: '/images/doctor-avatar.jpg',
+      specialty: apt.doctorSpecialization || 'General',
+      clinicName: apt.clinicName,
+      date: apt.date,
+      time: apt.timeRange,
+      status: apt.statusDisplay,
+      notes: apt.notes || '',
+      createdAt: apt.createdAt,
+      isUpcoming: apt.isUpcoming,
+      isToday: apt.isToday,
+    }));
+  };
+
+  const appointmentsData = transformAppointments(appointmentsResponse?.items || []);
 
   // Handle edit button click
   const handleEdit = (appointment: Appointment) => {
@@ -89,6 +111,24 @@ export default function AppointmentsPage() {
       [name]: value,
     }));
   };
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
+          <p className="text-red-500 mb-2">Failed to load appointments</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Filter appointments
   const filteredAppointments = filterAppointments(

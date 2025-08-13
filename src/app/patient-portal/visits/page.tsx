@@ -18,6 +18,7 @@ import {
   Pill,
   FileCheck,
   ArrowUpRight,
+  AlertCircle,
 } from 'lucide-react';
 import {
   Card,
@@ -32,6 +33,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/lib/api/hooks/useAuth';
+import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -354,8 +356,59 @@ export default function VisitsPage() {
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
   const visitsPerPage = 5;
+
+  // API hooks
+  const { usePatientVisits } = useClinicPatients();
+  
+  // Filter state
+  const [filters, setFilters] = useState({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+
+  // Fetch visits
+  const { data: visitsResponse, isLoading: loading, error } = usePatientVisits(filters);
+
+  // Transform API data to component format
+  const transformVisits = (visits: any[]) => {
+    return visits.map(visit => ({
+      id: visit.id,
+      visitNumber: visit.visitNumber,
+      doctorName: visit.doctorName,
+      doctorSpecialty: 'General', // Default specialty
+      clinicName: visit.clinicName,
+      date: visit.createdAt,
+      time: '10:00', // Default time
+      duration: 30, // Default duration
+      type: visit.type,
+      status: visit.currentStatus,
+      diagnosis: 'General diagnosis', // Default diagnosis
+      chiefComplaint: visit.symptoms || '',
+      symptoms: visit.symptoms || '',
+      followUpInstructions: visit.followUpInstructions || '',
+      notes: visit.notes || '',
+      diagnoses: visit.diagnoses || [],
+      prescriptions: visit.prescriptions || [],
+      labTests: visit.labTests || [],
+      radiologyTests: visit.radiologyTests || [],
+      hasPrescriptions: (visit.prescriptions || []).length > 0,
+      hasDocuments: false, // Default value
+      followUp: visit.followUpInstructions || '',
+      vitals: {
+        temperature: 37.2,
+        bloodPressure: '120/80',
+        heartRate: 72,
+        respiratoryRate: 16,
+        oxygenSaturation: 98,
+        weight: 75,
+        height: 175,
+      },
+      medications: [],
+    }));
+  };
+
+  const visits = transformVisits(visitsResponse?.items || []);
 
   // Format date to Arabic format
   const formatDate = (dateString: string) => {
@@ -407,13 +460,25 @@ export default function VisitsPage() {
     { value: 'emergency', label: 'طارئ' },
   ];
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+  // Remove the useEffect since we're using API loading state
 
-    return () => clearTimeout(timer);
-  }, []);
+  // Handle error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
+          <p className="text-red-500 mb-2">Failed to load visits</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
