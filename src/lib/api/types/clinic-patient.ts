@@ -1,6 +1,8 @@
 import { AppointmentStatus } from './appointment';
 import { PaginationRequest } from './pagination';
-import { FrequencyType } from './visit-prescription';
+import { TestStatus, VisitLabTestDto } from './visit-lab-test';
+import { FrequencyType, VisitPrescriptionDto } from './visit-prescription';
+import { VisitRadiologyTestDto } from './visit-radiology-test';
 
 // Enums
 export enum Gender {
@@ -513,7 +515,7 @@ export interface PatientPortalAppointmentsDto {
   date: string;
   startTime: string;
   endTime: string;
-  type: string;
+  type: VisitType;
   status: AppointmentStatus;
   cancellationReason?: string;
   notes?: string;
@@ -544,7 +546,7 @@ export interface PatientPortalVisitsDto {
   id: string;
   visitNumber: string;
   createdAt: string;
-  type: string;
+  type: VisitType;
   currentStatus: string;
   symptoms?: string;
   followUpInstructions?: string;
@@ -552,6 +554,7 @@ export interface PatientPortalVisitsDto {
   notes?: string;
   doctorName: string;
   clinicName: string;
+  doctorSpecialization: string;
   appointmentNumber?: string;
   diagnoses: VisitDiagnosisDto[];
   prescriptions: VisitPrescriptionDto[];
@@ -576,33 +579,6 @@ export interface VisitDiagnosisDto {
   diagnosisCode: string;
 }
 
-export interface VisitPrescriptionDto {
-  id: string;
-  medicineId: string;
-  medicineName: string;
-  dosage: number;
-  frequency: string;
-  duration: number;
-  status: string;
-  notes?: string;
-}
-
-export interface VisitLabTestDto {
-  id: string;
-  labTestId: string;
-  testName: string;
-  status: string;
-  notes?: string;
-}
-
-export interface VisitRadiologyTestDto {
-  id: string;
-  radiologyTestId: string;
-  testName: string;
-  status: string;
-  notes?: string;
-}
-
 // Patient Portal Prescriptions Types
 export interface PatientPortalPrescriptionsDto {
   id: string;
@@ -616,7 +592,7 @@ export interface PatientPortalPrescriptionsDto {
   dosageForm?: string;
   strength?: string;
   dosage: number;
-  frequency: string;
+  frequency: FrequencyType;
   frequencyNotes?: string;
   duration: number;
   durationUnit: string;
@@ -646,12 +622,27 @@ export interface PatientPrescriptionFilterDto {
 // Update DTOs
 export interface UpdatePatientAppointmentDto {
   id: string;
+  status: AppointmentStatus;
   cancellationReason?: string;
-  notes?: string;
 }
 
 export interface UpdatePatientPrescriptionDto {
   id: string;
   notes?: string;
   instructions?: string;
+}
+export interface SavePatientAppointmentDto {
+  date: string;
+  startTime: string;
+  appointmentReason: string;
+  staffId: string;
+  clinicId: string;
+  type: VisitType;
+}
+
+// Book Follow-up Appointment DTO
+export interface BookFollowUpAppointmentDto {
+  originalAppointmentId: string;
+  preferredDate?: string; // YYYY-MM-DD format
+  appointmentReason?: string;
 }

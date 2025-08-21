@@ -35,9 +35,7 @@ export default function PatientPortalLayout({
   useEffect(() => {
     setIsClient(true);
   }, []);
-  console.log('PatientPortalLayout rendered', {
-    user,
-  });
+
   // Redirect to login if not authenticated - only run on client
   useEffect(() => {
     if (isClient && !user) {

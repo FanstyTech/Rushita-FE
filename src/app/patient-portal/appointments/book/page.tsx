@@ -1,19 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card';
-import {
-  Calendar,
-  Stethoscope,
-  User,
-  Building,
-  FileText,
-} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Calendar, Stethoscope, User, Building, FileText } from 'lucide-react';
 import {
   BookingHeader,
   BookingSteps,
@@ -23,35 +13,66 @@ import {
   DateTimeSelection,
   AppointmentConfirmation,
   BookingFooter,
-  mockSpecialties,
-  mockDoctors,
-  mockClinics,
   generateTimeSlots,
-  formatDate,
   canProceedToNextStep,
   BookingStep,
 } from '@/components/patient-portal/appointments/book';
+import { useClinicBookingCondition } from '@/lib/api/hooks/useClinicBookingCondition';
+import { useClinic } from '@/lib/api/hooks/useClinic';
+import { useClinicStaff } from '@/lib/api/hooks/useClinicStaff';
+import { GetClinicStaffForDropdownInput } from '@/lib/api/types/clinic-staff';
+import { SelectOption } from '@/lib/api/types/select-option';
+import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients'; // إضافة hook المرضى
+import {
+  SavePatientAppointmentDto,
+  VisitType,
+} from '@/lib/api/types/clinic-patient'; // إضافة الأنواع المطلوبة
 
 export default function BookAppointmentPage() {
   const router = useRouter();
+
   const [activeStep, setActiveStep] = useState(0);
-  const [selectedClinic, setSelectedClinic] = useState<string | null>(null);
-  const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null);
-  const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null);
+  const [selectedClinic, setSelectedClinic] =
+    useState<SelectOption<string> | null>(null);
+  const [selectedSpecialty, setSelectedSpecialty] =
+    useState<SelectOption<string> | null>(null);
+  const [selectedDoctor, setSelectedDoctor] =
+    useState<SelectOption<string> | null>(null);
+
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [appointmentReason, setAppointmentReason] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Filter specialties by selected clinic
-  const filteredSpecialties = selectedClinic
-    ? mockSpecialties.filter((_, index) => index < 4) // Just a dummy filter for demo
-    : [];
+  // Create staff filter with debounced search
+  const staffFilter = useMemo<GetClinicStaffForDropdownInput>(() => {
+    const filterObj: GetClinicStaffForDropdownInput = { filter: '' };
 
-  // Filter doctors by selected specialty
-  const filteredDoctors = selectedSpecialty
-    ? mockDoctors.filter((doctor) => doctor.specialty === selectedSpecialty)
-    : [];
+    if (selectedClinic && selectedSpecialty) {
+      filterObj.clinicId = selectedClinic.value;
+      filterObj.specialtyId = selectedSpecialty.value;
+    }
+    return filterObj;
+  }, [selectedClinic, selectedSpecialty]);
+
+  // API Hooks
+  const { savePatientAppointment } = useClinicPatients();
+
+  const { useClinicsForDropdown, useClinicSpecialtiesForDropdown } =
+    useClinic();
+  const { useClinicStaffForDropdown } = useClinicStaff();
+  const { useClinicBookingConditionsDropdown } = useClinicBookingCondition();
+
+  const { data: clinics, isLoading: isClinicsLoadding } =
+    useClinicsForDropdown();
+  const { data: clinicSpecialties, isLoading: isClinicSpecialtiesLoadding } =
+    useClinicSpecialtiesForDropdown(selectedClinic?.value || '');
+
+  const { data: conditions, isLoading: isConditionsLoadding } =
+    useClinicBookingConditionsDropdown({
+      clinicId: selectedClinic?.value,
+    });
+  const { data: doctors, isLoading: isDoctorsLoadding } =
+    useClinicStaffForDropdown(staffFilter);
 
   // Get available time slots
   const availableTimeSlots = generateTimeSlots();
@@ -105,14 +126,27 @@ export default function BookAppointmentPage() {
 
   // Handle form submission
   const handleSubmit = async () => {
-    setIsSubmitting(true);
+    if (!selectedClinic || !selectedDoctor || !selectedDate || !selectedTime) {
+      return;
+    }
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      // Redirect to appointments page
-      router.push('/patient-portal/appointments');
-    }, 1500);
+    const appointmentDate = selectedDate.toISOString().split('T')[0];
+    const [hours, minutes] = selectedTime.split(':');
+    const startTime = `${hours.padStart(2, '0')}:${minutes.padStart(
+      2,
+      '0'
+    )}:00`;
+
+    const appointmentData: SavePatientAppointmentDto = {
+      date: appointmentDate,
+      startTime: startTime,
+      appointmentReason: appointmentReason || '',
+      staffId: selectedDoctor.value,
+      clinicId: selectedClinic.value,
+      type: VisitType.New,
+    };
+    await savePatientAppointment.mutateAsync(appointmentData);
+    router.push('/patient-portal/appointments');
   };
 
   // Check if can proceed to next step
@@ -140,7 +174,7 @@ export default function BookAppointmentPage() {
           {/* Step 1: Select clinic */}
           {activeStep === 0 && (
             <ClinicSelection
-              clinics={mockClinics}
+              clinics={clinics || []}
               selectedClinic={selectedClinic}
               onClinicSelect={setSelectedClinic}
             />
@@ -149,7 +183,7 @@ export default function BookAppointmentPage() {
           {/* Step 2: Select specialty */}
           {activeStep === 1 && (
             <SpecialtySelection
-              specialties={filteredSpecialties}
+              specialties={clinicSpecialties || []}
               selectedSpecialty={selectedSpecialty}
               onSpecialtySelect={setSelectedSpecialty}
               onPrevStep={handlePrevStep}
@@ -159,9 +193,9 @@ export default function BookAppointmentPage() {
           {/* Step 3: Select doctor */}
           {activeStep === 2 && (
             <DoctorSelection
-              doctors={filteredDoctors}
-              specialties={mockSpecialties}
-              clinics={mockClinics}
+              doctors={doctors || []}
+              selectedClinic={selectedClinic}
+              selectedSpecialty={selectedSpecialty}
               selectedDoctor={selectedDoctor}
               onDoctorSelect={setSelectedDoctor}
               onPrevStep={handlePrevStep}
@@ -190,10 +224,7 @@ export default function BookAppointmentPage() {
               selectedDate={selectedDate}
               selectedTime={selectedTime}
               appointmentReason={appointmentReason}
-              clinics={mockClinics}
-              specialties={mockSpecialties}
-              doctors={mockDoctors}
-              formatDate={formatDate}
+              conditions={conditions || []}
             />
           )}
         </CardContent>
@@ -202,7 +233,7 @@ export default function BookAppointmentPage() {
           activeStep={activeStep}
           totalSteps={steps.length}
           canProceed={canProceed}
-          isSubmitting={isSubmitting}
+          isSubmitting={savePatientAppointment.isPending}
           onPrevStep={handlePrevStep}
           onNextStep={handleNextStep}
           onSubmit={handleSubmit}

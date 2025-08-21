@@ -10,7 +10,6 @@ import {
   Building,
   FileText,
   MapPin,
-  Phone,
   AlertTriangle,
   ArrowLeft,
   CalendarRange,
@@ -21,187 +20,111 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { TextArea } from '@/components/common/form';
-import { Label } from '@/components/ui/label';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-
-// Dummy appointment data
-const appointments = [
-  {
-    id: 'app-1',
-    doctorName: 'د. أحمد محمد',
-    doctorSpecialty: 'طب عام',
-    doctorImage: '/images/doctors/doctor-1.jpg',
-    clinicName: 'عيادة الطب العام',
-    clinicAddress: 'الطابق الثاني، المبنى الرئيسي',
-    clinicPhone: '0123456789',
-    date: '2025-08-10',
-    time: '10:00',
-    duration: 30, // minutes
-    status: 'confirmed', // confirmed, cancelled, completed
-    notes: 'فحص دوري',
-    createdAt: '2025-07-30',
-    instructions: 'يرجى إحضار التقارير الطبية السابقة وبطاقة التأمين.',
-    canCancel: true,
-    canReschedule: true,
-  },
-  {
-    id: 'app-2',
-    doctorName: 'د. سارة خالد',
-    doctorSpecialty: 'أسنان',
-    doctorImage: '/images/doctors/doctor-2.jpg',
-    clinicName: 'عيادة الأسنان',
-    clinicAddress: 'الطابق الثالث، المبنى الرئيسي',
-    clinicPhone: '0123456790',
-    date: '2025-08-15',
-    time: '14:30',
-    duration: 45, // minutes
-    status: 'confirmed',
-    notes: 'تنظيف أسنان',
-    createdAt: '2025-08-01',
-    instructions: 'يرجى تجنب تناول الطعام قبل الموعد بساعتين.',
-    canCancel: true,
-    canReschedule: true,
-  },
-  {
-    id: 'app-3',
-    doctorName: 'د. محمد علي',
-    doctorSpecialty: 'جلدية',
-    doctorImage: '/images/doctors/doctor-3.jpg',
-    clinicName: 'عيادة الجلدية',
-    clinicAddress: 'الطابق الأول، مبنى العيادات التخصصية',
-    clinicPhone: '0123456791',
-    date: '2025-07-25',
-    time: '09:15',
-    duration: 30, // minutes
-    status: 'completed',
-    notes: 'فحص حساسية جلدية',
-    createdAt: '2025-07-15',
-    instructions: '',
-    canCancel: false,
-    canReschedule: false,
-  },
-  {
-    id: 'app-4',
-    doctorName: 'د. فاطمة أحمد',
-    doctorSpecialty: 'عيون',
-    doctorImage: '/images/doctors/doctor-4.jpg',
-    clinicName: 'عيادة العيون',
-    clinicAddress: 'الطابق الثاني، مبنى العيادات التخصصية',
-    clinicPhone: '0123456792',
-    date: '2025-07-20',
-    time: '11:30',
-    duration: 30, // minutes
-    status: 'cancelled',
-    notes: 'فحص نظر',
-    createdAt: '2025-07-10',
-    instructions: '',
-    canCancel: false,
-    canReschedule: false,
-  },
-  {
-    id: 'app-5',
-    doctorName: 'د. خالد محمود',
-    doctorSpecialty: 'باطنية',
-    doctorImage: '/images/doctors/doctor-5.jpg',
-    clinicName: 'عيادة الباطنية',
-    clinicAddress: 'الطابق الرابع، المبنى الرئيسي',
-    clinicPhone: '0123456793',
-    date: '2025-08-20',
-    time: '13:00',
-    duration: 30, // minutes
-    status: 'confirmed',
-    notes: 'متابعة حالة',
-    createdAt: '2025-08-02',
-    instructions: 'يرجى الصيام لمدة 8 ساعات قبل الموعد.',
-    canCancel: true,
-    canReschedule: true,
-  },
-];
-
-// Get status badge variant and label
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case 'confirmed':
-      return {
-        variant: 'outline',
-        label: 'مؤكد',
-        color: 'text-green-500',
-      };
-    case 'cancelled':
-      return {
-        variant: 'destructive',
-        label: 'ملغي',
-        color: 'text-destructive',
-      };
-    case 'completed':
-      return {
-        variant: 'secondary',
-        label: 'مكتمل',
-        color: 'text-secondary-foreground',
-      };
-    default:
-      return {
-        variant: 'outline',
-        label: 'غير معروف',
-        color: 'text-muted-foreground',
-      };
-  }
-};
+import { Input } from '@/components/common/form';
+import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
+import { toast } from '@/components/ui/Toast';
+import { getAppointmentStatusStyle } from '@/utils/textUtils';
+import { AppointmentStatus } from '@/lib/api/types/appointment';
+import { formatDate } from '@/utils/dateTimeUtils';
+import { AppointmentDetailsSkeleton } from '@/components/skeletons/AppointmentDetailsSkeleton';
+import Modal from '@/components/common/Modal';
 
 export default function AppointmentDetailsPage() {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
-  const [showCancelDialog, setShowCancelDialog] = useState(false);
-  const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [showFollowUpModal, setShowFollowUpModal] = useState(false);
 
-  // Find appointment by ID
-  const appointment = appointments.find((app) => app.id === params.id);
+  // Follow-up appointment form state
+  const [followUpData, setFollowUpData] = useState({
+    preferredDate: '',
+    appointmentReason: '',
+  });
 
-  // Format date to Arabic format
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('ar-SA', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(date);
-  };
+  // Get appointment details from API
+  const {
+    useAppointmentDetails,
+    updatePatientAppointment,
+    bookFollowUpAppointment,
+  } = useClinicPatients();
+  const {
+    data: appointment,
+    isLoading: isLoadingAppointment,
+    error,
+  } = useAppointmentDetails(id);
 
   // Handle appointment cancellation
-  const handleCancelAppointment = () => {
-    setIsLoading(true);
+  const handleCancelAppointment = async () => {
+    if (!appointment) return;
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      setShowCancelDialog(false);
-      // Redirect to appointments page
-      router.push('/patient-portal/appointments');
-    }, 1500);
+    await updatePatientAppointment.mutateAsync({
+      id: appointment.id,
+      status: AppointmentStatus.Cancelled,
+      cancellationReason: cancelReason,
+    });
+
+    setShowCancelModal(false);
+    setCancelReason('');
+    router.push('/patient-portal/appointments');
   };
 
   // Handle appointment rescheduling
   const handleRescheduleAppointment = () => {
-    setIsLoading(true);
-
     // Simulate API call
     setTimeout(() => {
-      setIsLoading(false);
-      setShowRescheduleDialog(false);
+      setShowRescheduleModal(false);
       // Redirect to booking page with pre-filled data
-      router.push(`/patient-portal/appointments/book?reschedule=${params.id}`);
+      router.push(`/patient-portal/appointments/book?reschedule=${id}`);
     }, 1500);
   };
+
+  // Handle booking follow-up appointment
+  const handleBookFollowUp = async () => {
+    if (!appointment) return;
+
+    await bookFollowUpAppointment.mutateAsync({
+      originalAppointmentId: appointment.id,
+      preferredDate: followUpData.preferredDate || undefined,
+      appointmentReason: followUpData.appointmentReason,
+    });
+    setShowFollowUpModal(false);
+    router.push('/patient-portal/appointments');
+  };
+
+  // Reset follow-up form when modal opens
+  const handleOpenFollowUpModal = () => {
+    if (appointment) {
+      setFollowUpData({
+        preferredDate: '',
+        appointmentReason: `متابعة - ${appointment.notes || 'موعد متابعة'}`,
+      });
+    }
+    setShowFollowUpModal(true);
+  };
+
+  // Loading state
+  if (isLoadingAppointment) {
+    return <AppointmentDetailsSkeleton />;
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <AlertTriangle className="h-16 w-16 text-destructive mb-4" />
+        <h1 className="text-2xl font-bold mb-2">حدث خطأ</h1>
+        <p className="text-muted-foreground mb-6">
+          {error.message || 'حدث خطأ أثناء تحميل تفاصيل الموعد'}
+        </p>
+        <Button asChild>
+          <Link href="/patient-portal/appointments">العودة إلى المواعيد</Link>
+        </Button>
+      </div>
+    );
+  }
 
   // If appointment not found
   if (!appointment) {
@@ -219,6 +142,10 @@ export default function AppointmentDetailsPage() {
       </div>
     );
   }
+
+  const statusStyle = getAppointmentStatusStyle(appointment.status);
+  const canCancel = appointment.status == AppointmentStatus.Pending;
+  const canReschedule = false;
 
   return (
     <div className="space-y-6">
@@ -246,51 +173,20 @@ export default function AppointmentDetailsPage() {
         <CardContent className="p-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-4">
-              <div
-                className={`rounded-full p-3 ${
-                  appointment.status === 'confirmed'
-                    ? 'bg-green-500/10'
-                    : appointment.status === 'cancelled'
-                    ? 'bg-destructive/10'
-                    : 'bg-secondary/10'
-                }`}
-              >
-                <Calendar
-                  className={`h-6 w-6 ${
-                    appointment.status === 'confirmed'
-                      ? 'text-green-500'
-                      : appointment.status === 'cancelled'
-                      ? 'text-destructive'
-                      : 'text-secondary-foreground'
-                  }`}
-                />
+              <div className={`rounded-full p-3 ${statusStyle.bgClass}`}>
+                <Calendar className={`h-6 w-6 ${statusStyle.textClass}`} />
               </div>
               <div>
                 <h2 className="text-xl font-semibold">
                   {appointment.doctorName}
                 </h2>
                 <p className="text-muted-foreground">
-                  {appointment.doctorSpecialty} - {appointment.clinicName}
+                  {appointment.doctorSpecialization} - {appointment.clinicName}
                 </p>
               </div>
             </div>
-            <Badge
-              variant={
-                appointment.status === 'confirmed'
-                  ? 'outline'
-                  : appointment.status === 'cancelled'
-                  ? 'destructive'
-                  : 'secondary'
-              }
-              className={`text-sm px-3 py-1 ${
-                appointment.status === 'confirmed'
-                  ? 'border-green-500/50 text-green-500 bg-green-500/10'
-                  : appointment.status === 'cancelled'
-                  ? ''
-                  : 'border-secondary/50'
-              }`}
-            >
-              {getStatusBadge(appointment.status).label}
+            <Badge className={`text-sm px-3 py-1 ${statusStyle.className}`}>
+              {statusStyle.label}
             </Badge>
           </div>
         </CardContent>
@@ -328,7 +224,7 @@ export default function AppointmentDetailsPage() {
               <div>
                 <p className="font-medium">الوقت</p>
                 <p className="text-muted-foreground">
-                  {appointment.time} ({appointment.duration} دقيقة)
+                  {appointment.timeRange}{' '}
                 </p>
               </div>
             </div>
@@ -345,44 +241,59 @@ export default function AppointmentDetailsPage() {
               </div>
             )}
 
+            {appointment.cancellationReason && (
+              <div className="flex items-start gap-3">
+                <div className="rounded-full p-1 bg-red-500/10 mt-0.5">
+                  <X className="h-4 w-4 text-red-500" />
+                </div>
+                <div>
+                  <p className="font-medium">سبب الإلغاء</p>
+                  <p className="text-muted-foreground">
+                    {appointment.cancellationReason}
+                  </p>
+                </div>
+              </div>
+            )}
+
             <Separator className="my-2 bg-border/50" />
 
             <div className="space-y-3 pt-2">
-              {appointment.status === 'confirmed' && appointment.canCancel && (
+              {canCancel && (
                 <Button
                   variant="outline"
-                  className="w-full justify-start text-destructive border-destructive/20 hover:bg-destructive/10"
-                  onClick={() => setShowCancelDialog(true)}
+                  className="w-full justify-start text-destructive  hover:text-destructive-800 border-destructive/20 hover:bg-destructive/10"
+                  onClick={() => setShowCancelModal(true)}
+                  disabled={updatePatientAppointment.isPending}
                 >
                   <X className="mr-2 h-4 w-4" />
-                  إلغاء الموعد
+                  {updatePatientAppointment.isPending
+                    ? 'جاري الإلغاء...'
+                    : 'إلغاء الموعد'}
                 </Button>
               )}
 
-              {appointment.status === 'confirmed' &&
-                appointment.canReschedule && (
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start border-blue-500/20 text-blue-500 hover:bg-blue-500/10"
-                    onClick={() => setShowRescheduleDialog(true)}
-                  >
-                    <CalendarRange className="mr-2 h-4 w-4" />
-                    إعادة جدولة الموعد
-                  </Button>
-                )}
-
-              {appointment.status === 'completed' && (
+              {canReschedule && (
                 <Button
                   variant="outline"
-                  className="w-full justify-start border-green-500/20 text-green-500 hover:bg-green-500/10"
-                  asChild
+                  className="w-full justify-start border-blue-500/20 text-blue-500 hover:bg-blue-500/10"
+                  onClick={() => setShowRescheduleModal(true)}
                 >
-                  <Link href="/patient-portal/appointments/book">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    حجز موعد متابعة
-                  </Link>
+                  <CalendarRange className="mr-2 h-4 w-4" />
+                  إعادة جدولة الموعد
                 </Button>
               )}
+
+              {/* Follow-up appointment button */}
+              {/* {appointment.status == AppointmentStatus.Completed && ( */}
+              <Button
+                variant="outline"
+                className="w-full justify-start hover:text-green-800 border-green-500/20 text-green-500 hover:bg-green-500/10"
+                onClick={handleOpenFollowUpModal}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                حجز موعد متابعة
+              </Button>
+              {/* )} */}
             </div>
           </CardContent>
         </Card>
@@ -390,7 +301,7 @@ export default function AppointmentDetailsPage() {
         {/* Right column: Doctor and clinic info */}
         <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200 md:col-span-2">
           <CardHeader className="bg-muted/30 backdrop-blur-sm border-b border-border/50 pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-lg ">
               <div className="rounded-full p-1 bg-purple-500/10">
                 <User className="h-4 w-4 text-purple-500" />
               </div>
@@ -408,7 +319,7 @@ export default function AppointmentDetailsPage() {
                   {appointment.doctorName}
                 </h3>
                 <p className="text-muted-foreground">
-                  {appointment.doctorSpecialty}
+                  {appointment.doctorSpecialization}
                 </p>
               </div>
             </div>
@@ -436,113 +347,166 @@ export default function AppointmentDetailsPage() {
                 <div>
                   <p className="font-medium">العنوان</p>
                   <p className="text-muted-foreground">
-                    {appointment.clinicAddress}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="rounded-full p-1 bg-blue-500/10 mt-0.5">
-                  <Phone className="h-4 w-4 text-blue-500" />
-                </div>
-                <div>
-                  <p className="font-medium">رقم الهاتف</p>
-                  <p className="text-muted-foreground">
-                    {appointment.clinicPhone}
+                    {appointment.clinicAddress || '-'}
                   </p>
                 </div>
               </div>
             </div>
 
-            {appointment.instructions && (
-              <>
-                <Separator className="bg-border/50" />
-                <div className="rounded-md bg-muted/30 p-4 border border-border/50">
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full p-1 bg-amber-500/10 mt-0.5">
-                      <AlertTriangle className="h-4 w-4 text-amber-500" />
-                    </div>
-                    <div>
-                      <p className="font-medium">تعليمات</p>
-                      <p className="text-muted-foreground">
-                        {appointment.instructions}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
+            {/* Appointment number */}
+            <div className="flex items-start gap-3">
+              <div className="rounded-full p-1 bg-blue-500/10 mt-0.5">
+                <FileText className="h-4 w-4 text-blue-500" />
+              </div>
+              <div>
+                <p className="font-medium">رقم الموعد</p>
+                <p className="text-muted-foreground">
+                  {appointment.appointmentNumber}
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Cancel Dialog */}
-      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>إلغاء الموعد</DialogTitle>
-            <DialogDescription>
-              هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟ لا يمكن التراجع عن هذا
-              الإجراء.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="reason">سبب الإلغاء (اختياري)</Label>
-              <TextArea
-                id="reason"
-                placeholder="يرجى ذكر سبب الإلغاء..."
-                value={cancelReason}
-                onChange={(e) => setCancelReason(e.target.value)}
-                className="min-h-[100px]"
-              />
-            </div>
-          </div>
-          <DialogFooter>
+      {/* Cancel Modal */}
+      <Modal
+        isOpen={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        title="إلغاء الموعد"
+        maxWidth="2xl"
+        footer={
+          <div className="flex justify-end gap-3">
             <Button
               variant="outline"
-              onClick={() => setShowCancelDialog(false)}
-              disabled={isLoading}
+              onClick={() => setShowCancelModal(false)}
+              disabled={updatePatientAppointment.isPending}
             >
               إلغاء
             </Button>
             <Button
               variant="destructive"
               onClick={handleCancelAppointment}
-              disabled={isLoading}
+              isLoading={updatePatientAppointment.isPending}
             >
-              {isLoading ? 'جاري الإلغاء...' : 'تأكيد الإلغاء'}
+              تأكيد الإلغاء
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Reschedule Dialog */}
-      <Dialog
-        open={showRescheduleDialog}
-        onOpenChange={setShowRescheduleDialog}
+          </div>
+        }
       >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>إعادة جدولة الموعد</DialogTitle>
-            <DialogDescription>
-              سيتم توجيهك إلى صفحة حجز المواعيد لاختيار وقت جديد.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
+        <div className="space-y-4">
+          <p className="text-muted-foreground">
+            هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟ لا يمكن التراجع عن هذا
+            الإجراء.
+          </p>
+          <div className="space-y-2">
+            <TextArea
+              id="reason"
+              label="سبب الإلغاء (اختياري)"
+              placeholder="يرجى ذكر سبب الإلغاء..."
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              className="min-h-[100px]"
+            />
+          </div>
+        </div>
+      </Modal>
+
+      {/* Reschedule Modal */}
+      <Modal
+        isOpen={showRescheduleModal}
+        onClose={() => setShowRescheduleModal(false)}
+        title="إعادة جدولة الموعد"
+        maxWidth="2xl"
+        footer={
+          <div className="flex justify-end gap-3">
             <Button
               variant="outline"
-              onClick={() => setShowRescheduleDialog(false)}
-              disabled={isLoading}
+              onClick={() => setShowRescheduleModal(false)}
+              disabled={updatePatientAppointment.isPending}
             >
               إلغاء
             </Button>
-            <Button onClick={handleRescheduleAppointment} disabled={isLoading}>
-              {isLoading ? 'جاري التوجيه...' : 'متابعة'}
+            <Button
+              onClick={handleRescheduleAppointment}
+              isLoading={updatePatientAppointment.isPending}
+            >
+              متابعة
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+        }
+      >
+        <p className="text-muted-foreground">
+          سيتم توجيهك إلى صفحة حجز المواعيد لاختيار وقت جديد.
+        </p>
+      </Modal>
+
+      {/* Follow-up Appointment Modal */}
+      <Modal
+        isOpen={showFollowUpModal}
+        onClose={() => setShowFollowUpModal(false)}
+        title="حجز موعد متابعة"
+        maxWidth="2xl"
+        footer={
+          <div className="flex justify-end gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowFollowUpModal(false)}
+              disabled={bookFollowUpAppointment.isPending}
+            >
+              إلغاء
+            </Button>
+            <Button
+              onClick={handleBookFollowUp}
+              isLoading={bookFollowUpAppointment.isPending}
+            >
+              حجز الموعد
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-muted-foreground">
+            سيتم حجز موعد متابعة مع نفس الطبيب والعيادة. يمكنك اختيار التاريخ
+            المفضل وسبب الموعد.
+          </p>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <Input
+              type="date"
+              label="التاريخ المفضل (اختياري)"
+              value={followUpData.preferredDate}
+              onChange={(e) =>
+                setFollowUpData((prev) => ({
+                  ...prev,
+                  preferredDate: e.target.value,
+                }))
+              }
+              min={new Date().toISOString().split('T')[0]} // Today as minimum date
+            />
+          </div>
+
+          <TextArea
+            label="سبب الموعد"
+            placeholder="يرجى ذكر سبب الموعد..."
+            value={followUpData.appointmentReason}
+            onChange={(e) =>
+              setFollowUpData((prev) => ({
+                ...prev,
+                appointmentReason: e.target.value,
+              }))
+            }
+            className="min-h-[100px]"
+          />
+
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              <strong>ملاحظة:</strong> إذا لم تختر تاريخاً، سيتم حجز الموعد بعد
+              أسبوعين من اليوم.
+            </p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

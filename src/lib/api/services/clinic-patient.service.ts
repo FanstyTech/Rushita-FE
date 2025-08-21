@@ -32,6 +32,8 @@ import {
   UpdatePatientHealthMetricDto,
   UpdatePatientPrescriptionDto,
   UpdatePatientPortalProfileDto,
+  SavePatientAppointmentDto,
+  BookFollowUpAppointmentDto,
 } from '../types/clinic-patient';
 import { PaginationResponse } from '../types/pagination';
 import { SelectOption } from '../types/select-option';
@@ -203,7 +205,7 @@ class ClinicPatientService {
 
   async updatePatientAppointment(
     data: UpdatePatientAppointmentDto
-  ): Promise<ApiResponse<PatientPortalAppointmentsDto>> {
+  ): Promise<ApiResponse<void>> {
     return apiClient.put(
       API_ENDPOINTS.CLINIC_PATIENTS.UPDATE_PATIENT_APPOINTMENT,
       data
@@ -238,6 +240,57 @@ class ClinicPatientService {
       API_ENDPOINTS.CLINIC_PATIENTS.UPDATE_PATIENT_PRESCRIPTION,
       data
     );
+  }
+
+  // Save patient appointment
+  async savePatientAppointment(
+    data: SavePatientAppointmentDto
+  ): Promise<ApiResponse<void>> {
+    return apiClient.post(API_ENDPOINTS.CLINIC_PATIENTS.SAVE_APPOINTMENT, data);
+  }
+
+  /**
+   * Get appointment details by appointment ID for patient portal
+   * @param appointmentId - The ID of the appointment
+   * @returns Promise<ApiResponse<PatientPortalAppointmentsDto>>
+   */
+  async getAppointmentDetails(
+    appointmentId: string
+  ): Promise<ApiResponse<PatientPortalAppointmentsDto>> {
+    return apiClient.get(
+      API_ENDPOINTS.CLINIC_PATIENTS.GET_APPOINTMENT_DETAILS,
+      {
+        params: { id: appointmentId },
+      }
+    );
+  }
+
+  /**
+   * Book a follow-up appointment based on an existing appointment
+   * @param data - Follow-up appointment data
+   * @returns Promise<ApiResponse<PatientPortalAppointmentsDto>>
+   */
+  async bookFollowUpAppointment(
+    data: BookFollowUpAppointmentDto
+  ): Promise<ApiResponse<PatientPortalAppointmentsDto>> {
+    return apiClient.post(
+      API_ENDPOINTS.CLINIC_PATIENTS.BOOK_FOLLOW_UP_APPOINTMENT,
+      data
+    );
+  }
+
+  /**
+   * Get visit details by visit ID
+   * @param visitId - The ID of the visit
+   * @returns Promise<ApiResponse<PatientPortalVisitsDto>>
+   */
+
+  async getVisitDetails(
+    visitId: string
+  ): Promise<ApiResponse<PatientPortalVisitsDto>> {
+    return apiClient.get(API_ENDPOINTS.CLINIC_PATIENTS.GET_VISIT_DETAILS, {
+      params: { id: visitId },
+    });
   }
 }
 

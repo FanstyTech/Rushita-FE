@@ -1,5 +1,5 @@
 import { DosageForm, MedicineStrength } from './medicine';
-import { PaginationRequest, PaginationResponse } from './pagination';
+import { PaginationRequest } from './pagination';
 
 // Prescription status enum
 export enum PrescriptionStatus {

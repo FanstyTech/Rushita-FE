@@ -36,7 +36,7 @@ export function AppointmentsCard({
 
   return (
     <motion.div variants={variants}>
-      <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50 h-full">
+      <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50 h-full flex flex-col">
         <CardHeader className="p-6 pb-0">
           <div className="flex items-center justify-between mb-1">
             <CardTitle className="flex items-center text-lg">
@@ -54,80 +54,62 @@ export function AppointmentsCard({
             {t('patientPortal.dashboard.appointments.description')}
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-6 flex-1">
           {appointments.length > 0 ? (
-            <div className="space-y-5">
+            <div className="space-y-3">
               {appointments.map((appointment) => (
                 <div
                   key={appointment.id}
-                  className="group relative flex flex-col gap-3 rounded-lg p-3 transition-all hover:bg-accent/50"
+                  className="group relative rounded-lg border border-border/30 p-3 transition-all hover:bg-accent/50 hover:border-border/50"
                 >
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-11 w-11 border-2 border-primary/10 shadow-sm">
-                      <AvatarImage
-                        // src={appointment.doctorAvatar}
-                        alt={appointment.doctorName}
-                      />
-                      <AvatarFallback className="bg-primary/10 text-primary font-medium">
-                        {appointment.doctorName.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium text-base">
-                            {appointment.doctorName}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            {appointment.doctorSpecialization}
-                          </p>
-                        </div>
-                        <Badge
-                          className={cn(
-                            getAppointmentStatusClass(appointment.status)
-                          )}
-                        >
-                          {getAppointmentStatusLabel(appointment.status)}
-                        </Badge>
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <Calendar className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-sm leading-tight">
+                          {appointment.doctorName}
+                        </h4>
+                        <p className="text-xs text-muted-foreground">
+                          {appointment.doctorSpecialization}
+                        </p>
                       </div>
                     </div>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "text-xs",
+                        getAppointmentStatusClass(appointment.status)
+                      )}
+                    >
+                      {getAppointmentStatusLabel(appointment.status)}
+                    </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between mt-1 text-sm">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center">
-                        <Calendar className="h-3.5 w-3.5 mr-1.5 text-primary/70" />
-                        <span>{formatDate(appointment.date)}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Clock className="h-3.5 w-3.5 mr-1.5 text-primary/70" />
-                        <span>{appointment.startTime}</span>
-                      </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center gap-3">
+                      <span>{formatDate(appointment.date)}</span>
+                      <span className="flex items-center">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {appointment.startTime}
+                      </span>
                     </div>
-                    <div className="text-xs px-2 py-0.5 rounded-full bg-muted">
+                    <span className="px-2 py-0.5 rounded-full bg-muted text-xs">
                       {appointment.clinicName}
-                    </div>
+                    </span>
                   </div>
-
-                  {appointment.notes && (
-                    <div className="mt-1 text-xs bg-muted/50 p-2 rounded-md text-muted-foreground">
-                      <span className="font-medium">
-                        {t('patientPortal.dashboard.appointments.notes')}
-                      </span>{' '}
-                      {appointment.notes}
-                    </div>
-                  )}
 
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="absolute top-0 right-0 h-8 w-8 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 h-6 w-6 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     asChild
                   >
                     <Link
                       href={`/patient-portal/appointments/${appointment.id}`}
                     >
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronRight className="h-3 w-3" />
                     </Link>
                   </Button>
                 </div>

@@ -14,6 +14,7 @@ import {
   PatientPrescriptionFilterDto,
   UpdatePatientAppointmentDto,
   UpdatePatientPrescriptionDto,
+  SavePatientAppointmentDto,
 } from '../types/clinic-patient';
 // Replace the problematic query keys section with this:
 const patientPortalQueryKeys = {
@@ -327,6 +328,7 @@ export function useClinicPatients() {
     onError: (error: Error) => {
       toast.error(error.message);
     },
+    retry: false,
   });
 
   // Delete emergency contact mutation
@@ -347,6 +349,7 @@ export function useClinicPatients() {
     onError: (error: Error) => {
       toast.error(error.message);
     },
+    retry: false,
   });
 
   // Patient Portal Dashboard
@@ -368,7 +371,9 @@ export function useClinicPatients() {
     useQuery({
       queryKey: ['clinic-patients', 'appointments', filters],
       queryFn: async () => {
-        const response = await clinicPatientService.getPatientAppointments(filters);
+        const response = await clinicPatientService.getPatientAppointments(
+          filters
+        );
         if (!response.success) {
           throw new Error(response.message || 'Failed to fetch appointments');
         }
@@ -379,7 +384,9 @@ export function useClinicPatients() {
 
   const updatePatientAppointment = useMutation({
     mutationFn: async (data: UpdatePatientAppointmentDto) => {
-      const response = await clinicPatientService.updatePatientAppointment(data);
+      const response = await clinicPatientService.updatePatientAppointment(
+        data
+      );
       if (!response.success) {
         throw new Error(response.message || 'Failed to update appointment');
       }
@@ -387,18 +394,15 @@ export function useClinicPatients() {
     },
     onSuccess: (data) => {
       toast.success('Appointment updated successfully');
-      if (data?.id) {
-        queryClient.invalidateQueries({ 
-          queryKey: ['clinic-patients', 'appointments'],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['clinic-patients', 'portal-dashboard'],
-        });
-      }
+      queryClient.invalidateQueries({
+        queryKey: ['clinic-patients', 'appointments'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['clinic-patients', 'portal-dashboard'],
+      });
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
+
+    retry: false,
   });
 
   // Patient Portal Visits
@@ -420,7 +424,9 @@ export function useClinicPatients() {
     useQuery({
       queryKey: ['clinic-patients', 'prescriptions', filters],
       queryFn: async () => {
-        const response = await clinicPatientService.getPatientPrescriptions(filters);
+        const response = await clinicPatientService.getPatientPrescriptions(
+          filters
+        );
         if (!response.success) {
           throw new Error(response.message || 'Failed to fetch prescriptions');
         }
@@ -431,7 +437,9 @@ export function useClinicPatients() {
 
   const updatePatientPrescription = useMutation({
     mutationFn: async (data: UpdatePatientPrescriptionDto) => {
-      const response = await clinicPatientService.updatePatientPrescription(data);
+      const response = await clinicPatientService.updatePatientPrescription(
+        data
+      );
       if (!response.success) {
         throw new Error(response.message || 'Failed to update prescription');
       }
@@ -440,7 +448,7 @@ export function useClinicPatients() {
     onSuccess: (data) => {
       toast.success('Prescription updated successfully');
       if (data?.id) {
-        queryClient.invalidateQueries({ 
+        queryClient.invalidateQueries({
           queryKey: ['clinic-patients', 'prescriptions'],
         });
         queryClient.invalidateQueries({
@@ -451,6 +459,63 @@ export function useClinicPatients() {
     onError: (error: Error) => {
       toast.error(error.message);
     },
+    retry: false,
+  });
+
+  // Save patient appointment mutation
+  const savePatientAppointment = useMutation({
+    mutationFn: async (data: SavePatientAppointmentDto) => {
+      const response = await clinicPatientService.savePatientAppointment(data);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to save appointment');
+      }
+    },
+    onSuccess: () => {
+      toast.success('تم حجز الموعد بنجاح!');
+      // Invalidate appointments queries
+      queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-portal-dashboard'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+    retry: false,
+  });
+
+  const useAppointmentDetails = (appointmentId: string) =>
+    useQuery({
+      queryKey: ['appointment-details', appointmentId],
+      queryFn: async () => {
+        const response = await clinicPatientService.getAppointmentDetails(
+          appointmentId
+        );
+
+        return response.result;
+      },
+      enabled: !!appointmentId,
+      retry: false,
+    });
+
+  const useVisitDetails = (visitId: string) =>
+    useQuery({
+      queryKey: ['visit-details', visitId],
+      queryFn: async () => {
+        const response = await clinicPatientService.getVisitDetails(visitId);
+
+        return response.result;
+      },
+      enabled: !!visitId,
+      retry: false,
+    });
+
+  const bookFollowUpAppointment = useMutation({
+    mutationFn: clinicPatientService.bookFollowUpAppointment,
+    onSuccess: () => {
+      toast.success('Follow-up appointment booked successfully!');
+      queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-portal-dashboard'] });
+    },
+    retry: false,
   });
 
   return {
@@ -481,5 +546,9 @@ export function useClinicPatients() {
     usePatientVisits,
     usePatientPrescriptions,
     updatePatientPrescription,
+    savePatientAppointment,
+    useAppointmentDetails,
+    useVisitDetails,
+    bookFollowUpAppointment,
   };
 }

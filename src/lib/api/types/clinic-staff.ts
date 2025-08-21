@@ -21,12 +21,12 @@ export interface ClinicStaffDto {
   email: string;
   address: string;
   name: string;
-  specialization:string;
+  specialization: string;
   phoneNumber: string;
-  dateOfBirth?: string; 
-  clinicId : string,
-  personId : string,
-  specialtyId:string 
+  dateOfBirth?: string;
+  clinicId: string;
+  personId: string;
+  specialtyId: string;
 }
 
 export interface UpdateClinicStaffStatusDto {
@@ -69,6 +69,7 @@ export interface ChangeStaffPasswordDto {
 }
 export interface GetClinicStaffForDropdownInput {
   clinicId?: string;
+  specialtyId?: string;
   filter?: string;
   all?: boolean | true;
 }

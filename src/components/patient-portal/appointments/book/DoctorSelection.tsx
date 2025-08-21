@@ -2,37 +2,17 @@
 
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User } from 'lucide-react';
-
-interface Doctor {
-  id: string;
-  name: string;
-  specialty: string;
-  clinicId: string;
-  image?: string;
-}
-
-interface Specialty {
-  id: string;
-  name: string;
-}
-
-interface Clinic {
-  id: string;
-  name: string;
-}
+import { SelectOption } from '@/lib/api/types/select-option';
 
 interface DoctorSelectionProps {
-  doctors: Doctor[];
-  specialties: Specialty[];
-  clinics: Clinic[];
-  selectedDoctor: string | null;
-  onDoctorSelect: (doctorId: string) => void;
+  doctors: SelectOption<string>[];
+  selectedSpecialty: SelectOption | null;
+  selectedClinic: SelectOption | null;
+  selectedDoctor: SelectOption | null;
+  onDoctorSelect: (doctor: SelectOption) => void;
   onPrevStep: () => void;
 }
 
@@ -51,13 +31,13 @@ const itemVariants = {
   show: { opacity: 1, y: 0 },
 };
 
-export function DoctorSelection({ 
-  doctors, 
-  specialties, 
-  clinics, 
-  selectedDoctor, 
-  onDoctorSelect, 
-  onPrevStep 
+export function DoctorSelection({
+  doctors,
+  selectedSpecialty,
+  selectedClinic,
+  selectedDoctor,
+  onDoctorSelect,
+  onPrevStep,
 }: DoctorSelectionProps) {
   return (
     <motion.div
@@ -70,27 +50,27 @@ export function DoctorSelection({
       {doctors.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {doctors.map((doctor) => (
-            <motion.div key={doctor.id} variants={itemVariants}>
+            <motion.div key={doctor.value} variants={itemVariants}>
               <Card
                 className={cn(
                   'cursor-pointer transition-all duration-200 hover:shadow-md backdrop-blur-sm',
-                  selectedDoctor === doctor.id
+                  selectedDoctor?.value === doctor.value
                     ? 'border-primary bg-primary/5'
                     : 'border-border/50 bg-card/80'
                 )}
-                onClick={() => onDoctorSelect(doctor.id)}
+                onClick={() => onDoctorSelect(doctor)}
               >
                 <CardContent className="flex items-center gap-4 p-4">
                   <div className="h-16 w-16 rounded-full bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center overflow-hidden">
                     <User className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-medium">{doctor.name}</h3>
+                    <h3 className="font-medium">{doctor.label}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {specialties.find((s) => s.id === doctor.specialty)?.name}
+                      {selectedSpecialty?.label}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {clinics.find((c) => c.id === doctor.clinicId)?.name}
+                      {selectedClinic?.label}
                     </p>
                   </div>
                 </CardContent>
@@ -102,9 +82,7 @@ export function DoctorSelection({
         <Card className="backdrop-blur-sm bg-card/80 border border-border/50">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <User className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium">
-              لم يتم العثور على أطباء
-            </h3>
+            <h3 className="text-lg font-medium">لم يتم العثور على أطباء</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               لم يتم العثور على أطباء في هذا التخصص، يرجى اختيار تخصص آخر
             </p>

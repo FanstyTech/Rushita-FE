@@ -34,7 +34,7 @@ export function RecentVisitsCard({ visits, variants }: RecentVisitsCardProps) {
 
   return (
     <motion.div variants={variants}>
-      <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50 h-full">
+      <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50 h-full flex flex-col">
         <CardHeader className="p-6 pb-0">
           <div className="flex items-center justify-between mb-1">
             <CardTitle className="flex items-center text-lg">
@@ -52,89 +52,58 @@ export function RecentVisitsCard({ visits, variants }: RecentVisitsCardProps) {
             {t('patientPortal.dashboard.recentVisits.description')}
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-6 flex-1">
           {visits.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {visits.map((visit) => (
                 <div
                   key={visit.id}
-                  className="group relative flex flex-col gap-2 rounded-lg p-3 transition-all hover:bg-accent/50"
+                  className="group relative rounded-lg border border-border/30 p-3 transition-all hover:bg-accent/50 hover:border-border/50"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-11 w-11 border-2 border-primary/10 shadow-sm">
-                        <AvatarImage
-                          // src={visit.doctorAvatar}
-                          alt={visit.doctorName}
-                        />
-                        <AvatarFallback className="bg-primary/10 text-primary font-medium">
-                          {visit.doctorName.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <Stethoscope className="h-4 w-4 text-primary" />
+                      </div>
                       <div>
-                        <h4 className="font-medium text-base">
+                        <h4 className="font-medium text-sm leading-tight">
                           {visit.doctorName}
                         </h4>
-                        <p className="text-sm text-muted-foreground">
-                          {/* {visit.specialty}  */}
-                          todo - {visit.clinicName}
+                        <p className="text-xs text-muted-foreground">
+                          {visit.clinicName}
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col items-end">
-                      <div className="text-xs px-2 py-0.5 rounded-full bg-muted">
-                        {/* {formatRelativeTime(visit.date)} */}
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {formatDate(visit.createdAt)}
-                      </p>
-                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {visit.type || 'Visit'}
+                    </Badge>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {visit.symptoms && (
-                      <div className="text-xs px-2 py-0.5 rounded-full bg-muted flex items-center">
-                        <FileText className="h-3 w-3 mr-1" />
-                        <span>{visit.symptoms}</span>
-                      </div>
-                    )}
-                    {visit.type && (
-                      <div className="text-xs px-2 py-0.5 rounded-full bg-muted flex items-center">
-                        <Tag className="h-3 w-3 mr-1" />
-                        <span>{visit.type}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {visit.diagnoses && (
-                    <div className="mt-2 text-xs bg-muted/50 p-2 rounded-md text-muted-foreground">
-                      <span className="font-medium">
-                        {t('patientPortal.dashboard.recentVisits.diagnosis')}
-                      </span>{' '}
-                      {visit.diagnoses
-                        .map((diagnosis) => diagnosis.description)
-                        .join(', ')}
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center gap-3">
+                      <span>{formatDate(visit.createdAt)}</span>
+                      {visit.symptoms && (
+                        <span className="flex items-center">
+                          <FileText className="h-3 w-3 mr-1" />
+                          {visit.symptoms.length > 20 ? `${visit.symptoms.substring(0, 20)}...` : visit.symptoms}
+                        </span>
+                      )}
                     </div>
-                  )}
-
-                  {visit.nextVisitDate && visit.nextVisitDate && (
-                    <div className="mt-1 text-xs flex items-center text-primary">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      <span>
-                        {t('patientPortal.dashboard.recentVisits.followUp')}{' '}
-                        {formatDate(visit.nextVisitDate)}
+                    {visit.nextVisitDate && (
+                      <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">
+                        Follow-up
                       </span>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="absolute top-0 right-0 h-8 w-8 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 h-6 w-6 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     asChild
                   >
                     <Link href={`/patient-portal/visits/${visit.id}`}>
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronRight className="h-3 w-3" />
                     </Link>
                   </Button>
                 </div>

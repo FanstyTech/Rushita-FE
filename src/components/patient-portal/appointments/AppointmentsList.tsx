@@ -4,19 +4,12 @@ import { motion } from 'framer-motion';
 import Skeleton from '@/components/ui/Skeleton';
 import { AppointmentCard } from './AppointmentCard';
 import { EmptyState } from './EmptyState';
-import { Appointment } from './types';
+import { PatientPortalAppointmentsDto } from '@/lib/api/types/clinic-patient';
 
 interface AppointmentsListProps {
-  appointments: Appointment[];
+  appointments: PatientPortalAppointmentsDto[];
   isLoading: boolean;
   activeTab: string;
-  isEditing: boolean;
-  editingAppointmentId: string | null;
-  formData: any;
-  onCancel: () => void;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSelectChange: (name: string, value: string) => void;
-  getStatusBadge: (status: string) => any;
 }
 
 const containerVariants = {
@@ -46,13 +39,6 @@ export function AppointmentsList({
   appointments,
   isLoading,
   activeTab,
-  isEditing,
-  editingAppointmentId,
-  formData,
-  onCancel,
-  onInputChange,
-  onSelectChange,
-  getStatusBadge,
 }: AppointmentsListProps) {
   if (isLoading) {
     return (
@@ -79,13 +65,6 @@ export function AppointmentsList({
         <AppointmentCard
           key={appointment.id}
           appointment={appointment}
-          isEditing={isEditing}
-          editingAppointmentId={editingAppointmentId}
-          formData={formData}
-          onCancel={onCancel}
-          onInputChange={onInputChange}
-          onSelectChange={onSelectChange}
-          getStatusBadge={getStatusBadge}
           variants={itemVariants}
         />
       ))}

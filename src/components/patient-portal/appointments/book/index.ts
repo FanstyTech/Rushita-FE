@@ -8,4 +8,3 @@ export { AppointmentConfirmation } from './AppointmentConfirmation';
 export { BookingFooter } from './BookingFooter';
 export * from './types';
 export * from './utils';
-export * from './mockData';

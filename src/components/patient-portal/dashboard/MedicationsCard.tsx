@@ -24,6 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { PatientPortalPrescriptionsDto } from '@/lib/api/types/clinic-patient';
 import { formatDate } from '@/utils/dateTimeUtils';
+import { getFrequencyTypeClass, getFrequencyTypeLabel } from '@/utils/textUtils';
 
 interface MedicationsCardProps {
   medications: PatientPortalPrescriptionsDto[];
@@ -36,33 +37,10 @@ export function MedicationsCard({
 }: MedicationsCardProps) {
   const { t } = useTranslation();
 
-  // Get frequency display info
-  const getFrequencyInfo = (frequency: string) => {
-    switch (frequency) {
-      case 'high':
-        return {
-          color: 'bg-destructive/10 text-destructive',
-          badgeVariant: 'destructive',
-          label: t('patientPortal.dashboard.medications.priority.high'),
-        };
-      case 'medium':
-        return {
-          color: 'bg-warning/10 text-warning',
-          badgeVariant: 'warning',
-          label: t('patientPortal.dashboard.medications.priority.medium'),
-        };
-      default:
-        return {
-          color: 'bg-primary/10 text-primary',
-          badgeVariant: 'outline',
-          label: t('patientPortal.dashboard.medications.priority.normal'),
-        };
-    }
-  };
 
   return (
     <motion.div variants={variants}>
-      <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50 h-full">
+      <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50 h-full flex flex-col">
         <CardHeader className="p-6 pb-3">
           <div className="flex items-center justify-between mb-2">
             <CardTitle className="flex items-center text-lg">
@@ -71,7 +49,7 @@ export function MedicationsCard({
               </div>
               {t('patientPortal.dashboard.medications.title')}
             </CardTitle>
-            <Badge variant="secondary" className="font-normal px-2.5 py-1">
+            <Badge variant="outline" className="font-normal">
               {medications.length}{' '}
               {t('patientPortal.dashboard.medications.medicationsCount')}
             </Badge>
@@ -80,99 +58,69 @@ export function MedicationsCard({
             {t('patientPortal.dashboard.medications.description')}
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-6 pt-3">
+        <CardContent className="p-6 pt-3 flex-1">
           {medications.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {medications.map((medication) => {
-                const frequencyInfo = getFrequencyInfo(medication.frequency);
 
                 return (
                   <div
                     key={medication.id}
-                    className="group relative flex flex-col gap-2 rounded-lg border border-border/30 p-4 transition-all hover:bg-accent/50 hover:border-border/70"
+                    className="group relative rounded-lg border border-border/30 p-3 transition-all hover:bg-accent/50 hover:border-border/50"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
                         <div
                           className={cn(
-                            'h-12 w-12 rounded-full flex items-center justify-center shrink-0',
-                            frequencyInfo.color
+                            'h-8 w-8 rounded-full flex items-center justify-center shrink-0',
+                            getFrequencyTypeClass(medication.frequency)
                           )}
                         >
-                          <Pill className="h-6 w-6" />
+                          <Pill className="h-4 w-4" />
                         </div>
                         <div>
-                          <h4 className="font-medium text-base">
+                          <h4 className="font-medium text-sm leading-tight">
                             {medication.medicineName}
                           </h4>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-xs text-muted-foreground">
                             {medication.dosage}
                           </p>
                         </div>
                       </div>
-                      {/* <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Badge
-                              variant={frequencyInfo.badgeVariant as any}
-                              className="text-xs font-normal"
-                            >
-                              {frequencyInfo.label}
-                            </Badge>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>
-                              {t(
-                                'patientPortal.dashboard.medications.frequencyTooltip'
-                              )}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider> */}
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "text-xs",
+                          getFrequencyTypeClass(medication.frequency)
+                        )}
+                      >
+                        {getFrequencyTypeLabel(medication.frequency)}
+                      </Badge>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <div className="text-xs px-2.5 py-1 rounded-full bg-muted flex items-center">
-                        <Calendar className="h-3 w-3 mr-1.5" />
-                        <span>
-                          {t('patientPortal.dashboard.medications.started')}{' '}
-                          {formatDate(medication.createdAt)}
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {medication.frequency}
                         </span>
+                        <span>{formatDate(medication.createdAt)}</span>
                       </div>
-                      <div className="text-xs px-2.5 py-1 rounded-full bg-muted flex items-center">
-                        <Clock className="h-3 w-3 mr-1.5" />
-                        <span>{medication.frequency}</span>
-                      </div>
-                      <div className="text-xs px-2.5 py-1 rounded-full bg-muted flex items-center">
-                        <User className="h-3 w-3 mr-1.5" />
-                        <span>{medication.prescribedByName}</span>
-                      </div>
+                      <span className="px-2 py-0.5 rounded-full bg-muted text-xs">
+                        {medication.prescribedByName}
+                      </span>
                     </div>
-
-                    {medication.instructions && (
-                      <div className="mt-2 text-sm bg-muted/50 p-3 rounded-md text-muted-foreground">
-                        <div className="flex items-center mb-1">
-                          <AlertCircle className="h-3.5 w-3.5 mr-1.5 text-primary" />
-                          <span className="font-medium text-xs">
-                            {t(
-                              'patientPortal.dashboard.medications.instructions'
-                            )}
-                          </span>
-                        </div>
-                        <p className="text-xs">{medication.instructions}</p>
-                      </div>
-                    )}
 
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      className="absolute top-3 right-3 h-8 w-8 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-2 right-2 h-6 w-6 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                       asChild
                     >
                       <Link
                         href={`/patient-portal/medications/${medication.id}`}
                       >
-                        <ChevronRight className="h-4 w-4" />
+                        <ChevronRight className="h-3 w-3" />
                       </Link>
                     </Button>
                   </div>

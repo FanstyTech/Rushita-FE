@@ -25,7 +25,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/dateTimeUtils';
-import { calculateBMI, getBMICategory } from '../profile';
 import {
   BMICategory,
   MetricStatus,
@@ -101,9 +100,10 @@ export function HealthMetricsCard({
                 {t(
                   'patientPortal.dashboard.healthMetrics.bloodPressure.lastUpdate'
                 )}{' '}
-                {formatDate(
-                  metrics?.healthIndicators?.bloodPressure?.lastUpdated || ''
-                )}
+                {/* {metrics?.healthIndicators?.bloodPressure?.lastUpdated 
+                  ? formatDate(metrics.healthIndicators.bloodPressure.lastUpdated)
+                  : t('common.notAvailable')
+                } */}
               </div>
               <div className="mt-3">
                 <div className="flex items-center justify-between text-xs mb-1">
@@ -173,7 +173,7 @@ export function HealthMetricsCard({
               <div className="flex items-center justify-between text-sm">
                 <div>
                   <span className="font-bold text-xl">
-                    {metrics.healthIndicators?.bloodSugar.value}
+                    {metrics?.healthIndicators?.bloodSugar.value}
                   </span>{' '}
                 </div>
               </div>
@@ -181,9 +181,10 @@ export function HealthMetricsCard({
                 {t(
                   'patientPortal.dashboard.healthMetrics.bloodSugar.lastUpdate'
                 )}{' '}
-                {formatDate(
-                  metrics?.healthIndicators?.bloodSugar.lastUpdated || ''
-                )}
+                {/* {metrics?.healthIndicators?.bloodSugar?.lastUpdated 
+                  ? formatDate(metrics.healthIndicators.bloodSugar.lastUpdated)
+                  : t('common.notAvailable')
+                } */}
               </div>
               <div className="mt-3">
                 <div className="flex items-center justify-between text-xs mb-1">
@@ -270,9 +271,10 @@ export function HealthMetricsCard({
                 {t(
                   'patientPortal.dashboard.healthMetrics.heartRate.lastUpdate'
                 )}{' '}
-                {formatDate(
-                  metrics.healthIndicators?.heartRate.lastUpdated || ''
-                )}
+                {/* {metrics?.healthIndicators?.heartRate?.lastUpdated 
+                  ? formatDate(metrics.healthIndicators.heartRate.lastUpdated)
+                  : t('common.notAvailable')
+                } */}
               </div>
               <div className="mt-3">
                 <div className="flex items-center justify-between text-xs mb-1">
@@ -351,9 +353,9 @@ export function HealthMetricsCard({
                 {t(
                   'patientPortal.dashboard.healthMetrics.cholesterol.lastUpdate'
                 )}{' '}
-                {formatDate(
-                  metrics.healthIndicators?.cholesterol.lastUpdated || ''
-                )}
+                {/* {formatDate(
+                  metrics?.healthIndicators?.cholesterol.lastUpdated || ''
+                )} */}
               </div>
             </div>
 

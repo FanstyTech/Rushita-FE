@@ -138,6 +138,7 @@ export const API_ENDPOINTS = {
     DELETE: '/clinic/delete',
     GET_ONE: '/clinic/getById',
     GET_FOR_DROPDOWN: '/clinic/getClinicsForDropdown',
+    GET_SPECIALTIES_FOR_DROPDOWN: '/clinic/getClinicSpecialtiesForDropdown',
     UPLOAD_IMAGE: '/clinic/uploadImage',
     UPDATE_STATUS: '/clinic/updateStatus',
     UPDATE_LOCATION: '/clinic/updateLocation',
@@ -175,15 +176,16 @@ export const API_ENDPOINTS = {
     CREATE_OR_UPDATE_CONDITION: '/patient/createOrUpdateMedicalCondition',
     CREATE_OR_UPDATE_ALLERGY: '/patient/createOrUpdateAllergy',
     CREATE_OR_UPDATE_FAMILY_HISTORY: '/patient/createOrUpdateFamilyHistory',
-    
+
     // New Patient Portal Profile endpoints
     GET_PORTAL_PROFILE: '/patient/getPatientPortalProfile',
     UPDATE_PORTAL_PROFILE: '/patient/updatePatientPortalProfile',
     GET_HEALTH_METRICS: '/patient/getPatientHealthMetrics',
     UPDATE_HEALTH_METRICS: '/patient/updatePatientHealthMetrics',
-    CREATE_OR_UPDATE_EMERGENCY_CONTACT: '/patient/createOrUpdateEmergencyContact',
+    CREATE_OR_UPDATE_EMERGENCY_CONTACT:
+      '/patient/createOrUpdateEmergencyContact',
     DELETE_EMERGENCY_CONTACT: '/patient/deleteEmergencyContact',
-    
+
     // New Patient Portal Dashboard, Appointments, Visits, and Prescriptions endpoints
     GET_PORTAL_DASHBOARD: '/patient/getPatientPortalDashboard',
     GET_PATIENT_APPOINTMENTS: '/patient/getPatientAppointments',
@@ -191,6 +193,10 @@ export const API_ENDPOINTS = {
     GET_PATIENT_VISITS: '/patient/getPatientVisits',
     GET_PATIENT_PRESCRIPTIONS: '/patient/getPatientPrescriptions',
     UPDATE_PATIENT_PRESCRIPTION: '/patient/updatePatientPrescription',
+    SAVE_APPOINTMENT: '/patient/savePatientAppointments',
+    GET_APPOINTMENT_DETAILS: '/patient/getPatientAppointmentDetails',
+    BOOK_FOLLOW_UP_APPOINTMENT: '/patient/bookFollowUpAppointment',
+    GET_VISIT_DETAILS: '/patient/getPatientVisitDetails',
   },
   APPOINTMENT: {
     LIST: '/appointment/getAll',
@@ -251,6 +257,37 @@ export const API_ENDPOINTS = {
       '/visitPrescription/getPrescribedMedicationsByVisitId',
   },
   FINANCE_ENDPOINTS: {
+    REVENUES: {
+      GET_LIST: '/clinicRevenue/getAll',
+      GET_ONE: '/clinicRevenue/getById',
+      CREATE_OR_UPDATE: '/clinicRevenue/createOrUpdate',
+      DELETE: '/clinicRevenue/delete',
+      GET_SUMMARY: '/clinicRevenue/getSummary',
+      GET_DASHBOARD_STATS: '/clinicRevenue/getDashboardStats',
+    },
+    EXPENSES: {
+      GET_LIST: '/clinicExpense/getAll',
+      GET_ONE: '/clinicExpense/getById',
+      CREATE_OR_UPDATE: '/clinicExpense/createOrUpdate',
+      DELETE: '/clinicExpense/delete',
+      GET_SUMMARY: '/clinicExpense/getSummary',
+      GET_DASHBOARD_STATS: '/clinicExpense/getDashboardStats',
+    },
+    SALARIES: {
+      GET_LIST: '/staffSalary/getAll',
+      GET_ONE: '/staffSalary/getById',
+      CREATE_OR_UPDATE: '/staffSalary/createOrUpdate',
+      DELETE: '/staffSalary/delete',
+      GET_SUMMARY: '/staffSalary/getSummary',
+    },
+    TRANSACTIONS: {
+      GET_LIST: '/clinicTransaction/getAll',
+      GET_ONE: '/clinicTransaction/getById',
+      CREATE_OR_UPDATE: '/clinicTransaction/createOrUpdate',
+      DELETE: '/clinicTransaction/delete',
+      GET_SUMMARY: '/clinicTransaction/getSummary',
+      GET_DASHBOARD_STATS: '/clinicTransaction/getDashboardStats',
+    },
     SERVICE_PRICES: {
       GET_LIST: '/servicePrice/getAll',
       GET_ONE: '/servicePrice/getById',
@@ -259,6 +296,15 @@ export const API_ENDPOINTS = {
       DELETE: '/servicePrice/delete',
     },
     SERVICES_BY_TYPE: '/servicePrice/getServicePriceByType',
+    INVOICES: {
+      GET_LIST: '/invoice/getAll',
+      GET_ONE: '/invoice/getById',
+      CREATE_OR_UPDATE: '/invoice/createOrUpdate',
+      DELETE: '/invoice/delete',
+      GET_SUMMARY: '/invoice/getSummary',
+      GET_DASHBOARD_STATS: '/invoice/getDashboardStats',
+      ADD_PAYMENT: '/invoice/addPayment',
+    },
   },
   ROLE: {
     GET_LIST: '/role/getRoles',
@@ -291,5 +337,15 @@ export const API_ENDPOINTS = {
     CONVERT_TEMP: '/api/attachment/convert-temp',
     GET_TEMP_BY_SESSION: '/api/attachment/temp/:sessionId',
     CLEANUP_TEMP: '/api/attachment/cleanup-temp',
+  },
+  CLINIC_BOOKING_CONDITION: {
+    LIST: '/clinicBookingCondition/getAll',
+    CREATE_OR_UPDATE: '/clinicBookingCondition/createOrUpdate',
+    DELETE: '/clinicBookingCondition/delete',
+    GET_ONE: '/clinicBookingCondition/getById',
+    GET_FOR_DROPDOWN: '/clinicBookingCondition/getForDropdown',
+    GET_BY_CLINIC_ID: '/clinicBookingCondition/getByClinicId',
+    GET_FOR_EDIT: '/clinicBookingCondition/getForEdit',
+    UPDATE_STATUS: '/clinicBookingCondition/updateStatus',
   },
 } as const;

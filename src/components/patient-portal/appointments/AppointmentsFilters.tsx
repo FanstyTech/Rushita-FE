@@ -1,6 +1,14 @@
 'use client';
 
-import { Search, Stethoscope, Filter, X, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Search,
+  Stethoscope,
+  Filter,
+  X,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -9,9 +17,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Input, Select } from '@/components/common/form';
+import { SelectOption } from '@/lib/api/types/select-option';
+import { AppointmentStatus } from '@/lib/api/types/appointment';
+import { getAppointmentStatusStyle } from '@/utils/textUtils';
 
 interface AppointmentsFiltersProps {
   searchQuery: string;
@@ -19,6 +29,7 @@ interface AppointmentsFiltersProps {
   selectedStatus: string;
   activeTab: string;
   filteredAppointmentsCount: number;
+  specialties: SelectOption<string>[];
   onSearchChange: (value: string) => void;
   onSpecialtyChange: (value: string) => void;
   onStatusChange: (value: string) => void;
@@ -26,28 +37,13 @@ interface AppointmentsFiltersProps {
   onResetFilters: () => void;
 }
 
-const specialties = [
-  { value: 'all', label: 'جميع التخصصات' },
-  { value: 'general', label: 'طب عام' },
-  { value: 'dental', label: 'أسنان' },
-  { value: 'dermatology', label: 'جلدية' },
-  { value: 'ophthalmology', label: 'عيون' },
-  { value: 'internal', label: 'باطنية' },
-];
-
-const statusOptions = [
-  { value: 'all', label: 'جميع الحالات' },
-  { value: 'confirmed', label: 'مؤكد' },
-  { value: 'cancelled', label: 'ملغي' },
-  { value: 'completed', label: 'مكتمل' },
-];
-
 export function AppointmentsFilters({
   searchQuery,
   selectedSpecialty,
   selectedStatus,
   activeTab,
   filteredAppointmentsCount,
+  specialties,
   onSearchChange,
   onSpecialtyChange,
   onStatusChange,
@@ -99,37 +95,34 @@ export function AppointmentsFilters({
           </div>
 
           <div className="space-y-2">
-            <Label
-              htmlFor="specialty"
-              className="flex items-center gap-1 text-sm font-medium"
-            >
-              <Stethoscope className="h-3.5 w-3.5 text-primary" />
-              التخصص
-            </Label>
             <Select
-              id="specialty"
+              label="Specialty"
               value={selectedSpecialty}
               onChange={(e) => onSpecialtyChange(e.target.value)}
-              options={specialties}
-              placeholder="اختر التخصص"
-              fullWidth
+              options={[
+                { value: '', label: 'Select Specialty' },
+                ...(specialties?.map((specialty: SelectOption<string>) => ({
+                  value: specialty.value,
+                  label: specialty.label || '',
+                })) || []),
+              ]}
             />
           </div>
-
           <div className="space-y-2">
-            <Label
-              htmlFor="status"
-              className="flex items-center gap-1 text-sm font-medium"
-            >
-              <Badge className="h-3.5 w-3.5 p-0 text-primary" />
-              الحالة
-            </Label>
             <Select
-              id="status"
               value={selectedStatus}
+              label="Appointment status "
+              options={[
+                { value: 'all', label: 'All' },
+                ...Object.entries(AppointmentStatus)
+                  .filter(([key]) => isNaN(Number(key)))
+                  .map(([_, value]) => ({
+                    value: value.toString(),
+                    label: getAppointmentStatusStyle(value as AppointmentStatus)
+                      .label,
+                  })),
+              ]}
               onChange={(e) => onStatusChange(e.target.value)}
-              options={statusOptions}
-              placeholder="اختر الحالة"
               fullWidth
             />
           </div>

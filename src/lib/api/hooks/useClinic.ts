@@ -7,6 +7,7 @@ import type {
   ClinicStatus,
   CreateUpdateClinicDto,
 } from '../types/clinic';
+import type { SelectOption } from '../types/select-option';
 
 export const useClinic = () => {
   const queryClient = useQueryClient();
@@ -44,7 +45,28 @@ export const useClinic = () => {
       enabled: !!id,
     });
 
-    const UpdateUserInf = (clinicDetails: ClinicDto) =>
+  const useClinicSpecialtiesForDropdown = (id: string) =>
+    useQuery({
+      queryKey: ['clinicForEdit', id],
+      queryFn: async () => {
+        const response = await clinicService.getClinicSpecialtiesForDropdown(
+          id
+        );
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+      enabled: !!id,
+    });
+
+  const useClinicsForDropdown = () =>
+    useQuery({
+      queryKey: ['clinics', 'dropdown'],
+      queryFn: () => clinicService.getForDropdown(),
+    });
+
+  const UpdateUserInf = (clinicDetails: ClinicDto) =>
     useQuery({
       queryKey: ['UpdateUserInf', clinicDetails],
       queryFn: async () => {
@@ -55,6 +77,7 @@ export const useClinic = () => {
       },
       enabled: !!clinicDetails,
     });
+
   const createOrUpdateClinic = useMutation({
     mutationFn: (data: CreateUpdateClinicDto & { id?: string }) =>
       clinicService.createOrUpdate(data),
@@ -104,9 +127,11 @@ export const useClinic = () => {
     useClinicsList,
     useClinicDetails,
     useClinicForEdit,
+    useClinicsForDropdown,
+    useClinicSpecialtiesForDropdown,
     createOrUpdateClinic,
     deleteClinic,
     updateClinicStatus,
-    UpdateUserInf
+    UpdateUserInf,
   };
 };

@@ -37,23 +37,25 @@ class ClinicService {
     });
   }
 
-async getOne(id: string): Promise<ClinicDto> {
-  const response = await apiClient.get<{ success: boolean; message: string; result: ClinicDto }>(
-    `${API_ENDPOINTS.CLINIC.GET_ONE}`,
-    { params: { id } }
-  );
-  return response.result; // فقط بيانات العيادة
-}
+  async getOne(id: string): Promise<ClinicDto> {
+    const response = await apiClient.get<{
+      success: boolean;
+      message: string;
+      result: ClinicDto;
+    }>(`${API_ENDPOINTS.CLINIC.GET_ONE}`, { params: { id } });
+    return response.result; // فقط بيانات العيادة
+  }
 
-async UpdateUserInf(clinicDetails: ClinicDto): Promise<boolean> {
-  const response = await apiClient.put<{ success: boolean; message: string; result: boolean }>(
-    `${API_ENDPOINTS.CLINIC.UpdateUserInf}`,
-    {
-        clinicDetails
-   }
-  );
-  return response.result; 
-}
+  async UpdateUserInf(clinicDetails: ClinicDto): Promise<boolean> {
+    const response = await apiClient.put<{
+      success: boolean;
+      message: string;
+      result: boolean;
+    }>(`${API_ENDPOINTS.CLINIC.UpdateUserInf}`, {
+      clinicDetails,
+    });
+    return response.result;
+  }
 
   async getForEdit(id: string): Promise<ApiResponse<CreateUpdateClinicDto>> {
     const response = await apiClient.get<ApiResponse<CreateUpdateClinicDto>>(
@@ -68,8 +70,21 @@ async UpdateUserInf(clinicDetails: ClinicDto): Promise<boolean> {
   }
 
   async getForDropdown(): Promise<SelectOption<string>[]> {
-    const response = await apiClient.get<SelectOption<string>[]>(
+    const response = await apiClient.get<ApiResponse<SelectOption<string>[]>>(
       API_ENDPOINTS.CLINIC.GET_FOR_DROPDOWN
+    );
+    return response.result || [];
+  }
+  async getClinicSpecialtiesForDropdown(
+    id: string
+  ): Promise<ApiResponse<SelectOption<string>[]>> {
+    const response = await apiClient.get<ApiResponse<SelectOption<string>[]>>(
+      `${API_ENDPOINTS.CLINIC.GET_SPECIALTIES_FOR_DROPDOWN}`,
+      {
+        params: {
+          id: id,
+        },
+      }
     );
     return response;
   }
@@ -129,7 +144,10 @@ async UpdateUserInf(clinicDetails: ClinicDto): Promise<boolean> {
 
 export const clinicService = new ClinicService();
 
-export async function updateClinicInfo(id: string, clinicDetails: ClinicDto): Promise<ClinicDto> {
+export async function updateClinicInfo(
+  id: string,
+  clinicDetails: ClinicDto
+): Promise<ClinicDto> {
   const response = await apiClient.put<{ result: ClinicDto }>(
     `/api/clinics/${id}`,
     clinicDetails

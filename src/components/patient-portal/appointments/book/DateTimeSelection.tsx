@@ -2,20 +2,12 @@
 
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { TextArea } from '@/components/common/form';
 import { AppointmentCalendar } from '@/components/ui/appointment-calendar';
-import {
-  Calendar,
-  CalendarDays,
-  Clock,
-  FileText,
-} from 'lucide-react';
+import { Calendar, CalendarDays, Clock, FileText } from 'lucide-react';
 
 interface DateTimeSelectionProps {
   selectedDate: Date | undefined;
@@ -80,7 +72,6 @@ export function DateTimeSelection({
                 selectedDate={selectedDate}
                 onSelect={onDateSelect}
                 disabled={(date) => {
-                  // Disable past dates and weekends (Friday and Saturday in Saudi Arabia)
                   const day = date.getDay();
                   return (
                     date < new Date() ||
@@ -126,9 +117,7 @@ export function DateTimeSelection({
                   <div className="rounded-full p-3 bg-amber-500/10 mb-4">
                     <Clock className="h-8 w-8 text-amber-500" />
                   </div>
-                  <h3 className="text-lg font-medium">
-                    اختر تاريخ أولاً
-                  </h3>
+                  <h3 className="text-lg font-medium">اختر تاريخ أولاً</h3>
                   <p className="mt-2 text-sm text-muted-foreground">
                     يرجى اختيار تاريخ لعرض الأوقات المتاحة
                   </p>

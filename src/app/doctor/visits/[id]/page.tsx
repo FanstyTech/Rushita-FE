@@ -30,7 +30,7 @@ import {
   getVisitStatusLabel,
   getVisitTypeLabel,
 } from '@/utils/textUtils';
-import VisitDetailsSkeleton from '@/components/skeletons/VisitDetailsSkeleton';
+import VisitDetailsSkeleton from '@/components/skeletons/patient-portal/VisitDetailsSkeleton';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,

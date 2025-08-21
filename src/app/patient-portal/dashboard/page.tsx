@@ -96,7 +96,7 @@ export default function DashboardPage() {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="space-y-6"
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch"
           >
             <AppointmentsCard
               appointments={dashboardData?.recentAppointments || []}

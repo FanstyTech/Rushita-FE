@@ -15,8 +15,10 @@ import {
   Severity,
   VisitType,
 } from '@/lib/api/types/clinic-patient';
-import { ClinicStaffStatus } from '@/lib/api/types/clinic-staff';
+import { ClinicStaffStatus, StaffType } from '@/lib/api/types/clinic-staff';
+import { InvoiceStatus, PaymentMethod } from '@/lib/api/types/invoice';
 import { DosageForm, MedicineStrength } from '@/lib/api/types/medicine';
+import { SalaryStatus } from '@/lib/api/types/salary';
 import { ServiceType } from '@/lib/api/types/service-price';
 import { VisitStatus } from '@/lib/api/types/visit';
 import { TestStatus } from '@/lib/api/types/visit-lab-test';
@@ -268,21 +270,6 @@ export const getVisitTypeLabel = (visitType: VisitType): string => {
   return visitTypeMap[visitType] || 'Unknown';
 };
 
-export const getAppointmentStatusLabel = (
-  status: AppointmentStatus
-): string => {
-  const statusMap: Record<AppointmentStatus, string> = {
-    [AppointmentStatus.Pending]: 'Pending',
-    [AppointmentStatus.Scheduled]: 'Scheduled',
-    [AppointmentStatus.Confirmed]: 'Confirmed',
-    [AppointmentStatus.InProgress]: 'In Progress',
-    [AppointmentStatus.Completed]: 'Completed',
-    [AppointmentStatus.Cancelled]: 'Cancelled',
-    [AppointmentStatus.NoShow]: 'No Show',
-  };
-  return statusMap[status] || 'Unknown';
-};
-
 export const getBloodTypeLabel = (status: BloodType): string => {
   // Blood type display names mapping
   const bloodTypeDisplayNames: Record<BloodType, string> = {
@@ -374,21 +361,6 @@ export const getVisitTypeClass = (visitType: VisitType): string => {
   return visitTypeMap[visitType] || 'bg-gray-50 text-gray-400';
 };
 
-export const getAppointmentStatusClass = (
-  status: AppointmentStatus
-): string => {
-  const statusMap: Record<AppointmentStatus, string> = {
-    [AppointmentStatus.Pending]: 'bg-gray-100 text-gray-800',
-    [AppointmentStatus.Scheduled]: 'bg-blue-100 text-blue-800',
-    [AppointmentStatus.Confirmed]: 'bg-green-100 text-green-800',
-    [AppointmentStatus.InProgress]: 'bg-yellow-100 text-yellow-800',
-    [AppointmentStatus.Completed]: 'bg-green-100 text-green-800',
-    [AppointmentStatus.Cancelled]: 'bg-red-100 text-red-800',
-    [AppointmentStatus.NoShow]: 'bg-orange-100 text-orange-800',
-  };
-  return statusMap[status] || 'bg-gray-50 text-gray-400';
-};
-
 export const getDayLabel = (day: DayEnum): string => {
   // Blood type display names mapping
   const dayNames: Record<DayEnum, string> = {
@@ -417,19 +389,6 @@ export const ConvartDayLabel = (day: string): number => {
   };
 
   return dayNames[day] || day;
-};
-
-export const GetStaffType = (StaffType: StaffTypeEnum): string => {
-  const Type: Record<StaffTypeEnum, string> = {
-    [StaffTypeEnum.ClinicAdministrator]: 'ClinicAdministrator',
-    [StaffTypeEnum.Doctor]: 'Doctor',
-    [StaffTypeEnum.Nurse]: 'Nurse',
-    [StaffTypeEnum.Receptionist]: 'Receptionist',
-    [StaffTypeEnum.FinancialStaff]: 'FinancialStaff',
-    [StaffTypeEnum.LabTechnician]: 'LabTechnician',
-    [StaffTypeEnum.Pharmacist]: 'Pharmacist',
-  };
-  return Type[StaffType] || 'Unknown';
 };
 
 export const getServiceTypeColor = (type: ServiceType): string => {
@@ -597,4 +556,194 @@ export const getMetricStatusLabel = (status: MetricStatus): string => {
     [MetricStatus.Unknown]: 'Unknown',
   };
   return statusMap[status] || 'Unknown';
+};
+const backgroundColors = [
+  'bg-blue-500',
+  'bg-purple-500',
+  'bg-green-500',
+  'bg-yellow-500',
+  'bg-red-500',
+  'bg-indigo-500',
+  'bg-pink-500',
+  'bg-teal-500',
+];
+export const backgroundColor = (name: string): string => {
+  const index = name
+    .split('')
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return backgroundColors[index % backgroundColors.length];
+};
+
+export const getAppointmentStatusLabel = (
+  status: AppointmentStatus
+): string => {
+  const statusMap: Record<AppointmentStatus, string> = {
+    [AppointmentStatus.Pending]: 'Pending',
+    [AppointmentStatus.Scheduled]: 'Scheduled',
+    [AppointmentStatus.Confirmed]: 'Confirmed',
+    [AppointmentStatus.InProgress]: 'In Progress',
+    [AppointmentStatus.Completed]: 'Completed',
+    [AppointmentStatus.Cancelled]: 'Cancelled',
+    [AppointmentStatus.NoShow]: 'No Show',
+  };
+  return statusMap[status] || 'Unknown';
+};
+export const getAppointmentStatusClass = (
+  status: AppointmentStatus
+): string => {
+  const statusMap: Record<AppointmentStatus, string> = {
+    [AppointmentStatus.Pending]: 'bg-gray-100 text-gray-800',
+    [AppointmentStatus.Scheduled]: 'bg-blue-100 text-blue-800',
+    [AppointmentStatus.Confirmed]: 'bg-green-100 text-green-800',
+    [AppointmentStatus.InProgress]: 'bg-yellow-100 text-yellow-800',
+    [AppointmentStatus.Completed]: 'bg-green-100 text-green-800',
+    [AppointmentStatus.Cancelled]: 'bg-red-100 text-red-800',
+    [AppointmentStatus.NoShow]: 'bg-orange-100 text-orange-800',
+  };
+  return statusMap[status] || 'bg-gray-50 text-gray-400';
+};
+export interface AppointmentStatusStyle {
+  label: string;
+  bgClass: string;
+  borderClass: string;
+  textClass: string;
+}
+export interface AppointmentStatusStyle {
+  label: string;
+  bgClass: string;
+  borderClass: string;
+  textClass: string;
+  className?: string; // optional combined class
+}
+
+export const getAppointmentStatusStyle = (
+  status: AppointmentStatus
+): AppointmentStatusStyle => {
+  const statusMap: Record<AppointmentStatus, AppointmentStatusStyle> = {
+    [AppointmentStatus.Pending]: {
+      label: 'Pending',
+      bgClass: 'bg-gray-100',
+      borderClass: 'border-gray-300',
+      textClass: 'text-gray-800',
+    },
+    [AppointmentStatus.Scheduled]: {
+      label: 'Scheduled',
+      bgClass: 'bg-blue-100',
+      borderClass: 'border-blue-300',
+      textClass: 'text-blue-800',
+    },
+    [AppointmentStatus.Confirmed]: {
+      label: 'Confirmed',
+      bgClass: 'bg-green-100',
+      borderClass: 'border-green-300',
+      textClass: 'text-green-800',
+    },
+    [AppointmentStatus.InProgress]: {
+      label: 'In Progress',
+      bgClass: 'bg-yellow-100',
+      borderClass: 'border-yellow-300',
+      textClass: 'text-yellow-800',
+    },
+    [AppointmentStatus.Completed]: {
+      label: 'Completed',
+      bgClass: 'bg-green-100',
+      borderClass: 'border-green-300',
+      textClass: 'text-green-800',
+    },
+    [AppointmentStatus.Cancelled]: {
+      label: 'Cancelled',
+      bgClass: 'bg-red-100',
+      borderClass: 'border-red-300',
+      textClass: 'text-red-800',
+    },
+    [AppointmentStatus.NoShow]: {
+      label: 'No Show',
+      bgClass: 'bg-orange-100',
+      borderClass: 'border-orange-300',
+      textClass: 'text-orange-800',
+    },
+  };
+
+  const style = statusMap[status] || {
+    label: 'Unknown',
+    bgClass: 'bg-gray-50',
+    borderClass: 'border-gray-200',
+    textClass: 'text-gray-400',
+  };
+
+  // Combine classes into one string
+  return {
+    ...style,
+    className: `${style.bgClass} ${style.borderClass} ${style.textClass} border px-2 py-1 rounded`,
+  };
+};
+export const getSalaryStatusColor = (status: SalaryStatus) => {
+  const colors: { [key: number]: string } = {
+    [SalaryStatus.Paid]:
+      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+    [SalaryStatus.Pending]:
+      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+    [SalaryStatus.Cancelled]:
+      'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+  };
+  return colors[status] || colors[SalaryStatus.Pending];
+};
+
+export const getStaffTypeColor = (role: StaffType) => {
+  const colors: { [key: string]: string } = {
+    [StaffType.Doctor]:
+      'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+    [StaffType.Administrator]:
+      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+    [StaffType.Receptionist]:
+      'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+    [StaffType.FinancialStaff]:
+      'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
+    Cleaner: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
+  };
+  return colors[role] || colors.Cleaner;
+};
+export const getStaffTypeLabel = (type: StaffType): string => {
+  const typeMap: Record<StaffTypeEnum, string> = {
+    [StaffTypeEnum.ClinicAdministrator]: 'Clinic Administrator',
+    [StaffTypeEnum.Doctor]: 'Doctor',
+    [StaffTypeEnum.Nurse]: 'Nurse',
+    [StaffTypeEnum.Receptionist]: 'Receptionist',
+    [StaffTypeEnum.FinancialStaff]: 'FinancialStaff',
+    [StaffTypeEnum.LabTechnician]: 'LabTechnician',
+    [StaffTypeEnum.Pharmacist]: 'Pharmacist',
+  };
+  return typeMap[type] || 'Unknown';
+};
+export const getInvoiceStatusColor = (status: InvoiceStatus) => {
+  const colors: { [key: number]: string } = {
+    [InvoiceStatus.Paid]:
+      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+    [InvoiceStatus.PartiallyPaid]:
+      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+    [InvoiceStatus.Pending]:
+      'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+    [InvoiceStatus.Cancelled]:
+      'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
+  };
+  return colors[status] || colors[InvoiceStatus.Pending];
+};
+export const getInvoiceStatusLabel = (status: InvoiceStatus) => {
+  const statusMap: Record<InvoiceStatus, string> = {
+    [InvoiceStatus.Cancelled]: 'Cancelled',
+    [InvoiceStatus.Paid]: 'Paid',
+    [InvoiceStatus.PartiallyPaid]: 'Partially Paid',
+    [InvoiceStatus.Pending]: 'Pending',
+  };
+  return statusMap[status] || 'Unknown';
+};
+export const getPaymentMethodLabel = (method: PaymentMethod) => {
+  const methodMap: Record<PaymentMethod, string> = {
+    [PaymentMethod.Cash]: 'Cash',
+    [PaymentMethod.Card]: 'Card',
+    [PaymentMethod.BankTransfer]: 'Bank Transfer',
+    [PaymentMethod.Insurance]: 'Insurance',
+    [PaymentMethod.Other]: 'Other',
+  };
+  return methodMap[method] || 'Unknown';
 };

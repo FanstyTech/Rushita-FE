@@ -240,7 +240,6 @@ export function PhoneInputForm({
             }}
             phoneCodeName="phoneCode"
             required={true}
-            darkMode={false}
             placeholder="XXX-XXX-XXXX"
           />
         </motion.div>
