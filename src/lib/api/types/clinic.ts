@@ -41,23 +41,21 @@ export interface ClinicDto {
   clinicTypeId?: string;
   latitude?: number;
   longitude?: number;
-  workingHours : WorkingHours[]
-  specialtiess:Specialtiessdto[]
-  staffdto:staffdto[]
+  workingHours: WorkingHours[];
+  specialtiess: Specialtiessdto[];
+  staffdto: staffdto[];
 }
 
 export interface Specialtiessdto {
-  id: string; 
+  id: string;
   specialties: string;
 }
-export interface staffdto{
+export interface staffdto {
   id: string;
   name: string;
-  staffType:StaffTypeEnum;
+  staffType: StaffTypeEnum;
   specialty: string;
 }
-
-
 
 export interface WorkingHours {
   day: DayEnum;
@@ -119,4 +117,7 @@ export interface GetUserInfoDto {
   bio?: string;
   phoneNumber?: string;
   address: string;
+}
+export interface GetClinicsForDropdownDto extends SelectOption {
+  hasBookings: boolean;
 }

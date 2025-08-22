@@ -1241,8 +1241,18 @@ export default function FinancialDashboardPage() {
                   <span className="font-bold text-green-600 dark:text-green-400 text-lg">
                     {formatCurrency(revenueDashboard?.averageRevenue || 0)}
                   </span>
-                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                  <svg
+                    className="w-4 h-4 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 15l7-7 7 7"
+                    />
                   </svg>
                 </div>
               </div>
@@ -1259,26 +1269,37 @@ export default function FinancialDashboardPage() {
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     هامش الربح الإجمالي
                   </span>
-                  <span className={`text-lg font-bold ${
-                    calculateProfitMargin() >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                  }`}>
+                  <span
+                    className={`text-lg font-bold ${
+                      calculateProfitMargin() >= 0
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-red-600 dark:text-red-400'
+                    }`}
+                  >
                     {calculateProfitMargin().toFixed(1)}%
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                  <div 
+                  <div
                     className={`h-2 rounded-full ${
-                      calculateProfitMargin() >= 0 
-                        ? 'bg-gradient-to-r from-green-400 to-green-600' 
+                      calculateProfitMargin() >= 0
+                        ? 'bg-gradient-to-r from-green-400 to-green-600'
                         : 'bg-gradient-to-r from-red-400 to-red-600'
-                    }`} 
-                    style={{ width: `${Math.min(Math.abs(calculateProfitMargin()), 100)}%` }}
+                    }`}
+                    style={{
+                      width: `${Math.min(
+                        Math.abs(calculateProfitMargin()),
+                        100
+                      )}%`,
+                    }}
                   ></div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">نسبة المصروفات</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                    نسبة المصروفات
+                  </div>
                   <div className="text-lg font-semibold text-red-600 dark:text-red-400">
                     {formatPercentage(
                       expenseDashboard?.totalExpenses || 0,
@@ -1287,7 +1308,9 @@ export default function FinancialDashboardPage() {
                   </div>
                 </div>
                 <div className="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">كفاءة التشغيل</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                    كفاءة التشغيل
+                  </div>
                   <div className="text-lg font-semibold text-blue-600 dark:text-blue-400">
                     {formatPercentage(
                       revenueDashboard?.totalRevenue || 0,
@@ -1303,16 +1326,23 @@ export default function FinancialDashboardPage() {
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     صافي التدفق
                   </span>
-                  <span className={`text-xl font-bold ${
-                    (transactionDashboard?.netAmount || 0) >= 0 
-                      ? 'text-green-600 dark:text-green-400' 
-                      : 'text-red-600 dark:text-red-400'
-                  }`}>
+                  <span
+                    className={`text-xl font-bold ${
+                      (transactionDashboard?.netAmount || 0) >= 0
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-red-600 dark:text-red-400'
+                    }`}
+                  >
                     {formatCurrency(transactionDashboard?.netAmount || 0)}
                   </span>
                 </div>
                 <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                  {new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                  {new Date().toLocaleDateString('ar-EG', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
                 </div>
               </div>
             </div>
@@ -1327,46 +1357,96 @@ export default function FinancialDashboardPage() {
                 <div className="flex items-center gap-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
                   <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                   <span className="text-sm text-yellow-700 dark:text-yellow-300">
-                    {formatCurrency(invoiceDashboard.totalUnpaid)} فواتير معلقة
+                    {formatCurrency(invoiceDashboard?.totalUnpaid || 0)} فواتير
+                    معلقة
                   </span>
                 </div>
               )}
               {calculateNetProfit() < 0 && (
                 <div className="flex items-center gap-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-100 dark:border-red-800/50">
                   <div className="flex-shrink-0 p-1.5 bg-red-100 dark:bg-red-900/50 rounded-lg">
-                    <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                    <svg
+                      className="w-4 h-4 text-red-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+                      />
                     </svg>
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-red-700 dark:text-red-300">خسارة في الفترة الحالية</div>
-                    <div className="text-xs text-red-500 dark:text-red-400">انخفاض بنسبة {Math.abs(calculateNetProfit()).toFixed(1)}%</div>
+                    <div className="text-sm font-medium text-red-700 dark:text-red-300">
+                      خسارة في الفترة الحالية
+                    </div>
+                    <div className="text-xs text-red-500 dark:text-red-400">
+                      انخفاض بنسبة {Math.abs(calculateNetProfit()).toFixed(1)}%
+                    </div>
                   </div>
                 </div>
               )}
-              {(expenseDashboard?.totalExpenses || 0) > (revenueDashboard?.totalRevenue || 0) * 0.8 && (
+              {(expenseDashboard?.totalExpenses || 0) >
+                (revenueDashboard?.totalRevenue || 0) * 0.8 && (
                 <div className="flex items-center gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-100 dark:border-amber-800/50">
                   <div className="flex-shrink-0 p-1.5 bg-amber-100 dark:bg-amber-900/50 rounded-lg">
-                    <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    <svg
+                      className="w-4 h-4 text-amber-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
                     </svg>
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-amber-700 dark:text-amber-300">المصروفات مرتفعة نسبياً</div>
-                    <div className="text-xs text-amber-600 dark:text-amber-400">تشكل {formatPercentage(expenseDashboard?.totalExpenses || 0, revenueDashboard?.totalRevenue || 1)} من الإيرادات</div>
+                    <div className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                      المصروفات مرتفعة نسبياً
+                    </div>
+                    <div className="text-xs text-amber-600 dark:text-amber-400">
+                      تشكل{' '}
+                      {formatPercentage(
+                        expenseDashboard?.totalExpenses || 0,
+                        revenueDashboard?.totalRevenue || 1
+                      )}{' '}
+                      من الإيرادات
+                    </div>
                   </div>
                 </div>
               )}
               {(transactionDashboard?.netAmount || 0) < 0 && (
                 <div className="flex items-center gap-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-100 dark:border-red-800/50">
                   <div className="flex-shrink-0 p-1.5 bg-red-100 dark:bg-red-900/50 rounded-lg">
-                    <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                    <svg
+                      className="w-4 h-4 text-red-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+                      />
                     </svg>
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-red-700 dark:text-red-300">صافي التدفق سالب</div>
-                    <div className="text-xs text-red-500 dark:text-red-400">قيمة التدفق: {formatCurrency(transactionDashboard?.netAmount || 0)}</div>
+                    <div className="text-sm font-medium text-red-700 dark:text-red-300">
+                      صافي التدفق سالب
+                    </div>
+                    <div className="text-xs text-red-500 dark:text-red-400">
+                      قيمة التدفق:{' '}
+                      {formatCurrency(transactionDashboard?.netAmount || 0)}
+                    </div>
                   </div>
                 </div>
               )}

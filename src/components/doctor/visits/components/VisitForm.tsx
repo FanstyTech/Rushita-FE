@@ -28,6 +28,7 @@ import { useRadiologyTest } from '@/lib/api/hooks/useRadiologyTest';
 import { useMedicine } from '@/lib/api/hooks/useMedicine';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
+import { useAppointments } from '@/lib/api/hooks/useAppointments';
 import { FilterState } from '@/components/common/FilterBar';
 import {
   GetPatientDropdownInput,
@@ -41,6 +42,7 @@ import { CreateOrUpdateVisitDto } from '@/lib/api/types/visit';
 import { TreatmentFormData, treatmentFormSchema } from './validation';
 import { AttachmentDto, EntityType } from '@/lib/api/types/attachment';
 import { toast } from 'sonner';
+import { formatDate, formatDateForInput } from '@/utils/dateTimeUtils';
 
 const INITIAL_MEDICINE_FILTER: FilterState = {
   pageNumber: 1,
@@ -53,7 +55,13 @@ const INITIAL_MEDICINE_FILTER: FilterState = {
   isActive: undefined,
 };
 
-export default function TreatmentForm({ visitId }: { visitId?: string }) {
+export default function TreatmentForm({
+  visitId,
+  appointmentId,
+}: {
+  visitId?: string;
+  appointmentId?: string | undefined;
+}) {
   // Form State
   const {
     register,
@@ -142,11 +150,28 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
   const { useRadiologyTestsDropdown } = useRadiologyTest();
   const { useMedicinesList } = useMedicine();
   const { usePatientDropdown, usePatientForView } = useClinicPatients();
+  const { useAppointmentForEdit } = useAppointments();
+
+  // Fetch appointment data if appointmentId is provided
+  const { data: appointmentData, isLoading: isLoadingAppointment } =
+    useAppointmentForEdit(appointmentId || '');
 
   // Fetch visit data if visitId is provided
   const { data: visitData, isLoading: isLoadingVisit } = getVisitForEdit(
     visitId || ''
   );
+
+  // Effect to populate form with appointment data when available
+  useEffect(() => {
+    if (appointmentData && appointmentId && !visitId) {
+      // Set patient ID and trigger patient data fetch
+      setSelectedPatient(appointmentData.patientId);
+      setValue('patientId', appointmentData.patientId);
+
+      // Set visit type from appointment
+      setValue('visitType', appointmentData.type);
+    }
+  }, [appointmentData, appointmentId, visitId, setValue]);
 
   // Effect to populate form with visit data when available
   useEffect(() => {
@@ -260,6 +285,7 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
     // Prepare data for the API
     const visitData: CreateOrUpdateVisitDto = {
       id: currentVisitId, // Include the ID for updates
+      appointmentId: appointmentId || undefined,
       patientId: data.patientId,
       staffId: user?.clinicInfo?.staffId || '',
       clinicId: user?.clinicInfo?.id || '',
@@ -283,7 +309,8 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
 
   return (
     <div className="space-y-6">
-      {isLoadingVisit && visitId ? (
+      {(isLoadingVisit && visitId) ||
+      (isLoadingAppointment && appointmentId) ? (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
         </div>
@@ -304,7 +331,8 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
             register={register}
             errors={errors}
             isReadOnly={!!visitId}
-            visitType={visitData?.type}
+            visitType={visitData?.type || appointmentData?.type}
+            patientName={appointmentData?.patientName}
           />
 
           {/* Treatment Form Section */}
@@ -315,6 +343,12 @@ export default function TreatmentForm({ visitId }: { visitId?: string }) {
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     Treatment Information
                   </h2>
+                  {appointmentData && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      Linked to appointment: {appointmentData.appointmentNumber}{' '}
+                      - {formatDate(appointmentData.date)}
+                    </p>
+                  )}
                 </div>
 
                 <div className="p-6 space-y-6">

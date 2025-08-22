@@ -221,18 +221,6 @@ class ClinicPatientService {
     });
   }
 
-  // Patient Portal Prescriptions
-  async getPatientPrescriptions(
-    filter: PatientPrescriptionFilterDto
-  ): Promise<ApiResponse<PaginationResponse<PatientPortalPrescriptionsDto>>> {
-    return apiClient.get(
-      API_ENDPOINTS.CLINIC_PATIENTS.GET_PATIENT_PRESCRIPTIONS,
-      {
-        params: convertFilterToParams(filter as FilterParams),
-      }
-    );
-  }
-
   async updatePatientPrescription(
     data: UpdatePatientPrescriptionDto
   ): Promise<ApiResponse<PatientPortalPrescriptionsDto>> {

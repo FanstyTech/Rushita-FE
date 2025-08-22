@@ -419,22 +419,6 @@ export function useClinicPatients() {
       retry: false,
     });
 
-  // Patient Portal Prescriptions
-  const usePatientPrescriptions = (filters: PatientPrescriptionFilterDto) =>
-    useQuery({
-      queryKey: ['clinic-patients', 'prescriptions', filters],
-      queryFn: async () => {
-        const response = await clinicPatientService.getPatientPrescriptions(
-          filters
-        );
-        if (!response.success) {
-          throw new Error(response.message || 'Failed to fetch prescriptions');
-        }
-        return response.result;
-      },
-      retry: false,
-    });
-
   const updatePatientPrescription = useMutation({
     mutationFn: async (data: UpdatePatientPrescriptionDto) => {
       const response = await clinicPatientService.updatePatientPrescription(
@@ -544,7 +528,6 @@ export function useClinicPatients() {
     usePatientAppointments,
     updatePatientAppointment,
     usePatientVisits,
-    usePatientPrescriptions,
     updatePatientPrescription,
     savePatientAppointment,
     useAppointmentDetails,

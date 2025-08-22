@@ -105,3 +105,33 @@ export interface UpdateVisitLabTestResultDto {
   result: string;
   attachmentIds: string[];
 }
+
+// Patient Portal Lab Test DTO
+export interface PatientPortalLabTestDto {
+  id: string;
+  visitId: string;
+  visitNumber: string;
+  labTestName: string;
+  labTestCode: string;
+  labTestCategoryName: string;
+  specialtyName: string;
+  doctorName: string;
+  clinicName: string;
+  notes?: string;
+  result?: string;
+  status: TestStatus;
+  requestDate: string;
+  resultDate?: string;
+  abnormalFlags: number;
+  criticalFlags: number;
+  attachments?: AttachmentDto[];
+}
+
+// Patient Portal Filter DTO
+export interface PatientLabTestFilterDto extends PaginationRequest {
+  searchValue?: string;
+  status?: TestStatus;
+  testTypeId?: string;
+  fromDate?: string;
+  toDate?: string;
+}

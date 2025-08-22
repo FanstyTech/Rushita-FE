@@ -9,7 +9,7 @@ import {
 } from '@/lib/api/types/clinic-patient';
 import { SelectOption } from '@/lib/api/types/select-option';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
-import { getBloodTypeLabel } from '@/utils/textUtils';
+import { getBloodTypeLabel, getVisitTypeLabel } from '@/utils/textUtils';
 import { useCallback } from 'react';
 import { TreatmentFormData } from './validation';
 
@@ -28,6 +28,7 @@ interface PatientInfoSectionProps {
   errors: FieldErrors;
   isReadOnly?: boolean;
   visitType?: VisitType;
+  patientName?: string;
 }
 
 export default function PatientInfoSection({
@@ -44,6 +45,7 @@ export default function PatientInfoSection({
   errors,
   isReadOnly = false,
   visitType,
+  patientName,
 }: PatientInfoSectionProps) {
   // Handle staff selection
   const handlePatientSelect = useCallback(
@@ -58,6 +60,7 @@ export default function PatientInfoSection({
     },
     [patientsData, setSelectedPatient]
   );
+  const isPatientDisabled = !!patientName;
 
   return (
     <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
@@ -98,6 +101,7 @@ export default function PatientInfoSection({
                     label="Search Patient"
                     placeholder="Search by name, ID, or phone..."
                     options={patientsData || []}
+                    disabled={isPatientDisabled}
                     value={selectedPatient}
                     onChange={handlePatientSelect}
                     isLoading={patientsLoading}
@@ -114,14 +118,15 @@ export default function PatientInfoSection({
 
                 <div>
                   <Select
-                    value={visitType}
+                    disabled={isPatientDisabled}
+                    value={visitType?.toString()}
                     {...register(`visitType`)}
                     label="Visit Type"
                     options={Object.entries(VisitType)
                       .filter(([key]) => isNaN(Number(key)))
-                      .map(([key, value]) => ({
+                      .map(([_, value]) => ({
                         value: value.toString(),
-                        label: key,
+                        label: getVisitTypeLabel(value as VisitType).toString(),
                       }))}
                     error={errors.visitType?.message as string}
                   />

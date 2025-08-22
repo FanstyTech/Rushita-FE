@@ -103,13 +103,13 @@ export function Sidebar({
       name: t('patientPortal.sidebar.navigation.prescriptions'),
       href: '/patient-portal/prescriptions',
       icon: Pill,
-      badge: '2',
+      badge: '',
     },
     {
       name: t('patientPortal.sidebar.navigation.labResults'),
       href: '/patient-portal/lab-results',
       icon: Activity,
-      badge: '1',
+      badge: '',
     },
   ];
 
@@ -118,12 +118,6 @@ export function Sidebar({
       name: t('patientPortal.sidebar.navigation.billing'),
       href: '/patient-portal/billing',
       icon: CreditCard,
-      badge: '',
-    },
-    {
-      name: t('patientPortal.sidebar.navigation.telemedicine'),
-      href: '/patient-portal/telemedicine',
-      icon: Video,
       badge: '',
     },
   ];

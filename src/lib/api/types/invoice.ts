@@ -20,6 +20,7 @@ export interface InvoiceDto {
   clinicId: string;
   visitId: string;
   doctorName: string;
+  clinicName: string;
   patientName: string;
   patientId: string;
   invoiceNumber: string;
@@ -53,6 +54,8 @@ export interface InvoiceListDto {
   status: InvoiceStatus;
   createdAt: string;
   notes?: string;
+  lastPaymentDate?: string;
+  itemsCount?: number;
 }
 export class InvoiceItemDto {
   quantity!: number; // int
@@ -79,6 +82,7 @@ export interface InvoiceFilterDto extends PaginationRequest {
   endDate?: string;
   minAmount?: number;
   maxAmount?: number;
+  invoiceNumber?: string;
 }
 
 export interface InvoiceSummaryFilterDto {

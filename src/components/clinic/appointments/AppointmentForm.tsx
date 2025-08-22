@@ -7,10 +7,10 @@ import Select from '@/components/common/form/Select';
 import Input from '@/components/common/form/Input';
 import TextArea from '@/components/common/form/TextArea';
 import { SelectOption } from '@/lib/api/types/select-option';
-import { VisitType } from '@/lib/api/types/appointment';
+import { AppointmentStatus, VisitType } from '@/lib/api/types/appointment';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import { useClinicStaff } from '@/lib/api/hooks/useClinicStaff';
-import { AppointmentStatus, GetPatientDropdownInput } from '@/lib/api/types/clinic-patient';
+import { GetPatientDropdownInput } from '@/lib/api/types/clinic-patient';
 import { GetClinicStaffForDropdownInput } from '@/lib/api/types/clinic-staff';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { PermissionKeys } from '@/config/permissions';
@@ -43,7 +43,6 @@ interface AppointmentFormProps {
       endTime: string;
       notes: string;
       status: AppointmentStatus;
-
     }>
   >;
 }

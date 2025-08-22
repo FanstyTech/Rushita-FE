@@ -28,12 +28,12 @@ import {
   AlertTriangle,
   AlertOctagon,
   CalendarCheck,
+  X,
 } from 'lucide-react';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -43,6 +43,16 @@ import { Separator } from '@/components/ui/separator';
 import { Input, Select } from '@/components/common/form/index';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useVisitLabTest } from '@/lib/api/hooks/useVisitLabTest';
+import {
+  TestStatus,
+  PatientLabTestFilterDto,
+} from '@/lib/api/types/visit-lab-test';
+import { formatDate } from '@/utils/dateTimeUtils';
+import { Pagination, usePagination } from '@/components/ui/pagination';
+import { getTestStatusColor, getTestStatusLabel } from '@/utils/textUtils';
+import { useLabTestCategory } from '@/lib/api/hooks/useLabTestCategory';
+import { SelectOption } from '@/lib/api/types/select-option';
 
 // Animation variants for staggered animations
 const containerVariants = {
@@ -60,260 +70,112 @@ const itemVariants = {
   show: { opacity: 1, y: 0 },
 };
 
-// Dummy lab results data
-const labResults = [
-  {
-    id: 'lab-1',
-    visitId: 'visit-1',
-    testName: 'تحليل الدم الشامل (CBC)',
-    testType: 'blood',
-    doctorName: 'د. أحمد محمد',
-    doctorSpecialty: 'طب عام',
-    clinicName: 'عيادة الطب العام',
-    labName: 'مختبر الشفاء',
-    requestDate: '2025-07-10',
-    resultDate: '2025-07-12',
-    status: 'completed', // requested, in-progress, completed, cancelled
-    abnormalFlags: 2, // Number of abnormal results
-    criticalFlags: 0, // Number of critical results
-    notes: 'يرجى مراجعة الطبيب لمناقشة نتائج التحليل',
-    reportUrl: '/reports/blood-test-1.pdf',
-  },
-  {
-    id: 'lab-2',
-    visitId: 'visit-2',
-    testName: 'تحليل وظائف الكبد',
-    testType: 'blood',
-    doctorName: 'د. سارة خالد',
-    doctorSpecialty: 'باطنية',
-    clinicName: 'عيادة الباطنية',
-    labName: 'مختبر الشفاء',
-    requestDate: '2025-06-20',
-    resultDate: '2025-06-22',
-    status: 'completed',
-    abnormalFlags: 1,
-    criticalFlags: 0,
-    notes: '',
-    reportUrl: '/reports/liver-function-test.pdf',
-  },
-  {
-    id: 'lab-3',
-    visitId: 'visit-3',
-    testName: 'تحليل وظائف الكلى',
-    testType: 'blood',
-    doctorName: 'د. سارة خالد',
-    doctorSpecialty: 'باطنية',
-    clinicName: 'عيادة الباطنية',
-    labName: 'مختبر الشفاء',
-    requestDate: '2025-06-20',
-    resultDate: '2025-06-22',
-    status: 'completed',
-    abnormalFlags: 0,
-    criticalFlags: 0,
-    notes: 'نتائج التحليل طبيعية',
-    reportUrl: '/reports/kidney-function-test.pdf',
-  },
-  {
-    id: 'lab-4',
-    visitId: 'visit-4',
-    testName: 'تحليل الكوليسترول والدهون',
-    testType: 'blood',
-    doctorName: 'د. محمد علي',
-    doctorSpecialty: 'قلب',
-    clinicName: 'عيادة القلب',
-    labName: 'مختبر الصحة',
-    requestDate: '2025-05-15',
-    resultDate: '2025-05-17',
-    status: 'completed',
-    abnormalFlags: 3,
-    criticalFlags: 1,
-    notes: 'مستوى الكوليسترول مرتفع، يرجى مراجعة الطبيب فوراً',
-    reportUrl: '/reports/lipid-profile.pdf',
-  },
-  {
-    id: 'lab-5',
-    visitId: 'visit-5',
-    testName: 'تحليل السكر التراكمي',
-    testType: 'blood',
-    doctorName: 'د. خالد محمود',
-    doctorSpecialty: 'غدد صماء',
-    clinicName: 'عيادة الغدد الصماء',
-    labName: 'مختبر الصحة',
-    requestDate: '2025-04-10',
-    resultDate: '2025-04-12',
-    status: 'completed',
-    abnormalFlags: 1,
-    criticalFlags: 0,
-    notes: 'مستوى السكر التراكمي مرتفع قليلاً، يرجى الالتزام بالنظام الغذائي',
-    reportUrl: '/reports/hba1c-test.pdf',
-  },
-  {
-    id: 'lab-6',
-    visitId: 'visit-6',
-    testName: 'تحليل البول الشامل',
-    testType: 'urine',
-    doctorName: 'د. فاطمة أحمد',
-    doctorSpecialty: 'مسالك بولية',
-    clinicName: 'عيادة المسالك البولية',
-    labName: 'مختبر الشفاء',
-    requestDate: '2025-03-05',
-    resultDate: '2025-03-06',
-    status: 'completed',
-    abnormalFlags: 0,
-    criticalFlags: 0,
-    notes: '',
-    reportUrl: '/reports/urinalysis.pdf',
-  },
-  {
-    id: 'lab-7',
-    visitId: 'visit-7',
-    testName: 'تحليل الغدة الدرقية',
-    testType: 'blood',
-    doctorName: 'د. خالد محمود',
-    doctorSpecialty: 'غدد صماء',
-    clinicName: 'عيادة الغدد الصماء',
-    labName: 'مختبر الصحة',
-    requestDate: '2025-02-20',
-    resultDate: null,
-    status: 'in-progress',
-    abnormalFlags: 0,
-    criticalFlags: 0,
-    notes: '',
-    reportUrl: null,
-  },
-  {
-    id: 'lab-8',
-    visitId: 'visit-8',
-    testName: 'تحليل فيتامين د',
-    testType: 'blood',
-    doctorName: 'د. سارة خالد',
-    doctorSpecialty: 'باطنية',
-    clinicName: 'عيادة الباطنية',
-    labName: 'مختبر الشفاء',
-    requestDate: '2025-08-01',
-    resultDate: null,
-    status: 'requested',
-    abnormalFlags: 0,
-    criticalFlags: 0,
-    notes: 'يرجى الصيام لمدة 8 ساعات قبل التحليل',
-    reportUrl: null,
-  },
-];
-
-// Get lab result status badge variant and label
-const getLabResultStatusBadge = (status: string) => {
-  let variant = '';
-  let label = '';
-
-  switch (status) {
-    case 'requested':
-      variant = 'outline';
-      label = 'تم الطلب';
-      break;
-    case 'in-progress':
-      variant = 'secondary';
-      label = 'قيد التنفيذ';
-      break;
-    case 'completed':
-      variant = 'success';
-      label = 'مكتمل';
-      break;
-    case 'cancelled':
-      variant = 'destructive';
-      label = 'ملغي';
-      break;
-    default:
-      variant = 'outline';
-      label = status;
-  }
-
-  return { variant, label };
-};
-
-// Get test type badge variant and label
-const getTestTypeBadge = (type: string) => {
-  let variant = '';
-  let label = '';
-
-  switch (type) {
-    case 'blood':
-      variant = 'blood';
-      label = 'دم';
-      break;
-    case 'urine':
-      variant = 'urine';
-      label = 'بول';
-      break;
-    case 'stool':
-      variant = 'stool';
-      label = 'براز';
-      break;
-    case 'imaging':
-      variant = 'imaging';
-      label = 'أشعة';
-      break;
-    default:
-      variant = 'default';
-      label = type;
-  }
-
-  return { variant, label };
-};
-
 export default function LabResultsPage() {
   const router = useRouter();
+
+  // Filter states
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState<TestStatus | ''>('');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [currentPage, setCurrentPage] = useState(1);
-  const resultsPerPage = 5;
 
-  // Filter lab results based on search query and filters
-  const filteredResults = labResults.filter((result) => {
-    const matchesSearch =
-      searchQuery === '' ||
-      result.testName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      result.doctorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      result.clinicName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      result.labName.toLowerCase().includes(searchQuery.toLowerCase());
+  // Pagination hook
+  const { currentPage, pageSize, handlePageChange, handlePageSizeChange } =
+    usePagination(10);
 
-    const matchesStatus =
-      statusFilter === 'all' || result.status === statusFilter;
+  // Build API filters object
+  const buildApiFilters = () => {
+    const filters: PatientLabTestFilterDto = {
+      pageNumber: currentPage,
+      pageSize: pageSize,
+    };
 
-    const matchesType = typeFilter === 'all' || result.testType === typeFilter;
+    // Add search filter
+    if (searchQuery.trim()) {
+      filters.searchValue = searchQuery.trim();
+    }
 
-    return matchesSearch && matchesStatus && matchesType;
-  });
+    // Add status filter
+    if (statusFilter) {
+      filters.status = statusFilter;
+    }
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredResults.length / resultsPerPage);
-  const startIndex = (currentPage - 1) * resultsPerPage;
-  const currentResults = filteredResults.slice(
-    startIndex,
-    startIndex + resultsPerPage
-  );
+    // Add type filter
+    if (typeFilter !== 'all') {
+      filters.testTypeId = typeFilter;
+    }
 
-  // Handle pagination
-  const goToPage = (page: number) => {
-    setCurrentPage(page);
+    return filters;
   };
 
+  // Fetch lab tests using the hook
+  const { getPatientLabTests } = useVisitLabTest();
+  const {
+    data: labTestsData,
+    isLoading,
+    error,
+  } = getPatientLabTests(buildApiFilters());
+
+  const { useLabTestCategoriesDropdown: getLabTestCategoriesForDropdown } =
+    useLabTestCategory();
+  const { data: categories } = getLabTestCategoriesForDropdown();
+
+  const labTests = labTestsData?.items || [];
+
   // Calculate summary statistics
-  const totalResults = labResults.length;
-  const completedResults = labResults.filter(
-    (result) => result.status === 'completed'
+  const totalResults = labTestsData?.totalCount || 0;
+  const completedResults = labTests.filter(
+    (result) => result.status === TestStatus.Completed
   ).length;
-  const pendingResults = labResults.filter(
-    (result) => result.status === 'requested' || result.status === 'in-progress'
+  const pendingResults = labTests.filter(
+    (result) =>
+      result.status === TestStatus.Pending ||
+      result.status === TestStatus.InProgress
   ).length;
-  const abnormalResults = labResults.filter(
+  const abnormalResults = labTests.filter(
     (result) => result.abnormalFlags > 0 || result.criticalFlags > 0
   ).length;
 
+  // Handle filter changes
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleStatusFilter = (status: TestStatus | '') => {
+    setStatusFilter(status);
+  };
+
+  const handleTypeFilter = (type: string) => {
+    setTypeFilter(type);
+  };
+
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setStatusFilter('');
+    setTypeFilter('all');
+  };
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
+          <p className="text-red-500 mb-2">فشل في تحميل نتائج التحاليل</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            إعادة المحاولة
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="space-y-6">
       {/* Page header */}
-      <div className="flex flex-col space-y-2">
+      <div>
         <h1 className="text-3xl font-bold tracking-tight">
           نتائج التحاليل المخبرية
         </h1>
@@ -386,67 +248,84 @@ export default function LabResultsPage() {
       </div>
 
       {/* Filters */}
-      <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            تصفية النتائج
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="search" className="text-sm font-medium">
-                بحث
-              </label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <motion.div variants={itemVariants} initial="hidden" animate="show">
+        <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50">
+          <CardHeader className="bg-primary/5 pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                  <Filter className="h-5 w-5 text-primary" />
+                  تصفية النتائج
+                </CardTitle>
+                <CardDescription className="mt-1">
+                  يمكنك تصفية التحاليل حسب الحالة أو النوع أو البحث بالاسم
+                </CardDescription>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs flex items-center gap-1 hover:bg-primary/10"
+                onClick={handleResetFilters}
+              >
+                <X className="h-3 w-3" />
+                إعادة ضبط الفلاتر
+              </Button>
+            </div>
+          </CardHeader>
+
+          <CardContent className="p-6">
+            <div className="grid gap-4 md:grid-cols-3">
+              {/* Search input */}
+              <div className="space-y-2">
                 <Input
-                  id="search"
+                  label="بحث"
                   placeholder="ابحث عن اسم التحليل، الطبيب، العيادة..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  startIcon={<Search className="h-4 w-4" />}
+                  fullWidth
+                />
+              </div>
+
+              {/* Status filter */}
+              <div className="space-y-2">
+                <Select
+                  label="الحالة"
+                  value={statusFilter}
+                  onChange={(e) =>
+                    handleStatusFilter(e.target.value as TestStatus | '')
+                  }
+                  options={[
+                    { value: 'all', label: 'All' },
+                    ...Object.entries(TestStatus)
+                      .filter(([key]) => isNaN(Number(key)))
+                      .map(([_, value]) => ({
+                        value: value.toString(),
+                        label: getTestStatusLabel(value as TestStatus),
+                      })),
+                  ]}
+                />
+              </div>
+
+              {/* Type filter */}
+              <div className="space-y-2">
+                <Select
+                  label="نوع التحليل"
+                  value={typeFilter}
+                  onChange={(e) => handleTypeFilter(e.target.value)}
+                  options={[
+                    { value: '', label: 'Select Category' },
+                    ...(categories?.map((category: SelectOption<string>) => ({
+                      value: category.value,
+                      label: category.label || '',
+                    })) || []),
+                  ]}
                 />
               </div>
             </div>
-
-            <div className="space-y-2">
-              <label htmlFor="status" className="text-sm font-medium">
-                الحالة
-              </label>
-              {/* <Select
-                id="status"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-              >
-                <option value="all">جميع الحالات</option>
-                <option value="requested">تم الطلب</option>
-                <option value="in-progress">قيد التنفيذ</option>
-                <option value="completed">مكتمل</option>
-                <option value="cancelled">ملغي</option>
-              </Select> */}
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="type" className="text-sm font-medium">
-                نوع التحليل
-              </label>
-              {/* <Select
-                id="type"
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-              >
-                <option value="all">جميع الأنواع</option>
-                <option value="blood">دم</option>
-                <option value="urine">بول</option>
-                <option value="stool">براز</option>
-                <option value="imaging">أشعة</option>
-              </Select> */}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Lab results list */}
       <motion.div
@@ -455,11 +334,19 @@ export default function LabResultsPage() {
         animate="show"
         className="space-y-4"
       >
-        {currentResults.length > 0 ? (
-          currentResults.map((result) => {
-            const statusBadge = getLabResultStatusBadge(result.status);
-            const typeBadge = getTestTypeBadge(result.testType);
-
+        {isLoading ? (
+          // Loading skeleton
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <Card key={i} className="animate-pulse">
+                <CardContent className="p-6">
+                  <div className="h-32 bg-muted rounded"></div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : labTests.length > 0 ? (
+          labTests.map((result) => {
             return (
               <motion.div key={result.id} variants={itemVariants}>
                 <Card className="overflow-hidden backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200">
@@ -468,11 +355,11 @@ export default function LabResultsPage() {
                     <div
                       className={cn(
                         'absolute top-0 left-0 w-1 h-full',
-                        result.status === 'completed'
+                        result.status === TestStatus.Completed
                           ? 'bg-emerald-500'
-                          : result.status === 'pending'
+                          : result.status === TestStatus.Pending
                           ? 'bg-amber-500'
-                          : result.status === 'processing'
+                          : result.status === TestStatus.InProgress
                           ? 'bg-blue-500'
                           : 'bg-slate-400'
                       )}
@@ -485,52 +372,42 @@ export default function LabResultsPage() {
                           <div
                             className={cn(
                               'p-2 rounded-full',
-                              result.testType === 'blood'
-                                ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
-                                : result.testType === 'urine'
-                                ? 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400'
-                                : result.testType === 'imaging'
-                                ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                                : 'bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400'
+
+                              'bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400'
                             )}
                           >
-                            {result.testType === 'blood' ? (
-                              <Droplet className="h-5 w-5" />
-                            ) : result.testType === 'urine' ? (
-                              <Droplet className="h-5 w-5" />
-                            ) : result.testType === 'imaging' ? (
-                              <Scan className="h-5 w-5" />
-                            ) : (
-                              <Microscope className="h-5 w-5" />
-                            )}
+                            <Microscope className="h-5 w-5" />
                           </div>
                           <h3 className="text-xl font-semibold">
-                            {result.testName}
+                            {result.labTestName}
                           </h3>
                         </div>
                         <div className="flex flex-wrap gap-2">
                           <Badge
-                            variant={statusBadge.variant as any}
-                            className="px-3 py-1"
+                            variant={'destructive'}
+                            className={cn(
+                              'px-3 py-1',
+                              getTestStatusColor(result.status)
+                            )}
                           >
                             <div className="flex items-center gap-1.5">
-                              {result.status === 'completed' ? (
+                              {result.status === TestStatus.Completed ? (
                                 <CheckCircle className="h-3 w-3" />
-                              ) : result.status === 'pending' ? (
+                              ) : result.status === TestStatus.Pending ? (
                                 <Clock className="h-3 w-3" />
-                              ) : result.status === 'processing' ? (
+                              ) : result.status === TestStatus.InProgress ? (
                                 <Loader2 className="h-3 w-3" />
                               ) : (
                                 <Circle className="h-3 w-3" />
                               )}
-                              {statusBadge.label}
+                              {getTestStatusLabel(result.status)}
                             </div>
                           </Badge>
                           <Badge
-                            variant={typeBadge.variant as any}
-                            className="px-3 py-1"
+                            variant={'secondary'}
+                            className="bg-blue-50 text-blue-700"
                           >
-                            {typeBadge.label}
+                            {result.labTestCategoryName}
                           </Badge>
                         </div>
                       </div>
@@ -556,7 +433,7 @@ export default function LabResultsPage() {
                                     {result.doctorName}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    {result.doctorSpecialty}
+                                    {result.specialtyName}
                                   </p>
                                 </div>
                               </div>
@@ -578,19 +455,6 @@ export default function LabResultsPage() {
                             {/* Middle column - Lab & Dates */}
                             <div className="space-y-3 md:border-l md:border-border/30 md:pl-4">
                               <div className="flex items-center gap-2">
-                                <div className="bg-emerald-500/10 p-1.5 rounded-md">
-                                  <Microscope className="h-4 w-4 text-emerald-500" />
-                                </div>
-                                <div>
-                                  <p className="text-xs text-muted-foreground">
-                                    المختبر
-                                  </p>
-                                  <p className="font-medium">
-                                    {result.labName}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
                                 <div className="bg-purple-500/10 p-1.5 rounded-md">
                                   <Calendar className="h-4 w-4 text-purple-500" />
                                 </div>
@@ -599,13 +463,7 @@ export default function LabResultsPage() {
                                     تاريخ الطلب
                                   </p>
                                   <p className="font-medium">
-                                    {new Date(
-                                      result.requestDate
-                                    ).toLocaleDateString('ar-SA', {
-                                      year: 'numeric',
-                                      month: 'long',
-                                      day: 'numeric',
-                                    })}
+                                    {formatDate(result.requestDate)}
                                   </p>
                                 </div>
                               </div>
@@ -623,13 +481,7 @@ export default function LabResultsPage() {
                                       تاريخ النتيجة
                                     </p>
                                     <p className="font-medium">
-                                      {new Date(
-                                        result.resultDate
-                                      ).toLocaleDateString('ar-SA', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric',
-                                      })}
+                                      {formatDate(result.resultDate)}
                                     </p>
                                   </div>
                                 </div>
@@ -673,10 +525,12 @@ export default function LabResultsPage() {
                       <div className="border-t border-border/40 p-4 bg-muted/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div className="text-sm text-muted-foreground">
                           رقم التحليل:{' '}
-                          <span className="font-mono">{result.id}</span>
+                          <span className="font-mono">
+                            {result.labTestCode}
+                          </span>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-2 self-end sm:self-center">
-                          {result.status === 'completed' && (
+                          {result.status === TestStatus.Completed && (
                             <>
                               <Button
                                 variant="outline"
@@ -734,48 +588,21 @@ export default function LabResultsPage() {
           </Card>
         )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center space-x-2 space-x-reverse mt-6">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => goToPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronRight className="h-4 w-4" />
-              <span className="sr-only">الصفحة السابقة</span>
-            </Button>
-            <div className="flex items-center gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => goToPage(page)}
-                    className={cn(
-                      'w-8 h-8 p-0',
-                      currentPage === page
-                        ? 'bg-primary text-primary-foreground'
-                        : ''
-                    )}
-                  >
-                    {page}
-                  </Button>
-                )
-              )}
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronLeft className="h-4 w-4" />
-              <span className="sr-only">الصفحة التالية</span>
-            </Button>
-          </div>
+        {/* Pagination Component */}
+        {labTestsData && labTestsData.totalCount > 0 && (
+          <Pagination
+            currentPage={labTestsData.pageNumber}
+            totalPages={labTestsData.totalPages}
+            totalCount={labTestsData.totalCount}
+            pageSize={pageSize}
+            hasPreviousPage={labTestsData.hasPreviousPage}
+            hasNextPage={labTestsData.hasNextPage}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+            showPageSizeSelector={true}
+            pageSizeOptions={[5, 10, 20, 50]}
+            className="mt-6"
+          />
         )}
       </motion.div>
     </div>

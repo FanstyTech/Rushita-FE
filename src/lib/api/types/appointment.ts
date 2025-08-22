@@ -73,6 +73,8 @@ export interface UpdateAppointmentStatusDto {
 }
 
 export interface GetAppointmentForEditDto extends CreateUpdateAppointmentDto {
+  appointmentNumber: string;
+  patientName: string;
   patient: SelectOption<string>;
   staff: SelectOption<string>;
 }

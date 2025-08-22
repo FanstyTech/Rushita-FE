@@ -9,6 +9,8 @@ import {
   LabSummaryStatsInput,
   UpdateVisitLabTestStatusDto,
   UpdateVisitLabTestResultDto,
+  PatientLabTestFilterDto,
+  PatientPortalLabTestDto,
 } from '../types/visit-lab-test';
 import type { PaginationResponse } from '../types/pagination';
 import type { ApiResponse } from '../types/api';
@@ -103,6 +105,24 @@ export const visitLabTestService = {
   ): Promise<ApiResponse<LabSummaryStatsDto[]>> {
     return apiClient.get(API_ENDPOINTS.visitLabTest.GET_SUMMARY, {
       params: convertFilterToParams(input as FilterParams),
+    });
+  },
+
+  // Get patient lab tests for patient portal
+  async getPatientLabTests(
+    filter: PatientLabTestFilterDto
+  ): Promise<ApiResponse<PaginationResponse<PatientPortalLabTestDto>>> {
+    return apiClient.get(API_ENDPOINTS.visitLabTest.PATIENT_LAB_TESTS, {
+      params: convertFilterToParams(filter as FilterParams),
+    });
+  },
+
+  // Get patient lab test details
+  async getPatientLabTestDetails(
+    id: string
+  ): Promise<ApiResponse<PatientPortalLabTestDto>> {
+    return apiClient.get(API_ENDPOINTS.visitLabTest.PATIENT_LAB_TEST_DETAILS, {
+      params: { id },
     });
   },
 };

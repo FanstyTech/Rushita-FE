@@ -3,15 +3,15 @@
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
-import { Building } from 'lucide-react';
 import { SelectOption } from '@/lib/api/types/select-option';
 import Avatar from '@/components/common/Avatar';
-import { backgroundColor } from '@/utils/textUtils';
+import { GetClinicsForDropdownDto } from '@/lib/api/types/clinic';
+import { Badge } from '@/components/ui/badge';
 
 interface ClinicSelectionProps {
-  clinics: SelectOption<string>[];
-  selectedClinic: SelectOption | null;
-  onClinicSelect: (clinic: SelectOption) => void;
+  clinics: GetClinicsForDropdownDto[];
+  selectedClinic: GetClinicsForDropdownDto | null;
+  onClinicSelect: (clinic: GetClinicsForDropdownDto) => void;
 }
 
 const containerVariants = {
@@ -34,6 +34,7 @@ export function ClinicSelection({
   selectedClinic,
   onClinicSelect,
 }: ClinicSelectionProps) {
+  console.log(clinics);
   return (
     <motion.div
       variants={containerVariants}
@@ -47,20 +48,36 @@ export function ClinicSelection({
           <motion.div key={clinic.value} variants={itemVariants}>
             <Card
               className={cn(
-                'cursor-pointer transition-all duration-200 hover:shadow-md',
+                'cursor-pointer transition-all duration-200 hover:shadow-md relative',
                 selectedClinic?.value === clinic.value
                   ? 'border-primary bg-primary/5'
                   : 'border-border/50 bg-card/80'
               )}
               onClick={() => onClinicSelect(clinic)}
             >
+              {/* Booking Tag */}
+              {clinic.hasBookings && (
+                <div className="absolute -top-2 -right-2 z-10">
+                  <Badge 
+                    variant="default" 
+                    className="bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1 rounded-full shadow-sm"
+                  >
+                    لديك حجوزات سابقة
+                  </Badge>
+                </div>
+              )}
+
               <CardContent className="flex flex-col items-center justify-center p-4 text-center">
                 <Avatar
                   name={clinic.label || ''}
                   size="lg"
                   className="w-16 h-16 rounded-xl border-2 border-gray-100"
                 />
-                <h3 className="font-medium mt-3">{clinic.label}</h3>
+
+                <h3 className="font-medium mt-3">
+                  {clinic.label}
+                </h3>
+                
               </CardContent>
             </Card>
           </motion.div>

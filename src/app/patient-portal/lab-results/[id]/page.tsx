@@ -9,38 +9,30 @@ import {
   ArrowLeft,
   Printer,
   Download,
-  Share2,
   User,
   Building,
   FileText,
   AlertCircle,
   Info,
-  ChevronLeft,
-  ChevronRight,
-  CheckCircle,
-  XCircle,
-  Microscope,
   Beaker,
   Activity,
-  Eye,
   Dna,
+  Loader2,
+  CheckCircle,
+  Circle,
 } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Skeleton from '@/components/ui/Skeleton';
+import { useVisitLabTest } from '@/lib/api/hooks/useVisitLabTest';
+import { TestStatus } from '@/lib/api/types/visit-lab-test';
+import { formatDate } from '@/utils/dateTimeUtils';
+import { getTestStatusColor, getTestStatusLabel } from '@/utils/textUtils';
 
 // Animation variants
 const containerVariants = {
@@ -58,349 +50,21 @@ const itemVariants = {
   show: { opacity: 1, y: 0 },
 };
 
-// Dummy lab results data with detailed test parameters
-const labResults = [
-  {
-    id: 'lab-1',
-    visitId: 'visit-1',
-    testName: 'تحليل الدم الشامل (CBC)',
-    testType: 'blood',
-    doctorName: 'د. أحمد محمد',
-    doctorSpecialty: 'طب عام',
-    clinicName: 'عيادة الطب العام',
-    labName: 'مختبر الشفاء',
-    requestDate: '2025-07-10',
-    resultDate: '2025-07-12',
-    status: 'completed', // requested, in-progress, completed, cancelled
-    abnormalFlags: 2, // Number of abnormal results
-    criticalFlags: 0, // Number of critical results
-    notes: 'يرجى مراجعة الطبيب لمناقشة نتائج التحليل',
-    reportUrl: '/reports/blood-test-1.pdf',
-    sampleCollectionDate: '2025-07-10',
-    sampleType: 'دم وريدي',
-    sampleId: 'S-20250710-001',
-    testCode: 'CBC-001',
-    testMethod: 'آلي - جهاز Sysmex XN-1000',
-    testParameters: [
-      {
-        name: 'كريات الدم الحمراء (RBC)',
-        value: '4.2',
-        unit: 'مليون/ميكرولتر',
-        referenceRange: '4.5 - 5.5',
-        status: 'low', // normal, low, high, critical-low, critical-high
-      },
-      {
-        name: 'الهيموجلوبين (Hb)',
-        value: '13.5',
-        unit: 'جم/ديسيلتر',
-        referenceRange: '13.5 - 17.5',
-        status: 'normal',
-      },
-      {
-        name: 'الهيماتوكريت (Hct)',
-        value: '38',
-        unit: '%',
-        referenceRange: '40 - 50',
-        status: 'low',
-      },
-      {
-        name: 'متوسط حجم الكرية (MCV)',
-        value: '88',
-        unit: 'فيمتولتر',
-        referenceRange: '80 - 96',
-        status: 'normal',
-      },
-      {
-        name: 'متوسط هيموجلوبين الكرية (MCH)',
-        value: '29',
-        unit: 'بيكوجرام',
-        referenceRange: '27 - 33',
-        status: 'normal',
-      },
-      {
-        name: 'متوسط تركيز هيموجلوبين الكرية (MCHC)',
-        value: '33',
-        unit: 'جم/ديسيلتر',
-        referenceRange: '32 - 36',
-        status: 'normal',
-      },
-      {
-        name: 'كريات الدم البيضاء (WBC)',
-        value: '7.5',
-        unit: 'ألف/ميكرولتر',
-        referenceRange: '4.5 - 11.0',
-        status: 'normal',
-      },
-      {
-        name: 'العدلات (Neutrophils)',
-        value: '65',
-        unit: '%',
-        referenceRange: '40 - 70',
-        status: 'normal',
-      },
-      {
-        name: 'الليمفاويات (Lymphocytes)',
-        value: '25',
-        unit: '%',
-        referenceRange: '20 - 40',
-        status: 'normal',
-      },
-      {
-        name: 'الصفائح الدموية (Platelets)',
-        value: '140',
-        unit: 'ألف/ميكرولتر',
-        referenceRange: '150 - 450',
-        status: 'low',
-      },
-    ],
-    interpretation:
-      'نتائج التحليل تشير إلى انخفاض طفيف في كريات الدم الحمراء والصفائح الدموية. قد يكون ذلك مؤشراً على فقر الدم الخفيف أو نقص في الحديد.',
-    recommendations:
-      'يُنصح بمراجعة الطبيب لتقييم الحالة وقد يلزم إجراء المزيد من الفحوصات أو وصف مكملات الحديد.',
-  },
-  {
-    id: 'lab-4',
-    visitId: 'visit-4',
-    testName: 'تحليل الكوليسترول والدهون',
-    testType: 'blood',
-    doctorName: 'د. محمد علي',
-    doctorSpecialty: 'قلب',
-    clinicName: 'عيادة القلب',
-    labName: 'مختبر الصحة',
-    requestDate: '2025-05-15',
-    resultDate: '2025-05-17',
-    status: 'completed',
-    abnormalFlags: 3,
-    criticalFlags: 1,
-    notes: 'مستوى الكوليسترول مرتفع، يرجى مراجعة الطبيب فوراً',
-    reportUrl: '/reports/lipid-profile.pdf',
-    sampleCollectionDate: '2025-05-15',
-    sampleType: 'دم وريدي (صائم)',
-    sampleId: 'S-20250515-003',
-    testCode: 'LIPID-001',
-    testMethod: 'طيف ضوئي - جهاز Cobas c501',
-    testParameters: [
-      {
-        name: 'الكوليسترول الكلي (Total Cholesterol)',
-        value: '280',
-        unit: 'ملجم/ديسيلتر',
-        referenceRange: '< 200',
-        status: 'high',
-      },
-      {
-        name: 'الكوليسترول عالي الكثافة (HDL)',
-        value: '35',
-        unit: 'ملجم/ديسيلتر',
-        referenceRange: '> 40',
-        status: 'low',
-      },
-      {
-        name: 'الكوليسترول منخفض الكثافة (LDL)',
-        value: '190',
-        unit: 'ملجم/ديسيلتر',
-        referenceRange: '< 130',
-        status: 'high',
-      },
-      {
-        name: 'الدهون الثلاثية (Triglycerides)',
-        value: '320',
-        unit: 'ملجم/ديسيلتر',
-        referenceRange: '< 150',
-        status: 'critical-high',
-      },
-    ],
-    interpretation:
-      'نتائج التحليل تشير إلى ارتفاع خطير في مستويات الدهون الثلاثية وارتفاع في الكوليسترول الكلي والكوليسترول منخفض الكثافة (LDL) مع انخفاض في الكوليسترول عالي الكثافة (HDL).',
-    recommendations:
-      'يجب مراجعة الطبيب فوراً لتقييم خطر الإصابة بأمراض القلب والأوعية الدموية. قد يلزم تعديل النظام الغذائي وممارسة الرياضة وربما العلاج الدوائي.',
-  },
-];
-
-// Get lab result status badge variant and label
-const getLabResultStatusBadge = (status: string) => {
-  let variant = '';
-  let label = '';
-  let color = '';
-  let bgColor = '';
-  let borderColor = '';
-  let icon = AlertCircle;
-
-  switch (status) {
-    case 'requested':
-      variant = 'outline';
-      label = 'تم الطلب';
-      color = 'text-purple-500';
-      bgColor = 'bg-purple-500/10';
-      borderColor = 'border-purple-500/50';
-      icon = Clock;
-      break;
-    case 'in-progress':
-      variant = 'secondary';
-      label = 'قيد التنفيذ';
-      color = 'text-blue-500';
-      bgColor = 'bg-blue-500/10';
-      borderColor = 'border-blue-500/50';
-      icon = Beaker;
-      break;
-    case 'completed':
-      variant = 'outline';
-      label = 'مكتمل';
-      color = 'text-green-500';
-      bgColor = 'bg-green-500/10';
-      borderColor = 'border-green-500/50';
-      icon = CheckCircle;
-      break;
-    case 'cancelled':
-      variant = 'destructive';
-      label = 'ملغي';
-      color = 'text-destructive';
-      bgColor = 'bg-destructive/10';
-      borderColor = 'border-destructive/50';
-      icon = XCircle;
-      break;
-    default:
-      variant = 'outline';
-      label = status;
-      color = 'text-muted-foreground';
-      bgColor = 'bg-muted/50';
-      borderColor = 'border-muted/50';
-      icon = AlertCircle;
-  }
-
-  return { variant, label, color, bgColor, borderColor, icon };
-};
-
-// Get test type badge variant and label
-const getTestTypeBadge = (type: string) => {
-  let variant = '';
-  let label = '';
-  let icon = null;
-
-  switch (type) {
-    case 'blood':
-      variant = 'blood';
-      label = 'دم';
-      icon = Beaker;
-      break;
-    case 'urine':
-      variant = 'urine';
-      label = 'بول';
-      icon = Beaker;
-      break;
-    case 'stool':
-      variant = 'stool';
-      label = 'براز';
-      icon = Beaker;
-      break;
-    case 'imaging':
-      variant = 'imaging';
-      label = 'أشعة';
-      icon = Eye;
-      break;
-    default:
-      variant = 'default';
-      label = type;
-      icon = Microscope;
-  }
-
-  return { variant, label, icon };
-};
-
-// Get parameter status badge
-const getParameterStatusBadge = (status: string) => {
-  switch (status) {
-    case 'normal':
-      return {
-        variant: 'outline',
-        label: 'طبيعي',
-        color: 'text-green-500',
-        bgColor: 'bg-green-500/10',
-        borderColor: 'border-green-500/50',
-      };
-    case 'low':
-      return {
-        variant: 'outline',
-        label: 'منخفض',
-        color: 'text-amber-500',
-        bgColor: 'bg-amber-500/10',
-        borderColor: 'border-amber-500/50',
-      };
-    case 'high':
-      return {
-        variant: 'outline',
-        label: 'مرتفع',
-        color: 'text-amber-500',
-        bgColor: 'bg-amber-500/10',
-        borderColor: 'border-amber-500/50',
-      };
-    case 'critical-low':
-      return {
-        variant: 'destructive',
-        label: 'منخفض جداً',
-        color: 'text-destructive',
-        bgColor: 'bg-destructive/10',
-        borderColor: 'border-destructive/50',
-      };
-    case 'critical-high':
-      return {
-        variant: 'destructive',
-        label: 'مرتفع جداً',
-        color: 'text-destructive',
-        bgColor: 'bg-destructive/10',
-        borderColor: 'border-destructive/50',
-      };
-    default:
-      return {
-        variant: 'outline',
-        label: 'غير معروف',
-        color: 'text-muted-foreground',
-        bgColor: 'bg-muted/50',
-        borderColor: 'border-muted/50',
-      };
-  }
-};
-
 export default function LabResultDetailsPage() {
   const params = useParams();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [labResult, setLabResult] = useState<any>(null);
+  const labTestId = params.id as string;
 
-  // Format date to Arabic format
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('ar-SA', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(date);
-  };
-
-  useEffect(() => {
-    // Simulate API call to fetch lab result details
-    const fetchLabResult = async () => {
-      setLoading(true);
-      try {
-        // In a real app, this would be an API call
-        const foundLabResult = labResults.find((p) => p.id === params.id);
-
-        // Simulate network delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        setLabResult(foundLabResult || null);
-      } catch (error) {
-        console.error('Error fetching lab result:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLabResult();
-  }, [params.id]);
+  // Fetch lab test details using the hook
+  const { getPatientLabTestDetails } = useVisitLabTest();
+  const {
+    data: labResult,
+    isLoading,
+    error,
+  } = getPatientLabTestDetails(labTestId);
 
   // Loading skeleton
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
         {/* Header skeleton */}
@@ -465,6 +129,55 @@ export default function LabResultDetailsPage() {
     );
   }
 
+  // Handle error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              خطأ في تحميل نتيجة التحليل
+            </h1>
+            <p className="text-muted-foreground">
+              فشل في تحميل تفاصيل نتيجة التحليل
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            العودة
+          </Button>
+        </div>
+
+        <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50">
+          <CardContent className="p-10 flex flex-col items-center justify-center text-center">
+            <div className="h-16 w-16 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mb-4">
+              <AlertCircle className="h-8 w-8 text-red-500" />
+            </div>
+            <h3 className="font-medium text-lg mb-1">
+              فشل في تحميل نتيجة التحليل
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md mb-6">
+              حدث خطأ أثناء تحميل تفاصيل نتيجة التحليل. يرجى المحاولة مرة أخرى.
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => window.location.reload()}
+              >
+                إعادة المحاولة
+              </Button>
+              <Button variant="default" asChild>
+                <Link href="/patient-portal/lab-results">
+                  عرض جميع نتائج التحاليل
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Lab result not found
   if (!labResult) {
     return (
@@ -507,139 +220,253 @@ export default function LabResultDetailsPage() {
     );
   }
 
-  const labResultStatusBadge = getLabResultStatusBadge(labResult.status);
-  const testTypeBadge = getTestTypeBadge(labResult.testType);
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            {labResult.testName}
-          </h1>
-          <p className="text-muted-foreground">
-            {labResult.doctorName} - {labResult.doctorSpecialty}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge
-            variant={labResultStatusBadge.variant}
-            color={labResultStatusBadge.color}
-            className={labResultStatusBadge.bgColor}
-          >
-            {labResultStatusBadge.label}
-          </Badge>
-          <Badge
-            variant={testTypeBadge.variant}
-            color="text-blue-500"
-            className="bg-blue-500/10"
-          >
-            {testTypeBadge.label}
-          </Badge>
-        </div>
-      </div>
-
-      <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50">
-        <CardHeader className="p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Avatar size="lg" className="bg-blue-500 text-white">
-                <User className="h-6 w-6" />
-              </Avatar>
-              <div>
-                <h2 className="text-lg font-medium">{labResult.doctorName}</h2>
-                <p className="text-muted-foreground">
-                  {labResult.doctorSpecialty}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="default" asChild>
-                <Link href={labResult.reportUrl} target="_blank">
-                  <Download className="h-4 w-4" />
-                  تحميل التقرير
-                </Link>
-              </Button>
-              <Button variant="default" asChild>
-                <Link href={labResult.reportUrl} target="_blank">
-                  <Printer className="h-4 w-4" />
-                  طباعة التقرير
-                </Link>
-              </Button>
-            </div>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-6"
+    >
+      {/* Header */}
+      <motion.div
+        variants={itemVariants}
+        className="flex items-center justify-between"
+      >
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/patient-portal/lab-results">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              العودة للنتائج
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {labResult.labTestName}
+            </h1>
+            <p className="text-muted-foreground">
+              {labResult.doctorName} - {labResult.specialtyName}
+            </p>
           </div>
-        </CardHeader>
-        <CardContent className="p-6 pt-0">
-          <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium">تاريخ الطلب:</h3>
-                <p className="text-muted-foreground">
-                  {formatDate(labResult.requestDate)}
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium">تاريخ النتيجة:</h3>
-                <p className="text-muted-foreground">
-                  {formatDate(labResult.resultDate)}
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium">حالة النتيجة:</h3>
-                <Badge
-                  variant={labResultStatusBadge.variant}
-                  color={labResultStatusBadge.color}
-                  className={labResultStatusBadge.bgColor}
-                >
-                  {labResultStatusBadge.label}
-                </Badge>
+        </div>
+      </motion.div>
+
+      {/* Main Content */}
+      <motion.div variants={itemVariants}>
+        <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50">
+          <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center">
+                  <User className="h-6 w-6" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-medium text-white">
+                    {labResult.doctorName}
+                  </h2>
+                  <p className="text-white/80">
+                    {labResult.specialtyName} - {labResult.clinicName}
+                  </p>
+                </div>
               </div>
             </div>
+          </CardHeader>
 
-            <Separator className="bg-border/50" />
+          <CardContent className="p-6">
+            <Tabs defaultValue="details" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="details">تفاصيل التحليل</TabsTrigger>
+                <TabsTrigger value="results">النتائج</TabsTrigger>
+                <TabsTrigger value="notes">الملاحظات</TabsTrigger>
+              </TabsList>
 
-            <div>
-              <h2 className="text-lg font-medium">المعايير:</h2>
-              <div className="space-y-4">
-                {labResult.testParameters.map((parameter, index) => (
-                  <div key={index} className="grid grid-cols-4 gap-4">
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-medium">{parameter.name}:</h3>
-                      <p className="text-muted-foreground">
-                        {parameter.value} {parameter.unit}
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-medium">النطاق المرجعي:</h3>
-                      <p className="text-muted-foreground">
-                        {parameter.referenceRange}
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-medium">الحالة:</h3>
-                      <Badge
-                        variant={
-                          getParameterStatusBadge(parameter.status).variant
-                        }
-                        color={getParameterStatusBadge(parameter.status).color}
-                        className={
-                          getParameterStatusBadge(parameter.status).bgColor
-                        }
-                      >
-                        {getParameterStatusBadge(parameter.status).label}
-                      </Badge>
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-medium">الملاحظات:</h3>
-                      <p className="text-muted-foreground">{parameter.notes}</p>
+              {/* Details Tab */}
+              <TabsContent value="details" className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <Calendar className="h-5 w-5 text-blue-500" />
+                      معلومات التحليل
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          كود التحليل:
+                        </span>
+                        <span className="font-medium">
+                          {labResult.labTestCode}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          تاريخ الطلب:
+                        </span>
+                        <span className="font-medium">
+                          {formatDate(labResult.requestDate)}
+                        </span>
+                      </div>
+                      {labResult.resultDate && (
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">
+                            تاريخ النتيجة:
+                          </span>
+                          <span className="font-medium">
+                            {formatDate(labResult.resultDate)}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))}
+
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <Activity className="h-5 w-5 text-green-500" />
+                      حالة التحليل
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">الحالة:</span>
+                        <Badge
+                          variant={'default'}
+                          className={cn(getTestStatusColor(labResult.status))}
+                        >
+                          {labResult.status === TestStatus.Completed ? (
+                            <CheckCircle className="h-3 w-3" />
+                          ) : labResult.status === TestStatus.Pending ? (
+                            <Clock className="h-3 w-3" />
+                          ) : labResult.status === TestStatus.InProgress ? (
+                            <Loader2 className="h-3 w-3" />
+                          ) : (
+                            <Circle className="h-3 w-3" />
+                          )}{' '}
+                          {getTestStatusLabel(labResult.status)}
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">
+                          نوع التحليل:
+                        </span>
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-50 text-blue-700"
+                        >
+                          {labResult.labTestCategoryName}
+                        </Badge>
+                      </div>
+                      {labResult.abnormalFlags > 0 && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground">
+                            نتائج غير طبيعية:
+                          </span>
+                          <Badge
+                            variant="outline"
+                            className="bg-yellow-50 text-yellow-700"
+                          >
+                            {labResult.abnormalFlags} معايير
+                          </Badge>
+                        </div>
+                      )}
+                      {labResult.criticalFlags > 0 && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground">
+                            نتائج حرجة:
+                          </span>
+                          <Badge variant="destructive">
+                            {labResult.criticalFlags} معايير
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Results Tab */}
+              <TabsContent value="results" className="space-y-6">
+                {labResult.result ? (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <Dna className="h-5 w-5 text-purple-500" />
+                      نتائج التحليل
+                    </h3>
+                    <div className="bg-muted/50 rounded-lg p-4">
+                      <pre className="whitespace-pre-wrap text-sm">
+                        {labResult.result}
+                      </pre>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="h-16 w-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
+                      <Beaker className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="font-medium text-lg mb-2">
+                      النتائج قيد المعالجة
+                    </h3>
+                    <p className="text-muted-foreground">
+                      النتائج التفصيلية ستكون متاحة بعد اكتمال التحليل
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Notes Tab */}
+              <TabsContent value="notes" className="space-y-6">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Info className="h-5 w-5 text-blue-500" />
+                    الملاحظات والتوصيات
+                  </h3>
+                  {labResult.notes ? (
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                      <p className="text-sm">{labResult.notes}</p>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="h-16 w-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
+                        <Info className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                      <h3 className="font-medium text-lg mb-2">
+                        لا توجد ملاحظات
+                      </h3>
+                      <p className="text-muted-foreground">
+                        لم يتم إضافة أي ملاحظات خاصة لهذا التحليل
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Visit Information */}
+      <motion.div variants={itemVariants}>
+        <Card className="backdrop-blur-sm bg-card/80 border border-border/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building className="h-5 w-5" />
+              معلومات الزيارة
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div>
+                <p className="text-sm text-muted-foreground">رقم الزيارة</p>
+                <p className="font-medium">{labResult.visitNumber}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">العيادة</p>
+                <p className="font-medium">{labResult.clinicName}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">التخصص</p>
+                <p className="font-medium">{labResult.specialtyName}</p>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }

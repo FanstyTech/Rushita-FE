@@ -7,6 +7,8 @@ import type {
   LabSummaryStatsInput,
   UpdateVisitLabTestStatusDto,
   UpdateVisitLabTestResultDto,
+  PatientLabTestFilterDto,
+  PatientPortalLabTestDto,
 } from '../types/visit-lab-test';
 import { toast } from '@/components/ui/Toast';
 
@@ -29,6 +31,15 @@ export function useVisitLabTest() {
     visitsWithTests: () => [...queryKeys.all, 'visitsWithTests'] as const,
     visitsWithTestsList: (input: GetVisitsWithLabTestsInput) =>
       [...queryKeys.visitsWithTests(), input] as const,
+  };
+
+  // Patient Portal specific query keys
+  const patientQueryKeys = {
+    patient: () => [...queryKeys.all, 'patient'] as const,
+    patientList: (filter: PatientLabTestFilterDto) =>
+      [...patientQueryKeys.patient(), 'list', filter] as const,
+    patientDetail: (id: string) =>
+      [...patientQueryKeys.patient(), 'detail', id] as const,
   };
 
   // Get paginated list
@@ -222,6 +233,37 @@ export function useVisitLabTest() {
     },
   });
 
+  // Get patient lab tests for patient portal
+  const getPatientLabTests = (filter: PatientLabTestFilterDto) =>
+    useQuery({
+      queryKey: patientQueryKeys.patientList(filter),
+      queryFn: async () => {
+        const response = await visitLabTestService.getPatientLabTests(filter);
+        if (!response.success) {
+          throw new Error(
+            response.message || 'Failed to fetch patient lab tests'
+          );
+        }
+        return response.result;
+      },
+    });
+
+  // Get patient lab test details
+  const getPatientLabTestDetails = (id: string) =>
+    useQuery({
+      queryKey: patientQueryKeys.patientDetail(id),
+      queryFn: async () => {
+        const response = await visitLabTestService.getPatientLabTestDetails(id);
+        if (!response.success) {
+          throw new Error(
+            response.message || 'Failed to fetch patient lab test details'
+          );
+        }
+        return response.result;
+      },
+      enabled: !!id,
+    });
+
   return {
     // Queries
     getVisitLabTests,
@@ -238,5 +280,9 @@ export function useVisitLabTest() {
     updateResult,
     // Query keys (for manual cache management)
     queryKeys,
+
+    // Patient Portal specific methods
+    getPatientLabTests,
+    getPatientLabTestDetails,
   };
 }

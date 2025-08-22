@@ -305,7 +305,7 @@ export default function AppointmentsPage() {
                         <Button
                           variant="ghost"
                           onClick={() =>
-                            router.push(`/doctor/visits/${appointment?.id}`)
+                            router.push(`/doctor/visits/add/${appointment?.id}`)
                           }
                         >
                           <ClipboardIcon className="h-4 w-4" />

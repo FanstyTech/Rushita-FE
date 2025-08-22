@@ -27,13 +27,14 @@ import {
   SavePatientAppointmentDto,
   VisitType,
 } from '@/lib/api/types/clinic-patient'; // إضافة الأنواع المطلوبة
+import { GetClinicsForDropdownDto } from '@/lib/api/types/clinic';
 
 export default function BookAppointmentPage() {
   const router = useRouter();
 
   const [activeStep, setActiveStep] = useState(0);
   const [selectedClinic, setSelectedClinic] =
-    useState<SelectOption<string> | null>(null);
+    useState<GetClinicsForDropdownDto | null>(null);
   const [selectedSpecialty, setSelectedSpecialty] =
     useState<SelectOption<string> | null>(null);
   const [selectedDoctor, setSelectedDoctor] =

@@ -34,6 +34,7 @@ import ChangeStaffPasswordModal from '@/components/clinic/staff/ChangeStaffPassw
 import EmptyState from '@/components/common/EmptyState';
 import { ShieldCheck } from 'lucide-react';
 import { LogOut } from 'lucide-react';
+import ManagePermissionsModal from '@/components/clinic/staff/ManagePermissionsModal';
 
 export default function ClinicStaffPage() {
   // 1. Authentication hook
@@ -61,6 +62,8 @@ export default function ClinicStaffPage() {
     cityId: undefined,
     status: undefined,
   });
+  const [showPermissionsModal, setShowPermissionsModal] = useState(false);
+  const [selectedStaffForPermissions, setSelectedStaffForPermissions] = useState<ClinicStaffListDto | null>(null);
 
   // 3. API hooks
   const {
@@ -166,13 +169,19 @@ export default function ClinicStaffPage() {
   };
 
   const handleManagePermissions = (staff: ClinicStaffListDto) => {
-    setSelectedStaffId(staff.id);
+    setSelectedStaffForPermissions(staff);
+    setShowPermissionsModal(true);
   };
 
   const handleEndSession = () => {
     window.confirm(
       "Are you sure you want to end this user's session? They will be logged out immediately."
     );
+  };
+
+  const handleClosePermissionsModal = () => {
+    setShowPermissionsModal(false);
+    setSelectedStaffForPermissions(null);
   };
 
   return (
@@ -397,6 +406,15 @@ export default function ClinicStaffPage() {
         onSubmit={handlePasswordSubmit}
         isLoading={updateStaffPassword.isPending}
       />
+      {selectedStaffForPermissions && (
+        <ManagePermissionsModal
+          isOpen={showPermissionsModal}
+          onClose={handleClosePermissionsModal}
+          userId={selectedStaffForPermissions.userId}
+          clinicId={String(filters.clinicId)}
+          staffName={selectedStaffForPermissions.personName}
+        />
+      )}
     </PageLayout>
   );
 }

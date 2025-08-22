@@ -22,7 +22,11 @@ import { SalaryStatus } from '@/lib/api/types/salary';
 import { ServiceType } from '@/lib/api/types/service-price';
 import { VisitStatus } from '@/lib/api/types/visit';
 import { TestStatus } from '@/lib/api/types/visit-lab-test';
-import { PrescriptionStatus } from '@/lib/api/types/visit-prescription';
+import {
+  DurationUnit,
+  MedicationStatus,
+  PrescriptionStatus,
+} from '@/lib/api/types/visit-prescription';
 
 /**
  * Generates initials from a name string.
@@ -715,35 +719,91 @@ export const getStaffTypeLabel = (type: StaffType): string => {
   };
   return typeMap[type] || 'Unknown';
 };
-export const getInvoiceStatusColor = (status: InvoiceStatus) => {
-  const colors: { [key: number]: string } = {
-    [InvoiceStatus.Paid]:
-      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-    [InvoiceStatus.PartiallyPaid]:
-      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-    [InvoiceStatus.Pending]:
-      'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-    [InvoiceStatus.Cancelled]:
-      'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
-  };
-  return colors[status] || colors[InvoiceStatus.Pending];
-};
-export const getInvoiceStatusLabel = (status: InvoiceStatus) => {
-  const statusMap: Record<InvoiceStatus, string> = {
-    [InvoiceStatus.Cancelled]: 'Cancelled',
-    [InvoiceStatus.Paid]: 'Paid',
-    [InvoiceStatus.PartiallyPaid]: 'Partially Paid',
+export const getInvoiceStatusLabel = (status: InvoiceStatus): string => {
+  const statusLabelMap: Record<InvoiceStatus, string> = {
     [InvoiceStatus.Pending]: 'Pending',
+    [InvoiceStatus.PartiallyPaid]: 'Partially Paid',
+    [InvoiceStatus.Paid]: 'Paid',
+    [InvoiceStatus.Cancelled]: 'Cancelled',
   };
-  return statusMap[status] || 'Unknown';
+  return statusLabelMap[status] || 'غير معروف';
 };
-export const getPaymentMethodLabel = (method: PaymentMethod) => {
-  const methodMap: Record<PaymentMethod, string> = {
+export const getPaymentMethodLabel = (method: PaymentMethod): string => {
+  const methodLabelMap: Record<PaymentMethod, string> = {
+    [PaymentMethod.BankTransfer]: 'Bank Transfer',
     [PaymentMethod.Cash]: 'Cash',
     [PaymentMethod.Card]: 'Card',
-    [PaymentMethod.BankTransfer]: 'Bank Transfer',
     [PaymentMethod.Insurance]: 'Insurance',
     [PaymentMethod.Other]: 'Other',
   };
-  return methodMap[method] || 'Unknown';
+  return methodLabelMap[method] || 'Unknown';
+};
+
+export const getInvoiceStatusColor = (status: InvoiceStatus): string => {
+  const statusColorMap: Record<InvoiceStatus, string> = {
+    [InvoiceStatus.Pending]:
+      'bg-yellow-50 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
+    [InvoiceStatus.PartiallyPaid]:
+      'bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+    [InvoiceStatus.Paid]:
+      'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-300',
+    [InvoiceStatus.Cancelled]:
+      'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-300',
+  };
+  return (
+    statusColorMap[status] ||
+    'bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+  );
+};
+
+export const getMedicationStatusLabel = (status: MedicationStatus): string => {
+  const statusLabelMap: Record<MedicationStatus, string> = {
+    [MedicationStatus.Active]: 'Active',
+    [MedicationStatus.Completed]: 'Completed',
+    [MedicationStatus.Cancelled]: 'Cancelled',
+    [MedicationStatus.Expired]: 'Expired',
+  };
+  return statusLabelMap[status] || 'Unknown';
+};
+
+export const getMedicationStatusColor = (status: MedicationStatus): string => {
+  const statusColorMap: Record<MedicationStatus, string> = {
+    [MedicationStatus.Active]:
+      'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-300',
+    [MedicationStatus.Completed]:
+      'bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+    [MedicationStatus.Cancelled]:
+      'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-300',
+    [MedicationStatus.Expired]:
+      'bg-amber-50 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
+  };
+  return (
+    statusColorMap[status] ||
+    'bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+  );
+};
+
+export const getMedicationStatusClass = (status: MedicationStatus): string => {
+  const statusClassMap: Record<MedicationStatus, string> = {
+    [MedicationStatus.Active]:
+      'text-green-500 bg-green-500/10 border-green-500/50',
+    [MedicationStatus.Completed]:
+      'text-secondary-foreground bg-secondary/10 border-secondary/50',
+    [MedicationStatus.Cancelled]:
+      'text-destructive bg-destructive/10 border-destructive/50',
+    [MedicationStatus.Expired]:
+      'text-amber-500 bg-amber-500/10 border-amber-500/50',
+  };
+  return (
+    statusClassMap[status] ||
+    'text-muted-foreground bg-muted/50 border-muted/50'
+  );
+};
+export const getDurationUnitLabel = (unit: DurationUnit): string => {
+  const unitMap: Record<DurationUnit, string> = {
+    [DurationUnit.Day]: 'Day',
+    [DurationUnit.Month]: 'Month',
+    [DurationUnit.Week]: 'Week',
+  };
+  return unitMap[unit] || 'Unknown';
 };

@@ -19,12 +19,16 @@ import {
   AlertCircle,
   Info,
   Eye,
+  X,
+  Microscope,
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -34,6 +38,21 @@ import { Separator } from '@/components/ui/separator';
 import { Input, Select } from '@/components/common/form/index';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useVisitPrescription } from '@/lib/api/hooks/useVisitPrescription';
+import {
+  MedicationStatus,
+  PatientPrescriptionFilterDto,
+} from '@/lib/api/types/visit-prescription';
+import {
+  getDurationUnitLabel,
+  getFrequencyTypeLabel,
+  getMedicationStatusClass,
+  getMedicationStatusLabel,
+} from '@/utils/textUtils';
+import { formatDate } from '@/utils/dateTimeUtils';
+import { Pagination, usePagination } from '@/components/ui/pagination';
+import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
+import { SelectOption } from '@/lib/api/types/select-option';
 
 // Animation variants for staggered animations
 const containerVariants = {
@@ -51,241 +70,122 @@ const itemVariants = {
   show: { opacity: 1, y: 0 },
 };
 
-// Dummy prescriptions data
-const prescriptions = [
-  {
-    id: 'presc-1',
-    visitId: 'visit-1',
-    doctorName: 'د. أحمد محمد',
-    doctorSpecialty: 'طب عام',
-    clinicName: 'عيادة الطب العام',
-    date: '2025-07-10',
-    status: 'active', // active, completed, cancelled
-    medications: [
-      {
-        name: 'ديكلوفيناك',
-        dosage: '50 مجم',
-        frequency: 'مرتين يومياً',
-        duration: '7 أيام',
-        instructions: 'يؤخذ بعد الطعام',
-        refillable: true,
-        refillsRemaining: 2,
-      },
-      {
-        name: 'باراسيتامول',
-        dosage: '500 مجم',
-        frequency: 'عند الحاجة',
-        duration: 'حسب الحاجة',
-        instructions: 'يؤخذ عند الشعور بالألم، بحد أقصى 4 مرات في اليوم',
-        refillable: false,
-        refillsRemaining: 0,
-      },
-    ],
-    diagnosis: 'التهاب المفاصل الروماتويدي',
-    notes: 'يجب مراجعة الطبيب بعد انتهاء الوصفة',
-  },
-  {
-    id: 'presc-2',
-    visitId: 'visit-2',
-    doctorName: 'د. سارة خالد',
-    doctorSpecialty: 'أسنان',
-    clinicName: 'عيادة الأسنان',
-    date: '2025-06-20',
-    status: 'active',
-    medications: [
-      {
-        name: 'أموكسيسيلين',
-        dosage: '500 مجم',
-        frequency: '3 مرات يومياً',
-        duration: '5 أيام',
-        instructions: 'يؤخذ قبل الطعام بساعة',
-        refillable: false,
-        refillsRemaining: 0,
-      },
-      {
-        name: 'إيبوبروفين',
-        dosage: '400 مجم',
-        frequency: 'عند الحاجة',
-        duration: '3 أيام',
-        instructions: 'يؤخذ بعد الطعام عند الشعور بالألم',
-        refillable: false,
-        refillsRemaining: 0,
-      },
-    ],
-    diagnosis: 'تسوس في الضرس العلوي الأيمن',
-    notes: '',
-  },
-  {
-    id: 'presc-3',
-    visitId: 'visit-3',
-    doctorName: 'د. محمد علي',
-    doctorSpecialty: 'جلدية',
-    clinicName: 'عيادة الجلدية',
-    date: '2025-05-15',
-    status: 'completed',
-    medications: [
-      {
-        name: 'هيدروكورتيزون كريم',
-        dosage: '1%',
-        frequency: 'مرتين يومياً',
-        duration: '10 أيام',
-        instructions: 'يوضع على المنطقة المصابة بطبقة رقيقة',
-        refillable: true,
-        refillsRemaining: 0,
-      },
-      {
-        name: 'سيتريزين',
-        dosage: '10 مجم',
-        frequency: 'مرة واحدة يومياً',
-        duration: '14 يوم',
-        instructions: 'يؤخذ قبل النوم',
-        refillable: false,
-        refillsRemaining: 0,
-      },
-    ],
-    diagnosis: 'التهاب جلدي تحسسي',
-    notes: 'تجنب استخدام الصابون المعطر والمنظفات القوية',
-  },
-  {
-    id: 'presc-4',
-    visitId: 'visit-5',
-    doctorName: 'د. خالد محمود',
-    doctorSpecialty: 'باطنية',
-    clinicName: 'عيادة الباطنية',
-    date: '2025-07-05',
-    status: 'active',
-    medications: [
-      {
-        name: 'أتورفاستاتين',
-        dosage: '20 مجم',
-        frequency: 'مرة واحدة يومياً',
-        duration: '30 يوم',
-        instructions: 'يؤخذ في المساء',
-        refillable: true,
-        refillsRemaining: 5,
-      },
-      {
-        name: 'أملوديبين',
-        dosage: '5 مجم',
-        frequency: 'مرة واحدة يومياً',
-        duration: '30 يوم',
-        instructions: 'يؤخذ في الصباح',
-        refillable: true,
-        refillsRemaining: 5,
-      },
-    ],
-    diagnosis: 'ارتفاع ضغط الدم وارتفاع الكوليسترول',
-    notes: 'يجب متابعة ضغط الدم يومياً وتسجيل القراءات',
-  },
-];
-
-// Get prescription status badge variant and label
-const getPrescriptionStatusBadge = (status: string) => {
-  switch (status) {
-    case 'active':
-      return {
-        variant: 'outline',
-        label: 'سارية',
-        color: 'text-green-500',
-        bgColor: 'bg-green-500/10',
-        borderColor: 'border-green-500/50',
-      };
-    case 'completed':
-      return {
-        variant: 'secondary',
-        label: 'منتهية',
-        color: 'text-secondary-foreground',
-        bgColor: 'bg-secondary/10',
-        borderColor: 'border-secondary/50',
-      };
-    case 'cancelled':
-      return {
-        variant: 'destructive',
-        label: 'ملغية',
-        color: 'text-destructive',
-        bgColor: 'bg-destructive/10',
-        borderColor: 'border-destructive/50',
-      };
-    default:
-      return {
-        variant: 'outline',
-        label: 'غير معروف',
-        color: 'text-muted-foreground',
-        bgColor: 'bg-muted/50',
-        borderColor: 'border-muted/50',
-      };
-  }
-};
-
 export default function PrescriptionsPage() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
-  const [selectedSpecialty, setSelectedSpecialty] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const prescriptionsPerPage = 5;
 
-  // Format date to Arabic format
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('ar-SA', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(date);
+  // Filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState<MedicationStatus | ''>(
+    ''
+  );
+  const [selectedSpecialty, setSelectedSpecialty] = useState('all');
+
+  // Pagination hook
+  const { currentPage, pageSize, handlePageChange, handlePageSizeChange } =
+    usePagination(10);
+
+  // Add state for expanded cards
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+
+  // Toggle card expansion
+  const toggleCardExpansion = (cardId: string) => {
+    const newExpandedCards = new Set(expandedCards);
+    if (newExpandedCards.has(cardId)) {
+      newExpandedCards.delete(cardId);
+    } else {
+      newExpandedCards.add(cardId);
+    }
+    setExpandedCards(newExpandedCards);
   };
 
-  // Filter prescriptions based on search query, status, and specialty
-  const filteredPrescriptions = prescriptions.filter((prescription) => {
-    const matchesSearch =
-      searchQuery === '' ||
-      prescription.doctorName.includes(searchQuery) ||
-      prescription.doctorSpecialty.includes(searchQuery) ||
-      prescription.clinicName.includes(searchQuery) ||
-      prescription.diagnosis.includes(searchQuery) ||
-      prescription.medications.some((med) => med.name.includes(searchQuery));
+  // API hooks
+  const { useSpecialtiesDropdown: getSpecialtiesForDropdown } = useSpecialty();
 
-    const matchesStatus =
-      selectedStatus === '' || prescription.status === selectedStatus;
-    const matchesSpecialty =
-      selectedSpecialty === '' ||
-      prescription.doctorSpecialty === selectedSpecialty;
+  // Build API filters object
+  const buildApiFilters = () => {
+    const filters: PatientPrescriptionFilterDto = {
+      pageNumber: currentPage,
+      pageSize: pageSize,
+    };
 
-    return matchesSearch && matchesStatus && matchesSpecialty;
-  });
+    // Add search filter
+    if (searchQuery.trim()) {
+      filters.searchValue = searchQuery.trim();
+    }
 
-  // Sort prescriptions by date (newest first)
-  const sortedPrescriptions = [...filteredPrescriptions].sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
+    // Add status filter
+    if (selectedStatus) {
+      filters.medicationStatus = selectedStatus;
+    }
 
-  // Pagination
-  const indexOfLastPrescription = currentPage * prescriptionsPerPage;
-  const indexOfFirstPrescription =
-    indexOfLastPrescription - prescriptionsPerPage;
-  const currentPrescriptions = sortedPrescriptions.slice(
-    indexOfFirstPrescription,
-    indexOfLastPrescription
-  );
-  const totalPages = Math.ceil(
-    sortedPrescriptions.length / prescriptionsPerPage
-  );
+    // Add specialty filter
+    if (selectedSpecialty !== 'all') {
+      filters.specialtyId = selectedSpecialty;
+    }
 
-  // Get unique specialties from prescriptions
-  const specialties = Array.from(
-    new Set(prescriptions.map((prescription) => prescription.doctorSpecialty))
-  );
+    return filters;
+  };
+
+  // Fetch prescriptions using the hook
+  const { getPatientPortalPrescriptions } = useVisitPrescription();
+  const {
+    data: prescriptionsData,
+    isLoading,
+    error,
+  } = getPatientPortalPrescriptions(buildApiFilters());
+
+  // Fetch specialties
+  const { data: specialties } = getSpecialtiesForDropdown();
+
+  const prescriptions = prescriptionsData?.items || [];
 
   // Get total active prescriptions
   const activePrescriptions = prescriptions.filter(
-    (prescription) => prescription.status === 'active'
+    (prescription) => prescription.medicationStatus === MedicationStatus.Active
   ).length;
 
   // Get total medications
   const totalMedications = prescriptions.reduce(
-    (total, prescription) => total + prescription.medications.length,
+    (total, prescription) => total + prescription.quantityInfo.quantity,
     0
   );
+
+  // Handle filter changes
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleStatusFilter = (status: MedicationStatus | '') => {
+    setSelectedStatus(status);
+  };
+
+  const handleSpecialtyChange = (specialty: string) => {
+    setSelectedSpecialty(specialty);
+  };
+
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setSelectedStatus('');
+    setSelectedSpecialty('all');
+  };
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
+          <p className="text-red-500 mb-2">فشل في تحميل الوصفات الطبية</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            إعادة المحاولة
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -298,83 +198,165 @@ export default function PrescriptionsPage() {
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {/* إجمالي الوصفات */}
+        <Card className="backdrop-blur-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">وصفات سارية</p>
-                <p className="text-3xl font-bold">{activePrescriptions}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  إجمالي الوصفات
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                  {prescriptions.length}
+                </p>
               </div>
-              <div className="rounded-full p-3 bg-green-500/10">
-                <FileText className="h-6 w-6 text-green-500" />
+              <div className="rounded-full p-3 bg-purple-100 dark:bg-purple-900/20">
+                <FileText className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200">
+        {/* وصفات سارية */}
+        <Card className="backdrop-blur-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الأدوية</p>
-                <p className="text-3xl font-bold">{totalMedications}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  وصفات سارية
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                  {activePrescriptions}
+                </p>
               </div>
-              <div className="rounded-full p-3 bg-blue-500/10">
-                <Pill className="h-6 w-6 text-blue-500" />
+              <div className="rounded-full p-3 bg-green-100 dark:bg-green-900/20">
+                <FileText className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* وصفات منتهية */}
+        <Card className="backdrop-blur-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  وصفات منتهية
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                  {prescriptions.filter(p => p.medicationStatus === MedicationStatus.Completed).length}
+                </p>
+              </div>
+              <div className="rounded-full p-3 bg-yellow-100 dark:bg-yellow-900/20">
+                <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* وصفات منتهية الصلاحية */}
+        <Card className="backdrop-blur-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  منتهية الصلاحية
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                  {prescriptions.filter(p => p.medicationStatus === MedicationStatus.Expired).length}
+                </p>
+              </div>
+              <div className="rounded-full p-3 bg-red-100 dark:bg-red-900/20">
+                <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filters */}
-      <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm">
+      {/* Filters section */}
+      <motion.div variants={itemVariants} initial="hidden" animate="show">
+        <Card className="overflow-hidden backdrop-blur-sm bg-card/80 shadow-md border border-border/50">
+          <CardHeader className="bg-primary/5 pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                  <Filter className="h-5 w-5 text-primary" />
+                  تصفية النتائج
+                </CardTitle>
+                <CardDescription className="mt-1">
+                  يمكنك تصفية الوصفات حسب الحالة أو التخصص أو البحث بالاسم
+                </CardDescription>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs flex items-center gap-1 hover:bg-primary/10"
+                onClick={handleResetFilters}
+              >
+                <X className="h-3 w-3" />
+                إعادة ضبط الفلاتر
+              </Button>
+            </div>
+          </CardHeader>
+
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
+            <div className="grid gap-4 md:grid-cols-2">
+              {/* Search input */}
+              <div className="space-y-2">
               <Input
-                id="search"
-                placeholder="البحث عن وصفة أو دواء..."
+                  label="بحث"
+                  placeholder="ابحث عن دواء، طبيب، أو تشخيص..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                startIcon={<Search className="h-4 w-4 text-muted-foreground" />}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  startIcon={<Search className="h-4 w-4" />}
+                  fullWidth
               />
             </div>
 
-            <div>
+              {/* Status filter */}
+              {/* <div className="space-y-2">
               <Select
-                id="status"
-                placeholder="حالة الوصفة"
+                  label="حالة الوصفة"
                 value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
+                  onChange={(e) =>
+                    handleStatusFilter(e.target.value as MedicationStatus | '')
+                  }
                 options={[
                   { value: '', label: 'جميع الحالات' },
-                  { value: 'active', label: 'سارية' },
-                  { value: 'completed', label: 'منتهية' },
-                  { value: 'cancelled', label: 'ملغية' },
-                ]}
-              />
-            </div>
+                    ...Object.entries(MedicationStatus)
+                      .filter(([key]) => isNaN(Number(key)))
+                      .map(([_, value]) => ({
+                        value: value.toString(),
+                        label: getMedicationStatusLabel(
+                          value as MedicationStatus
+                        ),
+                      })),
+                  ]}
+                />
+              </div> */}
 
-            <div>
+              {/* Specialty filter */}
+              <div className="space-y-2">
               <Select
-                id="specialty"
-                placeholder="التخصص"
+                  label="التخصص"
                 value={selectedSpecialty}
-                onChange={(e) => setSelectedSpecialty(e.target.value)}
+                  onChange={(e) => handleSpecialtyChange(e.target.value)}
                 options={[
-                  { value: '', label: 'جميع التخصصات' },
-                  ...specialties.map((specialty) => ({
-                    value: specialty,
-                    label: specialty,
-                  })),
+                    { value: 'all', label: 'All Specialties' },
+                    ...(specialties?.map((specialty: SelectOption<string>) => ({
+                      value: specialty.value,
+                      label: specialty.label || '',
+                    })) || []),
                 ]}
               />
             </div>
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Prescriptions list */}
       <motion.div
@@ -383,151 +365,233 @@ export default function PrescriptionsPage() {
         animate="show"
         className="space-y-4"
       >
-        {currentPrescriptions.length > 0 ? (
-          currentPrescriptions.map((prescription) => (
+        {isLoading ? (
+          // Loading skeleton
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <Card key={i} className="animate-pulse">
+                <CardContent className="p-6">
+                  <div className="h-32 bg-muted rounded"></div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : prescriptions.length > 0 ? (
+          prescriptions.map((prescription) => (
             <motion.div key={prescription.id} variants={itemVariants}>
               <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
                 <CardContent className="p-0">
+                  {/* Header Section - Always Visible */}
                   <div className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="flex items-start gap-4">
                         <div className="rounded-full p-3 bg-blue-500/10">
                           <FileText className="h-6 w-6 text-blue-500" />
                         </div>
-                        <div>
+                        <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <h3 className="text-lg font-semibold">
-                              وصفة طبية - {prescription.doctorSpecialty}
+                              وصفة طبية -{' '}
+                              {prescription.doctorInfo.doctorSpecialty}
                             </h3>
                             <Badge
-                              variant={
-                                getPrescriptionStatusBadge(prescription.status)
-                                  .variant as any
-                              }
+                              variant="outline"
                               className={cn(
                                 'text-xs',
-                                getPrescriptionStatusBadge(prescription.status)
-                                  .color,
-                                getPrescriptionStatusBadge(prescription.status)
-                                  .bgColor,
-                                getPrescriptionStatusBadge(prescription.status)
-                                  .borderColor
+                                getMedicationStatusClass(
+                                  prescription.medicationStatus
+                                )
                               )}
                             >
-                              {
-                                getPrescriptionStatusBadge(prescription.status)
-                                  .label
-                              }
+                              {getMedicationStatusLabel(
+                                prescription.medicationStatus
+                              )}
                             </Badge>
                           </div>
                           <p className="text-muted-foreground">
-                            {prescription.doctorName} -{' '}
-                            {prescription.clinicName}
+                            {prescription.doctorInfo.doctorName} -{' '}
+                            {prescription.doctorInfo.clinicName}
                           </p>
                           <p className="text-sm text-muted-foreground mt-1">
-                            {formatDate(prescription.date)}
+                            {formatDate(prescription.doctorInfo.prescribeDate)}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-blue-500/20 text-blue-500 hover:bg-blue-500/10"
-                          asChild
-                        >
-                          <Link
-                            href={`/patient-portal/prescriptions/${prescription.id}`}
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            عرض التفاصيل
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-green-500/20 text-green-500 hover:bg-green-500/10"
-                        >
-                          <Printer className="h-4 w-4 mr-1" />
-                          طباعة
-                        </Button>
-                      </div>
+                      
+                      {/* Expand/Collapse Button */}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleCardExpansion(prescription.id)}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        {expandedCards.has(prescription.id) ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
+                      </Button>
                     </div>
                   </div>
 
-                  <Separator className="bg-border/50" />
+                  {/* Expandable Content */}
+                  {expandedCards.has(prescription.id) && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <Separator className="bg-border/50" />
 
-                  <div className="p-6">
-                    <h4 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                      <Pill className="h-4 w-4" />
-                      الأدوية ({prescription.medications.length})
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {prescription.medications.map((med, index) => (
-                        <div
-                          key={index}
-                          className="bg-muted/20 backdrop-blur-sm rounded-lg p-4 border border-border/30"
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="rounded-full p-1.5 bg-blue-500/10 mt-0.5">
-                              <Pill className="h-4 w-4 text-blue-500" />
+                      <div className="p-6">
+                        <h4 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                          <Pill className="h-4 w-4" />
+                          تفاصيل الدواء
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="bg-muted/20 backdrop-blur-sm rounded-lg p-4 border border-border/30">
+                            <div className="space-y-3">
+                              {/* Medicine Name and Code */}
+                              <div>
+                                <h5 className="font-semibold text-lg">
+                                  {prescription.medicineInfo.medicineName}
+                                </h5>
+                                <p className="text-sm text-muted-foreground">
+                                  كود: {prescription.medicineInfo.medicineCode}
+                                </p>
+                                {prescription.medicineInfo.scientificName && (
+                                  <p className="text-xs text-muted-foreground">
+                                    الاسم العلمي:{' '}
+                                    {prescription.medicineInfo.scientificName}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Dosage Information */}
+                              <div className="space-y-2">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm font-medium">
+                                    الجرعة:
+                                  </span>
+                                  <span className="text-sm">
+                                    {prescription.prescriptionDetails.dosage}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm font-medium">
+                                    التكرار:
+                                  </span>
+                                  <span className="text-sm">
+                                    {getFrequencyTypeLabel(
+                                      prescription.prescriptionDetails.frequency
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm font-medium">
+                                    المدة:
+                                  </span>
+                                  <span className="text-sm">
+                                    {prescription.prescriptionDetails.duration}{' '}
+                                    {getDurationUnitLabel(
+                                      prescription.prescriptionDetails.durationUnit
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
-                            <div>
-                              <p className="font-medium">{med.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {med.dosage} - {med.frequency} - {med.duration}
-                              </p>
-                              {med.refillable && med.refillsRemaining > 0 && (
-                                <Badge
-                                  variant="outline"
-                                  className="mt-2 text-xs border-amber-500/50 text-amber-500 bg-amber-500/10"
-                                >
-                                  يمكن إعادة الصرف ({med.refillsRemaining} مرات)
-                                </Badge>
+                          </div>
+
+                          {/* Treatment Dates */}
+                          <div className="bg-muted/20 backdrop-blur-sm rounded-lg p-4 border border-border/30">
+                            <h5 className="font-medium mb-3 flex items-center gap-2">
+                              <Calendar className="h-4 w-4" />
+                              تواريخ العلاج
+                            </h5>
+                            <div className="space-y-2">
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm">تاريخ الوصفة:</span>
+                                <span className="text-sm">
+                                  {formatDate(
+                                    prescription.doctorInfo.prescribeDate
+                                  )}
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm">
+                                  تاريخ انتهاء العلاج:
+                                </span>
+                                <span className="text-sm">
+                                  {formatDate(
+                                    prescription.dateInfo.treatmentEndDate
+                                  )}
+                                </span>
+                              </div>
+                              {prescription.dateInfo.expiryDate && (
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm">
+                                    تاريخ انتهاء الصلاحية:
+                                  </span>
+                                  <span className="text-sm">
+                                    {formatDate(prescription.dateInfo.expiryDate)}
+                                  </span>
+                                </div>
+                              )}
+                              {prescription.dateInfo.lastDispensedDate && (
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm">آخر صرف:</span>
+                                  <span className="text-sm">
+                                    {formatDate(
+                                      prescription.dateInfo.lastDispensedDate
+                                    )}
+                                  </span>
+                                </div>
                               )}
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {prescription.diagnosis && (
-                    <>
-                      <Separator className="bg-border/50" />
-                      <div className="p-6">
-                        <div className="flex items-start gap-3">
-                          <div className="rounded-full p-1.5 bg-green-500/10 mt-0.5">
-                            <Info className="h-4 w-4 text-green-500" />
-                          </div>
-                          <div>
-                            <p className="font-medium">التشخيص</p>
-                            <p className="text-muted-foreground">
-                              {prescription.diagnosis}
-                            </p>
-                          </div>
-                        </div>
                       </div>
-                    </>
-                  )}
 
-                  {prescription.notes && (
-                    <>
-                      <Separator className="bg-border/50" />
-                      <div className="p-6">
-                        <div className="flex items-start gap-3">
-                          <div className="rounded-full p-1.5 bg-amber-500/10 mt-0.5">
-                            <AlertCircle className="h-4 w-4 text-amber-500" />
+                      {prescription.additionalInfo.diagnosis && (
+                        <>
+                          <Separator className="bg-border/50" />
+                          <div className="p-6">
+                            <div className="flex items-start gap-3">
+                              <div className="rounded-full p-1.5 bg-green-500/10 mt-0.5">
+                                <Info className="h-4 w-4 text-green-500" />
+                              </div>
+                              <div>
+                                <p className="font-medium">التشخيص</p>
+                                <p className="text-muted-foreground">
+                                  {prescription.additionalInfo.diagnosis}
+                                </p>
+                              </div>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium">ملاحظات</p>
-                            <p className="text-muted-foreground">
-                              {prescription.notes}
-                            </p>
+                        </>
+                      )}
+
+                      {prescription.prescriptionDetails.notes && (
+                        <>
+                          <Separator className="bg-border/50" />
+                          <div className="p-6">
+                            <div className="flex items-start gap-3">
+                              <div className="rounded-full p-1.5 bg-amber-500/10 mt-0.5">
+                                <AlertCircle className="h-4 w-4 text-amber-500" />
+                              </div>
+                              <div>
+                                <p className="font-medium">ملاحظات</p>
+                                <p className="text-muted-foreground">
+                                  {prescription.prescriptionDetails.notes}
+                                </p>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </>
+                        </>
+                      )}
+                    </motion.div>
                   )}
                 </CardContent>
               </Card>
@@ -548,33 +612,21 @@ export default function PrescriptionsPage() {
         )}
       </motion.div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="rounded-full border-border/50 hover:bg-muted/50"
-          >
-            <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">الصفحة السابقة</span>
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            صفحة {currentPage} من {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="rounded-full border-border/50 hover:bg-muted/50"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">الصفحة التالية</span>
-          </Button>
-        </div>
+      {/* Pagination Component */}
+      {prescriptionsData && prescriptionsData.totalCount > 0 && (
+        <Pagination
+          currentPage={prescriptionsData.pageNumber}
+          totalPages={prescriptionsData.totalPages}
+          totalCount={prescriptionsData.totalCount}
+          pageSize={pageSize}
+          hasPreviousPage={prescriptionsData.hasPreviousPage}
+          hasNextPage={prescriptionsData.hasNextPage}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          showPageSizeSelector={true}
+          pageSizeOptions={[5, 10, 20, 50]}
+          className="mt-6"
+        />
       )}
     </div>
   );

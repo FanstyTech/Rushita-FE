@@ -6,6 +6,8 @@ import {
   PrescribedMedicationItemDto,
   UpdatePrescriptionStatusDto,
   DispenseMedicineDto,
+  PatientPortalPrescriptionDto,
+  PatientPrescriptionFilterDto,
 } from '../types/visit-prescription';
 import type { PaginationResponse } from '../types/pagination';
 import type { ApiResponse } from '../types/api';
@@ -103,5 +105,14 @@ export const visitPrescriptionService = {
         params: { id },
       }
     );
+  },
+
+  // Get patient portal prescriptions
+  async getPatientPortalPrescriptions(
+    filter: PatientPrescriptionFilterDto
+  ): Promise<ApiResponse<PaginationResponse<PatientPortalPrescriptionDto>>> {
+    return apiClient.get(API_ENDPOINTS.visitPrescription.PATIENT_PORTAL_PRESCRIPTIONS, {
+      params: convertFilterToParams(filter as FilterParams),
+    });
   },
 };

@@ -6,6 +6,7 @@ import type {
   CreateUpdateClinicDto,
   ClinicFilterDto,
   ClinicStatus,
+  GetClinicsForDropdownDto,
 } from '../types/clinic';
 import type { PaginationResponse } from '../types/pagination';
 import type { SelectOption } from '../types/select-option';
@@ -69,10 +70,10 @@ class ClinicService {
     return response;
   }
 
-  async getForDropdown(): Promise<SelectOption<string>[]> {
-    const response = await apiClient.get<ApiResponse<SelectOption<string>[]>>(
-      API_ENDPOINTS.CLINIC.GET_FOR_DROPDOWN
-    );
+  async getForDropdown(): Promise<GetClinicsForDropdownDto[]> {
+    const response = await apiClient.get<
+      ApiResponse<GetClinicsForDropdownDto[]>
+    >(API_ENDPOINTS.CLINIC.GET_FOR_DROPDOWN);
     return response.result || [];
   }
   async getClinicSpecialtiesForDropdown(

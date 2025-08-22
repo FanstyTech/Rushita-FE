@@ -1,24 +1,30 @@
-// Permission DTO
-export interface PermissionDto {
-  id: string;
-  key: string;
-  name: string;
-  description: string;
-  module: string;
+export interface UserPermissionSelectionDto {
+  userId: string;
+  userName: string;
+  clinicId?: string;
+  modules: ModulePermissionsDto[];
 }
 
-// Module with its permissions
+export interface SaveUserPermissionsDto {
+  userId: string;
+  clinicId?: string;
+  selectedPermissions: PermissionSelectionDto[];
+  notes?: string;
+}
 export interface ModulePermissionsDto {
-  module: string;
-  permissions: PermissionDto[];
+  moduleName: string;
+  moduleDisplayName: string;
+  permissions: PermissionSelectionDto[];
 }
-
-// Permission filter
-export interface PermissionFilterDto {
-  module?: string;
-  searchTerm?: string;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  pageNumber?: number;
-  pageSize?: number;
+export interface PermissionSelectionDto {
+  id: string;
+  name: string;
+  key: string;
+  description?: string;
+  module: string;
+  isSelected: boolean;
+  isGranted: boolean;
+  expiresAt?: string;
+  notes?: string;
+  userPermissionId?: string;
 }

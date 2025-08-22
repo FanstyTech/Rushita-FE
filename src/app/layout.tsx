@@ -8,8 +8,10 @@ import { Cairo } from 'next/font/google';
 
 const cairo = Cairo({
   subsets: ['arabic', 'latin'],
-  weight: ['300', '400', '500', '600', '700'], // choose what you need
+  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
+  preload: true, 
+  fallback: ['system-ui', 'arial'], 
 });
 export default async function RootLayout({
   children,
@@ -50,7 +52,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className={`${cairo.className} font-ibm-plex`}
+        className={cairo.className}
         suppressHydrationWarning
       >
         <Providers>

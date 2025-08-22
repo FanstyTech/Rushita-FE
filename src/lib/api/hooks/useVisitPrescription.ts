@@ -197,12 +197,38 @@ export function useVisitPrescription() {
     retry: false,
   });
 
+  // Query keys for patient portal
+  const patientPortalQueryKeys = {
+    patientPortal: () => [...queryKeys.all, 'patientPortal'] as const,
+    patientPortalList: (filter: VisitPrescriptionFilterDto) =>
+      [...patientPortalQueryKeys.patientPortal(), 'list', filter] as const,
+  };
+
+  // Get patient portal prescriptions
+  const getPatientPortalPrescriptions = (filter: VisitPrescriptionFilterDto) =>
+    useQuery({
+      queryKey: patientPortalQueryKeys.patientPortalList(filter),
+      queryFn: async () => {
+        const response = await visitPrescriptionService.getPatientPortalPrescriptions(filter);
+        if (!response.success) {
+          throw new Error(
+            response.message || 'Failed to fetch patient portal prescriptions'
+          );
+        }
+        return response.result;
+      },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      retry: false,
+    });
+
   return {
     // Queries
     getVisitPrescriptions,
     getVisitPrescription,
     getVisitPrescriptionsByVisitId,
     getPrescribedMedicationsByVisitId,
+    getPatientPortalPrescriptions,
 
     // Mutations
     createOrUpdateVisitPrescription,
@@ -210,6 +236,9 @@ export function useVisitPrescription() {
     dispenseMedicine,
 
     // Query keys (for manual cache management)
-    queryKeys,
+    queryKeys: {
+      ...queryKeys,
+      patientPortal: patientPortalQueryKeys,
+    },
   };
 }

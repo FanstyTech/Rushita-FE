@@ -153,3 +153,97 @@ export interface DispenseMedicineDto {
   dispensedQuantity: number;
   notes?: string;
 }
+
+// Medication status enum (for patient portal)
+export enum MedicationStatus {
+  Active = 1, // Active
+  Completed = 2, // Completed
+  Cancelled = 3, // Cancelled
+  Expired = 4, // Expired
+}
+
+// Patient Portal Prescription DTO
+export interface PatientPortalPrescriptionDto {
+  id: string;
+  visitId: string;
+  visitNumber: string;
+  createdAt: string;
+
+  // Doctor and Clinic Information
+  doctorInfo: DoctorInfoDto;
+
+  // Medicine Information
+  medicineInfo: MedicineInfoDto;
+
+  // Prescription Details
+  prescriptionDetails: PrescriptionDetailsDto;
+
+  // Quantity Information
+  quantityInfo: QuantityInfoDto;
+
+  // Date Information
+  dateInfo: DateInfoDto;
+
+  // Calculated Status
+  medicationStatus: MedicationStatus;
+
+  // Additional Information
+  additionalInfo: AdditionalInfoDto;
+}
+
+export interface DoctorInfoDto {
+  doctorName: string;
+  doctorSpecialty: string;
+  clinicName: string;
+  prescribeDate: string;
+}
+
+export interface MedicineInfoDto {
+  medicineName: string;
+  medicineCode: string;
+  scientificName?: string;
+  description?: string;
+  dosageForm?: DosageForm;
+  strength?: MedicineStrength;
+}
+
+export interface PrescriptionDetailsDto {
+  dosage: number;
+  frequency: FrequencyType;
+  frequencyNotes?: string;
+  duration: number;
+  durationUnit: DurationUnit;
+  route?: string;
+  instructions?: string;
+  notes?: string;
+}
+
+export interface QuantityInfoDto {
+  quantity: number;
+  dispensedQuantity: number;
+  remainingQuantity: number;
+}
+
+export interface DateInfoDto {
+  expiryDate?: string;
+  lastDispensedDate?: string;
+  treatmentEndDate: string;
+}
+
+export interface AdditionalInfoDto {
+  diagnosis: string;
+  isRefillable: boolean;
+  refillsRemaining: number;
+}
+
+// Patient Portal Filter DTO
+export interface PatientPrescriptionFilterDto extends PaginationRequest {
+  fromDate?: string;
+  toDate?: string;
+  medicationStatus?: MedicationStatus;
+  status?: PrescriptionStatus;
+  visitId?: string;
+  medicineId?: string;
+  searchValue?: string;
+  specialtyId?: string;
+}

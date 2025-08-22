@@ -191,7 +191,6 @@ export const API_ENDPOINTS = {
     GET_PATIENT_APPOINTMENTS: '/patient/getPatientAppointments',
     UPDATE_PATIENT_APPOINTMENT: '/patient/updatePatientAppointment',
     GET_PATIENT_VISITS: '/patient/getPatientVisits',
-    GET_PATIENT_PRESCRIPTIONS: '/patient/getPatientPrescriptions',
     UPDATE_PATIENT_PRESCRIPTION: '/patient/updatePatientPrescription',
     SAVE_APPOINTMENT: '/patient/savePatientAppointments',
     GET_APPOINTMENT_DETAILS: '/patient/getPatientAppointmentDetails',
@@ -231,6 +230,8 @@ export const API_ENDPOINTS = {
     GET_SUMMARY: '/visitLabTest/getSummary',
     UPDATE_STATUS: '/visitLabTest/updateStatus',
     UPDATE_RESULT: '/visitLabTest/updateResult',
+    PATIENT_LAB_TESTS: '/visitLabTest/getPatientLabTests',
+    PATIENT_LAB_TEST_DETAILS: '/visitLabTest/getPatientLabTestDetails',
   },
   visitRadiologyTest: {
     LIST: '/visitRadiologyTest/getAll',
@@ -253,6 +254,7 @@ export const API_ENDPOINTS = {
     GET_BY_VISIT_ID: '/visitPrescription/getByVisitId',
     UPDATE_STATUS: '/visitPrescription/updateStatus',
     DISPENSE_MEDICINE: '/visitPrescription/dispenseMedicine',
+    PATIENT_PORTAL_PRESCRIPTIONS: '/visitPrescription/getPatientPortalPrescriptions', 
     GET_PRESCRIBED_MEDICATIONS:
       '/visitPrescription/getPrescribedMedicationsByVisitId',
   },
@@ -321,9 +323,8 @@ export const API_ENDPOINTS = {
     END_SESSION: '/role/endUserSession',
   },
   PERMISSION: {
-    GET_LIST: '/permission',
-    GET_MODULES: '/permission/modules',
-    GET_BY_MODULE: '/permission/by-module',
+    GET_USER_PERMISSION_SELECTION: '/userPermission/getUserPermissionSelection',
+    SAVE_USER_PERMISSIONS: '/userPermission/saveUserPermissions',
   },
   ATTACHMENT: {
     GET_BY_ID: '/attachment/getById/:id',
