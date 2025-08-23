@@ -19,6 +19,56 @@ const resources = {
         medicalIntelligence: 'Medical Intelligence',
       },
 
+      // Breadcrumb routes
+      breadcrumb: {
+        home: 'Home',
+        // Main sections
+        admin: 'Administration',
+        clinic: 'Clinic',
+        doctor: 'Doctor',
+
+        // Admin routes
+        dashboard: 'Dashboard',
+        users: 'Users',
+        clinics: 'Clinics',
+        settings: 'Settings',
+
+        // Clinic routes
+        patients: 'Patients',
+        appointments: 'Appointments',
+        'medical-records': 'Medical Records',
+        staff: 'Staff',
+
+        // Financial routes
+        financial: 'Financial',
+        revenues: 'Revenues',
+        expenses: 'Expenses',
+        invoices: 'Invoices',
+        salaries: 'Salaries',
+        transactions: 'Transactions',
+        reports: 'Reports',
+        'service-prices': 'Service Prices',
+
+        // Doctor routes
+        visits: 'Visits',
+        prescriptions: 'Prescriptions',
+        schedule: 'Schedule',
+
+        // Common actions
+        create: 'Create New',
+        edit: 'Edit',
+        view: 'View',
+        new: 'New',
+        add: 'Add',
+
+        // Dynamic route labels
+        patient: 'Patient #{{id}}',
+        appointment: 'Appointment #{{id}}',
+        visit: 'Visit #{{id}}',
+        invoice: 'Invoice #{{id}}',
+        staff_member: 'Staff #{{id}}',
+      },
+
       // User related
       user: {
         profile: 'Profile',
@@ -473,6 +523,56 @@ const resources = {
         medicalIntelligence: 'الذكاء الطبي',
       },
 
+      // Breadcrumb routes
+      breadcrumb: {
+        home: 'الرئيسية',
+        // Main sections
+        admin: 'الإدارة',
+        clinic: 'العيادة',
+        doctor: 'الطبيب',
+
+        // Admin routes
+        dashboard: 'لوحة التحكم',
+        users: 'المستخدمين',
+        clinics: 'العيادات',
+        settings: 'الإعدادات',
+
+        // Clinic routes
+        patients: 'المرضى',
+        appointments: 'المواعيد',
+        'medical-records': 'السجلات الطبية',
+        staff: 'الطاقم',
+
+        // Financial routes
+        financial: 'المالية',
+        revenues: 'الإيرادات',
+        expenses: 'المصروفات',
+        invoices: 'الفواتير',
+        salaries: 'الرواتب',
+        transactions: 'المعاملات',
+        reports: 'التقارير',
+        'service-prices': 'أسعار الخدمات',
+
+        // Doctor routes
+        visits: 'الزيارات',
+        prescriptions: 'الوصفات الطبية',
+        schedule: 'الجدول',
+
+        // Common actions
+        create: 'إنشاء جديد',
+        edit: 'تعديل',
+        view: 'عرض',
+        new: 'جديد',
+        add: 'إضافة',
+
+        // Dynamic route labels
+        patient: 'مريض #{{id}}',
+        appointment: 'موعد #{{id}}',
+        visit: 'زيارة #{{id}}',
+        invoice: 'فاتورة #{{id}}',
+        staff_member: 'عضو طاقم #{{id}}',
+      },
+
       // User related
       user: {
         profile: 'الملف الشخصي',
@@ -925,6 +1025,56 @@ const resources = {
         settings: 'Configuración',
         clinicAI: 'IA Clínica',
         medicalIntelligence: 'Inteligencia Médica',
+      },
+
+      // Breadcrumb routes
+      breadcrumb: {
+        home: 'Inicio',
+        // Main sections
+        admin: 'Administración',
+        clinic: 'Clínica',
+        doctor: 'Doctor',
+
+        // Admin routes
+        dashboard: 'Panel de Control',
+        users: 'Usuarios',
+        clinics: 'Clínicas',
+        settings: 'Configuración',
+
+        // Clinic routes
+        patients: 'Pacientes',
+        appointments: 'Citas',
+        'medical-records': 'Registros Médicos',
+        staff: 'Personal',
+
+        // Financial routes
+        financial: 'Finanzas',
+        revenues: 'Ingresos',
+        expenses: 'Gastos',
+        invoices: 'Facturas',
+        salaries: 'Salarios',
+        transactions: 'Transacciones',
+        reports: 'Informes',
+        'service-prices': 'Precios de Servicios',
+
+        // Doctor routes
+        visits: 'Visitas',
+        prescriptions: 'Recetas',
+        schedule: 'Calendario',
+
+        // Common actions
+        create: 'Crear Nuevo',
+        edit: 'Editar',
+        view: 'Ver',
+        new: 'Nuevo',
+        add: 'Agregar',
+
+        // Dynamic route labels
+        patient: 'Paciente #{{id}}',
+        appointment: 'Cita #{{id}}',
+        visit: 'Visita #{{id}}',
+        invoice: 'Factura #{{id}}',
+        staff_member: 'Miembro del Personal #{{id}}',
       },
 
       // User related

@@ -9,6 +9,8 @@ import {
   RadiologySummaryStatsInput,
   UpdateVisitRadiologyTestStatusDto,
   UpdateVisitRadiologyTestResultDto,
+  PatientRadiologyTestFilterDto,
+  PatientPortalRadiologyTestDto,
 } from '../types/visit-radiology-test';
 import type { PaginationResponse } from '../types/pagination';
 import type { ApiResponse } from '../types/api';
@@ -104,6 +106,24 @@ export const visitRadiologyTestService = {
   ): Promise<ApiResponse<RadiologySummaryStatsDto[]>> {
     return apiClient.get(API_ENDPOINTS.visitRadiologyTest.GET_SUMMARY, {
       params: convertFilterToParams(input as FilterParams),
+    });
+  },
+
+  // Get patient radiology tests for patient portal
+  async getPatientRadiologyTests(
+    filter: PatientRadiologyTestFilterDto
+  ): Promise<ApiResponse<PaginationResponse<PatientPortalRadiologyTestDto>>> {
+    return apiClient.get(API_ENDPOINTS.visitRadiologyTest.PATIENT_RADIOLOGY_TESTS, {
+      params: convertFilterToParams(filter as FilterParams),
+    });
+  },
+
+  // Get patient radiology test details
+  async getPatientRadiologyTestDetails(
+    id: string
+  ): Promise<ApiResponse<PatientPortalRadiologyTestDto>> {
+    return apiClient.get(API_ENDPOINTS.visitRadiologyTest.PATIENT_RADIOLOGY_TEST_DETAILS, {
+      params: { id },
     });
   },
 }; 

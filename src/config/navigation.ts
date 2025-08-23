@@ -22,7 +22,13 @@ import {
   Cog6ToothIcon,
   BanknotesIcon,
   CurrencyDollarIcon,
+  ReceiptPercentIcon,
+  DocumentDuplicateIcon,
+  ArrowTrendingUpIcon,
+  UsersIcon,
+  ArrowsRightLeftIcon,
 } from '@heroicons/react/24/outline';
+
 import type { NavItem } from '@/types/navigation';
 import { PermissionKeys } from './permissions';
 
@@ -323,11 +329,53 @@ export const clinicNav: NavItem[] = [
     permission: PermissionKeys.VIEW_FINANCIALS,
     children: [
       {
+        name: 'Financial Dashboard ',
+        id: 'clinic-financial-dashboard',
+        href: '/clinic/financial',
+        icon: CurrencyDollarIcon,
+        permission: PermissionKeys.ACCESS_CLINIC_DASHBOARD,
+      },
+      {
         name: 'Service Prices',
         id: 'clinic-financial-service-prices',
         href: '/clinic/financial/service-prices',
         icon: CurrencyDollarIcon,
         permission: PermissionKeys.MANAGE_SERVICE_PRICES,
+      },
+      {
+        name: 'Expenses',
+        id: 'clinic-financial-expenses',
+        href: '/clinic/financial/expenses',
+        icon: ReceiptPercentIcon,
+        permission: PermissionKeys.VIEW_EXPENSES,
+      },
+      {
+        name: 'Invoices',
+        id: 'clinic-financial-invoices',
+        href: '/clinic/financial/invoices',
+        icon: DocumentDuplicateIcon,
+        permission: PermissionKeys.VIEW_INVOICES,
+      },
+      {
+        name: 'Revenues',
+        id: 'clinic-financial-revenues',
+        href: '/clinic/financial/revenues',
+        icon: ArrowTrendingUpIcon,
+        permission: PermissionKeys.VIEW_REVENUES,
+      },
+      {
+        name: 'Salaries',
+        id: 'clinic-financial-salaries',
+        href: '/clinic/financial/salaries',
+        icon: UsersIcon,
+        permission: PermissionKeys.VIEW_SALARIES,
+      },
+      {
+        name: 'Transactions',
+        id: 'clinic-financial-transactions',
+        href: '/clinic/financial/transactions',
+        icon: ArrowsRightLeftIcon,
+        permission: PermissionKeys.VIEW_TRANSACTIONS,
       },
     ],
   },

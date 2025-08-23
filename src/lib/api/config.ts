@@ -245,6 +245,9 @@ export const API_ENDPOINTS = {
     GET_SUMMARY: '/visitRadiologyTest/getSummary',
     UPDATE_STATUS: '/visitRadiologyTest/updateStatus',
     UPDATE_RESULT: '/visitRadiologyTest/updateResult',
+    PATIENT_RADIOLOGY_TESTS: '/visitRadiologyTest/getPatientRadiologyTests',
+    PATIENT_RADIOLOGY_TEST_DETAILS:
+      '/visitRadiologyTest/getPatientRadiologyTestDetails',
   },
   visitPrescription: {
     LIST: '/visitPrescription/getAll',

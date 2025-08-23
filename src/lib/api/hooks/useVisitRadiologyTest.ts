@@ -7,6 +7,7 @@ import type {
   RadiologySummaryStatsInput,
   UpdateVisitRadiologyTestStatusDto,
   UpdateVisitRadiologyTestResultDto,
+  PatientRadiologyTestFilterDto,
 } from '../types/visit-radiology-test';
 import { toast } from '@/components/ui/Toast';
 
@@ -29,6 +30,15 @@ export function useVisitRadiologyTest() {
     visitsWithTests: () => [...queryKeys.all, 'visitsWithTests'] as const,
     visitsWithTestsList: (input: GetVisitsWithRadiologyTestsInput) =>
       [...queryKeys.visitsWithTests(), input] as const,
+  };
+
+  // Patient Portal specific query keys
+  const patientQueryKeys = {
+    patient: () => [...queryKeys.all, 'patient'] as const,
+    patientList: (filter: PatientRadiologyTestFilterDto) =>
+      [...patientQueryKeys.patient(), 'list', filter] as const,
+    patientDetail: (id: string) =>
+      [...patientQueryKeys.patient(), 'detail', id] as const,
   };
 
   // Get paginated list
@@ -122,6 +132,18 @@ export function useVisitRadiologyTest() {
         return response.result;
       },
     });
+
+  // Get patient radiology tests for patient portal
+  const getPatientRadiologyTests = (filter: PatientRadiologyTestFilterDto) => ({
+    queryKey: patientQueryKeys.patientList(filter),
+    queryFn: () => visitRadiologyTestService.getPatientRadiologyTests(filter),
+  });
+
+  // Get patient radiology test details
+  const getPatientRadiologyTestDetails = (id: string) => ({
+    queryKey: patientQueryKeys.patientDetail(id),
+    queryFn: () => visitRadiologyTestService.getPatientRadiologyTestDetails(id),
+  });
 
   // Create/Update mutation
   const createOrUpdateVisitRadiologyTest = useMutation({
@@ -233,6 +255,8 @@ export function useVisitRadiologyTest() {
     getVisitRadiologyTestsByRadiologyTestId,
     getVisitsWithRadiologyTests,
     getRadiologyTestSummary,
+    getPatientRadiologyTests,
+    getPatientRadiologyTestDetails,
 
     // Mutations
     createOrUpdateVisitRadiologyTest,

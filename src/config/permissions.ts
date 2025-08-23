@@ -21,11 +21,20 @@ export const PermissionKeys = {
   CANCEL_APPOINTMENTS: 'clinic.appointments.cancel',
 
   // Financial Management
-  MANAGE_FINANCIALS: 'clinic.financials.manage',
   VIEW_FINANCIALS: 'clinic.financials.view',
+  ACCESS_FINANCIALS_DASHBOARD: 'clinic.financials.dashboard',
   MANAGE_INVOICES: 'clinic.financials.invoices.manage',
+  VIEW_INVOICES: 'clinic.financials.invoices.view',
   MANAGE_SERVICE_PRICES: 'clinic.financials.serviceprices.manage',
   VIEW_SERVICE_PRICES: 'clinic.financials.serviceprices.view',
+  VIEW_EXPENSES: 'clinic.financials.expenses.view',
+  MANAGE_EXPENSES: 'clinic.financials.expenses.manage',
+  VIEW_REVENUES: 'clinic.financials.revenues.view',
+  MANAGE_REVENUES: 'clinic.financials.revenues.manage',
+  VIEW_SALARIES: 'clinic.financials.salaries.view',
+  MANAGE_SALARIES: 'clinic.financials.salaries.manage',
+  VIEW_TRANSACTIONS: 'clinic.financials.transactions.view',
+  MANAGE_TRANSACTIONS: 'clinic.financials.transactions.manage',
 
   // Medical Records
   MANAGE_MEDICAL_RECORDS: 'clinic.medical.records.manage',

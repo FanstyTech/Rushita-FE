@@ -106,3 +106,33 @@ export interface UpdateVisitRadiologyTestResultDto {
   result?: string;
   attachmentIds?: string[];
 }
+
+// Patient Portal Radiology Test DTO
+export interface PatientPortalRadiologyTestDto {
+  id: string;
+  visitId: string;
+  visitNumber: string;
+  radiologyTestName: string;
+  radiologyTestCode: string;
+  radiologyTestCategoryName: string;
+  specialtyName: string;
+  doctorName: string;
+  clinicName: string;
+  radiologyCenterName: string;
+  notes?: string;
+  result?: string;
+  status: TestStatus;
+  requestDate: string;
+  testDate?: string;
+  resultDate?: string;
+  attachments?: AttachmentDto[];
+}
+
+// Patient Portal Filter DTO
+export interface PatientRadiologyTestFilterDto extends PaginationRequest {
+  searchValue?: string;
+  status?: TestStatus;
+  specialtyId?: string;
+  fromDate?: string;
+  toDate?: string;
+}

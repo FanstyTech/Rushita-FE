@@ -9,14 +9,13 @@ import {
   MenuItems,
   MenuItem,
 } from '@headlessui/react';
-import { BellIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
+import { BellIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { BsGrid } from 'react-icons/bs';
 import Avatar from './common/Avatar';
-import { languages } from '@/middleware';
-import { Language } from '@/i18n/LanguageProvider';
 import ThemeToggle from './ThemeToggle';
+import LanguageToggle from './LanguageToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -69,15 +68,6 @@ export default function Header() {
 
           {/* Right Section: Icons */}
           <div className="flex items-center space-x-3 rtl:space-x-reverse">
-            {/* Extra Utility Icon (Placeholder) */}
-            <button
-              type="button"
-              className="rounded-full p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-            >
-              <span className="sr-only">{t('user.notifications')}</span>
-              <BsGrid className="h-6 w-6" aria-hidden="true" />
-            </button>
-
             {/* Notifications */}
             <button
               type="button"
@@ -89,47 +79,7 @@ export default function Header() {
 
             {/* Theme Toggle */}
             <ThemeToggle />
-
-            {/* Language Dropdown */}
-            <div className="">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="rounded-full p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
-                    <span className="sr-only">{t('settings.language')}</span>
-                    <GlobeAltIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent asChild>
-                  <div>
-                    {languages.map((lang, index) => (
-                      <DropdownMenuItem
-                        key={index}
-                        className="mx-auto p-0 my-1 flex justify-center items-center"
-                      >
-                        <button
-                          onClick={() => setLanguage(lang as Language)}
-                          disabled={isChangingLanguage}
-                          className={cn(
-                            'block w-full px-4 py-2 text-start text-sm text-gray-700 dark:text-gray-300',
-                            language === lang
-                              ? 'bg-gray-50 dark:bg-gray-700/50'
-                              : '',
-                            isChangingLanguage
-                              ? 'opacity-50 cursor-not-allowed'
-                              : ''
-                          )}
-                        >
-                          {t(`languages.${lang}`)}
-                          {isChangingLanguage && language === lang && (
-                            <span className="ml-2 inline-block h-3 w-3 animate-pulse rounded-full bg-blue-500"></span>
-                          )}
-                        </button>
-                      </DropdownMenuItem>
-                    ))}
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            <LanguageToggle />
 
             {/* Profile dropdown */}
             <Menu as="div" className="relative">

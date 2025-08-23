@@ -24,7 +24,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { formatDate } from '@/utils/dateTimeUtils';
 import {
   BMICategory,
   MetricStatus,

@@ -1,72 +1,222 @@
-"use client"
+'use client';
 import Image from 'next/image';
-import Link from 'next/link'
-import React from 'react'
+import Link from 'next/link';
+import React from 'react';
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from 'react-icons/fa';
-import { Card } from '../ui/card';
+import { Mail, Phone, MapPin, ArrowUp } from 'lucide-react';
+import { Button } from '../ui/button';
 
 const navLinks = [
-    { id: "home", label: "الرئيسية" },
-    { id: "whyroshita", label: "لماذا روشيتة" },
-    { id: "projects", label: "خدماتنا" },
-    { id: "contact", label: "الاسعار" }
+  { id: 'home', label: 'الرئيسية' },
+  { id: 'whyroshita', label: 'لماذا روشيتة' },
+  { id: 'projects', label: 'خدماتنا' },
+  { id: 'contact', label: 'الاسعار' },
 ];
+
+const socialLinks = [
+  {
+    icon: FaFacebook,
+    href: '#',
+    color: 'hover:text-blue-500',
+    label: 'Facebook',
+  },
+  {
+    icon: FaTwitter,
+    href: '#',
+    color: 'hover:text-blue-400',
+    label: 'Twitter',
+  },
+  {
+    icon: FaLinkedin,
+    href: '#',
+    color: 'hover:text-blue-600',
+    label: 'LinkedIn',
+  },
+  {
+    icon: FaInstagram,
+    href: '#',
+    color: 'hover:text-pink-500',
+    label: 'Instagram',
+  },
+];
+
 function Footer() {
-    return (
-        <footer className="  ">
-            <Card className='rounded-none pt-5 border-0 p-0'>
-                <div className="max-w-7xl w-full mx-auto px-4 py-12 sm:px-6 lg:px-8">
-                    <div className="flex  md:ltr:flex-row-reverse md:flex-row flex-col sm:justify-between justify-center">
-                        {/* معلومات الشركة */}
-                        <div className="flex justify-center items-center  text-right">
-                            <div className='flex justify-center items-center'>
-                                <div className="flex flex-row-reverse text-foreground/85  space-x-reverse space-x-4">
-                                    <Link href="#" className=" duration-300  hover:text-blue-500"><FaFacebook size={24} /></Link>
-                                    <Link href="#" className=" duration-300  hover:text-blue-400"><FaTwitter size={24} /></Link>
-                                    <Link href="#" className=" duration-300  hover:text-blue-600"><FaLinkedin size={24} /></Link>
-                                    <Link href="#" className=" duration-300  hover:text-pink-500"><FaInstagram size={24} /></Link>
-                                </div>
-                            </div>
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-                        </div>
+  return (
+    <footer className="bg-gray-900 dark:bg-gray-950 text-white relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 right-10 w-72 h-72 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-96 h-96 bg-gradient-to-r from-purple-500/5 to-pink-500/5 rounded-full blur-3xl"></div>
+      </div>
 
-                        <div className="text-right ">
-                            <ul className="space-y-2 xxs:flex-row flex-col flex xxs:gap-5 mt-3 justify-center w-full md:w-fit  items-center  text-foreground">
-                                {navLinks.map((item) => (
-                                    <li key={item.id} className='m-0'><Link href={`/#${item.id}`} className="  hover:text-secend  duration-300 ">{item.label}</Link></li>
-                                ))}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Main Footer Content */}
+        <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Company Info */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex items-center">
+              <Image
+                width={180}
+                height={60}
+                src="/images/image4.png"
+                alt="روشيتة"
+                className="h-14 w-auto"
+              />
+            </div>
 
-                            </ul>
-                        </div>
-                        <div className='flex justify-center items-center'>
-                            <Image
-                                width={150}
-                                height={50}
-                                src="/images/image4.png"
-                                alt="شعار الشركة"
-                                className="h-12 w-auto"
-                            />
+            <p className="text-gray-300 text-lg leading-relaxed max-w-md">
+              نظام إدارة العيادات الذكي الذي يجعل يوم عملك أسهل وأكثر تنظيماً.
+              من أول موعد لآخر متابعة.
+            </p>
 
-                        </div>
-                    </div>
+            {/* Contact Info */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-gray-300">
+                <Mail className="w-5 h-5 text-blue-400" />
+                <span>info@rushita.com</span>
+              </div>
+              <div className="flex items-center gap-3 text-gray-300">
+                <Phone className="w-5 h-5 text-green-400" />
+                <span dir="ltr">+966 50 123 4567</span>
+              </div>
+              <div className="flex items-center gap-3 text-gray-300">
+                <MapPin className="w-5 h-5 text-red-400" />
+                <span>الرياض، المملكة العربية السعودية</span>
+              </div>
+            </div>
+          </div>
 
-                    {/* الشريط السفلي */}
-                    <div className="mt-12 pt-8 border-t border-gray-500 flex flex-col sm:flex-row justify-between items-center space-y-4 md:space-y-0 text-sm text-foreground">
-                        <div className="flex flex-row-reverse xxs:flex-nowrap flex-wrap  gap-5 items-center space-x-reverse ">
-                            <Link href="#" className="hover:text-secend duration-300  ">سياسة الخصوصية</Link>
-                            <Link href="#" className="hover:text-secend duration-300 ">الشروط والأحكام</Link>
-                        </div>
-                        <p >© {new Date().getFullYear()} جميع الحقوق محفوظة لشركتك</p>
+          {/* Quick Links */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-bold text-white">روابط سريعة</h3>
+            <ul className="space-y-3">
+              {navLinks.map((item) => (
+                <li key={item.id}>
+                  <Link
+                    href={`/#${item.id}`}
+                    className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-                    </div>
+          {/* Support & Resources */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-bold text-white">الدعم والموارد</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
+                >
+                  مركز المساعدة
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
+                >
+                  الأسئلة الشائعة
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
+                >
+                  دليل المستخدم
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
+                >
+                  تواصل معنا
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-                    {/* زر الصعود للأعلى */}
+        {/* Social Media & CTA Section */}
+        <div className="py-8 border-t border-gray-800">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+            {/* Social Links */}
+            <div className="flex items-center gap-6">
+              <span className="text-gray-400 font-medium">تابعنا على:</span>
+              <div className="flex gap-4">
+                {socialLinks.map((social, index) => {
+                  const IconComponent = social.icon;
+                  return (
+                    <Link
+                      key={index}
+                      href={social.href}
+                      className={`w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-full flex items-center justify-center transition-all duration-300 ${social.color} hover:scale-110`}
+                      aria-label={social.label}
+                    >
+                      <IconComponent size={20} />
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
 
-                </div>
-            </Card>
-        </footer>
+            {/* Scroll to Top Button */}
+            <Button
+              onClick={scrollToTop}
+              variant="outline"
+              size="sm"
+              className="bg-transparent border-gray-600 text-gray-300 hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-all duration-300"
+            >
+              العودة للأعلى
+              <ArrowUp className="w-4 h-4 mr-2" />
+            </Button>
+          </div>
+        </div>
 
-    )
+        {/* Bottom Bar */}
+        <div className="py-6 border-t border-gray-800">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+            <div className="flex flex-wrap items-center gap-6">
+              <Link
+                href="#"
+                className="hover:text-blue-400 transition-colors duration-300"
+              >
+                سياسة الخصوصية
+              </Link>
+              <Link
+                href="#"
+                className="hover:text-blue-400 transition-colors duration-300"
+              >
+                الشروط والأحكام
+              </Link>
+              <Link
+                href="#"
+                className="hover:text-blue-400 transition-colors duration-300"
+              >
+                سياسة الاستخدام
+              </Link>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span>© {new Date().getFullYear()}</span>
+              <span className="text-blue-400 font-medium">روشيتة</span>
+              <span>جميع الحقوق محفوظة</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 }
 
-export default Footer
+export default Footer;
