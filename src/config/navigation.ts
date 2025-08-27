@@ -36,28 +36,28 @@ export const doctorNav: NavItem[] = [
   {
     name: 'Dashboard',
     id: 'doctor-dashboard',
-    href: '/doctor/dashboard',
+    href: '/clinic/doctor/dashboard',
     icon: ChartBarIcon,
     permission: PermissionKeys.ACCESS_DOCTOR_DASHBOARD,
   },
   {
     name: 'Vistis',
     id: 'doctor-visits',
-    href: '/doctor/visits',
+    href: '/clinic/doctor/visits',
     icon: ClipboardDocumentListIcon,
     permission: PermissionKeys.MANAGE_VISITS,
   },
   {
     name: 'Leaves',
     id: 'doctor-leaves',
-    href: '/doctor/leaves',
+    href: '/clinic/doctor/leaves',
     icon: CalendarIcon,
     permission: PermissionKeys.MANAGE_LEAVES,
   },
   {
     name: 'Profile',
     id: 'doctor-profile',
-    href: '/doctor/profile',
+    href: '/clinic/doctor/profile',
     icon: UserIcon,
     permission: PermissionKeys.VIEW_PROFILE,
   },
@@ -67,7 +67,7 @@ export const adminNav: NavItem[] = [
   {
     name: 'Dashboard',
     id: 'admin-dashboard',
-    href: '/admin/dashboard',
+    href: '/clinic/admin/dashboard',
     icon: ChartBarIcon,
     permission: PermissionKeys.ACCESS_ADMIN_DASHBOARD,
   },
@@ -156,6 +156,13 @@ export const adminNav: NavItem[] = [
         href: '/admin/lookups/clinic-type',
         icon: BuildingOfficeIcon,
         permission: PermissionKeys.VIEW_CLINIC_TYPE,
+      },
+      {
+        name: 'Currency',
+        id: 'admin-lookups-currency',
+        href: '/admin/lookups/currency',
+        icon: CurrencyDollarIcon,
+        permission: PermissionKeys.VIEW_CURRENCY,
       },
       {
         name: 'Radiology Test Category',
@@ -253,7 +260,6 @@ export const clinicNav: NavItem[] = [
     icon: UserGroupIcon,
     permission: PermissionKeys.VIEW_PATIENTS,
   },
-
   {
     name: 'Staff',
     id: 'clinic-staff',
@@ -291,7 +297,6 @@ export const clinicNav: NavItem[] = [
       },
     ],
   },
-
   {
     name: 'Radiology',
     id: 'clinic-radiology',
@@ -404,8 +409,23 @@ export const clinicNav: NavItem[] = [
   {
     name: 'Settings',
     id: 'clinic-settings',
-    href: '/clinic/settings',
     icon: Cog6ToothIcon,
     permission: PermissionKeys.VIEW_CLINIC_SETTINGS,
+    children: [
+      {
+        name: 'Clinic Settings',
+        id: 'clinic-settings-general',
+        href: '/clinic/settings',
+        icon: Cog6ToothIcon,
+        permission: PermissionKeys.VIEW_CLINIC_SETTINGS,
+      },
+      {
+        name: 'Clinic Profile',
+        id: 'clinic-profile',
+        href: '/clinic/profile',
+        icon: BuildingOfficeIcon,
+        permission: PermissionKeys.VIEW_CLINIC_PROFILE,
+      },
+    ],
   },
 ];

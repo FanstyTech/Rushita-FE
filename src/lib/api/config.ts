@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
     refreshToken: '/auth/refreshToken',
     resetPassword: '/auth/reset-password',
     forgotPassword: '/auth/forgot-password',
+    COMPLETE_REGISTRATION: '/auth/completeRegistration',
   },
   otp: {
     SEND: '/otp/sendOtp',
@@ -91,6 +92,7 @@ export const API_ENDPOINTS = {
   CLINICS: {
     LIST: '/clinics',
     CREATE: '/clinics',
+    CREATE_OR_UPDATE: '/clinics/CreateOrUpdate',
     UPDATE: '/clinics/:id',
     DELETE: '/clinics/:id',
     GET_ONE: '/clinics/:id',
@@ -108,6 +110,15 @@ export const API_ENDPOINTS = {
     DELETE: '/city/Delete',
     GET_ONE: '/city/:id',
     GET_FOR_DROPDOWN: '/city/getCitiesForDropdown',
+  },
+  CURRENCY: {
+    LIST: '/currency/getAll',
+    CREATE_OR_UPDATE: '/currency/createOrUpdate',
+    DELETE: '/currency/delete',
+    GET_ONE: '/currency/getById',
+    GET_FOR_DROPDOWN: '/currency/getCurrenciesForDropdown',
+    GET_DEFAULT: '/currency/getDefaultCurrency',
+    SET_DEFAULT: '/currency/setDefaultCurrency',
   },
   radiologyTestCategory: {
     LIST: '/radiologyTestCategory/getAll',
@@ -257,7 +268,8 @@ export const API_ENDPOINTS = {
     GET_BY_VISIT_ID: '/visitPrescription/getByVisitId',
     UPDATE_STATUS: '/visitPrescription/updateStatus',
     DISPENSE_MEDICINE: '/visitPrescription/dispenseMedicine',
-    PATIENT_PORTAL_PRESCRIPTIONS: '/visitPrescription/getPatientPortalPrescriptions', 
+    PATIENT_PORTAL_PRESCRIPTIONS:
+      '/visitPrescription/getPatientPortalPrescriptions',
     GET_PRESCRIBED_MEDICATIONS:
       '/visitPrescription/getPrescribedMedicationsByVisitId',
   },
@@ -351,5 +363,9 @@ export const API_ENDPOINTS = {
     GET_BY_CLINIC_ID: '/clinicBookingCondition/getByClinicId',
     GET_FOR_EDIT: '/clinicBookingCondition/getForEdit',
     UPDATE_STATUS: '/clinicBookingCondition/updateStatus',
+  },
+  CLINIC_SETTINGS: {
+    GET: '/clinicSettings/GetClinicSettings',
+    SAVE: '/clinicSettings/SaveClinicSettings',
   },
 } as const;

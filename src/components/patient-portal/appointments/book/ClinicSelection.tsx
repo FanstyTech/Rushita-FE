@@ -34,7 +34,6 @@ export function ClinicSelection({
   selectedClinic,
   onClinicSelect,
 }: ClinicSelectionProps) {
-  console.log(clinics);
   return (
     <motion.div
       variants={containerVariants}
@@ -58,8 +57,8 @@ export function ClinicSelection({
               {/* Booking Tag */}
               {clinic.hasBookings && (
                 <div className="absolute -top-2 -right-2 z-10">
-                  <Badge 
-                    variant="default" 
+                  <Badge
+                    variant="default"
                     className="bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1 rounded-full shadow-sm"
                   >
                     لديك حجوزات سابقة
@@ -74,10 +73,7 @@ export function ClinicSelection({
                   className="w-16 h-16 rounded-xl border-2 border-gray-100"
                 />
 
-                <h3 className="font-medium mt-3">
-                  {clinic.label}
-                </h3>
-                
+                <h3 className="font-medium mt-3">{clinic.label}</h3>
               </CardContent>
             </Card>
           </motion.div>

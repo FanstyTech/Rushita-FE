@@ -24,17 +24,20 @@ import { Card } from '@/components/ui/card';
 
 const whyroshita = [
   {
-    image: 'Why94551.png',
+    image:
+      'https://images.unsplash.com/photo-1655313719493-16ebe4906441?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     Title: 'مريض اتصل يسأل عن حالته… والسكرتيرة قلبت الدفاتر.',
     icon: Users,
   },
   {
-    image: 'Why21492610591.png',
+    image:
+      'https://images.unsplash.com/photo-1624969862293-b749659ccc4e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     Title: 'موعد تأخر لأنه الجدول ما انتبه للتداخل.',
     icon: Shield,
   },
   {
-    image: 'Why21512376191.png',
+    image:
+      'https://images.unsplash.com/photo-1554224155-cfa08c2a758f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     Title: 'ملف مريض ناقص… والطبيب ارتجل من الذاكرة.',
     icon: Zap,
   },
@@ -119,7 +122,7 @@ export default function Home() {
                   {/* Image */}
                   <div className="relative h-48 mb-6 rounded-xl overflow-hidden">
                     <Image
-                      src={`/images/${item.image}`}
+                      src={`${item.image}`}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
                       alt={item.Title}

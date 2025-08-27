@@ -86,7 +86,7 @@ const VisitDetailsPage: FC = () => {
       {/* Breadcrumb navigation */}
       <div className="flex items-center text-sm text-gray-500 mb-6">
         <button
-          onClick={() => router.push('/doctor/visits')}
+          onClick={() => router.push('/clinic/doctor/visits')}
           className="hover:text-blue-600 transition-colors"
         >
           Visits
@@ -125,7 +125,9 @@ const VisitDetailsPage: FC = () => {
                 {getVisitStatusLabel(visit.currentStatus)}
               </Badge>
               <Button
-                onClick={() => router.push(`/doctor/visits/${visitId}/edit`)}
+                onClick={() =>
+                  router.push(`/clinic/doctor/visits/${visitId}/edit`)
+                }
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white dark:text-gray-100 text-white dark:text-gray-100 text-white dark:text-gray-100"
                 size="sm"
               >

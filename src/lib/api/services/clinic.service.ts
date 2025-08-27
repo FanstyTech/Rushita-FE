@@ -58,18 +58,19 @@ class ClinicService {
     return response.result;
   }
 
-  async getForEdit(id: string): Promise<ApiResponse<CreateUpdateClinicDto>> {
+  async getForEdit(id?: string): Promise<ApiResponse<CreateUpdateClinicDto>> {
+    const params: any = {};
+    if (id) {
+      params.id = id;
+    }
+
     const response = await apiClient.get<ApiResponse<CreateUpdateClinicDto>>(
       `${API_ENDPOINTS.CLINIC.GET_FOR_EDIT}`,
-      {
-        params: {
-          id: id,
-        },
-      }
+      { params }
     );
+
     return response;
   }
-
   async getForDropdown(): Promise<GetClinicsForDropdownDto[]> {
     const response = await apiClient.get<
       ApiResponse<GetClinicsForDropdownDto[]>

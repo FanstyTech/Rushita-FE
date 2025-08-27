@@ -3,6 +3,7 @@ import {
   type LoginRequest,
   AuthenticationResult,
   AuthenticationUserResult,
+  CompleteRegistrationDto,
 } from '../types/auth';
 
 import { authService } from '../services/auth.service';
@@ -40,6 +41,19 @@ export const useAuth = () => {
     onSuccess: (response: AuthenticationResult, variables) => {
       toast.success('Login successfully');
       saveCookies(response, variables);
+    },
+  });
+  const completeRegistration = useMutation({
+    mutationFn: async (data: CompleteRegistrationDto) => {
+      const response = await authService.completeRegistration(data);
+      if (!response.success || !response.result) {
+        throw new Error(response.message || 'Complete Registration failed');
+      }
+      return response.result;
+    },
+    retry: false, // Disable retries for login
+    onSuccess: () => {
+      toast.success('Complete registration successfully');
     },
   });
 
@@ -93,6 +107,7 @@ export const useAuth = () => {
 
   return {
     login,
+    completeRegistration,
     saveCookies,
     logout,
     user,

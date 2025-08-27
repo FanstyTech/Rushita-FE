@@ -32,7 +32,7 @@ export const useClinic = () => {
       enabled: !!id,
     });
 
-  const useClinicForEdit = (id: string) =>
+  const useClinicForEdit = (id?: string) =>
     useQuery({
       queryKey: ['clinicForEdit', id],
       queryFn: async () => {
@@ -42,7 +42,6 @@ export const useClinic = () => {
         }
         return response.result;
       },
-      enabled: !!id,
     });
 
   const useClinicSpecialtiesForDropdown = (id: string) =>
@@ -88,9 +87,7 @@ export const useClinic = () => {
         `Clinic has been successfully ${data.id ? 'updated' : 'created'}`
       );
     },
-    onError: () => {
-      toast.error('Failed to save clinic');
-    },
+ 
   });
 
   const deleteClinic = useMutation({

@@ -86,14 +86,14 @@ export default function PharmacyPage() {
       cell: ({ row }) => (
         <div className="flex items-center justify-end gap-2">
           <Link
-            href={`/doctor/visits/${row.original.id}`}
+            href={`/clinic/doctor/visits/${row.original.id}`}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
             title="View details"
           >
             <Eye className="w-4 h-4 text-gray-600" />
           </Link>
           <Link
-            href={`/doctor/visits/${row.original.id}/edit`}
+            href={`/clinic/doctor/visits/${row.original.id}/edit`}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
             title="Edit visit"
           >

@@ -101,7 +101,9 @@ export default function VisitsPage() {
       cell: ({ row }) => (
         <div className="flex items-center justify-end gap-2">
           <Button
-            onClick={() => router.push(`/doctor/visits/${row.original.id}`)}
+            onClick={() =>
+              router.push(`/clinic/doctor/visits/${row.original.id}`)
+            }
             variant="ghost"
             className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
             title="View visit details"
@@ -110,7 +112,7 @@ export default function VisitsPage() {
           </Button>
           <Button
             onClick={() =>
-              router.push(`/doctor/visits/${row.original.id}/edit`)
+              router.push(`/clinic/doctor/visits/${row.original.id}/edit`)
             }
             variant="ghost"
             className="p-1 text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300 transition-colors"
@@ -170,7 +172,7 @@ export default function VisitsPage() {
                 })),
             },
           ]}
-          onAddNew={() => router.push('/doctor/visits/add')}
+          onAddNew={() => router.push('/clinic/doctor/visits/add')}
         />
 
         {/* Table */}

@@ -1,3 +1,4 @@
+import { StaffType } from './clinic-staff';
 import { SelectOption } from './select-option';
 
 export enum ClinicStatus {
@@ -53,7 +54,7 @@ export interface Specialtiessdto {
 export interface staffdto {
   id: string;
   name: string;
-  staffType: StaffTypeEnum;
+  staffType: StaffType;
   specialty: string;
 }
 

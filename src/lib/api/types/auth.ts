@@ -51,3 +51,8 @@ export interface ApiResponse<T> {
   result?: T;
   errors?: Record<string, string[]>;
 }
+export interface CompleteRegistrationDto {
+  password: string;
+  confirmPassword: string;
+  registrationToken: string;
+}

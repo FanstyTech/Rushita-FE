@@ -71,7 +71,6 @@ export default function ClinicStaffLeavesPage() {
   };
 
   const handleEdit = (id: string) => {
-    console.log(id);
     setSelectedLeaveId(id);
     setShowLeaveForm(true);
   };

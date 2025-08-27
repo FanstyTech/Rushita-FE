@@ -2,6 +2,8 @@ export const PermissionKeys = {
   // Clinic Management
   MANAGE_CLINIC_SETTINGS: 'clinic.settings.manage',
   VIEW_CLINIC_SETTINGS: 'clinic.settings.view',
+  VIEW_CLINIC_PROFILE: 'clinic.profile.view',
+  MANAGE_CLINIC_PROFILE: 'clinic.profile.manage',
 
   // Staff Management
   MANAGE_STAFF: 'clinic.staff.manage',
@@ -99,6 +101,7 @@ export const PermissionKeys = {
   VIEW_COUNTRY: 'admin.lookups.country.view',
   VIEW_CITY: 'admin.lookups.city.view',
   VIEW_CLINIC_TYPE: 'admin.lookups.clinic.type.view',
+  VIEW_CURRENCY: 'admin.lookups.currency.view',
   VIEW_RADIOLOGY_TEST_CATEGORY: 'admin.lookups.radiology.category.view',
   VIEW_RADIOLOGY_TEST: 'admin.lookups.radiology.test.view',
   VIEW_MEDICATION_TYPE: 'admin.lookups.medication.type.view',

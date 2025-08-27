@@ -1,140 +1,118 @@
-import { Card } from "../ui/card";
-
-const Skeleton = ({ className = '' }: { className?: string }) => (
-  <div className={`animate-pulse dark:bg-primary-foreground bg-gray-300  rounded ${className}`}></div>
-);
+import { Building2, User, MapPin, Clock, Globe } from 'lucide-react';
 
 export default function ClinicProfileSkeleton() {
   return (
-    <div className="space-y-8">
+    <div className="w-auto space-y-8">
       {/* Header Skeleton */}
-      <Card className=" gap-0 rounded-2xl p-0 shadow-sm overflow-hidden">
-        <Skeleton className="h-48 w-full bg-gradient-to-r from-blue-600 to-purple-600" />
-        <Card className="p-6 border-0 gap-0">
-          <div className="flex items-center gap-4">
-            <div className="relative -mt-16 mb-4   ">
-              <Skeleton className="w-28 h-28 rounded-2xl" />
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+              <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
-            <div className="space-y-2">
-              <Skeleton className="w-48 h-8" />
-              <Skeleton className="w-32 h-8 " />
+            <div>
+              <div className="h-8 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              <div className="h-4 w-64 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mt-2"></div>
             </div>
           </div>
-        </Card>
-      </Card>
+          <div className="h-10 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* About Section */}
-          <Card className=" shadow-sm p-6 gap-0">
-            <Skeleton className="w-24 h-6 mb-4" />
-            <Skeleton className="w-full h-24" />
-          </Card>
-
-          {/* Services Section */}
-          <Card className=" shadow-sm p-6 gap-0">
-            <Skeleton className="w-32 h-6 mb-4" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="p-4  rounded-xl">
-                  <div className="flex justify-between items-start mb-2">
-                    <Skeleton className="w-32 h-6" />
-                    <Skeleton className="w-20 h-6" />
-                  </div>
-                  <Skeleton className="w-full h-12" />
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          {/* Staff Section */}
-          <Card className=" shadow-sm p-6 gap-0">
-            <Skeleton className="w-40 h-6 mb-4" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-4 p-4 border rounded-xl"
-                >
-                  <Skeleton className="w-16 h-16 rounded-full" />
-                  <div className="space-y-2">
-                    <Skeleton className="w-32 h-5" />
-                    <Skeleton className="w-24 h-4" />
-                    <Skeleton className="w-28 h-4" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          {/* Offers Section */}
-          <Card className=" shadow-sm p-6 gap-0">
-            <Skeleton className="w-36 h-6 mb-4" />
-            <div className="grid grid-cols-1 gap-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="p-4 border rounded-xl">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="space-y-2">
-                      <Skeleton className="w-48 h-6" />
-                      <Skeleton className="w-32 h-4" />
-                    </div>
-                    <div className="text-right">
-                      <Skeleton className="w-24 h-8 rounded-full" />
-                    </div>
-                  </div>
-                  <Skeleton className="w-full h-16 mt-3" />
-                </div>
-              ))}
-            </div>
-          </Card>
+      {/* Basic Information Skeleton */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center justify-center w-10 h-10 bg-green-50 dark:bg-green-900/30 rounded-lg">
+            <User className="w-5 h-5 text-green-600 dark:text-green-400" />
+          </div>
+          <div>
+            <div className="h-6 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div className="h-4 w-56 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mt-1"></div>
+          </div>
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-8">
-          <Card className=" shadow-sm p-6 gap-0">
-            <Skeleton className="w-40 h-6 mb-4" />
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <Skeleton className="w-5 h-5 mt-0.5" />
-                  <div className="space-y-1">
-                    <Skeleton className="w-20 h-4" />
-                    <Skeleton className="w-32 h-5" />
-                  </div>
-                </div>
-              ))}
-              <div className="pt-2 border-t">
-                <Skeleton className="w-24 h-4 mb-3" />
-                <div className="flex gap-3">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Skeleton key={i} className="w-10 h-10 rounded-lg" />
-                  ))}
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[...Array(4)].map((_, index) => (
+            <div key={index}>
+              <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-2"></div>
+              <div className="h-10 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            </div>
+          ))}
+          <div className="md:col-span-2">
+            <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-2"></div>
+            <div className="h-20 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Location Information Skeleton */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center justify-center w-10 h-10 bg-orange-50 dark:bg-orange-900/30 rounded-lg">
+            <MapPin className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+          </div>
+          <div>
+            <div className="h-6 w-36 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div className="h-4 w-52 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mt-1"></div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[...Array(4)].map((_, index) => (
+            <div key={index}>
+              <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-2"></div>
+              <div className="h-10 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Working Hours Skeleton */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center justify-center w-10 h-10 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
+            <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          </div>
+          <div>
+            <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div className="h-4 w-60 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mt-1"></div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {[...Array(7)].map((_, index) => (
+            <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="w-20 h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
+              <div className="w-11 h-6 bg-gray-200 dark:bg-gray-600 rounded-full animate-pulse"></div>
+              <div className="flex items-center gap-2">
+                <div className="w-32 h-10 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
+                <div className="w-8 h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
+                <div className="w-32 h-10 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
               </div>
             </div>
-          </Card>
+          ))}
+        </div>
+      </div>
 
-          <Card className=" shadow-sm p-6 gap-0">
-            <Skeleton className="w-36 h-6 mb-4" />
-            <div className="space-y-3">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex justify-between">
-                  <Skeleton className="w-24 h-4" />
-                  <Skeleton className="w-20 h-4" />
-                </div>
-              ))}
-            </div>
-          </Card>
+      {/* Social Media Skeleton */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center justify-center w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+            <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          </div>
+          <div>
+            <div className="h-6 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div className="h-4 w-64 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mt-1"></div>
+          </div>
+        </div>
 
-          <Card className=" shadow-sm p-6 gap-0">
-            <Skeleton className="w-32 h-6 mb-4" />
-            <div className="flex flex-wrap gap-2">
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="w-24 h-8 rounded-full" />
-              ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[...Array(6)].map((_, index) => (
+            <div key={index}>
+              <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-2"></div>
+              <div className="h-10 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
             </div>
-          </Card>
+          ))}
         </div>
       </div>
     </div>

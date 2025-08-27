@@ -10,6 +10,8 @@ const publicPaths = [
   '/auth/login',
   '/auth/register',
   '/auth/forgot-password',
+  '/auth/complete-registration',
+  '/auth/registration-success',
   '/patient-portal/auth', // Patient portal auth page
   '/images', // Public images
   '/fonts', // Public fonts
@@ -79,7 +81,7 @@ export function middleware(request: NextRequest) {
         pathWithoutLanguage.startsWith('/patient-portal') ||
         pathWithoutLanguage.startsWith('/portal') ||
         pathWithoutLanguage.includes('/patient-portal');
-      
+
       // If it's a patient portal path
       const basePath = isPatientPortal ? '/patient-portal/auth' : '/auth/login';
       const loginUrl = new URL(
@@ -138,7 +140,6 @@ export function middleware(request: NextRequest) {
       pathname.startsWith('/portal') ||
       pathname.includes('/patient-portal');
 
-    console.log('isPatientPortal', isPatientPortal);
     // If the path requires authentication and no token exists, redirect to login
     if (!isPublicPath && !token) {
       const languagePrefix = `/${language}`;

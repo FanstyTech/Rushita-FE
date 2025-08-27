@@ -51,15 +51,6 @@ export function NavigationItem({
       pathname.replace(/^\/[a-z]{2}(?=\/|$)/, '') || '/';
     const normalizedHref = item.href.replace(/^\/[a-z]{2}(?=\/|$)/, '') || '/';
 
-    console.log(
-      'pathname',
-      pathname,
-      'normalizedPathname',
-      normalizedPathname,
-      'item.href',
-      normalizedHref
-    );
-
     // Exact match
     if (normalizedPathname === normalizedHref) return true;
 

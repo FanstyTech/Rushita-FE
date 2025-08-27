@@ -260,7 +260,6 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
   };
 
   const onSubmit = async (data: ClinicFormData) => {
-    try {
       const payload: CreateUpdateClinicDto = {
         id: initialData?.id,
         nameL: data.nameL,
@@ -279,9 +278,7 @@ export default function ClinicForm({ initialData }: ClinicFormProps) {
       await createOrUpdateClinic.mutateAsync(payload);
       router.push('/admin/clinics');
       router.refresh();
-    } catch (error) {
-      console.error('Failed to save clinic:', error);
-    }
+   
   };
 
   const handleStepChange = async (stepId: string) => {

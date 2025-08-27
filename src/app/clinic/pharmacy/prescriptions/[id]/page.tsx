@@ -155,22 +155,6 @@ export default function PrescribedMedicationsPage() {
     <PageLayout>
       {/* Prescriptions List */}
       <div className="space-y-6">
-        {/* Breadcrumb navigation */}
-        <div className="flex items-center text-sm text-gray-500 mb-6">
-          <button
-            onClick={() => router.push('/clinic/pharmacy/prescriptions')}
-            className="hover:text-blue-600 transition-colors"
-          >
-            Visits
-          </button>
-          <span className="mx-2">/</span>
-
-          <span className="font-medium text-gray-700 dark:text-gray-400">
-            Visit #
-            {prescribedMedicationsit && prescribedMedicationsit[0].visitNumber}
-          </span>
-        </div>
-
         {/* Group prescriptions by visit */}
         {prescribedMedicationsit &&
           (() => {

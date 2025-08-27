@@ -63,7 +63,8 @@ export default function ClinicStaffPage() {
     status: undefined,
   });
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
-  const [selectedStaffForPermissions, setSelectedStaffForPermissions] = useState<ClinicStaffListDto | null>(null);
+  const [selectedStaffForPermissions, setSelectedStaffForPermissions] =
+    useState<ClinicStaffListDto | null>(null);
 
   // 3. API hooks
   const {
@@ -241,22 +242,25 @@ export default function ClinicStaffPage() {
             staffList?.items.map((staff) => (
               <div
                 key={staff.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 p-6 transition-all duration-200 hover:scale-[1.02]"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <Avatar
-                      name={staff.personName}
-                      size="lg"
-                      className="rounded-xl"
-                    />
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900">
+                    <div className="relative">
+                      <Avatar
+                        name={staff.personName}
+                        size="lg"
+                        className="rounded-xl ring-2 ring-blue-100 dark:ring-blue-900/30"
+                      />
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                         {staff.personName}
                       </h3>
-                      <div className="mt-1 flex items-center gap-2 text-sm text-gray-500">
+                      <div className="mt-1 flex items-center gap-2">
                         <span
-                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getClinicStaffStatusClass(
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getClinicStaffStatusClass(
                             staff.status
                           )}`}
                         >
@@ -267,18 +271,18 @@ export default function ClinicStaffPage() {
                   </div>
                   <div className="flex items-center">
                     <Menu as="div" className="relative">
-                      <MenuButton className="p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                        <MoreVertical className="w-5 h-5 text-gray-400" />
+                      <MenuButton className="p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <MoreVertical className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                       </MenuButton>
-                      <MenuItems className="w-60 absolute right-0 mt-2 origin-top-right bg-white rounded-xl shadow-lg border border-gray-100 focus:outline-none">
+                      <MenuItems className="w-60 absolute right-0 mt-2 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 focus:outline-none z-10">
                         <div className="py-2">
                           <MenuItem>
                             {({ active }) => (
                               <button
                                 onClick={() => handleEdit(staff)}
                                 className={`${
-                                  active ? 'bg-gray-50' : ''
-                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700`}
+                                  active ? 'bg-gray-50 dark:bg-gray-700' : ''
+                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors`}
                               >
                                 <Edit2 className="w-4 h-4" />
                                 Edit Staff
@@ -290,8 +294,10 @@ export default function ClinicStaffPage() {
                               <button
                                 onClick={() => handleChangePassword(staff)}
                                 className={`${
-                                  active ? 'bg-yellow-50' : ''
-                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-yellow-700`}
+                                  active
+                                    ? 'bg-yellow-50 dark:bg-yellow-900/20'
+                                    : ''
+                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-yellow-700 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 transition-colors`}
                               >
                                 <Key className="w-4 h-4" />
                                 Change Password
@@ -303,8 +309,8 @@ export default function ClinicStaffPage() {
                               <button
                                 onClick={() => handleManagePermissions(staff)}
                                 className={`${
-                                  active ? 'bg-blue-50' : ''
-                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-blue-600`}
+                                  active ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors`}
                               >
                                 <ShieldCheck className="w-4 h-4" />
                                 Manage Permissions
@@ -316,8 +322,10 @@ export default function ClinicStaffPage() {
                               <button
                                 onClick={() => handleEndSession()}
                                 className={`${
-                                  active ? 'bg-orange-50' : ''
-                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-orange-600`}
+                                  active
+                                    ? 'bg-orange-50 dark:bg-orange-900/20'
+                                    : ''
+                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 transition-colors`}
                               >
                                 <LogOut className="w-4 h-4" />
                                 End Session
@@ -329,8 +337,8 @@ export default function ClinicStaffPage() {
                               <button
                                 onClick={() => handleDelete(staff.id)}
                                 className={`${
-                                  active ? 'bg-gray-50' : ''
-                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600`}
+                                  active ? 'bg-red-50 dark:bg-red-900/20' : ''
+                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors`}
                               >
                                 <Trash2 className="w-4 h-4" />
                                 Delete Clinic Staff
@@ -343,15 +351,19 @@ export default function ClinicStaffPage() {
                   </div>
                 </div>
 
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <Building2 className="w-4 h-4" />
-                    <span>{staff.clinicName}</span>
+                <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center justify-center w-8 h-8 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                      <Building2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <span className="font-medium">{staff.clinicName}</span>
                   </div>
                   {staff.specialtyName && (
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <LuBriefcaseMedical className="w-4 h-4" />
-                      <span>{staff.specialtyName}</span>
+                    <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                      <div className="flex items-center justify-center w-8 h-8 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                        <LuBriefcaseMedical className="w-4 h-4 text-green-600 dark:text-green-400" />
+                      </div>
+                      <span className="font-medium">{staff.specialtyName}</span>
                     </div>
                   )}
                 </div>

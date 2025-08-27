@@ -61,16 +61,6 @@ export default function PatientActionPage() {
 
   return (
     <PageLayout>
-      <div className="mb-6">
-        <Link
-          href="/clinic/patients"
-          className="inline-flex items-center text-gray-500 hover:text-gray-700"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Patients
-        </Link>
-      </div>
-
       <PatientForm
         onSubmit={handleSubmit}
         isSubmitting={createOrUpdatePatient.isPending}
