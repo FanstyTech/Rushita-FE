@@ -62,7 +62,7 @@ export default function Header() {
               <FaBars className="h-6 w-6 text-secend" />
             </button>
             <h1 className="text-xl font-bold text-gray-900 mt-1 dark:text-white">
-              {user?.clinicInfo?.name || 'Rushita'}
+              {user?.clinicInfo?.name || 'Rousheta'}
             </h1>
           </div>
 

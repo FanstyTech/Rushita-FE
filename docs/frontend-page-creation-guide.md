@@ -1,13 +1,13 @@
-# Rushita Frontend Page Creation Guide
+# Rousheta Frontend Page Creation Guide
 
 ## Overview
 
-This guide explains how to create a new lookup page in the Rushita Frontend application. It follows a standardized approach for consistency and maintainability.
+This guide explains how to create a new lookup page in the Rousheta Frontend application. It follows a standardized approach for consistency and maintainability.
 
 ## Prerequisites
 
 - Node.js and npm installed
-- Access to the Rushita-FE repository
+- Access to the Rousheta-FE repository
 - Basic understanding of React, TypeScript, and Tailwind CSS
 
 ## Project Structure

@@ -16,7 +16,7 @@ export const personalInfoSchema = z.object({
   countryCodeId: z.string().min(1, { message: 'رمز الدولة مطلوب' }),
   phone: z
     .string()
-    .min(9, { message: 'رقم الهاتف يجب أن يكون 9 أرقام على الأقل' }),
+    .max(9, { message: 'رقم الهاتف يجب أن يكون 9 أرقام على الأقل' }),
   countryId: z.string().min(1, { message: 'الدولة مطلوبة' }),
   cityId: z.string().min(1, { message: 'المدينة مطلوبة' }),
   address: z.string().min(1, { message: 'العنوان مطلوب' }),

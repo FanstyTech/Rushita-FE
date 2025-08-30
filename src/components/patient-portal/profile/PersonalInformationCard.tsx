@@ -22,7 +22,7 @@ import {
   IdentificationType,
   PersonalInformationDto,
 } from '@/lib/api/types/clinic-patient';
-import { getGenderLabel } from '@/utils/textUtils';
+import { getGenderLabel, getIdentificationTypeLabel } from '@/utils/textUtils';
 import { languages } from '@/middleware';
 
 interface PersonalInformationCardProps {
@@ -193,7 +193,9 @@ export function PersonalInformationCard({
                   .filter(([key]) => isNaN(Number(key)))
                   .map(([key, value]) => ({
                     value: value.toString(),
-                    label: key,
+                    label: getIdentificationTypeLabel(
+                      value as IdentificationType
+                    ),
                   }))}
                 error={errors?.idType?.message}
                 {...register('idType')}

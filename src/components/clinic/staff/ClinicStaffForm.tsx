@@ -19,7 +19,6 @@ const schema = z.object({
   fNameF: z.string().min(1, 'First name in Arabic is required'),
   lNameF: z.string().min(1, 'Last name in Arabic is required'),
   email: z.string().email('Invalid email address'),
-  password: z.string().optional(),
   joinDate: z.string(),
   staffType: z.coerce.number().min(1, 'Staff type is required'),
   specialtyId: z.string().min(1, 'Specialty is required'),
@@ -53,7 +52,6 @@ export default function ClinicStaffForm({
       fNameF: '',
       lNameF: '',
       email: '',
-      password: '',
       joinDate: new Date().toISOString().split('T')[0],
       staffType: undefined,
       specialtyId: undefined,
@@ -85,7 +83,6 @@ export default function ClinicStaffForm({
           fNameF: initialData.fNameF || '',
           lNameF: initialData.lNameF || '',
           email: initialData.email || '',
-          password: '',
           joinDate: initialData.joinDate
             ? new Date(initialData.joinDate).toISOString().split('T')[0]
             : new Date().toISOString().split('T')[0],
@@ -105,7 +102,6 @@ export default function ClinicStaffForm({
       joinDate: new Date(data.joinDate).toISOString(),
       clinicId: clinicId,
       id: initialData?.id || undefined,
-      password: data.password || undefined,
     };
     await onSubmit(submitData);
     reset(defaultValues);
@@ -210,15 +206,6 @@ export default function ClinicStaffForm({
             />
           </div>
         </div>
-
-        {!initialData && (
-          <Input
-            label="Password"
-            type="password"
-            {...register('password')}
-            error={errors.password?.message}
-          />
-        )}
       </form>
     </Modal>
   );

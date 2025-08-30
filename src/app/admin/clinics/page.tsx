@@ -50,7 +50,7 @@ export default function ClinicsPage() {
   );
   const [filters, setFilters] = useState<FilterState>({
     pageNumber: 1,
-    pageSize: 5,
+    pageSize: 5000,
     sortColumn: '',
     sortDirection: '',
     searchValue: '',

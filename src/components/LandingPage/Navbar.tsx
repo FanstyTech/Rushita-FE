@@ -7,18 +7,13 @@ import Link from 'next/link';
 import { MoveLeft } from 'lucide-react';
 import ThemeToggle from '../ThemeToggle';
 import LanguageToggle from '../LanguageToggle';
-
-export const navLinks = [
-  { id: 'home', label: 'الرئيسية' },
-  { id: 'whyroshita', label: 'لماذا روشيتة؟' },
-  { id: 'projects', label: 'خدماتنا' },
-  { id: 'contact', label: 'الاسعار' },
-];
+import { useTranslation } from 'react-i18next';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [pathname, setpathName] = useState('');
+  const [pathname, setpathName] = useState('home');
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const savedPath = localStorage.getItem('pathname') || 'home';
@@ -57,14 +52,14 @@ export const Navbar = () => {
       threshold: 0.5,
     });
 
-    navLinks.forEach((link) => {
-      const section = document.getElementById(link.id);
+    ['home', 'whyroshita', 'services', 'contact'].forEach((id) => {
+      const section = document.getElementById(id);
       if (section) observer.observe(section);
     });
 
     return () => {
-      navLinks.forEach((link) => {
-        const section = document.getElementById(link.id);
+      ['home', 'whyroshita', 'services', 'contact'].forEach((id) => {
+        const section = document.getElementById(id);
         if (section) observer.unobserve(section);
       });
     };
@@ -128,17 +123,17 @@ export const Navbar = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link key={link.id} href={`/#${link.id}`}>
+              {['home', 'whyroshita', 'services', 'contact'].map((id) => (
+                <Link key={id} href={`/#${id}`}>
                   <button
-                    onClick={() => setpathName(link.id)}
+                    onClick={() => setpathName(id)}
                     className={`${
-                      pathname === link.id
+                      pathname === id
                         ? 'text-blue-600 dark:text-blue-400 font-semibold relative after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-blue-600 after:to-purple-600'
                         : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
                     } px-3 py-2 text-base font-medium transition-all duration-300 hover:scale-105`}
                   >
-                    {link.label}
+                    {t(`landing.nav.${id}`)}
                   </button>
                 </Link>
               ))}
@@ -157,7 +152,7 @@ export const Navbar = () => {
                   size="sm"
                   className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium transition-all duration-300"
                 >
-                  سجل دخولك
+                  {t(`landing.nav.login`)}
                 </Button>
               </Link>
               <Link href="/auth/login">
@@ -165,7 +160,7 @@ export const Navbar = () => {
                   size="sm"
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium px-6 py-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                 >
-                  إبدأ تجربة مجانية
+                  {t(`landing.nav.getStarted`)}
                   <MoveLeft className="mr-1 h-4 w-4" />
                 </Button>
               </Link>
@@ -207,20 +202,20 @@ export const Navbar = () => {
           <div className="px-6 py-8 space-y-6">
             {/* Mobile Navigation Links */}
             <div className="space-y-4">
-              {navLinks.map((link) => (
-                <Link key={link.id} href={`/#${link.id}`}>
+              {['home', 'whyroshita', 'services', 'contact'].map((id) => (
+                <Link key={id} href={`/#${id}`}>
                   <button
                     onClick={() => {
-                      setpathName(link.id);
+                      setpathName(id);
                       toggleMenu();
                     }}
                     className={`${
-                      pathname === link.id
+                      pathname === id
                         ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-700'
                         : 'text-gray-700 dark:text-gray-300 border-transparent hover:bg-gray-50 dark:hover:bg-gray-800/50'
                     } w-full text-right px-4 py-3 text-lg font-medium rounded-xl border transition-all duration-300`}
                   >
-                    {link.label}
+                    {t(`landing.nav.${id}`)}
                   </button>
                 </Link>
               ))}
@@ -234,7 +229,7 @@ export const Navbar = () => {
                   size="lg"
                   className="w-full text-lg font-medium border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300"
                 >
-                  سجل دخولك
+                  {t(`landing.nav.login`)}
                 </Button>
               </Link>
               <Link href="/auth/login" className="block">
@@ -242,7 +237,7 @@ export const Navbar = () => {
                   size="lg"
                   className="w-full text-lg font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                 >
-                  إبدأ تجربة مجانية الآن
+                  {t(`landing.nav.getStarted`)}
                   <MoveLeft className="mr-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -251,74 +246,5 @@ export const Navbar = () => {
         </div>
       </div>
     </nav>
-  );
-};
-
-// Updated: Modified AboutMe component with rectangular image layout
-export const AboutMe = () => {
-  return (
-    <section
-      id="about"
-      className="py-20 min-h-screen bg-white dark:bg-gray-900"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row items-center gap-12">
-          {/* Updated: Left side - Rectangular Profile Image */}
-          <div className="w-full md:w-1/2">
-            <div className="relative">
-              {/* <Image
-                                fill
-                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                alt="Profile"
-                                className="w-full h-[500px] object-cover rounded-lg shadow-xl"
-                            /> */}
-            </div>
-          </div>
-
-          {/* No changes made to right side content */}
-          <div className="w-full md:w-1/2">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-              About Me
-            </h2>
-            <div className="space-y-4 text-gray-600 dark:text-gray-300">
-              <p className="text-lg">
-                Hi there! Im John Doe, a passionate web developer with expertise
-                in modern web technologies. I specialize in creating responsive
-                and user-friendly web applications using React, TailwindCSS, and
-                other cutting-edge tools.
-              </p>
-              <p className="text-lg">
-                With 5 years of experience in the industry, Ive worked on
-                various projects ranging from small business websites to
-                large-scale enterprise applications. Im always excited to learn
-                new technologies and take on challenging projects.
-              </p>
-              <div className="pt-6">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  Skills
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {[
-                    'React',
-                    'JavaScript',
-                    'TailwindCSS',
-                    'Node.js',
-                    'TypeScript',
-                    'Next.js',
-                  ].map((skill) => (
-                    <span
-                      key={skill}
-                      className="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-full text-sm font-medium"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 };

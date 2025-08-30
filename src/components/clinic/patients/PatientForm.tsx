@@ -7,16 +7,19 @@ import {
   patientSchema,
   PatientFormData,
 } from '@/app/clinic/patients/validation';
-import { Input, Select, PhoneInput } from '@/components/common';
+import { Input, Select, PhoneInput, TextArea } from '@/components/common';
 import {
   BloodType,
   bloodTypeDisplayNames,
   Gender,
+  IdentificationType,
 } from '@/lib/api/types/clinic-patient';
 import { useCountry } from '@/lib/api/hooks/useCountry';
 import { useCity } from '@/lib/api/hooks/useCity';
 import Button from '@/components/common/Button';
 import { format } from 'date-fns';
+import { languages } from '@/middleware';
+import { getIdentificationTypeLabel } from '@/utils/textUtils';
 
 interface PatientFormProps {
   onSubmit: (data: PatientFormData) => void;
@@ -55,13 +58,13 @@ export default function PatientForm({
     resolver: zodResolver(patientSchema) as Resolver<PatientFormData>,
     defaultValues: initialData
       ? {
-        ...initialData,
-        gender: initialData.gender?.toString(), // Convert to string
-        bloodType: initialData.bloodType?.toString(), // Convert to string
-        dateOfBirth: initialData.dateOfBirth
-          ? format(new Date(initialData.dateOfBirth), 'yyyy-MM-dd')
-          : undefined,
-      }
+          ...initialData,
+          gender: initialData.gender?.toString(), // Convert to string
+          bloodType: initialData.bloodType?.toString(), // Convert to string
+          dateOfBirth: initialData.dateOfBirth
+            ? format(new Date(initialData.dateOfBirth), 'yyyy-MM-dd')
+            : undefined,
+        }
       : undefined,
   });
 
@@ -106,6 +109,9 @@ export default function PatientForm({
   const handlePhoneCodeChange = (value: string) => {
     setSelectedPhoneCode(value);
     setValue('countryCodeId', value);
+  };
+  const handlePhoneNumberChange = (value: string) => {
+    setValue('phoneNumber', value);
   };
 
   // Handle country selection
@@ -175,6 +181,25 @@ export default function PatientForm({
                   {...register('lNameL')}
                 />
                 <Select
+                  label="ID Type"
+                  value={initialData?.idType?.toString()}
+                  error={errors.idType?.message}
+                  {...register('idType', { valueAsNumber: true })}
+                  options={Object.entries(IdentificationType)
+                    .filter(([key]) => isNaN(Number(key)))
+                    .map(([_, value]) => ({
+                      value: value.toString(),
+                      label: getIdentificationTypeLabel(
+                        value as IdentificationType
+                      ),
+                    }))}
+                />
+                <Input
+                  label="ID Number"
+                  error={errors.idNum?.message}
+                  {...register('idNum')}
+                />
+                <Select
                   label="Gender"
                   value={initialData?.gender?.toString()}
                   error={errors.gender?.message}
@@ -185,6 +210,16 @@ export default function PatientForm({
                       value: value.toString(),
                       label: key,
                     }))}
+                />
+                <Select
+                  label="Preferred Language"
+                  value={initialData?.preferredLanguage?.toString()}
+                  error={errors.preferredLanguage?.message}
+                  {...register('preferredLanguage')}
+                  options={languages.map((lang) => ({
+                    value: lang,
+                    label: lang,
+                  }))}
                 />
                 <Input
                   label="Date of Birth*"
@@ -207,13 +242,25 @@ export default function PatientForm({
             <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg border border-gray-100 dark:border-gray-600 shadow-sm">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <PhoneInput
-                  label="Mobile*"
+                  label="Phone Number"
                   phoneCodeOptions={phoneCodes || []}
-                  selectedPhoneCode={selectedPhoneCode}
-                  onPhoneCodeChange={handlePhoneCodeChange}
-                  phoneCodeName="phoneCode"
-                  error={errors.phoneNumber?.message}
+                  selectedPhoneCode={selectedPhoneCode || ''}
+                  onPhoneCodeChange={(value) => {
+                    handlePhoneCodeChange(value);
+                  }}
+                  onPhoneNumberChange={(value) => {
+                    setValue('phoneNumber', value);
+                  }}
+                  phoneCodeName="countryCodeId"
                   {...register('phoneNumber')}
+                  error={errors?.phoneNumber?.message}
+                  phoneCodeError={errors?.countryCodeId?.message}
+                  className={`border-border/50 focus-visible:ring-primary/20 ${
+                    errors?.phoneNumber || errors?.countryCodeId
+                      ? 'border-red-500'
+                      : ''
+                  }`}
+                  required
                 />
                 <Input
                   label="Email"
@@ -222,7 +269,7 @@ export default function PatientForm({
                   {...register('email')}
                 />
                 <Select
-                  value={initialData?.countryId}
+                  value={initialData?.countryId || ''}
                   label="Country"
                   error={errors.countryId?.message}
                   {...register('countryId')}
@@ -234,7 +281,7 @@ export default function PatientForm({
                 />
                 <Select
                   label="City"
-                  value={initialData?.cityId?.toString()}
+                  value={initialData?.cityId?.toString() || ''}
                   error={errors.cityId?.message}
                   {...register('cityId')}
                   options={(cities || []).map((city) => ({
@@ -278,13 +325,17 @@ export default function PatientForm({
                 <Input
                   label="Height (cm)"
                   type="number"
-                  {...register('height')}
+                  {...register('height', {
+                    valueAsNumber: true,
+                  })}
                   error={errors.height?.message}
                 />
                 <Input
                   label="Weight (kg)"
                   type="number"
-                  {...register('weight')}
+                  {...register('weight', {
+                    valueAsNumber: true,
+                  })}
                   error={errors.weight?.message}
                 />
               </div>

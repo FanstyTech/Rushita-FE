@@ -345,6 +345,7 @@ export interface PersonalInformationDto {
   preferredLanguage: string;
   idType?: IdentificationType;
   idNum?: string;
+  imageId?: string;
 }
 
 export interface EmergencyContactDto {

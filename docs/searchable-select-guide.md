@@ -1,6 +1,6 @@
 # Searchable Select Component Guide
 
-This guide explains how to implement searchable select dropdowns with debounced API calls in the Rushita-FE project.
+This guide explains how to implement searchable select dropdowns with debounced API calls in the Rousheta-FE project.
 
 ## Overview
 

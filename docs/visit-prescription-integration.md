@@ -1,6 +1,6 @@
 # VisitPrescription API Integration
 
-This document provides a complete guide for using the VisitPrescription API integration in the Rushita Frontend project.
+This document provides a complete guide for using the VisitPrescription API integration in the Rousheta Frontend project.
 
 ## Overview
 
@@ -181,7 +181,11 @@ interface DispenseMedicineDto {
 ```typescript
 import { useVisitPrescription } from '@/lib/api/hooks/useVisitPrescription';
 import type { CreateUpdateVisitPrescriptionDto } from '@/lib/api/types/visit-prescription';
-import { PrescriptionStatus, FrequencyType, DurationUnit } from '@/lib/api/types/visit-prescription';
+import {
+  PrescriptionStatus,
+  FrequencyType,
+  DurationUnit,
+} from '@/lib/api/types/visit-prescription';
 
 function MyComponent() {
   const {
@@ -211,7 +215,7 @@ function MyComponent() {
       remainingQuantity: 30,
       dispensedQuantity: 0,
     };
-    
+
     await createOrUpdateVisitPrescription.mutateAsync(newPrescription);
   };
 
@@ -258,10 +262,11 @@ const handleDispenseMedicine = async (id: string, quantity: number) => {
 
 ```typescript
 // Get prescribed medications for a visit
-const { data: prescribedMedications } = getPrescribedMedicationsByVisitId('visit-id');
+const { data: prescribedMedications } =
+  getPrescribedMedicationsByVisitId('visit-id');
 
 // Display the data
-prescribedMedications?.forEach(medication => {
+prescribedMedications?.forEach((medication) => {
   console.log(`Patient: ${medication.patientName}`);
   console.log(`Medication: ${medication.medication.name}`);
   console.log(`Dosage: ${medication.dosage}`);
@@ -284,8 +289,10 @@ const queryKeys = {
   detail: (id) => [...queryKeys.details(), id] as const,
   byVisit: () => [...queryKeys.all, 'byVisit'] as const,
   byVisitId: (visitId) => [...queryKeys.byVisit(), visitId] as const,
-  prescribedMedications: () => [...queryKeys.all, 'prescribedMedications'] as const,
-  prescribedMedicationsByVisit: (visitId) => [...queryKeys.prescribedMedications(), visitId] as const,
+  prescribedMedications: () =>
+    [...queryKeys.all, 'prescribedMedications'] as const,
+  prescribedMedicationsByVisit: (visitId) =>
+    [...queryKeys.prescribedMedications(), visitId] as const,
 };
 ```
 
@@ -336,7 +343,9 @@ const createOrUpdateVisitPrescription = useMutation({
   onSuccess: (data, variables) => {
     const isUpdate = !!variables.id;
     toast.success(
-      isUpdate ? 'Visit prescription updated successfully' : 'Visit prescription created successfully'
+      isUpdate
+        ? 'Visit prescription updated successfully'
+        : 'Visit prescription created successfully'
     );
   },
   onError: (error: Error) => {
@@ -348,21 +357,25 @@ const createOrUpdateVisitPrescription = useMutation({
 ## Best Practices
 
 ### 1. Type Safety
+
 - Always use the provided TypeScript interfaces
 - Use enums for status, frequency, and duration unit values
 - Avoid using `any` type
 
 ### 2. Performance
+
 - Use pagination for large datasets
 - Implement proper loading states
 - Use React Query's built-in caching
 
 ### 3. User Experience
+
 - Show loading indicators during API calls
 - Display success/error messages using toast notifications
 - Implement proper form validation for prescription data
 
 ### 4. Data Management
+
 - Use the provided query keys for cache management
 - Invalidate relevant queries after mutations
 - Handle optimistic updates when appropriate
@@ -370,6 +383,7 @@ const createOrUpdateVisitPrescription = useMutation({
 ## Common Use Cases
 
 ### 1. Visit Management Page
+
 ```typescript
 // Display all prescriptions for a specific visit
 const { data: visitPrescriptions } = getVisitPrescriptionsByVisitId(visitId);
@@ -392,6 +406,7 @@ const handleAddPrescription = async (medicineId: string) => {
 ```
 
 ### 2. Pharmacy Dashboard
+
 ```typescript
 // Show all pending prescriptions
 const { data: pendingPrescriptions } = getVisitPrescriptions({
@@ -410,19 +425,23 @@ const handleDispense = async (prescriptionId: string, quantity: number) => {
 ```
 
 ### 3. Patient History
+
 ```typescript
 // Get all prescribed medications for a patient's visit
 const { data: patientMedications } = getPrescribedMedicationsByVisitId(visitId);
 
 // Display medication history
-patientMedications?.forEach(medication => {
-  console.log(`${medication.medication.name} - ${medication.dosage} - ${medication.frequency}`);
+patientMedications?.forEach((medication) => {
+  console.log(
+    `${medication.medication.name} - ${medication.dosage} - ${medication.frequency}`
+  );
 });
 ```
 
 ## Testing
 
 ### Unit Testing Hooks
+
 ```typescript
 import { renderHook, waitFor } from '@testing-library/react';
 import { useVisitPrescription } from '@/lib/api/hooks/useVisitPrescription';
@@ -430,7 +449,7 @@ import { useVisitPrescription } from '@/lib/api/hooks/useVisitPrescription';
 describe('useVisitPrescription', () => {
   it('should fetch visit prescriptions successfully', async () => {
     const { result } = renderHook(() => useVisitPrescription());
-    
+
     await waitFor(() => {
       expect(result.current.getVisitPrescriptions.isSuccess).toBe(true);
     });
@@ -439,6 +458,7 @@ describe('useVisitPrescription', () => {
 ```
 
 ### Mock API Responses
+
 ```typescript
 const mockVisitPrescriptionResponse = {
   success: true,
@@ -460,14 +480,17 @@ const mockVisitPrescriptionResponse = {
 ### Common Issues
 
 1. **CORS Errors**
+
    - Ensure backend allows frontend domain
    - Check API base URL configuration
 
 2. **Authentication Issues**
+
    - Verify token storage and refresh logic
    - Check authorization headers
 
 3. **Type Errors**
+
    - Ensure all types are properly exported
    - Check for circular dependencies
 
@@ -484,9 +507,10 @@ const mockVisitPrescriptionResponse = {
 
 ## Conclusion
 
-The VisitPrescription API integration provides a robust, type-safe, and performant solution for managing prescriptions in the Rushita Frontend application. Follow the patterns and best practices outlined in this guide to ensure consistent and maintainable code.
+The VisitPrescription API integration provides a robust, type-safe, and performant solution for managing prescriptions in the Rousheta Frontend application. Follow the patterns and best practices outlined in this guide to ensure consistent and maintainable code.
 
 For additional help, refer to:
+
 - [API Integration Guide](../api-integration-guide.md)
 - [TanStack Query Documentation](https://tanstack.com/query/latest)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/) 
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)

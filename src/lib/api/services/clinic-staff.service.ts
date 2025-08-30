@@ -73,4 +73,10 @@ export const clinicStaffService = {
   async updateStatus(data: UpdateClinicStaffStatusDto): Promise<void> {
     await apiClient.put(`${API_ENDPOINTS.CLINIC_STAFF.UPDATE_STATUS}`, data);
   },
+
+  async resendActivationEmail(id: string): Promise<ApiResponse<boolean>> {
+    return apiClient.post(API_ENDPOINTS.CLINIC_STAFF.RESEND_ACTIVATION_EMAIL, {
+      id,
+    });
+  },
 };

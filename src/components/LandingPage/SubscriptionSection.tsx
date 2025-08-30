@@ -1,31 +1,41 @@
 import React, { useState } from 'react';
 import { Check, Star, Zap, Shield, Clock } from 'lucide-react';
 import { Button } from '../ui/button';
+import { useTranslation } from 'react-i18next';
 
 const SubscriptionSection = () => {
   const [paymentInterval, setPaymentInterval] = useState('monthly');
+  const { t } = useTranslation();
 
   const subscription = {
-    name: 'الباقة الشاملة',
-    subtitle: 'كل ما تحتاجه لعيادة ذكية ومتطورة',
-    price: { monthly: 50, yearly: 500 },
-    originalPrice: { monthly: 80, yearly: 800 },
+    name: t('landing.finalCta.subscription.professional.planName'),
+    subtitle: t('landing.finalCta.subscription.professional.subtitle'),
+    price: { monthly: 100, yearly: 1000 },
+    originalPrice: { monthly: 120, yearly: 1200 },
     features: [
-      'إدارة شاملة للمرضى والمواعيد',
-      'نظام مالي متكامل مع التقارير',
-      'ملفات طبية رقمية آمنة',
-      'تذكيرات تلقائية للمرضى',
-      'دعم فني متاح 24/7',
-      'تحديثات مجانية مدى الحياة',
+      'patientManagement',
+      'financialSystem',
+      'medicalRecords',
+      'automatedReminders',
+      'support',
+      'lifetimeUpdates',
     ],
     highlights: [
-      { icon: Zap, text: 'إعداد سريع', color: 'from-yellow-500 to-orange-500' },
+      {
+        icon: Zap,
+        text: 'quickSetup',
+        color: 'from-yellow-500 to-orange-500',
+      },
       {
         icon: Shield,
-        text: 'حماية معتمدة',
+        text: 'secure',
         color: 'from-green-500 to-emerald-500',
       },
-      { icon: Clock, text: 'دعم فوري', color: 'from-blue-500 to-purple-500' },
+      {
+        icon: Clock,
+        text: 'support',
+        color: 'from-blue-500 to-purple-500',
+      },
     ],
   };
 
@@ -54,7 +64,7 @@ const SubscriptionSection = () => {
                   : 'text-white/70 hover:text-white'
               }`}
             >
-              شهري
+              {t('landing.finalCta.subscription.monthly')}
             </button>
             <button
               onClick={() => setPaymentInterval('yearly')}
@@ -64,12 +74,12 @@ const SubscriptionSection = () => {
                   : 'text-white/70 hover:text-white'
               }`}
             >
-              سنوي
-              {paymentInterval === 'yearly' && (
-                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs px-2 py-1 rounded-full">
-                  وفر {savingsPercent}%
-                </div>
-              )}
+              {t('landing.finalCta.subscription.yearly')}
+              {/* {paymentInterval === 'yearly' && ( */}
+              <div className="absolute -top-4 -right-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs px-2 py-1 rounded-full">
+                {t('landing.finalCta.subscription.save')} {savingsPercent}%
+              </div>
+              {/* )} */}
             </button>
           </div>
         </div>
@@ -86,7 +96,7 @@ const SubscriptionSection = () => {
           <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
             <div className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full text-white text-xs font-medium shadow-lg">
               <Star className="w-3 h-3" />
-              الأكثر شعبية
+              {t('landing.finalCta.subscription.professional.popular')}
             </div>
           </div>
 
@@ -106,7 +116,12 @@ const SubscriptionSection = () => {
                     ${currentPrice}
                   </span>
                   <span className="text-white/60 text-sm">
-                    /{paymentInterval === 'monthly' ? 'شهر' : 'سنة'}
+                    /
+                    {t(
+                      `landing.finalCta.subscription.${
+                        paymentInterval === 'monthly' ? 'perMonth' : 'perYear'
+                      }`
+                    )}
                   </span>
                 </div>
                 {savings > 0 && (
@@ -115,7 +130,9 @@ const SubscriptionSection = () => {
                       ${originalPrice}
                     </span>
                     <span className="text-green-400 text-xs font-medium">
-                      وفر ${savings}
+                      {t('landing.finalCta.subscription.saveAmount', {
+                        amount: savings,
+                      })}
                     </span>
                   </div>
                 )}
@@ -137,7 +154,10 @@ const SubscriptionSection = () => {
                       <IconComponent className="w-2 h-2 text-white" />
                     </div>
                     <span className="text-white/80 text-xs">
-                      {highlight.text}
+                      {t(
+                        'landing.finalCta.subscription.professional.highlights.' +
+                          highlight.text
+                      )}
                     </span>
                   </div>
                 );
@@ -146,7 +166,7 @@ const SubscriptionSection = () => {
 
             {/* CTA Button */}
             <Button className="w-full py-3 text-base font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 mb-4">
-              ابدأ تجربتك المجانية الآن
+              {t('landing.finalCta.subscription.startTrial')}
             </Button>
           </div>
 
@@ -160,7 +180,12 @@ const SubscriptionSection = () => {
                 <div className="w-4 h-4 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
                   <Check className="w-3 h-3 text-white" />
                 </div>
-                <span className="text-white/90 text-xs">{feature}</span>
+                <span className="text-white/90 text-xs">
+                  {t(
+                    'landing.finalCta.subscription.professional.features.' +
+                      feature
+                  )}
+                </span>
               </div>
             ))}
           </div>
@@ -168,7 +193,7 @@ const SubscriptionSection = () => {
           {/* Bottom note - Compact */}
           <div className="text-center pt-3 border-t border-white/10">
             <p className="text-white/60 text-xs">
-              ✨ تجربة مجانية 30 يوم • إلغاء في أي وقت
+              {t('landing.finalCta.subscription.trialNote')}
             </p>
           </div>
         </div>

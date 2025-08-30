@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { Gender, BloodType } from '@/lib/api/types/clinic-patient';
+import {
+  Gender,
+  BloodType,
+  IdentificationType,
+} from '@/lib/api/types/clinic-patient';
 
 export const patientSchema = z.object({
   id: z.string().optional(),
@@ -14,18 +18,19 @@ export const patientSchema = z.object({
   sNameL: z.string().nullable().optional(),
   tNameL: z.string().nullable().optional(),
   lNameL: z.string().nullable().optional(),
+  idNum: z.string().nullable().optional(),
+  idType: z.coerce.number().min(1, { message: 'نوع الهوية مطلوب' }),
+  preferredLanguage: z.string().nullable().optional(),
   dateOfBirth: z.string().min(1, {
     message: 'Date of birth is required ',
   }),
   gender: z.coerce.number().min(1, 'Gender is required'),
   // Contact Information
   email: z.string().email('Invalid email format').optional().nullable(),
+
   phoneNumber: z
     .string()
-    .min(1, {
-      message: 'Phone number is required',
-    })
-    .regex(/^\d{9}$/, 'Phone number must be exactly 9 digits'),
+    .max(9, { message: 'Phone number must be exactly 9 digits ' }),
   countryCodeId: z.string().optional(),
   // Location
   address: z.string().optional().nullable(),
@@ -35,29 +40,8 @@ export const patientSchema = z.object({
   bloodType: z.coerce.number().min(1, 'Blood type is required'),
 
   // In your schema
-  height: z
-    .string()
-    .optional()
-    .transform((val) => {
-      if (!val || val === '') return undefined;
-      const num = Number(val);
-      return isNaN(num) ? undefined : num;
-    })
-    .refine((val) => val === undefined || (val >= 0 && val <= 300), {
-      message: 'Height must be between 0 and 300',
-    }),
-
-  weight: z
-    .string()
-    .optional()
-    .transform((val) => {
-      if (!val || val === '') return undefined;
-      const num = Number(val);
-      return isNaN(num) ? undefined : num;
-    })
-    .refine((val) => val === undefined || (val >= 0 && val <= 500), {
-      message: 'Weight must be between 0 and 500',
-    }),
+  height: z.number().min(1, { message: 'Height is required' }),
+  weight: z.number().min(1, { message: 'Weight is required' }),
 });
 
 // Create a base type from the schema
@@ -85,6 +69,7 @@ export const defaultPatientValues: PatientSchemaType = {
   phoneNumber: '',
   countryCodeId: '',
   gender: Gender.Male,
+  idType: IdentificationType.NationalID,
   dateOfBirth: '',
   address: '',
   countryId: '',

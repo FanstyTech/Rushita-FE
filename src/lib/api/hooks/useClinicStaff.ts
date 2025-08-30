@@ -129,6 +129,15 @@ export const useClinicStaff = () => {
     },
   });
 
+  const resendActivationEmail = useMutation({
+    retry: false,
+    mutationFn: (id: string) => clinicStaffService.resendActivationEmail(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clinicStaff'] });
+      toast.success('Activation email has been resent successfully');
+    }
+  });
+
   return {
     useClinicStaffList,
     useClinicStaffDetails,
@@ -139,5 +148,6 @@ export const useClinicStaff = () => {
     deleteClinicStaff,
     updateClinicStaffStatus,
     useDoctorDetails,
+    resendActivationEmail,
   };
 };

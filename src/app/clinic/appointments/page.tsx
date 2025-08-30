@@ -6,17 +6,9 @@ import { useRouter } from 'next/navigation';
 import { Calendar } from '@/components/clinic/appointments/Calendar';
 import { format } from 'date-fns';
 import Modal from '@/components/common/Modal';
-import {
-  CalendarIcon,
-  PencilIcon,
-  TrashIcon,
-  ClipboardIcon,
-} from '@heroicons/react/24/outline';
 import AppointmentSkeleton from '@/components/skeletons/AppointmentSkeleton';
 import PageLayout from '@/components/layouts/PageLayout';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { useAppointments } from '@/lib/api/hooks/useAppointments';
 import {
   AppointmentListDto,
@@ -28,13 +20,30 @@ import {
 import {
   convertFormDataForAPI,
   validateAppointmentTime,
-  formatTimeForAPI,
 } from '@/utils/dateTimeUtils';
 import { toast } from '@/components/ui/Toast';
-import AppointmentForm from '@/components/clinic/appointments/AppointmentForm';
 import { ConfirmationModal } from '@/components/common';
+import {
+  KanbanBoard,
+  AppointmentHeader,
+  AppointmentDetails,
+  AppointmentForm,
+} from '@/components/clinic/appointments';
 
-// Using formatTimeForAPI from dateTimeUtils for time formatting
+// Enhanced filter interface
+interface AppointmentFilters {
+  selectedDoctors: string[];
+  selectedTreatments: string[];
+  selectedStatuses: AppointmentStatus[];
+  searchQuery: string;
+  dateRange: {
+    start: Date | null;
+    end: Date | null;
+  };
+}
+
+// View modes
+type ViewMode = 'schedule' | 'kanban';
 
 export default function AppointmentsPage() {
   const { user } = useAuth();
@@ -42,6 +51,18 @@ export default function AppointmentsPage() {
 
   // Extract clinicId and staffId directly from user
   const clinicId = user?.clinicInfo?.id || '';
+
+  // View mode state
+  const [viewMode, setViewMode] = useState<ViewMode>('kanban');
+
+  // Filter states
+  const [filters, setFilters] = useState<AppointmentFilters>({
+    selectedDoctors: [],
+    selectedTreatments: [],
+    selectedStatuses: [],
+    searchQuery: '',
+    dateRange: { start: null, end: null },
+  });
 
   // Use client-side only initialization for dates to avoid hydration mismatches
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -53,8 +74,11 @@ export default function AppointmentsPage() {
 
   const [showNewAppointment, setShowNewAppointment] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [selectedAppointmentFoDelete, setSelectedAppointmentFoDelete] =
+  const [selectedAppointmentForDelete, setSelectedAppointmentForDelete] =
     useState('');
+  const [showAppointmentDetail, setShowAppointmentDetail] = useState(false);
+  const [detailAppointment, setDetailAppointment] =
+    useState<AppointmentListDto | null>(null);
 
   const [selectedAppointment, setSelectedAppointment] =
     useState<AppointmentListDto | null>(null);
@@ -86,6 +110,7 @@ export default function AppointmentsPage() {
   const {
     useAppointmentsList,
     useAppointmentForEdit,
+    updateAppointmentStatus,
     createOrUpdateAppointment,
     deleteAppointment,
   } = useAppointments();
@@ -111,6 +136,99 @@ export default function AppointmentsPage() {
   const { data: appointmentForEditData } = useAppointmentForEdit(
     selectedAppointment?.id || ''
   );
+
+  // Filter appointments based on current filters
+  const filteredAppointments = useMemo(() => {
+    if (!appointmentsData?.items) return [];
+
+    let filtered = appointmentsData.items;
+
+    // Filter by selected doctors
+    if (filters.selectedDoctors.length > 0) {
+      filtered = filtered.filter((apt) =>
+        filters.selectedDoctors.includes(apt.staffName)
+      );
+    }
+
+    // Filter by selected treatments
+    if (filters.selectedTreatments.length > 0) {
+      filtered = filtered.filter((apt) =>
+        filters.selectedTreatments.includes(apt.type.toString())
+      );
+    }
+
+    // Filter by selected statuses
+    if (filters.selectedStatuses.length > 0) {
+      filtered = filtered.filter((apt) =>
+        filters.selectedStatuses.includes(apt.status)
+      );
+    }
+
+    // Filter by date range
+    if (filters.dateRange.start && filters.dateRange.end) {
+      filtered = filtered.filter((apt) => {
+        const aptDate = new Date(apt.date);
+        return (
+          aptDate >= filters.dateRange.start! &&
+          aptDate <= filters.dateRange.end!
+        );
+      });
+    }
+
+    // Filter by search query
+    if (filters.searchQuery) {
+      filtered = filtered.filter((apt) =>
+        apt.patientName
+          .toLowerCase()
+          .includes(filters.searchQuery.toLowerCase())
+      );
+    }
+
+    return filtered;
+  }, [appointmentsData?.items, filters]);
+
+  // Group appointments by status for Kanban view
+  const appointmentsByStatus = useMemo(() => {
+    const grouped: Record<AppointmentStatus, AppointmentListDto[]> = {
+      [AppointmentStatus.Pending]: [],
+      [AppointmentStatus.Scheduled]: [],
+      [AppointmentStatus.Confirmed]: [],
+      [AppointmentStatus.InProgress]: [],
+      [AppointmentStatus.Completed]: [],
+      [AppointmentStatus.Cancelled]: [],
+      [AppointmentStatus.NoShow]: [],
+    };
+
+    filteredAppointments.forEach((apt) => {
+      if (grouped[apt.status]) {
+        grouped[apt.status].push(apt);
+      }
+    });
+
+    return grouped;
+  }, [filteredAppointments]);
+
+  // Handle appointment status change (for Kanban)
+  const handleStatusChange = async (
+    appointmentId: string,
+    newStatus: AppointmentStatus
+  ) => {
+    const appointment = filteredAppointments.find(
+      (apt) => apt.id === appointmentId
+    );
+    if (!appointment) return;
+
+    updateAppointmentStatus.mutateAsync({
+      id: appointmentId,
+      status: newStatus,
+    });
+  };
+
+  // Show appointment details
+  const handleShowAppointmentDetail = (appointment: AppointmentListDto) => {
+    setDetailAppointment(appointment);
+    setShowAppointmentDetail(true);
+  };
 
   // Create or update appointment
   const handleCreateAppointment = async () => {
@@ -197,20 +315,20 @@ export default function AppointmentsPage() {
 
       setShowNewAppointment(true);
     }
-  }, [appointmentForEditData]); // Handle delete appointment
+  }, [appointmentForEditData]);
 
+  // Handle delete appointment
   const handleDeleteAppointment = async () => {
-    if (!selectedAppointmentFoDelete) return;
+    if (!selectedAppointmentForDelete) return;
 
-    await deleteAppointment.mutateAsync(selectedAppointmentFoDelete);
+    await deleteAppointment.mutateAsync(selectedAppointmentForDelete);
     setShowDeleteConfirm(false);
   };
 
-  // Calendar data conversion
-  const calendarAppointments = useMemo(() => {
-    if (!appointmentsData?.items) return [];
-    return appointmentsData.items;
-  }, [appointmentsData]);
+  const handleAddNewAppointment = async () => {
+    setShowNewAppointment(true);
+    setSelectedAppointment(null);
+  };
 
   // Show skeleton loading state when appointments are loading initially
   if (appointmentsLoading && !appointmentsData) {
@@ -232,121 +350,34 @@ export default function AppointmentsPage() {
 
   return (
     <PageLayout>
-      {/* Header */}
-      <div className="flex justify-end items-center">
-        <Button
-          onClick={() => {
-            setShowNewAppointment(true);
-            setSelectedAppointment(null);
-          }}
-          className="gap-2"
-        >
-          <CalendarIcon className="h-5 w-5 mr-2" />
-          New Appointment
-        </Button>
-      </div>
+      {/* Header Component */}
+      <AppointmentHeader
+        appointmentsByStatus={appointmentsByStatus}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        handleAddNewAppointment={handleAddNewAppointment}
+      />
 
       {/* Main Content */}
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Calendar */}
-        <div className="lg:col-span-2">
-          <Calendar
-            appointments={calendarAppointments}
-            selectedDate={selectedDate}
-            onDaySelect={setSelectedDate}
-          />
-        </div>
-
-        {/* Day's Schedule */}
-        <Card className="">
-          <h3 className="px-4 sm:px-6 text-lg font-medium">
-            Schedule for {format(selectedDate, 'MMMM d, yyyy')}
-          </h3>
-          <div className="border-t border-gray-200">
-            <ul className="divide-y divide-gray-200">
-              {calendarAppointments
-                .filter(
-                  (apt) =>
-                    format(new Date(apt.date), 'yyyy-MM-dd') ===
-                    format(selectedDate, 'yyyy-MM-dd')
-                )
-                .map((appointment) => (
-                  <li
-                    key={appointment.id}
-                    className="px-4 py-4 sm:px-6 hover:bg-gray-50"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <CalendarIcon className="h-6 w-6 text-gray-400" />
-                        </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium">
-                            {formatTimeForAPI(appointment.startTime)} -{' '}
-                            {formatTimeForAPI(appointment.endTime)}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {appointment.patientName} -{' '}
-                            {VisitType[appointment.type]}
-                            <Badge variant="secondary">
-                              {appointment.staffName}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="ghost"
-                          onClick={() => handleEditAppointment(appointment)}
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                          <span className="sr-only">Edit</span>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          onClick={() =>
-                            router.push(`/doctor/visits/add/${appointment?.id}`)
-                          }
-                        >
-                          <ClipboardIcon className="h-4 w-4" />
-                          <span className="sr-only">Open Visit</span>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          onClick={() => {
-                            setShowDeleteConfirm(true);
-                            setSelectedAppointmentFoDelete(appointment?.id);
-                          }}
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                          <span className="sr-only">Delete</span>
-                        </Button>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-            </ul>
-            {calendarAppointments.filter(
-              (apt) =>
-                format(new Date(apt.date), 'yyyy-MM-dd') ===
-                format(selectedDate, 'yyyy-MM-dd')
-            ).length === 0 && (
-              <div className="px-4 py-12 text-center">
-                <div className="flex flex-col items-center">
-                  <div className="rounded-full bg-gray-100 p-3 mb-4">
-                    <CalendarIcon className="h-6 w-6 text-gray-400" />
-                  </div>
-                  <h3 className="text-sm font-medium mb-1">No appointments</h3>
-                  <p className="text-sm text-gray-500">
-                    There are no appointments scheduled for this day.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </Card>
-      </div>
-
+      {viewMode === 'schedule' ? (
+        <Calendar
+          appointments={filteredAppointments}
+          selectedDate={selectedDate}
+          onDaySelect={setSelectedDate}
+          onAppointmentClick={handleShowAppointmentDetail}
+        />
+      ) : (
+        <KanbanBoard
+          appointmentsByStatus={appointmentsByStatus}
+          filteredAppointments={filteredAppointments}
+          onStatusChange={handleStatusChange}
+          onEdit={handleEditAppointment}
+          onShowDetails={handleShowAppointmentDetail}
+          onStartVisit={(appointmentId) =>
+            router.push(`/clinic/doctor/visits/add/${appointmentId}`)
+          }
+        />
+      )}
       {/* Delete Confirmation Modal */}
       <ConfirmationModal
         isOpen={showDeleteConfirm}
@@ -406,6 +437,21 @@ export default function AppointmentsPage() {
           appointmentDetails={newAppointment}
           setAppointmentDetails={setNewAppointment}
         />
+      </Modal>
+      {/* Enhanced Appointment Details Modal */}
+      <Modal
+        isOpen={showAppointmentDetail}
+        onClose={() => setShowAppointmentDetail(false)}
+        title=""
+        maxWidth="2xl"
+      >
+        {detailAppointment && (
+          <AppointmentDetails
+            detailAppointment={detailAppointment}
+            handleEditAppointment={handleEditAppointment}
+            setShowAppointmentDetail={setShowAppointmentDetail}
+          />
+        )}
       </Modal>
     </PageLayout>
   );

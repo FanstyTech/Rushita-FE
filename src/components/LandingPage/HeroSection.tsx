@@ -12,8 +12,12 @@ import {
 import CicyleBg from './CicyleBg';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 const HeroSection = () => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
       {/* Background Elements */}
@@ -34,13 +38,13 @@ const HeroSection = () => {
           {/* Left Content */}
           <div
             className="space-y-8 animate-fade-in-up animation-delay-300"
-            dir="rtl"
+            dir={isRTL ? 'rtl' : 'ltr'}
           >
             {/* Medical Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-full border border-blue-200 dark:border-blue-800 animate-slide-in-right animation-delay-400">
               <Stethoscope className="w-5 h-5 text-blue-600 animate-pulse" />
               <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                نظام إدارة العيادات المتطور
+                {t('landing.hero.medicalBadge')}
               </span>
             </div>
 
@@ -48,23 +52,19 @@ const HeroSection = () => {
             <div className="space-y-4">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight animate-fade-in-up animation-delay-600">
                 <span className="block text-gray-900 dark:text-white">
-                  العيادة الذكية
+                  {t('landing.hero.heroTitle')}
                 </span>
                 <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient-x animation-delay-200">
-                  تبدأ من هنا
+                  {t('landing.hero.heroSubtitle')}
                 </span>
               </h1>
 
               <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed animate-fade-in-up animation-delay-800">
-                مع{' '}
-                <span className="font-bold text-blue-600 dark:text-blue-400 animate-text-shimmer">
-                  روشيتة
-                </span>
-                ، انتهى زمن الورق والتأجيل وبدأ زمن الترتيب والراحة
+                {t('landing.hero.heroDescription')}
               </p>
 
               <p className="text-lg text-gray-500 dark:text-gray-400 animate-fade-in-up animation-delay-1000">
-                من أول موعد... لآخر متابعة – كل شيء في مكانه
+                {t('landing.hero.heroDescription2')}
               </p>
             </div>
 
@@ -73,25 +73,25 @@ const HeroSection = () => {
               <div className="flex items-center gap-3 p-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 hover:scale-105 transition-all duration-300">
                 <Calendar className="w-6 h-6 text-green-500 animate-bounce-gentle" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  جدولة ذكية
+                  {t('landing.hero.feature1')}
                 </span>
               </div>
               <div className="flex items-center gap-3 p-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 hover:scale-105 transition-all duration-300">
                 <FileText className="w-6 h-6 text-blue-500 animate-pulse" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  ملفات رقمية
+                  {t('landing.hero.feature2')}
                 </span>
               </div>
               <div className="flex items-center gap-3 p-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 hover:scale-105 transition-all duration-300">
                 <Heart className="w-6 h-6 text-red-500 animate-heartbeat" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  متابعة شاملة
+                  {t('landing.hero.feature3')}
                 </span>
               </div>
               <div className="flex items-center gap-3 p-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 hover:scale-105 transition-all duration-300">
                 <TrendingUp className="w-6 h-6 text-purple-500 animate-bounce" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  تقارير ذكية
+                  {t('landing.hero.feature4')}
                 </span>
               </div>
             </div>
@@ -110,7 +110,7 @@ const HeroSection = () => {
                   <div className="relative flex items-center justify-center gap-2">
                     <Stethoscope className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
                     <span className="bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent font-bold">
-                      ابدأ تجربتك المجانية
+                      {t('landing.hero.ctaButton1')}
                     </span>
                     <MoveLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
                   </div>
@@ -135,7 +135,7 @@ const HeroSection = () => {
                   <div className="relative flex items-center justify-center gap-2">
                     <Users className="w-5 h-5 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300" />
                     <span className="text-gray-700 dark:text-gray-300 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent font-semibold transition-all duration-300">
-                      سجل دخولك
+                      {t('landing.hero.ctaButton2')}
                     </span>
                   </div>
 
@@ -152,7 +152,7 @@ const HeroSection = () => {
                   +60
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  عيادة تثق بنا
+                  {t('landing.hero.trustIndicator1')}
                 </div>
               </div>
               <div className="w-px h-12 bg-gray-300 dark:bg-gray-600"></div>
@@ -161,7 +161,7 @@ const HeroSection = () => {
                   1947
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  مستخدم نشط
+                  {t('landing.hero.trustIndicator2')}
                 </div>
               </div>
               <div className="w-px h-12 bg-gray-300 dark:bg-gray-600"></div>
@@ -170,7 +170,7 @@ const HeroSection = () => {
                   99%
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  رضا العملاء
+                  {t('landing.hero.trustIndicator3')}
                 </div>
               </div>
             </div>
@@ -197,10 +197,10 @@ const HeroSection = () => {
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                      حالة المريض
+                      {t('landing.hero.medicalElement1')}
                     </div>
                     <div className="text-xs text-green-600 dark:text-green-400">
-                      مستقرة ✓
+                      {t('landing.hero.medicalElement1Status')}
                     </div>
                   </div>
                 </div>
@@ -212,10 +212,10 @@ const HeroSection = () => {
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                      المواعيد اليوم
+                      {t('landing.hero.medicalElement2')}
                     </div>
                     <div className="text-xs text-blue-600 dark:text-blue-400">
-                      12 موعد مجدول
+                      {t('landing.hero.medicalElement2Status')}
                     </div>
                   </div>
                 </div>
@@ -227,10 +227,10 @@ const HeroSection = () => {
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                      فحص شامل
+                      {t('landing.hero.medicalElement3')}
                     </div>
                     <div className="text-xs text-purple-600 dark:text-purple-400">
-                      مكتمل
+                      {t('landing.hero.medicalElement3Status')}
                     </div>
                   </div>
                 </div>

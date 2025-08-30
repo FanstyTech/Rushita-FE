@@ -1,4 +1,4 @@
-// OTP Types for Rushita Frontend API Integration
+// OTP Types for Rousheta Frontend API Integration
 
 // Base OTP DTO
 export interface OtpDto {

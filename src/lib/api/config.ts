@@ -153,7 +153,7 @@ export const API_ENDPOINTS = {
     UPLOAD_IMAGE: '/clinic/uploadImage',
     UPDATE_STATUS: '/clinic/updateStatus',
     UPDATE_LOCATION: '/clinic/updateLocation',
-    UpdateUserInf: '/clinic/UpdateUserInf',
+    GET_DASHBOARD: '/clinic/getDashboard',
   },
   CLINIC_STAFF: {
     LIST: '/clinicStaff/getAll',
@@ -165,6 +165,7 @@ export const API_ENDPOINTS = {
     DELETE: '/clinicStaff/delete',
     UPDATE_STATUS: '/clinicStaff/updateStatus',
     CHANGE_PASSWORD: '/clinicStaff/changeStaffPassword',
+    RESEND_ACTIVATION_EMAIL: '/clinicStaff/resendActivationEmail',
   },
   CLINIC_STAFF_LEAVES: {
     LIST: '/clinicStaffLeave/getAll',
@@ -367,5 +368,10 @@ export const API_ENDPOINTS = {
   CLINIC_SETTINGS: {
     GET: '/clinicSettings/GetClinicSettings',
     SAVE: '/clinicSettings/SaveClinicSettings',
+  },
+
+  // Doctor endpoints
+  DOCTOR: {
+    DASHBOARD: '/doctor/getDashboard',
   },
 } as const;

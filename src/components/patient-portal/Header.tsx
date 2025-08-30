@@ -112,7 +112,7 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                     scrolled ? 'text-lg' : 'text-xl'
                   )}
                 >
-                  Rushita
+                  Rousheta
                 </span>
                 <span
                   className={cn(

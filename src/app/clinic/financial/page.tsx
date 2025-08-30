@@ -17,6 +17,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  AreaChart,
+  Area,
 } from 'recharts';
 import {
   DollarSign,
@@ -28,7 +30,10 @@ import {
   CreditCard,
   Receipt,
   BarChart3,
+  PieChart as PieChartIcon,
+  Wallet,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import PageLayout from '@/components/layouts/PageLayout';
 import { useInvoice } from '@/lib/api/hooks/useInvoice';
 import { useExpense } from '@/lib/api/hooks/useExpense';
@@ -222,161 +227,271 @@ export default function FinancialDashboardPage() {
 
   useEffect(() => {
     const dateRange = getDateRange();
-    refetchInvoices({
-      startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
-    });
-    refetchExpenses({
-      startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
-    });
-    refetchRevenue({
-      startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
-    });
-    refetchTransactions({
-      startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
-    });
-  }, [selectedPeriod]);
+    // Instead of passing parameters to refetch, we need to invalidate and refetch the queries
+    // The queries will automatically use the current dateRange values
+    refetchInvoices();
+    refetchExpenses();
+    refetchRevenue();
+    refetchTransactions();
+  }, [
+    selectedPeriod,
+    refetchInvoices,
+    refetchExpenses,
+    refetchRevenue,
+    refetchTransactions,
+  ]);
 
   return (
     <PageLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-              لوحة التحكم المالية
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              نظرة عامة على الأداء المالي للعيادة
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={handleRefresh}
-              disabled={isLoading}
-              className="flex items-center gap-2"
-            >
-              <RefreshCw
-                className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`}
-              />
-              تحديث
-            </Button>
-            <Button
-              variant={selectedPeriod === 'week' ? 'default' : 'outline'}
-              onClick={() => setSelectedPeriod('week')}
-              size="sm"
-            >
-              أسبوع
-            </Button>
-            <Button
-              variant={selectedPeriod === 'month' ? 'default' : 'outline'}
-              onClick={() => setSelectedPeriod('month')}
-              size="sm"
-            >
-              شهر
-            </Button>
-            <Button
-              variant={selectedPeriod === 'year' ? 'default' : 'outline'}
-              onClick={() => setSelectedPeriod('year')}
-              size="sm"
-            >
-              سنة
-            </Button>
-          </div>
-        </div>
-
-        {/* Main KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {/* Total Revenue Card */}
-          <Card className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
+      <div className="space-y-8">
+        {/* Enhanced Header with gradient background */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 rounded-3xl p-8 text-white"
+        >
+          <div className="absolute inset-0 bg-black/10" />
+          <div className="relative z-10">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                  إجمالي الإيرادات
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                    <Wallet className="w-6 h-6" />
+                  </div>
+                  <h1 className="text-3xl font-bold">لوحة التحكم المالية</h1>
+                </div>
+                <p className="text-blue-100 text-lg">
+                  نظرة شاملة على الأداء المالي للعيادة
                 </p>
-                <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {formatCurrency(totalRevenue)}
-                </p>
-                <div className="flex items-center mt-1">
-                  <TrendingUp className="w-3 h-3 text-green-600 mr-1" />
-                  <span className="text-xs text-green-600">+12.5%</span>
+                <div className="flex items-center gap-4 mt-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                    <span className="text-sm text-blue-100">متصل مباشر</span>
+                  </div>
+                  <div className="text-sm text-blue-100">
+                    آخر تحديث: {new Date().toLocaleTimeString('ar-EG')}
+                  </div>
                 </div>
               </div>
-              <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  variant="secondary"
+                  onClick={handleRefresh}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm"
+                >
+                  <RefreshCw
+                    className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`}
+                  />
+                  تحديث البيانات
+                </Button>
+                <div className="flex gap-2 bg-white/10 p-1 rounded-lg backdrop-blur-sm">
+                  {(['week', 'month', 'year'] as const).map((period) => (
+                    <Button
+                      key={period}
+                      variant={
+                        selectedPeriod === period ? 'secondary' : 'ghost'
+                      }
+                      onClick={() => setSelectedPeriod(period)}
+                      size="sm"
+                      className={`${
+                        selectedPeriod === period
+                          ? 'bg-white text-blue-600 shadow-lg'
+                          : 'text-white hover:bg-white/20'
+                      } transition-all duration-200`}
+                    >
+                      {period === 'week'
+                        ? 'أسبوع'
+                        : period === 'month'
+                        ? 'شهر'
+                        : 'سنة'}
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
-          </Card>
+          </div>
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24" />
+        </motion.div>
+
+        {/* Enhanced KPI Cards */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, staggerChildren: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          {/* Total Revenue Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-emerald-600 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-600" />
+
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                    إجمالي الإيرادات
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    {formatCurrency(totalRevenue)}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    مقارنة بالفترة السابقة
+                  </p>
+                </div>
+                <div className="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 p-3 shadow-lg">
+                  <DollarSign className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-green-500" />
+                  <span className="text-sm font-semibold text-green-600">
+                    +12.5%
+                  </span>
+                </div>
+                <div className="w-12 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full animate-pulse" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Total Expenses Card */}
-          <Card className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                  إجمالي المصروفات
-                </p>
-                <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {formatCurrency(totalExpenses)}
-                </p>
-                <div className="flex items-center mt-1">
-                  <TrendingDown className="w-3 h-3 text-red-600 mr-1" />
-                  <span className="text-xs text-red-600">-3.2%</span>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500 to-red-600 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-600" />
+
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                    إجمالي المصروفات
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    {formatCurrency(totalExpenses)}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    انخفاض في المصروفات
+                  </p>
+                </div>
+                <div className="rounded-xl bg-red-50 dark:bg-red-900/20 p-3 shadow-lg">
+                  <CreditCard className="w-6 h-6 text-red-600 dark:text-red-400" />
                 </div>
               </div>
-              <div className="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                <CreditCard className="w-5 h-5 text-red-600 dark:text-red-400" />
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <TrendingDown className="w-4 h-4 text-red-500" />
+                  <span className="text-sm font-semibold text-red-600">
+                    -3.2%
+                  </span>
+                </div>
+                <div className="w-12 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-red-500 to-red-600 rounded-full animate-pulse" />
+                </div>
               </div>
             </div>
-          </Card>
+          </motion.div>
 
           {/* Net Profit Card */}
-          <Card className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                  صافي الربح
-                </p>
-                <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {formatCurrency(netProfit)}
-                </p>
-                <div className="flex items-center mt-1">
-                  <TrendingUp className="w-3 h-3 text-blue-600 mr-1" />
-                  <span className="text-xs text-blue-600">+8.1%</span>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600" />
+
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                    صافي الربح
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    {formatCurrency(netProfit)}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    نمو مستمر في الأرباح
+                  </p>
+                </div>
+                <div className="rounded-xl bg-blue-50 dark:bg-blue-900/20 p-3 shadow-lg">
+                  <BarChart3 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
-              <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-blue-500" />
+                  <span className="text-sm font-semibold text-blue-600">
+                    +8.1%
+                  </span>
+                </div>
+                <div className="w-12 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-pulse" />
+                </div>
               </div>
             </div>
-          </Card>
+          </motion.div>
 
           {/* Total Invoices Card */}
-          <Card className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                  إجمالي الفواتير
-                </p>
-                <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {invoiceDashboard?.totalInvoices || 0}
-                </p>
-                <div className="flex items-center mt-1">
-                  <FileText className="w-3 h-3 text-purple-600 mr-1" />
-                  <span className="text-xs text-purple-600">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-purple-600 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-600" />
+
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                    إجمالي الفواتير
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    {invoiceDashboard?.totalInvoices || 0}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    إدارة الفواتير
+                  </p>
+                </div>
+                <div className="rounded-xl bg-purple-50 dark:bg-purple-900/20 p-3 shadow-lg">
+                  <Receipt className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-purple-500" />
+                  <span className="text-sm font-semibold text-purple-600">
                     {invoiceDashboard?.totalPaid || 0} مدفوعة
                   </span>
                 </div>
-              </div>
-              <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                <Receipt className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <div className="w-12 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full animate-pulse" />
+                </div>
               </div>
             </div>
-          </Card>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -476,146 +591,192 @@ export default function FinancialDashboardPage() {
           </Card>
         </div>
 
-        {/* Recent Transactions */}
-        <Card className="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              المعاملات الأخيرة
-            </h3>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={navigateToTransactions}
-              className="flex items-center gap-2"
-            >
-              <Eye className="w-4 h-4" />
-              عرض الكل
-            </Button>
-          </div>
-
-          <div className="space-y-3">
-            {[
-              {
-                id: 1,
-                date: '2024-08-23',
-                description: 'فاتورة زيارة - أحمد محمد',
-                type: 'revenue',
-                amount: 250,
-                status: 'completed',
-              },
-              {
-                id: 2,
-                date: '2024-08-22',
-                description: 'شراء مستلزمات طبية',
-                type: 'expense',
-                amount: -450,
-                status: 'completed',
-              },
-              {
-                id: 3,
-                date: '2024-08-22',
-                description: 'فاتورة زيارة - فاطمة علي',
-                type: 'revenue',
-                amount: 180,
-                status: 'pending',
-              },
-              {
-                id: 4,
-                date: '2024-08-21',
-                description: 'دفع إيجار العيادة',
-                type: 'expense',
-                amount: -2000,
-                status: 'completed',
-              },
-            ].map((transaction) => (
-              <div
-                key={transaction.id}
-                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`p-2 rounded-lg ${
-                      transaction.type === 'revenue'
-                        ? 'bg-green-100 dark:bg-green-900/30'
-                        : 'bg-red-100 dark:bg-red-900/30'
-                    }`}
-                  >
-                    {transaction.type === 'revenue' ? (
-                      <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    ) : (
-                      <TrendingDown className="w-4 h-4 text-red-600 dark:text-red-400" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white text-sm">
-                      {transaction.description}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {new Date(transaction.date).toLocaleDateString('ar-EG')}
-                    </p>
-                  </div>
+        {/* Enhanced Recent Transactions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden"
+        >
+          <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                  <Receipt className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
-                <div className="text-right">
-                  <p
-                    className={`font-semibold text-sm ${
-                      transaction.amount > 0
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}
-                  >
-                    {formatCurrency(Math.abs(transaction.amount))}
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    المعاملات الأخيرة
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    آخر العمليات المالية
                   </p>
-                  <Badge
-                    variant="secondary"
-                    className={`text-xs ${
-                      transaction.status === 'completed'
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                        : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                    }`}
-                  >
-                    {transaction.status === 'completed' ? 'مكتمل' : 'معلق'}
-                  </Badge>
                 </div>
               </div>
-            ))}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={navigateToTransactions}
+                className="flex items-center gap-2 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all duration-200"
+              >
+                <Eye className="w-4 h-4" />
+                عرض الكل
+              </Button>
+            </div>
           </div>
-        </Card>
 
-        {/* Key Metrics Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div className="text-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                هامش الربح
-              </p>
-              <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
-                {calculateProfitMargin().toFixed(1)}%
-              </p>
+          <div className="p-6">
+            <div className="space-y-4">
+              {[
+                {
+                  id: 1,
+                  date: '2024-08-23',
+                  description: 'فاتورة زيارة - أحمد محمد',
+                  type: 'revenue',
+                  amount: 250,
+                  status: 'completed',
+                },
+                {
+                  id: 2,
+                  date: '2024-08-22',
+                  description: 'شراء مستلزمات طبية',
+                  type: 'expense',
+                  amount: -450,
+                  status: 'completed',
+                },
+                {
+                  id: 3,
+                  date: '2024-08-22',
+                  description: 'فاتورة زيارة - فاطمة علي',
+                  type: 'revenue',
+                  amount: 180,
+                  status: 'pending',
+                },
+                {
+                  id: 4,
+                  date: '2024-08-21',
+                  description: 'دفع إيجار العيادة',
+                  type: 'expense',
+                  amount: -2000,
+                  status: 'completed',
+                },
+              ].map((transaction, index) => (
+                <motion.div
+                  key={transaction.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8 + index * 0.1 }}
+                  className="group flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`p-3 rounded-xl shadow-sm ${
+                        transaction.type === 'revenue'
+                          ? 'bg-emerald-100 dark:bg-emerald-900/30'
+                          : 'bg-red-100 dark:bg-red-900/30'
+                      }`}
+                    >
+                      {transaction.type === 'revenue' ? (
+                        <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <TrendingDown className="w-5 h-5 text-red-600 dark:text-red-400" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">
+                        {transaction.description}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {new Date(transaction.date).toLocaleDateString('ar-EG')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p
+                      className={`font-bold text-lg ${
+                        transaction.amount > 0
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-red-600 dark:text-red-400'
+                      }`}
+                    >
+                      {formatCurrency(Math.abs(transaction.amount))}
+                    </p>
+                    <Badge
+                      variant="secondary"
+                      className={`text-xs ${
+                        transaction.status === 'completed'
+                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                          : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                      }`}
+                    >
+                      {transaction.status === 'completed' ? 'مكتمل' : 'معلق'}
+                    </Badge>
+                  </div>
+                </motion.div>
+              ))}
             </div>
-          </Card>
+          </div>
+        </motion.div>
 
-          <Card className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div className="text-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                متوسط الزيارة
-              </p>
-              <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
-                {formatCurrency(285)}
-              </p>
+        {/* Enhanced Key Metrics Summary */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center group hover:shadow-xl transition-all duration-300">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+              <BarChart3 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             </div>
-          </Card>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+              هامش الربح
+            </p>
+            <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+              {calculateProfitMargin().toFixed(1)}%
+            </p>
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div
+                className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-1000"
+                style={{ width: `${Math.min(calculateProfitMargin(), 100)}%` }}
+              />
+            </div>
+          </div>
 
-          <Card className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div className="text-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                معدل التحصيل
-              </p>
-              <p className="text-2xl font-semibold text-purple-600 dark:text-purple-400">
-                94.2%
-              </p>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center group hover:shadow-xl transition-all duration-300">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+              <DollarSign className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
             </div>
-          </Card>
-        </div>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+              متوسط الزيارة
+            </p>
+            <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              {formatCurrency(285)}
+            </p>
+            <div className="flex items-center justify-center gap-1 text-sm">
+              <TrendingUp className="w-4 h-4 text-emerald-500" />
+              <span className="text-emerald-600 font-medium">+15.3%</span>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center group hover:shadow-xl transition-all duration-300">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+              <Receipt className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+            </div>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+              معدل التحصيل
+            </p>
+            <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+              94.2%
+            </p>
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div
+                className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full transition-all duration-1000"
+                style={{ width: '94.2%' }}
+              />
+            </div>
+          </div>
+        </motion.div>
       </div>
     </PageLayout>
   );

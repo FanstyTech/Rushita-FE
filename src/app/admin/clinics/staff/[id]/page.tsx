@@ -40,7 +40,7 @@ export default function ClinicStaffPage() {
   const [selectedStaffId, setSelectedStaffId] = useState<string>();
   const [filters, setFilters] = useState<FilterState>({
     pageNumber: 1,
-    pageSize: 5,
+    pageSize: 5000,
     sortColumn: '',
     sortDirection: '',
     searchValue: '',

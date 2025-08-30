@@ -301,7 +301,7 @@ export default function AuthPage() {
       completePersonalInfo: 'أكمل معلوماتك الشخصية',
       appDescription: 'إدارة صحتك بسهولة ومتابعة حالتك الطبية',
       copyright: (year: number) =>
-        `${year} Rushita Health. جميع الحقوق محفوظة.`,
+        `${year} Rousheta Health. جميع الحقوق محفوظة.`,
     },
     en: {
       login: 'Login',
@@ -316,7 +316,7 @@ export default function AuthPage() {
       appDescription:
         'Manage your health easily and track your medical condition',
       copyright: (year: number) =>
-        `${year} Rushita Health. All rights reserved.`,
+        `${year} Rousheta Health. All rights reserved.`,
     },
     es: {
       login: 'Iniciar sesión',
@@ -331,7 +331,7 @@ export default function AuthPage() {
       appDescription:
         'Gestione su salud fácilmente y haga seguimiento de su condición médica',
       copyright: (year: number) =>
-        `${year} Rushita Health. Todos los derechos reservados.`,
+        `${year} Rousheta Health. Todos los derechos reservados.`,
     },
   };
 
@@ -400,7 +400,7 @@ export default function AuthPage() {
         {/* Logo and title */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center">
-            <span className="text-3xl font-bold text-primary">Rushita</span>
+            <span className="text-3xl font-bold text-primary">Rousheta</span>
             <span className="text-3xl font-medium ml-1">Health</span>
           </div>
 

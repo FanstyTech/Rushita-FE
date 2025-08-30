@@ -10,8 +10,7 @@ const cairo = Cairo({
   subsets: ['arabic', 'latin'],
   weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
-  preload: true, 
-  fallback: ['system-ui', 'arial'], 
+  preload: true,
 });
 export default async function RootLayout({
   children,
@@ -51,10 +50,7 @@ export default async function RootLayout({
       dir={initialDir}
       suppressHydrationWarning
     >
-      <body
-        className={cairo.className}
-        suppressHydrationWarning
-      >
+      <body className={cairo.className} suppressHydrationWarning>
         <Providers>
           <ConditionalLayout languages={languages}>
             {children}

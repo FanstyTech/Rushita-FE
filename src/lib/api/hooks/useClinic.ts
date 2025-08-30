@@ -2,12 +2,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/Toast';
 import { clinicService } from '../services/clinic.service';
 import type {
+  ClinicDashboardFilterDto,
   ClinicDto,
   ClinicFilterDto,
   ClinicStatus,
   CreateUpdateClinicDto,
+  TimeRange,
 } from '../types/clinic';
-import type { SelectOption } from '../types/select-option';
 
 export const useClinic = () => {
   const queryClient = useQueryClient();
@@ -65,18 +66,6 @@ export const useClinic = () => {
       queryFn: () => clinicService.getForDropdown(),
     });
 
-  const UpdateUserInf = (clinicDetails: ClinicDto) =>
-    useQuery({
-      queryKey: ['UpdateUserInf', clinicDetails],
-      queryFn: async () => {
-        const response = await clinicService.UpdateUserInf(clinicDetails);
-        if (response) {
-        }
-        return response;
-      },
-      enabled: !!clinicDetails,
-    });
-
   const createOrUpdateClinic = useMutation({
     mutationFn: (data: CreateUpdateClinicDto & { id?: string }) =>
       clinicService.createOrUpdate(data),
@@ -87,7 +76,6 @@ export const useClinic = () => {
         `Clinic has been successfully ${data.id ? 'updated' : 'created'}`
       );
     },
- 
   });
 
   const deleteClinic = useMutation({
@@ -120,6 +108,19 @@ export const useClinic = () => {
     },
   });
 
+  // Single Dashboard Query
+  const useClinicDashboard = (filter: ClinicDashboardFilterDto) =>
+    useQuery({
+      queryKey: ['clinic-dashboard', filter],
+      queryFn: async () => {
+        const response = await clinicService.getDashboard(filter);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.result;
+      },
+    });
+
   return {
     useClinicsList,
     useClinicDetails,
@@ -129,6 +130,6 @@ export const useClinic = () => {
     createOrUpdateClinic,
     deleteClinic,
     updateClinicStatus,
-    UpdateUserInf,
+    useClinicDashboard,
   };
 };

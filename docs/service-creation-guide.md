@@ -1,16 +1,16 @@
 # Service Creation Guide
 
-This guide outlines the steps and best practices for creating new services in the Rushita Backend project.
+This guide outlines the steps and best practices for creating new services in the Rousheta Backend project.
 
 ## Project Structure
 
 ```
-Rushita.Domain/
+Rousheta.Domain/
   └── Entities/
       └── {ModuleName}/                   # e.g., Clinics/
           └── Entity.cs                   # e.g., Clinic.cs
 
-Rushita.Application/
+Rousheta.Application/
   ├── DTOs/
   │   └── {ModuleName}/                   # e.g., Clinics/
   │       ├── EntityDto.cs                # Full entity DTO
@@ -23,14 +23,14 @@ Rushita.Application/
   └── Mappings/
       └── MappingProfile.cs               # AutoMapper profile
 
-Rushita.Infrastructure/
+Rousheta.Infrastructure/
   └── {ModuleName}/                       # e.g., Clinics/
       └── EntityAppService.cs             # e.g., ClinicAppService.cs
 ```
 
 ## Entity Creation
 
-1. Create entity class in `Rushita.Domain/Entities/{ModuleName}/`:
+1. Create entity class in `Rousheta.Domain/Entities/{ModuleName}/`:
 
 ```csharp
 public class Entity : BaseEntity<Guid>
@@ -58,7 +58,7 @@ public class ApplicationDbContext : DbContext
 
 ## Step 1: Create DTOs
 
-1. Create DTOs in `Rushita.Application/DTOs/{ModuleName}/`:
+1. Create DTOs in `Rousheta.Application/DTOs/{ModuleName}/`:
 
 ```csharp
 public class EntityDto
@@ -99,7 +99,7 @@ public class EntityFilterDto : PaginationRequest
 
 ## Step 2: Create Interface
 
-1. Create interface in `Rushita.Application/Interfaces/{ModuleName}/`:
+1. Create interface in `Rousheta.Application/Interfaces/{ModuleName}/`:
 
 ```csharp
 public interface IEntityAppService
@@ -113,7 +113,7 @@ public interface IEntityAppService
 
 ## Step 3: Create Service Implementation
 
-1. Create service class in `Rushita.Infrastructure/{ModuleName}/`:
+1. Create service class in `Rousheta.Infrastructure/{ModuleName}/`:
 
 ```csharp
 public class EntityAppService : AppServiceBase, IEntityAppService
@@ -200,7 +200,7 @@ Key points:
 
 ## Step 4: Add AutoMapper Configuration
 
-1. In `Rushita.Application/Mappings/MappingProfile.cs`, register mappings:
+1. In `Rousheta.Application/Mappings/MappingProfile.cs`, register mappings:
 
 ```csharp
 CreateMap<Entity, EntityDto>();

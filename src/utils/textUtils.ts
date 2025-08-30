@@ -3,12 +3,18 @@
  */
 
 import { AppointmentStatus } from '@/lib/api/types/appointment';
-import { ClinicStatus, DayEnum, StaffTypeEnum } from '@/lib/api/types/clinic';
+import {
+  ClinicStatus,
+  DayEnum,
+  StaffTypeEnum,
+  TimeRange,
+} from '@/lib/api/types/clinic';
 import {
   BloodType,
   BMICategory,
   FrequencyType,
   Gender,
+  IdentificationType,
   MedicalConditionStatus,
   MetricStatus,
   Relationship,
@@ -309,6 +315,14 @@ export const getVisitStatusLabel = (status: VisitStatus): string => {
     [VisitStatus.Cancelled]: 'Cancelled',
   };
   return visitStatusMap[status] || 'Unknown';
+};
+export const getTimeRangeLabel = (status: TimeRange): string => {
+  const timeRangeMap: Record<TimeRange, string> = {
+    [TimeRange.Daily]: 'Daily',
+    [TimeRange.Monthly]: 'Monthly',
+    [TimeRange.Weekly]: 'Weekly',
+  };
+  return timeRangeMap[status] || 'Unknown';
 };
 
 export const getVisitStatusClass = (status: VisitStatus): string => {
@@ -618,6 +632,8 @@ export interface AppointmentStatusStyle {
   borderClass: string;
   textClass: string;
   className?: string; // optional combined class
+  chartColor: string;
+  chartBorderColor: string;
 }
 
 export const getAppointmentStatusStyle = (
@@ -629,42 +645,56 @@ export const getAppointmentStatusStyle = (
       bgClass: 'bg-gray-100',
       borderClass: 'border-gray-300',
       textClass: 'text-gray-800',
+      chartColor: 'rgba(107, 114, 128, 0.8)', // gray
+      chartBorderColor: 'rgba(107, 114, 128, 1)',
     },
     [AppointmentStatus.Scheduled]: {
       label: 'Scheduled',
       bgClass: 'bg-blue-100',
       borderClass: 'border-blue-300',
       textClass: 'text-blue-800',
+      chartColor: 'rgba(59, 130, 246, 0.8)', // blue
+      chartBorderColor: 'rgba(59, 130, 246, 1)',
     },
     [AppointmentStatus.Confirmed]: {
       label: 'Confirmed',
       bgClass: 'bg-green-100',
       borderClass: 'border-green-300',
       textClass: 'text-green-800',
+      chartColor: 'rgba(16, 185, 129, 0.8)', // emerald
+      chartBorderColor: 'rgba(16, 185, 129, 1)',
     },
     [AppointmentStatus.InProgress]: {
       label: 'In Progress',
       bgClass: 'bg-yellow-100',
       borderClass: 'border-yellow-300',
       textClass: 'text-yellow-800',
+      chartColor: 'rgba(245, 158, 11, 0.8)', // amber
+      chartBorderColor: 'rgba(245, 158, 11, 1)',
     },
     [AppointmentStatus.Completed]: {
       label: 'Completed',
       bgClass: 'bg-green-100',
       borderClass: 'border-green-300',
       textClass: 'text-green-800',
+      chartColor: 'rgba(34, 197, 94, 0.8)', // green
+      chartBorderColor: 'rgba(34, 197, 94, 1)',
     },
     [AppointmentStatus.Cancelled]: {
       label: 'Cancelled',
       bgClass: 'bg-red-100',
       borderClass: 'border-red-300',
       textClass: 'text-red-800',
+      chartColor: 'rgba(239, 68, 68, 0.8)', // red
+      chartBorderColor: 'rgba(239, 68, 68, 1)',
     },
     [AppointmentStatus.NoShow]: {
       label: 'No Show',
       bgClass: 'bg-orange-100',
       borderClass: 'border-orange-300',
       textClass: 'text-orange-800',
+      chartColor: 'rgba(251, 146, 60, 0.8)', // orange
+      chartBorderColor: 'rgba(251, 146, 60, 1)',
     },
   };
 
@@ -806,4 +836,15 @@ export const getDurationUnitLabel = (unit: DurationUnit): string => {
     [DurationUnit.Week]: 'Week',
   };
   return unitMap[unit] || 'Unknown';
+};
+export const getIdentificationTypeLabel = (
+  type: IdentificationType
+): string => {
+  const typeMap: Record<IdentificationType, string> = {
+    [IdentificationType.DriverLicense]: 'Driver License',
+    [IdentificationType.NationalID]: 'National ID',
+    [IdentificationType.Passport]: 'Passport',
+    [IdentificationType.Other]: 'Other',
+  };
+  return typeMap[type] || 'Unknown';
 };

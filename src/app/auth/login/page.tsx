@@ -124,7 +124,7 @@ export default function LoginPage() {
             <div className="flex items-center gap-3 mb-8">
               <Image
                 src="/images/logo-small.png"
-                alt="Rushita"
+                alt="Rousheta"
                 width={40}
                 height={40}
                 className="h-8 w-auto"
@@ -132,7 +132,7 @@ export default function LoginPage() {
               />
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  {isClient ? t('auth.login.branding.title') : 'Rushita'}
+                  {isClient ? t('auth.login.branding.title') : 'Rousheta'}
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   {isClient

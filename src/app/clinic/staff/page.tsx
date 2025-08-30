@@ -16,6 +16,9 @@ import {
   Trash2,
   Building2,
   Edit2,
+  ShieldCheck,
+  LogOut,
+  Mail,
 } from 'lucide-react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import Button from '@/components/common/Button';
@@ -32,8 +35,6 @@ import {
 } from '@/utils/textUtils';
 import ChangeStaffPasswordModal from '@/components/clinic/staff/ChangeStaffPasswordModal';
 import EmptyState from '@/components/common/EmptyState';
-import { ShieldCheck } from 'lucide-react';
-import { LogOut } from 'lucide-react';
 import ManagePermissionsModal from '@/components/clinic/staff/ManagePermissionsModal';
 
 export default function ClinicStaffPage() {
@@ -52,7 +53,7 @@ export default function ClinicStaffPage() {
   >();
   const [filters, setFilters] = useState<FilterState>({
     pageNumber: 1,
-    pageSize: 5,
+    pageSize: 50000,
     sortColumn: '',
     sortDirection: '',
     searchValue: '',
@@ -73,6 +74,7 @@ export default function ClinicStaffPage() {
     deleteClinicStaff,
     useChangeStaffPassword,
     createOrUpdateClinicStaff,
+    resendActivationEmail,
   } = useClinicStaff();
 
   const { useSpecialtiesDropdown } = useSpecialty();
@@ -183,6 +185,14 @@ export default function ClinicStaffPage() {
   const handleClosePermissionsModal = () => {
     setShowPermissionsModal(false);
     setSelectedStaffForPermissions(null);
+  };
+
+  const handleResendActivationEmail = async (staff: ClinicStaffListDto) => {
+    try {
+      await resendActivationEmail.mutateAsync(staff.id);
+    } catch (error) {
+      console.error('Failed to resend activation email:', error);
+    }
   };
 
   return (
@@ -301,6 +311,26 @@ export default function ClinicStaffPage() {
                               >
                                 <Key className="w-4 h-4" />
                                 Change Password
+                              </button>
+                            )}
+                          </MenuItem>
+                          <MenuItem>
+                            {({ active }) => (
+                              <button
+                                onClick={() =>
+                                  handleResendActivationEmail(staff)
+                                }
+                                disabled={resendActivationEmail.isPending}
+                                className={`${
+                                  active
+                                    ? 'bg-purple-50 dark:bg-purple-900/20'
+                                    : ''
+                                } flex items-center gap-2 w-full px-4 py-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+                              >
+                                <Mail className="w-4 h-4" />
+                                {resendActivationEmail.isPending
+                                  ? 'Sending...'
+                                  : 'Resend Activation Email'}
                               </button>
                             )}
                           </MenuItem>

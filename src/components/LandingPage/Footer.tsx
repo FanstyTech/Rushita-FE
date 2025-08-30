@@ -5,11 +5,12 @@ import React from 'react';
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from 'react-icons/fa';
 import { Mail, Phone, MapPin, ArrowUp } from 'lucide-react';
 import { Button } from '../ui/button';
+import { useTranslation } from 'react-i18next';
 
 const navLinks = [
   { id: 'home', label: 'الرئيسية' },
   { id: 'whyroshita', label: 'لماذا روشيتة' },
-  { id: 'projects', label: 'خدماتنا' },
+  { id: 'services', label: 'خدماتنا' },
   { id: 'contact', label: 'الاسعار' },
 ];
 
@@ -41,6 +42,9 @@ const socialLinks = [
 ];
 
 function Footer() {
+  const { t } = useTranslation();
+  const currentYear = new Date().getFullYear();
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -69,38 +73,39 @@ function Footer() {
             </div>
 
             <p className="text-gray-300 text-lg leading-relaxed max-w-md">
-              نظام إدارة العيادات الذكي الذي يجعل يوم عملك أسهل وأكثر تنظيماً.
-              من أول موعد لآخر متابعة.
+              {t('landing.footer.companyInfo.description')}
             </p>
 
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-gray-300">
                 <Mail className="w-5 h-5 text-blue-400" />
-                <span>info@rushita.com</span>
+                <span>{t('landing.footer.companyInfo.email')}</span>
               </div>
               <div className="flex items-center gap-3 text-gray-300">
                 <Phone className="w-5 h-5 text-green-400" />
-                <span dir="ltr">+966 50 123 4567</span>
+                <span dir="ltr">{t('landing.footer.companyInfo.phone')}</span>
               </div>
               <div className="flex items-center gap-3 text-gray-300">
                 <MapPin className="w-5 h-5 text-red-400" />
-                <span>الرياض، المملكة العربية السعودية</span>
+                <span>{t('landing.footer.companyInfo.address')}</span>
               </div>
             </div>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-white">روابط سريعة</h3>
+            <h3 className="text-xl font-bold text-white">
+              {t('landing.footer.quickLinks')}
+            </h3>
             <ul className="space-y-3">
-              {navLinks.map((item) => (
-                <li key={item.id}>
+              {['contact', 'services', 'whyroshita', 'home'].map((item) => (
+                <li key={item}>
                   <Link
-                    href={`/#${item.id}`}
+                    href={`/#${item}`}
                     className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
                   >
-                    {item.label}
+                    {t('landing.nav.' + item)}
                   </Link>
                 </li>
               ))}
@@ -109,14 +114,16 @@ function Footer() {
 
           {/* Support & Resources */}
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-white">الدعم والموارد</h3>
+            <h3 className="text-xl font-bold text-white">
+              {t('landing.footer.supportResources.title')}
+            </h3>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="#"
                   className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
                 >
-                  مركز المساعدة
+                  {t('landing.footer.supportResources.helpCenter')}
                 </Link>
               </li>
               <li>
@@ -124,7 +131,7 @@ function Footer() {
                   href="#"
                   className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
                 >
-                  الأسئلة الشائعة
+                  {t('landing.footer.supportResources.faq')}
                 </Link>
               </li>
               <li>
@@ -132,7 +139,7 @@ function Footer() {
                   href="#"
                   className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
                 >
-                  دليل المستخدم
+                  {t('landing.footer.supportResources.userGuide')}
                 </Link>
               </li>
               <li>
@@ -140,7 +147,7 @@ function Footer() {
                   href="#"
                   className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
                 >
-                  تواصل معنا
+                  {t('landing.footer.supportResources.contactUs')}
                 </Link>
               </li>
             </ul>
@@ -152,7 +159,9 @@ function Footer() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             {/* Social Links */}
             <div className="flex items-center gap-6">
-              <span className="text-gray-400 font-medium">تابعنا على:</span>
+              <span className="text-gray-400 font-medium">
+                {t('landing.footer.socialMedia')}
+              </span>
               <div className="flex gap-4">
                 {socialLinks.map((social, index) => {
                   const IconComponent = social.icon;
@@ -177,7 +186,7 @@ function Footer() {
               size="sm"
               className="bg-transparent border-gray-600 text-gray-300 hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-all duration-300"
             >
-              العودة للأعلى
+              {t('landing.footer.scrollToTop')}
               <ArrowUp className="w-4 h-4 mr-2" />
             </Button>
           </div>
@@ -191,26 +200,28 @@ function Footer() {
                 href="#"
                 className="hover:text-blue-400 transition-colors duration-300"
               >
-                سياسة الخصوصية
+                {t('landing.footer.privacyPolicy')}
               </Link>
               <Link
                 href="#"
                 className="hover:text-blue-400 transition-colors duration-300"
               >
-                الشروط والأحكام
+                {t('landing.footer.termsConditions')}
               </Link>
               <Link
                 href="#"
                 className="hover:text-blue-400 transition-colors duration-300"
               >
-                سياسة الاستخدام
+                {t('landing.footer.usagePolicy')}
               </Link>
             </div>
 
             <div className="flex items-center gap-2">
-              <span>© {new Date().getFullYear()}</span>
-              <span className="text-blue-400 font-medium">روشيتة</span>
-              <span>جميع الحقوق محفوظة</span>
+              <span>&copy; {currentYear}</span>
+              <span className="text-blue-400 font-medium">
+                {t('landing.projectName')}
+              </span>
+              <span>{t('landing.footer.allRightsReserved')}</span>
             </div>
           </div>
         </div>

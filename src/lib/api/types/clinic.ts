@@ -1,3 +1,4 @@
+import { AppointmentStatus, VisitType } from './appointment';
 import { StaffType } from './clinic-staff';
 import { SelectOption } from './select-option';
 
@@ -19,6 +20,13 @@ export enum DayEnum {
   Friday,
   Saturday,
 }
+
+export enum TimeRange {
+  Daily = 0,
+  Weekly = 1,
+  Monthly = 2,
+}
+
 export enum StaffTypeEnum {
   Doctor = 1,
   Nurse = 2,
@@ -121,4 +129,82 @@ export interface GetUserInfoDto {
 }
 export interface GetClinicsForDropdownDto extends SelectOption {
   hasBookings: boolean;
+}
+
+// Dashboard Types - Updated to match backend DTO
+export interface ClinicDashboardDto {
+  stats: DashboardStatsDto;
+  chartData: DashboardChartDataDto;
+  appointmentStatus: DashboardAppointmentStatusDto;
+  upcomingAppointments: DashboardUpcomingAppointmentDto[];
+  recentActivities: DashboardRecentActivityDto[];
+}
+
+export interface DashboardStatsDto {
+  totalPatients: number;
+  todayAppointments: number;
+  completedToday: number;
+  todayRevenue: number;
+  patientsChange: number;
+  appointmentsChange: number;
+  revenueChange: number;
+  completedChange: number;
+  patientSatisfaction: number;
+  averageWaitTime: number;
+  noShowRate: number;
+}
+
+export interface DashboardChartDataDto {
+  daily: DashboardDailyDataDto | null;
+  weekly: DashboardWeeklyDataDto | null;
+  monthly: DashboardMonthlyDataDto | null;
+}
+
+export interface DashboardDailyDataDto {
+  labels: string[];
+  appointments: number[];
+  completed: number[];
+}
+
+export interface DashboardWeeklyDataDto {
+  labels: string[];
+  appointments: number[];
+  completed: number[];
+}
+
+export interface DashboardMonthlyDataDto {
+  labels: string[];
+  appointments: number[];
+  completed: number[];
+}
+
+export interface DashboardAppointmentStatusDto {
+  statusCounts: AppointmentStatusCountDto[];
+}
+
+export interface AppointmentStatusCountDto {
+  status: AppointmentStatus;
+  count: number;
+}
+export interface DashboardUpcomingAppointmentDto {
+  id: string;
+  patientName: string;
+  time: string;
+  type: VisitType;
+  status: AppointmentStatus;
+  avatar?: string;
+}
+
+export interface DashboardRecentActivityDto {
+  id: string;
+  action: string;
+  patientName: string;
+  time: string;
+  type: string;
+}
+
+export interface ClinicDashboardFilterDto {
+  startDate?: string;
+  endDate?: string;
+  timeRange?: TimeRange;
 }

@@ -7,6 +7,8 @@ import type {
   ClinicFilterDto,
   ClinicStatus,
   GetClinicsForDropdownDto,
+  ClinicDashboardDto,
+  ClinicDashboardFilterDto,
 } from '../types/clinic';
 import type { PaginationResponse } from '../types/pagination';
 import type { SelectOption } from '../types/select-option';
@@ -45,17 +47,6 @@ class ClinicService {
       result: ClinicDto;
     }>(`${API_ENDPOINTS.CLINIC.GET_ONE}`, { params: { id } });
     return response.result; // فقط بيانات العيادة
-  }
-
-  async UpdateUserInf(clinicDetails: ClinicDto): Promise<boolean> {
-    const response = await apiClient.put<{
-      success: boolean;
-      message: string;
-      result: boolean;
-    }>(`${API_ENDPOINTS.CLINIC.UpdateUserInf}`, {
-      clinicDetails,
-    });
-    return response.result;
   }
 
   async getForEdit(id?: string): Promise<ApiResponse<CreateUpdateClinicDto>> {
@@ -127,6 +118,23 @@ class ClinicService {
       latitude,
       longitude,
     });
+  }
+
+  // Single Dashboard Method
+  async getDashboard(
+    filter: ClinicDashboardFilterDto
+  ): Promise<ApiResponse<ClinicDashboardDto>> {
+    const response = await apiClient.get<ApiResponse<ClinicDashboardDto>>(
+      API_ENDPOINTS.CLINIC.GET_DASHBOARD,
+      {
+        params: {
+          timeRange: String(filter.timeRange),
+          startDate: filter.startDate || '',
+          endDate: filter.endDate || '',
+        },
+      }
+    );
+    return response;
   }
 
   //   async getDoctors(clinicId: string): Promise<any[]> {

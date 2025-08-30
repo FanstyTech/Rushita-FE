@@ -1,8 +1,8 @@
-# Rushita Frontend Form Creation Guide
+# Rousheta Frontend Form Creation Guide
 
 ## Overview
 
-This guide provides a comprehensive approach to creating new forms in the Rushita Frontend project. It covers form setup, field types, validation, and best practices for consistent user experience.
+This guide provides a comprehensive approach to creating new forms in the Rousheta Frontend project. It covers form setup, field types, validation, and best practices for consistent user experience.
 
 ## Table of Contents
 
@@ -19,7 +19,7 @@ This guide provides a comprehensive approach to creating new forms in the Rushit
 ## Prerequisites
 
 - Node.js and npm installed
-- Access to the Rushita-FE repository
+- Access to the Rousheta-FE repository
 - Understanding of React, TypeScript, and React Hook Form
 - Knowledge of Zod validation library
 
@@ -90,7 +90,12 @@ export default function EntityForm({
 ### Step 2: Form Configuration
 
 ```typescript
-export default function EntityForm({ isOpen, onClose, initialData, onSubmit }: EntityFormProps) {
+export default function EntityForm({
+  isOpen,
+  onClose,
+  initialData,
+  onSubmit,
+}: EntityFormProps) {
   // 1. Define default values
   const defaultValues = useMemo(
     () => ({
@@ -146,7 +151,7 @@ export default function EntityForm({ isOpen, onClose, initialData, onSubmit }: E
       ...data,
       id: initialData?.id || undefined,
     };
-    
+
     await onSubmit(submitData);
     reset(defaultValues);
     onClose();
@@ -173,9 +178,7 @@ export default function EntityForm({ isOpen, onClose, initialData, onSubmit }: E
         </div>
       }
     >
-      <form className="space-y-4">
-        {/* Form fields will go here */}
-      </form>
+      <form className="space-y-4">{/* Form fields will go here */}</form>
     </Modal>
   );
 }
@@ -288,7 +291,7 @@ const { data: categories } = useCategoryDropdown();
   type="date"
   {...register('birthDate')}
   error={errors.birthDate?.message}
-/>
+/>;
 
 // With date conversion
 const onSubmitHandler: SubmitHandler<FormData> = async (data) => {
@@ -314,9 +317,7 @@ const onSubmitHandler: SubmitHandler<FormData> = async (data) => {
 
 ```typescript
 <div className="space-y-2">
-  <label className="block text-sm font-medium text-gray-700">
-    Gender
-  </label>
+  <label className="block text-sm font-medium text-gray-700">Gender</label>
   <div className="space-y-2">
     <label className="flex items-center">
       <input
@@ -369,31 +370,37 @@ const onSubmitHandler: SubmitHandler<FormData> = async (data) => {
 const schema = z.object({
   // Required text field
   nameL: z.string().min(1, 'Name in Arabic is required'),
-  
+
   // Optional text field
   description: z.string().optional(),
-  
+
   // Email validation
   email: z.string().email('Invalid email address'),
-  
+
   // Number validation
-  age: z.number().min(0, 'Age must be positive').max(120, 'Age must be less than 120'),
-  
+  age: z
+    .number()
+    .min(0, 'Age must be positive')
+    .max(120, 'Age must be less than 120'),
+
   // Date validation
   birthDate: z.string().min(1, 'Birth date is required'),
-  
+
   // Select validation
   categoryId: z.string().min(1, 'Category is required'),
-  
+
   // Boolean validation
   isActive: z.boolean(),
-  
+
   // Conditional validation
-  password: z.string().optional().refine((val) => {
-    if (!initialData && !val) return false; // Required for new users
-    if (val && val.length < 6) return false; // Min length if provided
-    return true;
-  }, 'Password must be at least 6 characters'),
+  password: z
+    .string()
+    .optional()
+    .refine((val) => {
+      if (!initialData && !val) return false; // Required for new users
+      if (val && val.length < 6) return false; // Min length if provided
+      return true;
+    }, 'Password must be at least 6 characters'),
 });
 ```
 
@@ -402,20 +409,23 @@ const schema = z.object({
 ```typescript
 const schema = z.object({
   // Custom validation
-  phoneNumber: z.string()
+  phoneNumber: z
+    .string()
     .regex(/^[0-9+\-\s()]+$/, 'Invalid phone number format')
     .min(10, 'Phone number must be at least 10 digits'),
-  
+
   // Conditional validation based on other fields
-  confirmPassword: z.string().optional()
+  confirmPassword: z
+    .string()
+    .optional()
     .refine((val) => {
       const password = watch('password');
       return !password || val === password;
     }, 'Passwords do not match'),
-  
+
   // Array validation
   tags: z.array(z.string()).min(1, 'At least one tag is required'),
-  
+
   // Object validation
   address: z.object({
     street: z.string().min(1, 'Street is required'),
@@ -431,10 +441,10 @@ const schema = z.object({
 const schema = z.object({
   // Arabic name (required)
   nameL: z.string().min(1, 'الاسم بالعربية مطلوب'),
-  
+
   // English name (required)
   nameF: z.string().min(1, 'Name in English is required'),
-  
+
   // Description (optional in both languages)
   descriptionL: z.string().optional(),
   descriptionF: z.string().optional(),
@@ -453,9 +463,14 @@ interface EntityFormProps {
   onSubmit: (data: CreateUpdateEntityDto) => Promise<void>;
 }
 
-export default function EntityForm({ isOpen, onClose, initialData, onSubmit }: EntityFormProps) {
+export default function EntityForm({
+  isOpen,
+  onClose,
+  initialData,
+  onSubmit,
+}: EntityFormProps) {
   const isEditMode = !!initialData;
-  
+
   // Conditional field rendering
   return (
     <Modal
@@ -465,20 +480,14 @@ export default function EntityForm({ isOpen, onClose, initialData, onSubmit }: E
       <form className="space-y-4">
         {/* Always show these fields */}
         <Input label="Name" {...register('name')} />
-        
+
         {/* Only show password for new users */}
         {!isEditMode && (
-          <Input
-            label="Password"
-            type="password"
-            {...register('password')}
-          />
+          <Input label="Password" type="password" {...register('password')} />
         )}
-        
+
         {/* Show different button text */}
-        <Button type="submit">
-          {isEditMode ? 'Update' : 'Create'}
-        </Button>
+        <Button type="submit">{isEditMode ? 'Update' : 'Create'}</Button>
       </form>
     </Modal>
   );
@@ -518,7 +527,7 @@ return (
         </div>
       ))}
     </div>
-    
+
     {/* Step content */}
     {currentStep === 1 && (
       <div className="space-y-4">
@@ -526,20 +535,20 @@ return (
         <Input label="Email" {...register('email')} />
       </div>
     )}
-    
+
     {currentStep === 2 && (
       <div className="space-y-4">
         <Input label="Phone" {...register('phone')} />
         <Input label="Address" {...register('address')} />
       </div>
     )}
-    
+
     {currentStep === 3 && (
       <div className="space-y-4">
         <Textarea label="Notes" {...register('notes')} />
       </div>
     )}
-    
+
     {/* Navigation buttons */}
     <div className="flex justify-between mt-6">
       <Button
@@ -549,7 +558,7 @@ return (
       >
         Previous
       </Button>
-      
+
       {currentStep < totalSteps ? (
         <Button onClick={nextStep}>Next</Button>
       ) : (
@@ -563,21 +572,26 @@ return (
 ### 3. Dynamic Form Fields Pattern
 
 ```typescript
-const [dynamicFields, setDynamicFields] = useState<Array<{ id: string; type: string }>>([]);
+const [dynamicFields, setDynamicFields] = useState<
+  Array<{ id: string; type: string }>
+>([]);
 
 const addField = () => {
-  setDynamicFields([...dynamicFields, { id: Date.now().toString(), type: 'text' }]);
+  setDynamicFields([
+    ...dynamicFields,
+    { id: Date.now().toString(), type: 'text' },
+  ]);
 };
 
 const removeField = (id: string) => {
-  setDynamicFields(dynamicFields.filter(field => field.id !== id));
+  setDynamicFields(dynamicFields.filter((field) => field.id !== id));
 };
 
 return (
   <div className="space-y-4">
     {/* Static fields */}
     <Input label="Name" {...register('name')} />
-    
+
     {/* Dynamic fields */}
     {dynamicFields.map((field) => (
       <div key={field.id} className="flex gap-2">
@@ -585,15 +599,12 @@ return (
           label={`Field ${field.id}`}
           {...register(`dynamicFields.${field.id}`)}
         />
-        <Button
-          variant="secondary"
-          onClick={() => removeField(field.id)}
-        >
+        <Button variant="secondary" onClick={() => removeField(field.id)}>
           Remove
         </Button>
       </div>
     ))}
-    
+
     <Button variant="secondary" onClick={addField}>
       Add Field
     </Button>
@@ -617,7 +628,7 @@ return (
     </div>
     <Input label="Email" {...register('email')} />
   </div>
-  
+
   {/* Contact Information */}
   <div className="space-y-4">
     <h3 className="text-lg font-medium">Contact Information</h3>
@@ -637,11 +648,7 @@ const ErrorMessage = ({ error }: { error?: string }) => {
 };
 
 // Usage
-<Input
-  label="Name"
-  {...register('name')}
-  error={errors.name?.message}
-/>
+<Input label="Name" {...register('name')} error={errors.name?.message} />;
 ```
 
 ### 3. Loading States
@@ -649,17 +656,9 @@ const ErrorMessage = ({ error }: { error?: string }) => {
 ```typescript
 // Disable form during submission
 <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-  <Input
-    label="Name"
-    {...register('name')}
-    disabled={isSubmitting}
-  />
-  
-  <Button
-    type="submit"
-    isLoading={isSubmitting}
-    disabled={isSubmitting}
-  >
+  <Input label="Name" {...register('name')} disabled={isSubmitting} />
+
+  <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
     Submit
   </Button>
 </form>
@@ -676,13 +675,15 @@ const ErrorMessage = ({ error }: { error?: string }) => {
   error={errors.email?.message}
   aria-describedby={errors.email ? 'email-error' : undefined}
   required
-/>
+/>;
 
-{errors.email && (
-  <p id="email-error" className="text-sm text-red-600">
-    {errors.email.message}
-  </p>
-)}
+{
+  errors.email && (
+    <p id="email-error" className="text-sm text-red-600">
+      {errors.email.message}
+    </p>
+  );
+}
 ```
 
 ## Examples
@@ -708,11 +709,14 @@ const schema = z.object({
   categoryId: z.string().min(1, 'Category is required'),
   description: z.string().optional(),
   isActive: z.boolean(),
-  password: z.string().optional().refine((val) => {
-    if (!initialData && !val) return false;
-    if (val && val.length < 6) return false;
-    return true;
-  }, 'Password must be at least 6 characters'),
+  password: z
+    .string()
+    .optional()
+    .refine((val) => {
+      if (!initialData && !val) return false;
+      if (val && val.length < 6) return false;
+      return true;
+    }, 'Password must be at least 6 characters'),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -731,7 +735,7 @@ export default function ProductForm({
   onSubmit,
 }: ProductFormProps) {
   const { data: categories } = useCategoryDropdown();
-  
+
   const defaultValues = useMemo(
     () => ({
       id: '',
@@ -782,7 +786,7 @@ export default function ProductForm({
       ...data,
       id: initialData?.id || undefined,
     };
-    
+
     await onSubmit(submitData);
     reset(defaultValues);
     onClose();
@@ -864,11 +868,7 @@ export default function ProductForm({
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Settings</h3>
           <div className="flex items-center">
-            <input
-              type="checkbox"
-              {...register('isActive')}
-              className="mr-2"
-            />
+            <input type="checkbox" {...register('isActive')} className="mr-2" />
             <label className="text-sm font-medium">Active</label>
           </div>
         </div>
@@ -897,10 +897,11 @@ export default function ProductForm({
 ### Common Issues
 
 1. **Form not resetting properly**
+
    ```typescript
    // Ensure defaultValues is memoized
    const defaultValues = useMemo(() => ({ ... }), []);
-   
+
    // Reset in useEffect
    useEffect(() => {
      if (isOpen) {
@@ -910,12 +911,13 @@ export default function ProductForm({
    ```
 
 2. **Validation not working**
+
    ```typescript
    // Check schema definition
    const schema = z.object({
      field: z.string().min(1, 'Field is required'),
    });
-   
+
    // Ensure resolver is set
    const form = useForm<FormData>({
      resolver: zodResolver(schema),
@@ -924,6 +926,7 @@ export default function ProductForm({
    ```
 
 3. **Select field not updating**
+
    ```typescript
    // Use valueAsNumber for numeric values
    <Select
@@ -947,12 +950,14 @@ export default function ProductForm({
 ### Debug Tips
 
 1. **Check form state**
+
    ```typescript
    console.log('Form values:', watch());
    console.log('Form errors:', errors);
    ```
 
 2. **Validate schema manually**
+
    ```typescript
    try {
      schema.parse(formData);
@@ -969,9 +974,10 @@ export default function ProductForm({
 
 ## Conclusion
 
-This guide provides a comprehensive approach to creating forms in the Rushita Frontend project. Follow these patterns consistently to maintain code quality and ensure a smooth user experience.
+This guide provides a comprehensive approach to creating forms in the Rousheta Frontend project. Follow these patterns consistently to maintain code quality and ensure a smooth user experience.
 
 For additional help, refer to:
+
 - [React Hook Form Documentation](https://react-hook-form.com/)
 - [Zod Documentation](https://zod.dev/)
-- [React Documentation](https://react.dev/) 
+- [React Documentation](https://react.dev/)

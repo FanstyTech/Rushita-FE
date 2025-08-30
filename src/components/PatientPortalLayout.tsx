@@ -103,7 +103,7 @@ export default function PatientPortalLayout({
         <footer className="bg-card/80 backdrop-blur-sm mx-4 md:mx-6 lg:mx-8 mb-4 p-4 border border-border/50 rounded-2xl shadow-md">
           <div className="flex justify-between items-center">
             <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} Rushita Health Portal
+              &copy; {new Date().getFullYear()} Rousheta Health Portal
             </p>
           </div>
         </footer>

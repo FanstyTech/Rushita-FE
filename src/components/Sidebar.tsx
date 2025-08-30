@@ -363,7 +363,7 @@ export default function Sidebar() {
         >
           <SheetHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
             <SheetTitle className="text-white text-center text-3xl font-bold tracking-wide">
-              Rushita
+              Rousheta
             </SheetTitle>
           </SheetHeader>
           <SheetDescription
@@ -423,7 +423,7 @@ export default function Sidebar() {
               <div className="relative">
                 <Image
                   src="/images/image4.png"
-                  alt="Rushita"
+                  alt="Rousheta"
                   width={120}
                   height={40}
                   className="h-10 w-auto"
@@ -435,7 +435,7 @@ export default function Sidebar() {
             <div className="relative">
               <Image
                 src="/images/logo-small.png"
-                alt="Rushita"
+                alt="Rousheta"
                 width={32}
                 height={32}
                 className="h-8 w-auto"
@@ -484,7 +484,7 @@ export default function Sidebar() {
         {!isCollapsed && (
           <div className="flex-shrink-0 px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
             <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              &copy; 2024 Rushita Platform
+              &copy; {new Date().getFullYear()} Rousheta Platform
             </div>
           </div>
         )}
