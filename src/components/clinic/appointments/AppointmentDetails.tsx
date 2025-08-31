@@ -1,8 +1,5 @@
 import { Button } from '@/components/ui/button';
-import {
-  AppointmentListDto,
-  AppointmentStatus,
-} from '@/lib/api/types/appointment';
+import { AppointmentListDto } from '@/lib/api/types/appointment';
 import { formatTimeForAPI } from '@/utils/dateTimeUtils';
 import { format } from 'date-fns';
 
@@ -13,7 +10,6 @@ import {
   getVisitTypeLabel,
 } from '@/utils/textUtils';
 import {
-  Badge,
   ClipboardIcon,
   ClockIcon,
   HeartIcon,
@@ -23,6 +19,8 @@ import {
   UserIcon,
 } from 'lucide-react';
 import router from 'next/router';
+import { useTranslation } from 'react-i18next';
+import { Badge } from '@/components/ui/badge';
 
 interface AppointmentDetailsProps {
   detailAppointment: AppointmentListDto;
@@ -35,6 +33,8 @@ export default function AppointmentDetails({
   setShowAppointmentDetail,
   handleEditAppointment,
 }: AppointmentDetailsProps) {
+  const { t } = useTranslation();
+  console.log('detailAppointment', detailAppointment);
   return (
     <>
       {' '}
@@ -79,7 +79,7 @@ export default function AppointmentDetails({
                 className="gap-2 dark:border-gray-600 dark:text-gray-100"
               >
                 <PencilIcon className="h-4 w-4" />
-                Edit
+                {t('clinic.appointments.actions.edit')}
               </Button>
               <Button
                 variant="outline"
@@ -93,7 +93,7 @@ export default function AppointmentDetails({
                 className="gap-2 dark:border-gray-600 dark:text-gray-100"
               >
                 <ClipboardIcon className="h-4 w-4" />
-                Start Visit
+                {t('clinic.appointments.details.startVisit')}
               </Button>
             </div>
           </div>
@@ -105,7 +105,7 @@ export default function AppointmentDetails({
               <div className="flex items-center gap-2 mb-2">
                 <ClockIcon className="h-5 w-5 text-blue-600" />
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                  Date & Time
+                  {t('clinic.appointments.details.dateTime')}
                 </h3>
               </div>
               <div className="space-y-1">
@@ -120,7 +120,7 @@ export default function AppointmentDetails({
                   {formatTimeForAPI(detailAppointment.endTime)}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Duration:{' '}
+                  {t('clinic.appointments.details.duration')}:{' '}
                   {(() => {
                     const start = new Date(
                       `2000-01-01T${detailAppointment.startTime}`
@@ -130,7 +130,9 @@ export default function AppointmentDetails({
                     );
                     const diff =
                       (end.getTime() - start.getTime()) / (1000 * 60);
-                    return `${diff} minutes`;
+                    return `${diff} ${t(
+                      'clinic.appointments.details.minutes'
+                    )}`;
                   })()}
                 </p>
               </div>
@@ -141,7 +143,7 @@ export default function AppointmentDetails({
               <div className="flex items-center gap-2 mb-2">
                 <UserCircleIcon className="h-5 w-5 text-emerald-600" />
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                  Assigned Doctor
+                  {t('clinic.appointments.details.assignedDoctor')}
                 </h3>
               </div>
               <div className="space-y-1">
@@ -149,13 +151,13 @@ export default function AppointmentDetails({
                   Dr. {detailAppointment.staffName}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Staff ID:
+                  {t('clinic.appointments.details.staffId')}:
                   {/* {detailAppointment.staffId.slice(-6)} */}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
                   <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
                   <span className="text-sm text-emerald-600 font-medium dark:text-emerald-400">
-                    Available
+                    {t('clinic.appointments.details.available')}
                   </span>
                 </div>
               </div>
@@ -166,7 +168,7 @@ export default function AppointmentDetails({
               <div className="flex items-center gap-2 mb-2">
                 <UserIcon className="h-5 w-5 text-purple-600" />
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                  Patient Details
+                  {t('clinic.appointments.details.patientDetails')}
                 </h3>
               </div>
               <div className="space-y-1">
@@ -174,13 +176,13 @@ export default function AppointmentDetails({
                   {detailAppointment.patientName}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Patient ID:
+                  {t('clinic.appointments.details.patientId')}:
                   {/* {detailAppointment.patientId.slice(-8)} */}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
                   <PhoneIcon className="h-3 w-3 text-gray-400" />
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    Contact available
+                    {t('clinic.appointments.details.contactAvailable')}
                   </span>
                 </div>
               </div>
@@ -191,7 +193,7 @@ export default function AppointmentDetails({
               <div className="flex items-center gap-2 mb-2">
                 <HeartIcon className="h-5 w-5 text-amber-600" />
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                  Treatment
+                  {t('clinic.appointments.details.treatment')}
                 </h3>
               </div>
               <div className="space-y-1">
@@ -220,7 +222,7 @@ export default function AppointmentDetails({
               <div className="flex items-center gap-2 mb-2">
                 <ClipboardIcon className="h-5 w-5 text-gray-600" />
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                  Notes
+                  {t('clinic.appointments.details.notes')}
                 </h3>
               </div>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">

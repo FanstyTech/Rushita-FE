@@ -1,7 +1,5 @@
 import React from 'react';
-import { format } from 'date-fns';
-import { enUS } from 'date-fns/locale';
-import { X, Calendar, User, Pill, FileText, Clock } from 'lucide-react';
+import { Calendar, User, Pill, FileText, Clock } from 'lucide-react';
 
 import {
   Dialog,

@@ -9,17 +9,6 @@ export { NotificationsCard } from './NotificationsCard';
 export { HealthAlertsCard } from './HealthAlertsCard';
 export { DashboardSkeleton } from './DashboardSkeleton';
 
-// Types
-export type {
-  Appointment,
-  Medication,
-  Visit,
-  Notification,
-  HealthAlert,
-  QuickAction,
-  HealthMetrics,
-} from './types';
-
 // Utils
 export { formatDate, formatRelativeTime } from './utils';
 

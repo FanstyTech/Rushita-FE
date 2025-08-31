@@ -4,6 +4,7 @@ export interface PaginationRequest {
   sortColumn?: string;
   sortDirection?: string;
   searchValue?: string;
+  specialtyId?: string;
 }
 
 export interface PaginationResponse<T> {

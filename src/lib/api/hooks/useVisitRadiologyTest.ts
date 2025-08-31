@@ -63,7 +63,9 @@ export function useVisitRadiologyTest() {
       queryFn: async () => {
         const response = await visitRadiologyTestService.getById(id);
         if (!response.success) {
-          throw new Error(response.message || 'Failed to fetch visit radiology test');
+          throw new Error(
+            response.message || 'Failed to fetch visit radiology test'
+          );
         }
         return response.result;
       },
@@ -78,7 +80,8 @@ export function useVisitRadiologyTest() {
         const response = await visitRadiologyTestService.getByVisitId(visitId);
         if (!response.success) {
           throw new Error(
-            response.message || 'Failed to fetch visit radiology tests for visit'
+            response.message ||
+              'Failed to fetch visit radiology tests for visit'
           );
         }
         return response.result;
@@ -92,10 +95,13 @@ export function useVisitRadiologyTest() {
     useQuery({
       queryKey: queryKeys.byRadiologyTestId(radiologyTestId),
       queryFn: async () => {
-        const response = await visitRadiologyTestService.getByRadiologyTestId(radiologyTestId);
+        const response = await visitRadiologyTestService.getByRadiologyTestId(
+          radiologyTestId
+        );
         if (!response.success) {
           throw new Error(
-            response.message || 'Failed to fetch visit radiology tests for radiology test'
+            response.message ||
+              'Failed to fetch visit radiology tests for radiology test'
           );
         }
         return response.result;
@@ -104,11 +110,14 @@ export function useVisitRadiologyTest() {
     });
 
   // Get visits with radiology tests
-  const getVisitsWithRadiologyTests = (input: GetVisitsWithRadiologyTestsInput) =>
+  const getVisitsWithRadiologyTests = (
+    input: GetVisitsWithRadiologyTestsInput
+  ) =>
     useQuery({
       queryKey: queryKeys.visitsWithTestsList(input),
       queryFn: async () => {
-        const response = await visitRadiologyTestService.getVisitsWithRadiologyTests(input);
+        const response =
+          await visitRadiologyTestService.getVisitsWithRadiologyTests(input);
         if (!response.success) {
           throw new Error(
             response.message || 'Failed to fetch visits with radiology tests'
@@ -123,7 +132,8 @@ export function useVisitRadiologyTest() {
     useQuery({
       queryKey: [...queryKeys.visitsWithTests(), 'summary', input],
       queryFn: async () => {
-        const response = await visitRadiologyTestService.getRadiologyTestSummary(input);
+        const response =
+          await visitRadiologyTestService.getRadiologyTestSummary(input);
         if (!response.success) {
           throw new Error(
             response.message || 'Failed to fetch radiology test summary'
@@ -150,7 +160,9 @@ export function useVisitRadiologyTest() {
     mutationFn: async (data: CreateUpdateVisitRadiologyTestDto) => {
       const response = await visitRadiologyTestService.createOrUpdate(data);
       if (!response.success) {
-        throw new Error(response.message || 'Failed to save visit radiology test');
+        throw new Error(
+          response.message || 'Failed to save visit radiology test'
+        );
       }
       return response.result;
     },
@@ -192,7 +204,7 @@ export function useVisitRadiologyTest() {
       }
       return response.result;
     },
-    onSuccess: (_) => {
+    onSuccess: () => {
       toast.success('Visit radiology test status updated successfully');
 
       // Invalidate and refetch relevant queries
@@ -215,7 +227,7 @@ export function useVisitRadiologyTest() {
       }
       return response.result;
     },
-    onSuccess: (_) => {
+    onSuccess: () => {
       toast.success('Visit radiology test result updated successfully');
 
       // Invalidate and refetch relevant queries
@@ -232,7 +244,9 @@ export function useVisitRadiologyTest() {
     mutationFn: async (id: string) => {
       const response = await visitRadiologyTestService.delete(id);
       if (!response.success) {
-        throw new Error(response.message || 'Failed to delete visit radiology test');
+        throw new Error(
+          response.message || 'Failed to delete visit radiology test'
+        );
       }
     },
     onSuccess: (_, id) => {
@@ -266,4 +280,4 @@ export function useVisitRadiologyTest() {
     // Query keys (for manual cache management)
     queryKeys,
   };
-} 
+}

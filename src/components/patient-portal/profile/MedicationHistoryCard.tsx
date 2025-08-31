@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Pill } from 'lucide-react';
 import { useTranslation } from 'react-i18next'; // Add this import
 import {
@@ -12,12 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/common/form';
-import {
-  UseFormRegister,
-  FieldErrors,
-  Control,
-  UseFormSetValue,
-} from 'react-hook-form';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { ProfileFormValues } from '@/app/patient-portal/profile/validation';
 
 interface MedicationHistoryCardProps {
@@ -25,12 +20,10 @@ interface MedicationHistoryCardProps {
   isEditing: boolean;
   formData: ProfileFormValues;
   onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  variants: any;
+  variants: Variants;
   // React Hook Form props
   register?: UseFormRegister<ProfileFormValues>;
   errors?: FieldErrors<ProfileFormValues>;
-  control?: Control<ProfileFormValues>;
-  setValue?: UseFormSetValue<ProfileFormValues>;
 }
 
 export function MedicationHistoryCard({
@@ -41,8 +34,6 @@ export function MedicationHistoryCard({
   variants,
   register,
   errors,
-  control,
-  setValue,
 }: MedicationHistoryCardProps) {
   const { t } = useTranslation(); // Add this hook
 
@@ -65,7 +56,11 @@ export function MedicationHistoryCard({
         <CardContent className="p-6">
           {isEditing ? (
             <div className="space-y-2">
-              <Label htmlFor="medications">{t('patientPortal.profile.medicationHistory.currentMedications')}</Label>
+              <Label htmlFor="medications">
+                {t(
+                  'patientPortal.profile.medicationHistory.currentMedications'
+                )}
+              </Label>
               <Input
                 id="medications"
                 {...(register
@@ -88,12 +83,17 @@ export function MedicationHistoryCard({
           ) : (
             <div className="space-y-2 p-3 rounded-lg border border-border/50 hover:bg-accent/50 transition-colors">
               <div className="text-sm font-medium text-muted-foreground">
-                {t('patientPortal.profile.medicationHistory.currentMedications')}
+                {t(
+                  'patientPortal.profile.medicationHistory.currentMedications'
+                )}
               </div>
               <div className="flex items-start gap-2">
                 <Pill className="h-4 w-4 text-primary/70 mt-0.5" />
                 <span className="font-medium">
-                  {medications || t('patientPortal.profile.medicationHistory.noCurrentMedications')}
+                  {medications ||
+                    t(
+                      'patientPortal.profile.medicationHistory.noCurrentMedications'
+                    )}
                 </span>
               </div>
             </div>

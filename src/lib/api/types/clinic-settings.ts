@@ -1,5 +1,3 @@
-import { SelectOption } from './select-option';
-
 export enum BookingConditionType {
   General = 1, // شروط عامة
   Cancellation = 2, // شروط الإلغاء

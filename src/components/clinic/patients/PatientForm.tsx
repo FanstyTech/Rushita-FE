@@ -7,7 +7,7 @@ import {
   patientSchema,
   PatientFormData,
 } from '@/app/clinic/patients/validation';
-import { Input, Select, PhoneInput, TextArea } from '@/components/common';
+import { Input, Select, PhoneInput } from '@/components/common';
 import {
   BloodType,
   bloodTypeDisplayNames,
@@ -110,9 +110,6 @@ export default function PatientForm({
     setSelectedPhoneCode(value);
     setValue('countryCodeId', value);
   };
-  const handlePhoneNumberChange = (value: string) => {
-    setValue('phoneNumber', value);
-  };
 
   // Handle country selection
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -187,7 +184,7 @@ export default function PatientForm({
                   {...register('idType', { valueAsNumber: true })}
                   options={Object.entries(IdentificationType)
                     .filter(([key]) => isNaN(Number(key)))
-                    .map(([_, value]) => ({
+                    .map(([, value]) => ({
                       value: value.toString(),
                       label: getIdentificationTypeLabel(
                         value as IdentificationType

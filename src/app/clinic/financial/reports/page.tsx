@@ -1,21 +1,32 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  DollarSign, 
-  TrendingUp, 
+import {
+  DollarSign,
+  TrendingUp,
   TrendingDown,
   Calendar,
   FileText,
   BarChart3,
-  PieChart,
-  Download
+  Download,
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+} from 'recharts';
 
 // Mock data for reports
 const mockReportData = {
@@ -24,7 +35,7 @@ const mockReportData = {
     totalExpenses: 85000,
     totalSalaries: 45000,
     netProfit: 40000,
-    profitMargin: 32
+    profitMargin: 32,
   },
   monthlyData: [
     { month: 'Jan', revenue: 12000, expenses: 8000, profit: 4000 },
@@ -39,7 +50,7 @@ const mockReportData = {
     { name: 'Treatments', value: 35000, color: '#3B82F6' },
     { name: 'Lab Tests', value: 25000, color: '#F59E0B' },
     { name: 'Radiology', value: 15000, color: '#EF4444' },
-    { name: 'Dental', value: 5000, color: '#8B5CF6' }
+    { name: 'Dental', value: 5000, color: '#8B5CF6' },
   ],
   expensesByType: [
     { name: 'Rent', value: 24000, color: '#EF4444' },
@@ -47,15 +58,15 @@ const mockReportData = {
     { name: 'Utilities', value: 12000, color: '#3B82F6' },
     { name: 'Equipment', value: 18000, color: '#8B5CF6' },
     { name: 'Marketing', value: 8000, color: '#10B981' },
-    { name: 'Other', value: 8000, color: '#6B7280' }
+    { name: 'Other', value: 8000, color: '#6B7280' },
   ],
   topDoctors: [
     { name: 'Dr. Smith', revenue: 25000, patients: 45 },
     { name: 'Dr. Johnson', revenue: 22000, patients: 38 },
     { name: 'Dr. Brown', revenue: 20000, patients: 42 },
     { name: 'Dr. Wilson', revenue: 18000, patients: 35 },
-    { name: 'Dr. Garcia', revenue: 15000, patients: 28 }
-  ]
+    { name: 'Dr. Garcia', revenue: 15000, patients: 28 },
+  ],
 };
 
 const reportTypes = [
@@ -63,7 +74,7 @@ const reportTypes = [
   { value: 'revenue', label: 'Revenue Analysis' },
   { value: 'expenses', label: 'Expense Analysis' },
   { value: 'doctors', label: 'Doctor Performance' },
-  { value: 'monthly', label: 'Monthly Trends' }
+  { value: 'monthly', label: 'Monthly Trends' },
 ];
 
 export default function ReportsPage() {
@@ -90,7 +101,9 @@ export default function ReportsPage() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Revenue</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Total Revenue
+              </p>
               <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                 {formatCurrency(mockReportData.financialSummary.totalRevenue)}
               </p>
@@ -104,7 +117,9 @@ export default function ReportsPage() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Expenses</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Total Expenses
+              </p>
               <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                 {formatCurrency(mockReportData.financialSummary.totalExpenses)}
               </p>
@@ -118,7 +133,9 @@ export default function ReportsPage() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Net Profit</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Net Profit
+              </p>
               <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {formatCurrency(mockReportData.financialSummary.netProfit)}
               </p>
@@ -132,7 +149,9 @@ export default function ReportsPage() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Profit Margin</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Profit Margin
+              </p>
               <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                 {formatPercentage(mockReportData.financialSummary.profitMargin)}
               </p>
@@ -146,31 +165,33 @@ export default function ReportsPage() {
 
       {/* Monthly Trend Chart */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Monthly Financial Trends</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Monthly Financial Trends
+        </h3>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={mockReportData.monthlyData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-            <Line 
-              type="monotone" 
-              dataKey="revenue" 
-              stroke="#10B981" 
+            <Line
+              type="monotone"
+              dataKey="revenue"
+              stroke="#10B981"
               strokeWidth={3}
               name="Revenue"
             />
-            <Line 
-              type="monotone" 
-              dataKey="expenses" 
-              stroke="#EF4444" 
+            <Line
+              type="monotone"
+              dataKey="expenses"
+              stroke="#EF4444"
               strokeWidth={3}
               name="Expenses"
             />
-            <Line 
-              type="monotone" 
-              dataKey="profit" 
-              stroke="#3B82F6" 
+            <Line
+              type="monotone"
+              dataKey="profit"
+              stroke="#3B82F6"
               strokeWidth={3}
               name="Profit"
             />
@@ -184,7 +205,9 @@ export default function ReportsPage() {
     <div className="space-y-6">
       {/* Revenue by Type Pie Chart */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Revenue by Service Type</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Revenue by Service Type
+        </h3>
         <ResponsiveContainer width="100%" height={400}>
           <RechartsPieChart>
             <Pie
@@ -192,7 +215,9 @@ export default function ReportsPage() {
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+              // label={({ name, percent }) =>
+              //   `${name} ${(percent * 100).toFixed(0)}%`
+              // }
               outerRadius={120}
               fill="#8884d8"
               dataKey="value"
@@ -208,7 +233,9 @@ export default function ReportsPage() {
 
       {/* Revenue Details Table */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Revenue Breakdown</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Revenue Breakdown
+        </h3>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-800">
@@ -226,12 +253,14 @@ export default function ReportsPage() {
             </thead>
             <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
               {mockReportData.revenueByType.map((item, index) => {
-                const percentage = (item.value / mockReportData.financialSummary.totalRevenue) * 100;
+                const percentage =
+                  (item.value / mockReportData.financialSummary.totalRevenue) *
+                  100;
                 return (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div 
+                        <div
                           className="w-4 h-4 rounded-full mr-3"
                           style={{ backgroundColor: item.color }}
                         />
@@ -260,7 +289,9 @@ export default function ReportsPage() {
     <div className="space-y-6">
       {/* Expenses by Type Pie Chart */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Expenses by Category</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Expenses by Category
+        </h3>
         <ResponsiveContainer width="100%" height={400}>
           <RechartsPieChart>
             <Pie
@@ -268,7 +299,9 @@ export default function ReportsPage() {
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+              // label={({ name, percent }) =>
+              //   `${name} ${(percent * 100).toFixed(0)}%`
+              // }
               outerRadius={120}
               fill="#8884d8"
               dataKey="value"
@@ -284,7 +317,9 @@ export default function ReportsPage() {
 
       {/* Expenses Details Table */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Expense Breakdown</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Expense Breakdown
+        </h3>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-800">
@@ -302,12 +337,14 @@ export default function ReportsPage() {
             </thead>
             <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
               {mockReportData.expensesByType.map((item, index) => {
-                const percentage = (item.value / mockReportData.financialSummary.totalExpenses) * 100;
+                const percentage =
+                  (item.value / mockReportData.financialSummary.totalExpenses) *
+                  100;
                 return (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div 
+                        <div
                           className="w-4 h-4 rounded-full mr-3"
                           style={{ backgroundColor: item.color }}
                         />
@@ -336,7 +373,9 @@ export default function ReportsPage() {
     <div className="space-y-6">
       {/* Doctor Performance Bar Chart */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Doctor Revenue Performance</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Doctor Revenue Performance
+        </h3>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={mockReportData.topDoctors}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -350,7 +389,9 @@ export default function ReportsPage() {
 
       {/* Doctor Performance Table */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Doctor Performance Details</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Doctor Performance Details
+        </h3>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-800">
@@ -402,31 +443,33 @@ export default function ReportsPage() {
     <div className="space-y-6">
       {/* Monthly Trends Chart */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Monthly Financial Trends</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Monthly Financial Trends
+        </h3>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={mockReportData.monthlyData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-            <Line 
-              type="monotone" 
-              dataKey="revenue" 
-              stroke="#10B981" 
+            <Line
+              type="monotone"
+              dataKey="revenue"
+              stroke="#10B981"
               strokeWidth={3}
               name="Revenue"
             />
-            <Line 
-              type="monotone" 
-              dataKey="expenses" 
-              stroke="#EF4444" 
+            <Line
+              type="monotone"
+              dataKey="expenses"
+              stroke="#EF4444"
               strokeWidth={3}
               name="Expenses"
             />
-            <Line 
-              type="monotone" 
-              dataKey="profit" 
-              stroke="#3B82F6" 
+            <Line
+              type="monotone"
+              dataKey="profit"
+              stroke="#3B82F6"
               strokeWidth={3}
               name="Profit"
             />
@@ -437,9 +480,13 @@ export default function ReportsPage() {
       {/* Monthly Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="p-6">
-          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Best Month</h4>
+          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Best Month
+          </h4>
           <div className="text-center">
-            <p className="text-2xl font-bold text-green-600 dark:text-green-400">June</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+              June
+            </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Revenue: {formatCurrency(19000)}
             </p>
@@ -450,7 +497,9 @@ export default function ReportsPage() {
         </Card>
 
         <Card className="p-6">
-          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Average Monthly</h4>
+          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Average Monthly
+          </h4>
           <div className="text-center">
             <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
               {formatCurrency(15667)}
@@ -463,10 +512,16 @@ export default function ReportsPage() {
         </Card>
 
         <Card className="p-6">
-          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Growth Rate</h4>
+          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Growth Rate
+          </h4>
           <div className="text-center">
-            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">+15.3%</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">vs Last Period</p>
+            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              +15.3%
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              vs Last Period
+            </p>
             <p className="text-sm text-green-600 dark:text-green-400">
               +{formatCurrency(2000)} increase
             </p>
@@ -499,8 +554,12 @@ export default function ReportsPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Financial Reports</h1>
-            <p className="text-gray-600 dark:text-gray-400">Comprehensive financial analysis and insights</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Financial Reports
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Comprehensive financial analysis and insights
+            </p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm">
@@ -522,7 +581,9 @@ export default function ReportsPage() {
               >
                 {type.value === 'summary' && <BarChart3 className="w-4 h-4" />}
                 {type.value === 'revenue' && <TrendingUp className="w-4 h-4" />}
-                {type.value === 'expenses' && <TrendingDown className="w-4 h-4" />}
+                {type.value === 'expenses' && (
+                  <TrendingDown className="w-4 h-4" />
+                )}
                 {type.value === 'doctors' && <FileText className="w-4 h-4" />}
                 {type.value === 'monthly' && <Calendar className="w-4 h-4" />}
                 {type.label}
@@ -534,7 +595,9 @@ export default function ReportsPage() {
         {/* Date Range Selector */}
         <Card className="p-6">
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Date Range:</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Date Range:
+            </span>
             <div className="flex gap-2">
               <Button
                 variant={dateRange === 'week' ? 'default' : 'outline'}

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
-import { Card } from '@/components/ui/card';
 import { UserIcon, X, ClockIcon } from 'lucide-react';
 import Select from '@/components/common/form/Select';
 import Input from '@/components/common/form/Input';
@@ -16,6 +15,7 @@ import { useAuth } from '@/lib/api/hooks/useAuth';
 import { PermissionKeys } from '@/config/permissions';
 import { hasPermission } from '@/utils/permissions';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface AppointmentFormProps {
   clinicId: string;
@@ -56,6 +56,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   appointmentDetails,
   setAppointmentDetails,
 }) => {
+  const { t } = useTranslation();
+
   // Get user from auth context
   const { user } = useAuth();
 
@@ -306,10 +308,10 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
           </div>
           <div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-              Create New Appointment
+              {t('clinic.appointments.form.createNewAppointment')}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Fill in the details to schedule a new appointment
+              {t('clinic.appointments.form.fillDetailsToSchedule')}
             </p>
           </div>
         </div>
@@ -323,7 +325,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
               <UserIcon className="h-5 w-5 text-white" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Staff Information
+              {t('clinic.appointments.form.staffInformation')}
             </h3>
           </div>
         </div>
@@ -331,18 +333,18 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
           {!selectedStaff ? (
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Select Staff Member
+                {t('clinic.appointments.form.selectStaff')}
               </label>
               <Select
                 options={safeStaffOptions}
                 onChange={handleStaffSelect}
-                placeholder="Search and select a staff member..."
+                placeholder={t('clinic.appointments.form.searchSelectStaff')}
                 isLoading={staffLoading || staffFetching}
                 onSearch={handleStaffSearch}
                 noOptionsMessage={
                   shouldFetchStaff
-                    ? 'No staff found'
-                    : 'Type to search for staff'
+                    ? t('clinic.appointments.form.noStaffFound')
+                    : t('clinic.appointments.form.typeToSearchStaff')
                 }
                 disabled={shouldAutoSelectSelf}
               />
@@ -359,7 +361,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                       {selectedStaff.label}
                     </span>
                     <p className="text-sm text-emerald-700 dark:text-emerald-400">
-                      Selected Staff Member
+                      {t('clinic.appointments.form.selectedStaffMember')}
                     </p>
                   </div>
                 </div>
@@ -389,7 +391,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
               <UserIcon className="h-5 w-5 text-white" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Patient Information
+              {t('clinic.appointments.details.patientInfo')}
             </h3>
           </div>
         </div>
@@ -397,18 +399,18 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
           {!selectedPatient ? (
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Select Patient
+                {t('clinic.appointments.form.selectPatient')}
               </label>
               <Select
                 options={safePatientOptions}
                 onChange={handlePatientSelect}
-                placeholder="Search and select a patient..."
+                placeholder={t('clinic.appointments.form.searchSelectPatient')}
                 isLoading={patientsLoading || patientsFetching}
                 onSearch={handlePatientSearch}
                 noOptionsMessage={
                   shouldFetchPatients
-                    ? 'No patients found'
-                    : 'Type to search for patients'
+                    ? t('clinic.appointments.form.noPatientsFound')
+                    : t('clinic.appointments.form.typeToSearchPatients')
                 }
               />
             </div>
@@ -424,7 +426,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                       {selectedPatient.label}
                     </span>
                     <p className="text-sm text-blue-700 dark:text-blue-400">
-                      Selected Patient
+                      {t('clinic.appointments.form.selectedPatient')}
                     </p>
                   </div>
                 </div>
@@ -451,7 +453,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
               <ClockIcon className="h-5 w-5 text-white" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Appointment Details
+              {t('clinic.appointments.details.appointmentInfo')}
             </h3>
           </div>
         </div>
@@ -459,12 +461,18 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
           {/* Appointment Type */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Type of Appointment
+              {t('clinic.appointments.form.visitType')}
             </label>
             <Select
               options={[
-                { value: VisitType.New.toString(), label: 'New Visit' },
-                { value: VisitType.Followup.toString(), label: 'Follow-up' },
+                {
+                  value: VisitType.New.toString(),
+                  label: t('clinic.appointments.visitTypes.new'),
+                },
+                {
+                  value: VisitType.Followup.toString(),
+                  label: t('clinic.appointments.visitTypes.followUp'),
+                },
               ]}
               value={appointmentDetails.type.toString()}
               onChange={(e) =>
@@ -473,19 +481,19 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   type: Number(e.target.value) as VisitType,
                 })
               }
-              placeholder="Select appointment type"
+              placeholder={t('clinic.appointments.form.selectVisitType')}
             />
           </div>
 
           {/* Time Selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Appointment Time
+              {t('clinic.appointments.form.appointmentTime')}
             </label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
-                  Start Time
+                  {t('clinic.appointments.form.startTime')}
                 </label>
                 <Input
                   type="time"
@@ -506,7 +514,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
               </div>
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
-                  End Time
+                  {t('clinic.appointments.form.endTime')}
                 </label>
                 <Input
                   type="time"
@@ -531,7 +539,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
           {/* Notes */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Additional Notes
+              {t('clinic.appointments.form.notes')}
             </label>
             <TextArea
               value={appointmentDetails.notes}
@@ -542,7 +550,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 })
               }
               rows={4}
-              placeholder="Add any additional notes about the appointment..."
+              placeholder={t('clinic.appointments.form.placeholder.notes')}
               className="resize-none"
             />
           </div>

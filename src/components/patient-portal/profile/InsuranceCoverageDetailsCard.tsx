@@ -1,7 +1,13 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Receipt, Percent, DollarSign, AlertTriangle, Info } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
+import {
+  Receipt,
+  Percent,
+  DollarSign,
+  AlertTriangle,
+  Info,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next'; // Add this import
 import {
   Card,
@@ -18,12 +24,12 @@ interface InsuranceCoverageDetailsCardProps {
     exclusions: string;
     notes: string;
   };
-  variants: any;
+  variants: Variants;
 }
 
-export function InsuranceCoverageDetailsCard({ 
-  insuranceInfo, 
-  variants 
+export function InsuranceCoverageDetailsCard({
+  insuranceInfo,
+  variants,
 }: InsuranceCoverageDetailsCardProps) {
   const { t } = useTranslation(); // Add this hook
 
@@ -51,9 +57,7 @@ export function InsuranceCoverageDetailsCard({
               </div>
               <div className="flex items-center gap-2">
                 <Percent className="h-4 w-4 text-primary/70" />
-                <span className="font-medium">
-                  {insuranceInfo.copayment}%
-                </span>
+                <span className="font-medium">{insuranceInfo.copayment}%</span>
               </div>
             </div>
 
@@ -64,7 +68,8 @@ export function InsuranceCoverageDetailsCard({
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-primary/70" />
                 <span className="font-medium">
-                  {insuranceInfo.annualLimit} {t('patientPortal.profile.insuranceCoverage.riyal')}
+                  {insuranceInfo.annualLimit}{' '}
+                  {t('patientPortal.profile.insuranceCoverage.riyal')}
                 </span>
               </div>
             </div>
@@ -76,7 +81,8 @@ export function InsuranceCoverageDetailsCard({
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-primary/70 mt-0.5" />
                 <span className="font-medium">
-                  {insuranceInfo.exclusions || t('patientPortal.profile.insuranceCoverage.noExclusions')}
+                  {insuranceInfo.exclusions ||
+                    t('patientPortal.profile.insuranceCoverage.noExclusions')}
                 </span>
               </div>
             </div>
@@ -88,7 +94,8 @@ export function InsuranceCoverageDetailsCard({
               <div className="flex items-start gap-2">
                 <Info className="h-4 w-4 text-primary/70 mt-0.5" />
                 <span className="font-medium">
-                  {insuranceInfo.notes || t('patientPortal.profile.insuranceCoverage.noNotes')}
+                  {insuranceInfo.notes ||
+                    t('patientPortal.profile.insuranceCoverage.noNotes')}
                 </span>
               </div>
             </div>

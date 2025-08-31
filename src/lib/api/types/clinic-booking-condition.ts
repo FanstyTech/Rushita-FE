@@ -1,4 +1,4 @@
-import { PaginationRequest, PaginationResponse } from './pagination';
+import { PaginationRequest } from './pagination';
 
 // Enum for condition types
 export enum BookingConditionType {
@@ -15,15 +15,15 @@ export enum BookingConditionType {
 export interface ClinicBookingConditionDto {
   id: string;
   clinicId: string;
-  titleL: string;           // Arabic title
-  titleF: string;           // English title
-  title: string;            // Computed title based on current language
-  descriptionL: string;     // Arabic description
-  descriptionF: string;     // English description
-  description: string;      // Computed description based on current language
+  titleL: string; // Arabic title
+  titleF: string; // English title
+  title: string; // Computed title based on current language
+  descriptionL: string; // Arabic description
+  descriptionF: string; // English description
+  description: string; // Computed description based on current language
   displayOrder: number;
   isActive: boolean;
-  isRequired: boolean;      // If condition is mandatory for booking
+  isRequired: boolean; // If condition is mandatory for booking
   conditionType: BookingConditionType;
   conditionTypeName: string;
   createdAt: string;
@@ -32,7 +32,7 @@ export interface ClinicBookingConditionDto {
 
 // Create/Update DTO
 export interface CreateUpdateClinicBookingConditionDto {
-  id?: string;              // Optional for create operations
+  id?: string; // Optional for create operations
   clinicId: string;
   titleL: string;
   titleF: string;
@@ -68,7 +68,7 @@ export interface ClinicBookingConditionFilterDto extends PaginationRequest {
   conditionType?: BookingConditionType;
   isActive?: boolean;
   isRequired?: boolean;
-  searchValue?: string;     // General search across multiple fields
+  searchValue?: string; // General search across multiple fields
 }
 
 // Dropdown option DTO

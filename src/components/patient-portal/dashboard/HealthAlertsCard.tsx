@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { AlertTriangle, AlertOctagon, AlertCircle, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next'; // Add this import
 import {
@@ -25,7 +25,7 @@ interface HealthAlert {
 
 interface HealthAlertsCardProps {
   alerts: HealthAlert[];
-  variants: any;
+  variants: Variants;
 }
 
 export function HealthAlertsCard({ alerts, variants }: HealthAlertsCardProps) {
@@ -39,7 +39,9 @@ export function HealthAlertsCard({ alerts, variants }: HealthAlertsCardProps) {
             <AlertTriangle className="h-5 w-5 text-primary mr-2" />
             {t('patientPortal.dashboard.healthAlerts.title')}
           </CardTitle>
-          <CardDescription>{t('patientPortal.dashboard.healthAlerts.description')}</CardDescription>
+          <CardDescription>
+            {t('patientPortal.dashboard.healthAlerts.description')}
+          </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <div className="divide-y">
@@ -59,12 +61,10 @@ export function HealthAlertsCard({ alerts, variants }: HealthAlertsCardProps) {
                   }}
                   className={cn(
                     'p-6 relative',
-                    alert.priority === 'high' &&
-                      'bg-red-50 dark:bg-red-900/20',
+                    alert.priority === 'high' && 'bg-red-50 dark:bg-red-900/20',
                     alert.priority === 'medium' &&
                       'bg-amber-50 dark:bg-amber-900/20',
-                    alert.priority === 'low' &&
-                      'bg-blue-50 dark:bg-blue-900/20'
+                    alert.priority === 'low' && 'bg-blue-50 dark:bg-blue-900/20'
                   )}
                 >
                   <div className="flex items-start gap-4">
@@ -123,9 +123,7 @@ export function HealthAlertsCard({ alerts, variants }: HealthAlertsCardProps) {
                           )}
                           asChild
                         >
-                          <Link href={alert.actionUrl}>
-                            {alert.actionText}
-                          </Link>
+                          <Link href={alert.actionUrl}>{alert.actionText}</Link>
                         </Button>
                       )}
                     </div>
@@ -137,9 +135,13 @@ export function HealthAlertsCard({ alerts, variants }: HealthAlertsCardProps) {
                 <div className="rounded-full bg-muted p-3 mb-3">
                   <Check className="h-6 w-6 text-muted-foreground" />
                 </div>
-                <h3 className="font-medium">{t('patientPortal.dashboard.healthAlerts.noAlerts.title')}</h3>
+                <h3 className="font-medium">
+                  {t('patientPortal.dashboard.healthAlerts.noAlerts.title')}
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  {t('patientPortal.dashboard.healthAlerts.noAlerts.description')}
+                  {t(
+                    'patientPortal.dashboard.healthAlerts.noAlerts.description'
+                  )}
                 </p>
               </div>
             )}

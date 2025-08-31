@@ -7,13 +7,6 @@ import { Mail, Phone, MapPin, ArrowUp } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useTranslation } from 'react-i18next';
 
-const navLinks = [
-  { id: 'home', label: 'الرئيسية' },
-  { id: 'whyroshita', label: 'لماذا روشيتة' },
-  { id: 'services', label: 'خدماتنا' },
-  { id: 'contact', label: 'الاسعار' },
-];
-
 const socialLinks = [
   {
     icon: FaFacebook,

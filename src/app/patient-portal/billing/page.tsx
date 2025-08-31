@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import {
   Receipt,
-  CreditCard,
   DollarSign,
   Calendar,
   Search,
@@ -13,11 +12,8 @@ import {
   Eye,
   AlertCircle,
   CheckCircle,
-  Clock,
   X,
   FileText,
-  TrendingUp,
-  TrendingDown,
 } from 'lucide-react';
 import {
   Card,
@@ -28,7 +24,6 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Input, Select } from '@/components/common/form/index';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -114,11 +109,6 @@ export default function BillingPage() {
     0
   );
   const totalUnpaid = totalAmount - totalPaid;
-  const overdueInvoices = invoices.filter(
-    (invoice) =>
-      invoice.status === InvoiceStatus.Pending &&
-      new Date(invoice.dueDate) < new Date()
-  ).length;
 
   // Handle filter changes
   const handleSearchChange = (query: string) => {
@@ -296,7 +286,7 @@ export default function BillingPage() {
                     { value: '', label: 'جميع الحالات' },
                     ...Object.entries(InvoiceStatus)
                       .filter(([key]) => isNaN(Number(key)))
-                      .map(([_, value]) => ({
+                      .map(([, value]) => ({
                         value: value.toString(),
                         label: getInvoiceStatusLabel(value as InvoiceStatus),
                       })),

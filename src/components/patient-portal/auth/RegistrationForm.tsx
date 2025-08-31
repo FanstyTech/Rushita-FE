@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -46,16 +45,13 @@ export type RegistrationFormData = z.infer<typeof registrationSchema>;
 
 interface RegistrationFormProps {
   phoneNumber: string;
-  phoneCode: string;
   countryCodeId: string;
 }
 
 export function RegistrationForm({
   phoneNumber,
-  phoneCode,
   countryCodeId,
 }: RegistrationFormProps) {
-  const router = useRouter();
   const { completeRegistration } = useOtp();
   const { language } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
@@ -66,7 +62,6 @@ export function RegistrationForm({
     watch,
     setValue,
     formState: { errors: formErrors },
-    reset: resetRegistrationForm,
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {

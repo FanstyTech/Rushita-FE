@@ -40,8 +40,7 @@ export default function TransactionsPage() {
   const { data: transactionsData, isLoading: isLoadingTransactions } =
     useTransactionsList(filter);
 
-  const { data: summaryData, isLoading: isLoadingSummary } =
-    useTransactionSummary({});
+  const { data: summaryData } = useTransactionSummary({});
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {

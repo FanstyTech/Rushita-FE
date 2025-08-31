@@ -5,35 +5,21 @@ import Link from 'next/link';
 import {
   Search,
   Filter,
-  Download,
   Eye,
   AlertCircle,
   CheckCircle,
   Clock,
   X,
-  FileText,
-  TrendingUp,
-  TrendingDown,
   Calendar,
   User,
   Building,
-  Microscope,
   Activity,
 } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useVisitRadiologyTest } from '@/lib/api/hooks/useVisitRadiologyTest';
-import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { TestStatus } from '@/lib/api/types/visit-lab-test';
 import { formatDate } from '@/utils/dateTimeUtils';
 import Skeleton from '@/components/ui/Skeleton';
@@ -45,28 +31,28 @@ export default function RadiologyPage() {
   const [selectedSpecialty, setSelectedSpecialty] = useState('all');
   const [selectedDateRange, setSelectedDateRange] = useState<string>('');
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-
-  // Get specialties
-  const { useSpecialtiesList } = useSpecialty();
-  const { data: specialtiesData } = useSpecialtiesList({ pageNumber: 1, pageSize: 100 });
-
   // Create filter object
   const filter = {
-    pageNumber: currentPage,
-    pageSize: pageSize,
+    pageNumber: 1,
+    pageSize: 10,
     searchValue: searchQuery.trim() || undefined,
     status: selectedStatus || undefined,
     specialtyId: selectedSpecialty !== 'all' ? selectedSpecialty : undefined,
-    fromDate: selectedDateRange ? getDateRangeFromFilter(selectedDateRange).fromDate : undefined,
-    toDate: selectedDateRange ? getDateRangeFromFilter(selectedDateRange).toDate : undefined,
+    fromDate: selectedDateRange
+      ? getDateRangeFromFilter(selectedDateRange).fromDate
+      : undefined,
+    toDate: selectedDateRange
+      ? getDateRangeFromFilter(selectedDateRange).toDate
+      : undefined,
   };
 
   // Get radiology tests
   const { getPatientRadiologyTests } = useVisitRadiologyTest();
-  const { data: radiologyData, isLoading, error } = useQuery(getPatientRadiologyTests(filter));
+  const {
+    data: radiologyData,
+    isLoading,
+    error,
+  } = useQuery(getPatientRadiologyTests(filter));
 
   const radiologyTests = radiologyData?.result?.items || [];
   const totalCount = radiologyData?.result?.totalCount || 0;
@@ -74,45 +60,12 @@ export default function RadiologyPage() {
   // Calculate stats
   const stats = {
     total: totalCount,
-    pending: radiologyTests.filter(t => t.status === TestStatus.Pending).length,
-    completed: radiologyTests.filter(t => t.status === TestStatus.Completed).length,
-    cancelled: radiologyTests.filter(t => t.status === TestStatus.Cancelled).length,
-  };
-
-  // Build API filters object
-  const buildApiFilters = () => {
-    const filters: any = {
-      pageNumber: currentPage,
-      pageSize: pageSize,
-    };
-
-    // Add search filter
-    if (searchQuery.trim()) {
-      filters.searchValue = searchQuery.trim();
-    }
-
-    // Add status filter
-    if (selectedStatus) {
-      filters.status = selectedStatus;
-    }
-
-    // Add date range filter
-    if (selectedDateRange) {
-      const now = new Date();
-      switch (selectedDateRange) {
-        case 'last30':
-          filters.fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
-          break;
-        case 'last7':
-          filters.fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
-          break;
-        case 'last90':
-          filters.fromDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString();
-          break;
-      }
-    }
-
-    return filters;
+    pending: radiologyTests.filter((t) => t.status === TestStatus.Pending)
+      .length,
+    completed: radiologyTests.filter((t) => t.status === TestStatus.Completed)
+      .length,
+    cancelled: radiologyTests.filter((t) => t.status === TestStatus.Cancelled)
+      .length,
   };
 
   // Clear filters
@@ -124,14 +77,20 @@ export default function RadiologyPage() {
   };
 
   // Check if any filters are active
-  const hasActiveFilters = searchQuery || selectedStatus || selectedSpecialty !== 'all' || selectedDateRange;
+  const hasActiveFilters =
+    searchQuery ||
+    selectedStatus ||
+    selectedSpecialty !== 'all' ||
+    selectedDateRange;
 
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">صور الأشعة</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            صور الأشعة
+          </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
             عرض وإدارة صور الأشعة والفحوصات الإشعاعية
           </p>
@@ -145,8 +104,12 @@ export default function RadiologyPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">إجمالي الفحوصات</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  إجمالي الفحوصات
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.total}
+                </p>
               </div>
               <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-full">
                 <Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -160,8 +123,12 @@ export default function RadiologyPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">في الانتظار</p>
-                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  في الانتظار
+                </p>
+                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                  {stats.pending}
+                </p>
               </div>
               <div className="p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-full">
                 <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
@@ -175,8 +142,12 @@ export default function RadiologyPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">مكتملة</p>
-                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.completed}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  مكتملة
+                </p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  {stats.completed}
+                </p>
               </div>
               <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-full">
                 <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -190,8 +161,12 @@ export default function RadiologyPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">ملغية</p>
-                <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.cancelled}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  ملغية
+                </p>
+                <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                  {stats.cancelled}
+                </p>
               </div>
               <div className="p-3 bg-red-100 dark:bg-red-900/20 rounded-full">
                 <X className="h-6 w-6 text-red-600 dark:text-red-400" />
@@ -207,7 +182,9 @@ export default function RadiologyPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Filter className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">الفلاتر</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                الفلاتر
+              </h3>
             </div>
             {hasActiveFilters && (
               <Button
@@ -305,7 +282,9 @@ export default function RadiologyPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">نتائج الفحوصات</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                نتائج الفحوصات
+              </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 {totalCount} فحص إشعاعي
               </p>
@@ -316,7 +295,10 @@ export default function RadiologyPage() {
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
+                <div
+                  key={i}
+                  className="flex items-center space-x-4 p-4 border rounded-lg"
+                >
                   <Skeleton className="h-12 w-12 rounded-full" />
                   <div className="space-y-2 flex-1">
                     <Skeleton className="h-4 w-3/4" />
@@ -329,13 +311,17 @@ export default function RadiologyPage() {
           ) : error ? (
             <div className="text-center py-8">
               <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <p className="text-red-600 dark:text-red-400">حدث خطأ في تحميل البيانات</p>
+              <p className="text-red-600 dark:text-red-400">
+                حدث خطأ في تحميل البيانات
+              </p>
             </div>
           ) : radiologyTests.length === 0 ? (
-                         <div className="text-center py-8">
-               <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-               <p className="text-gray-600 dark:text-gray-400">لا توجد فحوصات إشعاعية</p>
-             </div>
+            <div className="text-center py-8">
+              <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 dark:text-gray-400">
+                لا توجد فحوصات إشعاعية
+              </p>
+            </div>
           ) : (
             <div className="space-y-4">
               {radiologyTests.map((test) => (
@@ -346,10 +332,10 @@ export default function RadiologyPage() {
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-4 flex-1">
-                                                 <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-full">
-                           <Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                         </div>
-                        
+                        <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-full">
+                          <Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                        </div>
+
                         <div className="flex-1 space-y-3">
                           <div className="flex items-center justify-between">
                             <div>
@@ -360,12 +346,9 @@ export default function RadiologyPage() {
                                 رمز الفحص: {test.radiologyTestCode}
                               </p>
                             </div>
-                                                         <Badge
-                               variant="outline"
-                               className="text-xs"
-                             >
-                               {test.status}
-                             </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              {test.status}
+                            </Badge>
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -408,11 +391,7 @@ export default function RadiologyPage() {
                       </div>
 
                       <div className="flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          asChild
-                        >
+                        <Button variant="outline" size="sm" asChild>
                           <Link href={`/patient-portal/radiology/${test.id}`}>
                             <Eye className="h-4 w-4 mr-2" />
                             عرض التفاصيل
@@ -448,13 +427,19 @@ function getDateRangeFromFilter(dateRange: string) {
 
   switch (dateRange) {
     case 'last7':
-      fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      fromDate = new Date(
+        now.getTime() - 7 * 24 * 60 * 60 * 1000
+      ).toISOString();
       break;
     case 'last30':
-      fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      fromDate = new Date(
+        now.getTime() - 30 * 24 * 60 * 60 * 1000
+      ).toISOString();
       break;
     case 'last90':
-      fromDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString();
+      fromDate = new Date(
+        now.getTime() - 90 * 24 * 60 * 60 * 1000
+      ).toISOString();
       break;
   }
 

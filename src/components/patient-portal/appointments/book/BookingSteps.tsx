@@ -2,18 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Calendar,
-  Stethoscope,
-  User,
-  Building,
-  FileText,
-} from 'lucide-react';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface BookingStep {
   title: string;
@@ -42,7 +31,11 @@ const itemVariants = {
   show: { opacity: 1, y: 0 },
 };
 
-export function BookingSteps({ steps, activeStep, onStepClick }: BookingStepsProps) {
+export function BookingSteps({
+  steps,
+  activeStep,
+  onStepClick,
+}: BookingStepsProps) {
   return (
     <motion.div
       variants={containerVariants}

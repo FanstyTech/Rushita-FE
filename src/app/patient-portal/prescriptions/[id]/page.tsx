@@ -10,14 +10,11 @@ import {
   Printer,
   Download,
   Share2,
-  User,
-  Building,
   Pill,
   FileText,
   AlertCircle,
   Info,
   ChevronLeft,
-  ChevronRight,
   CheckCircle,
   XCircle,
   CalendarClock,
@@ -27,22 +24,19 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { motion } from 'framer-motion';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { motion, Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Skeleton from '@/components/ui/Skeleton';
 
 // Animation variants
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -52,7 +46,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0 },
 };
@@ -476,7 +470,7 @@ export default function PrescriptionDetailsPage() {
                 </div>
               </div>
               <Badge
-                variant={statusBadge.variant as any}
+                variant={'outline'}
                 className={cn(
                   'text-sm flex items-center gap-1 px-3 py-1',
                   statusBadge.color,

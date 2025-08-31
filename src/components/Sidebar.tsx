@@ -463,7 +463,7 @@ export default function Sidebar() {
         )}
 
         {/* Main Navigation */}
-        <div className="flex-1 min-h-0">
+        <div className="flex-1 h-full">
           <div className="h-full overflow-y-auto px-4 py-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500">
             <nav className="space-y-1">
               {sections.map((section) => (

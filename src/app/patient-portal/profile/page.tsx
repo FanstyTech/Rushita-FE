@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import {
   EmergencyContactCard,
   HealthIndicatorsCard,
@@ -44,7 +44,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
@@ -72,10 +72,8 @@ export default function ProfilePage() {
     handleSubmit,
     formState: { errors },
     setValue,
-    getValues,
     watch,
     reset,
-    control,
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
   });
@@ -457,7 +455,6 @@ export default function ProfilePage() {
               patientData={patientProfile.medicalInfo}
               isEditing={isEditing}
               formData={watch()}
-              onInputChange={handleInputChange}
               variants={itemVariants}
               register={register}
               errors={errors}
@@ -473,8 +470,6 @@ export default function ProfilePage() {
               variants={itemVariants}
               register={register}
               errors={errors}
-              control={control}
-              setValue={setValue}
             />
           </motion.div>
         </TabsContent>

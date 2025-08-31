@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   Calendar,
@@ -534,7 +533,7 @@ export default function VisitDetailsPage() {
                       التشخيصات
                     </h3>
                     <div className="grid grid-cols-1 gap-4">
-                      {visit.diagnoses.map((diagnosis, index) => (
+                      {visit.diagnoses.map((diagnosis) => (
                         <div
                           key={diagnosis.id}
                           className="rounded-xl bg-muted/20 backdrop-blur-sm p-5 shadow-sm hover:shadow-md transition-all duration-200 border border-border/30"

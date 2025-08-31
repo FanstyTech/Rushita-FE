@@ -71,11 +71,8 @@ export default function MedicalTestsPage() {
   const { useClinicStaffForDropdown } = useClinicStaff();
 
   // Get data
-  const {
-    data: visitsWithLabTestsData,
-    isLoading: isVisitsLoading,
-    refetch: refetchVisits,
-  } = getVisitsWithLabTests(filter);
+  const { data: visitsWithLabTestsData, isLoading: isVisitsLoading } =
+    getVisitsWithLabTests(filter);
 
   const { data: summaryData, isLoading: isSummaryLoading } = getLabTestSummary({
     clinicId: clinicId,

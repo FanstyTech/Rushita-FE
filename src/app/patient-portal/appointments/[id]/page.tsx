@@ -22,7 +22,6 @@ import { Separator } from '@/components/ui/separator';
 import { TextArea } from '@/components/common/form';
 import { Input } from '@/components/common/form';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
-import { toast } from '@/components/ui/Toast';
 import { getAppointmentStatusStyle } from '@/utils/textUtils';
 import { AppointmentStatus } from '@/lib/api/types/appointment';
 import { formatDate } from '@/utils/dateTimeUtils';

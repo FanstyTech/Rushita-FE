@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import {
   HeartPulse,
   Droplets,
@@ -32,8 +32,7 @@ interface MedicalInformationCardProps {
   patientData: MedicalInformationDto;
   isEditing: boolean;
   formData: ProfileFormValues;
-  onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  variants: any;
+  variants: Variants;
   // React Hook Form props
   register: UseFormRegister<ProfileFormValues>;
   errors?: FieldErrors<ProfileFormValues>;
@@ -43,7 +42,6 @@ export function MedicalInformationCard({
   patientData,
   isEditing,
   formData,
-  onInputChange,
   variants,
   register,
   errors,

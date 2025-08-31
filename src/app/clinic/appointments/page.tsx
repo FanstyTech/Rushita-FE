@@ -29,6 +29,7 @@ import {
   AppointmentDetails,
   AppointmentForm,
 } from '@/components/clinic/appointments';
+import { useTranslation } from 'react-i18next';
 
 // Enhanced filter interface
 interface AppointmentFilters {
@@ -46,6 +47,7 @@ interface AppointmentFilters {
 type ViewMode = 'schedule' | 'kanban';
 
 export default function AppointmentsPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const router = useRouter();
 
@@ -56,7 +58,7 @@ export default function AppointmentsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('kanban');
 
   // Filter states
-  const [filters, setFilters] = useState<AppointmentFilters>({
+  const [filters] = useState<AppointmentFilters>({
     selectedDoctors: [],
     selectedTreatments: [],
     selectedStatuses: [],
@@ -74,8 +76,7 @@ export default function AppointmentsPage() {
 
   const [showNewAppointment, setShowNewAppointment] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [selectedAppointmentForDelete, setSelectedAppointmentForDelete] =
-    useState('');
+  const [selectedAppointmentForDelete] = useState('');
   const [showAppointmentDetail, setShowAppointmentDetail] = useState(false);
   const [detailAppointment, setDetailAppointment] =
     useState<AppointmentListDto | null>(null);
@@ -233,17 +234,17 @@ export default function AppointmentsPage() {
   // Create or update appointment
   const handleCreateAppointment = async () => {
     if (!selectedPatient) {
-      toast.error('Please select a patient');
+      toast.error(t('clinic.appointments.messages.selectPatient'));
       return;
     }
     if (!selectedStaff) {
-      toast.error('Please select a staff member');
+      toast.error(t('clinic.appointments.messages.selectStaff'));
       return;
     }
     if (
       !validateAppointmentTime(newAppointment.startTime, newAppointment.endTime)
     ) {
-      toast.error('End time must be after start time');
+      toast.error(t('clinic.appointments.messages.invalidTime'));
       return;
     }
 
@@ -383,11 +384,11 @@ export default function AppointmentsPage() {
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleDeleteAppointment}
-        title="Delete Appointment"
-        message="Are you sure you want to delete this appointment?"
-        secondaryMessage="This action cannot be undone."
+        title={t('clinic.appointments.modals.deleteConfirmation')}
+        message={t('clinic.appointments.messages.deleteConfirmation')}
+        secondaryMessage={t('clinic.appointments.messages.deleteWarning')}
         variant="error"
-        confirmText="Delete"
+        confirmText={t('clinic.appointments.buttons.delete')}
         isLoading={deleteAppointment.isPending}
       />
       {/* New/Edit Appointment Modal */}
@@ -400,7 +401,9 @@ export default function AppointmentsPage() {
           }
         }}
         title={
-          selectedAppointment ? 'Edit Appointment' : 'Schedule New Appointment'
+          selectedAppointment
+            ? t('clinic.appointments.modals.editAppointment')
+            : t('clinic.appointments.modals.scheduleNew')
         }
         footer={
           <div className="flex justify-end gap-3">
@@ -413,7 +416,7 @@ export default function AppointmentsPage() {
               type="button"
               disabled={isSubmitting}
             >
-              Cancel
+              {t('clinic.appointments.buttons.cancel')}
             </Button>
             <Button
               onClick={handleCreateAppointment}
@@ -422,8 +425,8 @@ export default function AppointmentsPage() {
               isLoading={isSubmitting}
             >
               {selectedAppointment
-                ? 'Update Appointment'
-                : 'Schedule Appointment'}
+                ? t('clinic.appointments.buttons.updateAppointment')
+                : t('clinic.appointments.buttons.scheduleAppointment')}
             </Button>
           </div>
         }

@@ -3,7 +3,7 @@
 import { useLanguage, Language } from '@/i18n/LanguageProvider';
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
-import { Globe, Check, ChevronDown } from 'lucide-react';
+import { Globe, Check } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +23,8 @@ export default function LanguageToggle() {
   ];
 
   // Get current language display info
-  const currentLang = languages.find(lang => lang.code === language) || languages[0];
+  const currentLang =
+    languages.find((lang) => lang.code === language) || languages[0];
 
   // Avoid hydration mismatch
   useEffect(() => {

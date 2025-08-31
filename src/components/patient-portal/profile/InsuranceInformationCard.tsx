@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import {
   ShieldCheck,
   Building2,
@@ -20,12 +20,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/common/form';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/utils/dateTimeUtils';
-import {
-  UseFormRegister,
-  FieldErrors,
-  Control,
-  UseFormSetValue,
-} from 'react-hook-form';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { ProfileFormValues } from '@/app/patient-portal/profile/validation';
 
 interface InsuranceInformationCardProps {
@@ -38,12 +33,10 @@ interface InsuranceInformationCardProps {
   isEditing: boolean;
   formData: ProfileFormValues;
   onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  variants: any;
+  variants: Variants;
   // React Hook Form props
   register?: UseFormRegister<ProfileFormValues>;
   errors?: FieldErrors<ProfileFormValues>;
-  control?: Control<ProfileFormValues>;
-  setValue?: UseFormSetValue<ProfileFormValues>;
 }
 
 export function InsuranceInformationCard({
@@ -54,8 +47,6 @@ export function InsuranceInformationCard({
   variants,
   register,
   errors,
-  control,
-  setValue,
 }: InsuranceInformationCardProps) {
   const { t } = useTranslation();
 
@@ -79,7 +70,9 @@ export function InsuranceInformationCard({
           {isEditing ? (
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="insuranceProvider">{t('patientPortal.profile.insurance.provider')}</Label>
+                <Label htmlFor="insuranceProvider">
+                  {t('patientPortal.profile.insurance.provider')}
+                </Label>
                 <Input
                   id="insuranceProvider"
                   {...(register
@@ -100,7 +93,9 @@ export function InsuranceInformationCard({
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="insurancePolicyNumber">{t('patientPortal.profile.insurance.policyNumber')}</Label>
+                <Label htmlFor="insurancePolicyNumber">
+                  {t('patientPortal.profile.insurance.policyNumber')}
+                </Label>
                 <Input
                   id="insurancePolicyNumber"
                   {...(register
@@ -145,7 +140,9 @@ export function InsuranceInformationCard({
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="insuranceCoverage">{t('patientPortal.profile.insurance.coverageType')}</Label>
+                <Label htmlFor="insuranceCoverage">
+                  {t('patientPortal.profile.insurance.coverageType')}
+                </Label>
                 <Input
                   id="insuranceCoverage"
                   {...(register

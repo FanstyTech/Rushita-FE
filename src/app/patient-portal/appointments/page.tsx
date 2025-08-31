@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import {
@@ -11,6 +11,7 @@ import {
 import { Pagination, usePagination } from '@/components/ui/pagination';
 import { AlertCircle } from 'lucide-react';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
+import { PatientAppointmentFilterDto } from '@/lib/api/types/clinic-patient';
 
 export default function AppointmentsPage() {
   const [activeTab, setActiveTab] = useState('upcoming');
@@ -28,7 +29,7 @@ export default function AppointmentsPage() {
 
   // Build filters object for API
   const buildApiFilters = () => {
-    const filters: any = {
+    const filters: PatientAppointmentFilterDto = {
       pageNumber: currentPage,
       pageSize: pageSize,
       isUpcoming: activeTab === 'upcoming',

@@ -15,6 +15,9 @@ import {
   UpdatePatientAppointmentDto,
   UpdatePatientPrescriptionDto,
   SavePatientAppointmentDto,
+  CreateOrUpdateEmergencyContactDto,
+  UpdatePatientHealthMetricDto,
+  UpdatePatientPortalProfileDto,
 } from '../types/clinic-patient';
 // Replace the problematic query keys section with this:
 const patientPortalQueryKeys = {
@@ -255,7 +258,7 @@ export function useClinicPatients() {
 
   // Update patient portal profile mutation
   const updatePatientPortalProfile = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: UpdatePatientPortalProfileDto) => {
       // Assuming UpdatePatientPortalProfileDto is not defined here, using 'any' for now
       const response = await clinicPatientService.updatePatientPortalProfile(
         data
@@ -282,7 +285,7 @@ export function useClinicPatients() {
 
   // Update patient health metrics mutation
   const updatePatientHealthMetrics = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: UpdatePatientHealthMetricDto) => {
       // Assuming UpdatePatientHealthMetricDto is not defined here, using 'any' for now
       const response = await clinicPatientService.updatePatientHealthMetrics(
         data
@@ -305,7 +308,7 @@ export function useClinicPatients() {
 
   // Create or update emergency contact mutation
   const createOrUpdateEmergencyContact = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: CreateOrUpdateEmergencyContactDto) => {
       // Assuming CreateOrUpdateEmergencyContactDto is not defined here, using 'any' for now
       const response =
         await clinicPatientService.createOrUpdateEmergencyContact(data);
@@ -392,7 +395,7 @@ export function useClinicPatients() {
       }
       return response.result;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success('Appointment updated successfully');
       queryClient.invalidateQueries({
         queryKey: ['clinic-patients', 'appointments'],

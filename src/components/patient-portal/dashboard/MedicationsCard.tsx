@@ -1,15 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import {
-  Pill,
-  Calendar,
-  User,
-  ChevronRight,
-  Clock,
-  AlertCircle,
-} from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
+import { Pill, ChevronRight, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   Card,
@@ -24,11 +17,14 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { PatientPortalPrescriptionsDto } from '@/lib/api/types/clinic-patient';
 import { formatDate } from '@/utils/dateTimeUtils';
-import { getFrequencyTypeClass, getFrequencyTypeLabel } from '@/utils/textUtils';
+import {
+  getFrequencyTypeClass,
+  getFrequencyTypeLabel,
+} from '@/utils/textUtils';
 
 interface MedicationsCardProps {
   medications: PatientPortalPrescriptionsDto[];
-  variants: any;
+  variants: Variants;
 }
 
 export function MedicationsCard({
@@ -36,7 +32,6 @@ export function MedicationsCard({
   variants,
 }: MedicationsCardProps) {
   const { t } = useTranslation();
-
 
   return (
     <motion.div variants={variants}>
@@ -62,7 +57,6 @@ export function MedicationsCard({
           {medications.length > 0 ? (
             <div className="space-y-3">
               {medications.map((medication) => {
-
                 return (
                   <div
                     key={medication.id}
@@ -90,7 +84,7 @@ export function MedicationsCard({
                       <Badge
                         variant="outline"
                         className={cn(
-                          "text-xs",
+                          'text-xs',
                           getFrequencyTypeClass(medication.frequency)
                         )}
                       >

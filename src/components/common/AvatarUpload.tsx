@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Upload } from 'lucide-react';
 import { useAttachment } from '@/lib/api/hooks/useAttachment';
 import { EntityType } from '@/lib/api/types/attachment';

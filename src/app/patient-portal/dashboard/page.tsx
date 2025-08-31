@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { motion } from 'framer-motion';
@@ -18,14 +18,12 @@ import {
   NotificationsCard,
   HealthAlertsCard,
   DashboardSkeleton,
-  healthMetrics,
 } from '@/components/patient-portal/dashboard';
 // Import data and utils
 import {
   quickActions,
   notifications,
   healthAlerts,
-  formatDate,
   formatRelativeTime,
 } from '@/components/patient-portal/dashboard';
 import { containerVariants, itemVariants } from '@/utils/patientPortalUtils';

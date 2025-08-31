@@ -24,7 +24,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import DispenseMedicationModal from '@/components/clinic/pharmacy/modals/DispenseMedicationModal';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useVisitPrescription } from '@/lib/api/hooks/useVisitPrescription';
 import {
   DispenseMedicineDto,
@@ -44,7 +44,6 @@ import PrescriptionDetailsSkeleton from '@/components/skeletons/PrescriptionDeta
 export default function PrescribedMedicationsPage() {
   const params = useParams();
   const visitId = params?.id as string;
-  const router = useRouter();
 
   const { getPrescribedMedicationsByVisitId, dispenseMedicine } =
     useVisitPrescription();

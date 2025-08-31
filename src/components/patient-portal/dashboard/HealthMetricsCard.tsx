@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import {
   Activity,
   Heart,
@@ -38,7 +38,7 @@ import {
 
 interface HealthMetricsCardProps {
   metrics: PatientPortalDashboardDto;
-  variants: any;
+  variants: Variants;
 }
 
 export function HealthMetricsCard({

@@ -66,7 +66,7 @@ export default function RevenuePage() {
 
   // Get data
   const { data: revenues, isLoading } = useRevenuesList(filter);
-  const { data: summary, isLoading: isLoadingSummary } = useRevenueSummary({});
+  const { data: summary } = useRevenueSummary({});
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {

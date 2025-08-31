@@ -36,16 +36,7 @@ export function PhoneInputForm({
 
     setError(null);
 
-    try {
-      console.log('countryCodeId', countryCodeId);
-
-      await onSubmit(
-        phoneForm.phoneCode || countryCodeId,
-        phoneForm.phoneNumber
-      );
-    } catch (error) {
-      setError('حدث خطأ أثناء التحقق من رقم الهاتف');
-    }
+    await onSubmit(phoneForm.phoneCode || countryCodeId, phoneForm.phoneNumber);
   };
 
   return (

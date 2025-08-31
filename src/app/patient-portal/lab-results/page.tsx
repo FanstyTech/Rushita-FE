@@ -1,27 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   Calendar,
   Clock,
   Search,
   Filter,
-  FileText,
   Download,
   Printer,
   User,
   Building,
-  ChevronLeft,
-  ChevronRight,
   AlertCircle,
   Info,
   Eye,
   Microscope,
   Beaker,
-  Droplet,
-  Scan,
   CheckCircle,
   Circle,
   Loader2,
@@ -39,7 +33,6 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Input, Select } from '@/components/common/form/index';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -71,8 +64,6 @@ const itemVariants = {
 };
 
 export default function LabResultsPage() {
-  const router = useRouter();
-
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<TestStatus | ''>('');
@@ -299,7 +290,7 @@ export default function LabResultsPage() {
                     { value: 'all', label: 'All' },
                     ...Object.entries(TestStatus)
                       .filter(([key]) => isNaN(Number(key)))
-                      .map(([_, value]) => ({
+                      .map(([, value]) => ({
                         value: value.toString(),
                         label: getTestStatusLabel(value as TestStatus),
                       })),

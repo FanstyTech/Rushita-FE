@@ -2,7 +2,6 @@
 
 import {
   Search,
-  Stethoscope,
   Filter,
   X,
   Calendar,
@@ -116,7 +115,7 @@ export function AppointmentsFilters({
                 { value: 'all', label: 'All' },
                 ...Object.entries(AppointmentStatus)
                   .filter(([key]) => isNaN(Number(key)))
-                  .map(([_, value]) => ({
+                  .map(([, value]) => ({
                     value: value.toString(),
                     label: getAppointmentStatusStyle(value as AppointmentStatus)
                       .label,

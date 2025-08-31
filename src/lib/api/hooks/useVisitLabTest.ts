@@ -8,7 +8,6 @@ import type {
   UpdateVisitLabTestStatusDto,
   UpdateVisitLabTestResultDto,
   PatientLabTestFilterDto,
-  PatientPortalLabTestDto,
 } from '../types/visit-lab-test';
 import { toast } from '@/components/ui/Toast';
 
@@ -180,7 +179,7 @@ export function useVisitLabTest() {
       }
       return response.result;
     },
-    onSuccess: (_) => {
+    onSuccess: () => {
       toast.success('Visit lab test status updated successfully');
 
       // Invalidate and refetch relevant queries
@@ -202,7 +201,7 @@ export function useVisitLabTest() {
       }
       return response.result;
     },
-    onSuccess: (_) => {
+    onSuccess: () => {
       toast.success('Visit lab test status updated successfully');
 
       // Invalidate and refetch relevant queries

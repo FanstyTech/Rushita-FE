@@ -10,7 +10,6 @@ import { ArrowLeft } from 'lucide-react';
 
 interface VerificationFormProps {
   phoneNumber: string;
-  phoneCode: string;
   phoneCodeLabel: string;
   onSubmit: (otp: string) => void;
   onResendCode: () => Promise<void>;
@@ -20,7 +19,6 @@ interface VerificationFormProps {
 
 export function VerificationForm({
   phoneNumber,
-  phoneCode,
   phoneCodeLabel,
   onSubmit,
   onResendCode,
@@ -51,11 +49,7 @@ export function VerificationForm({
 
     setError(null);
 
-    try {
-      await onSubmit(otp);
-    } catch (error) {
-      setError('رمز التحقق غير صحيح');
-    }
+    await onSubmit(otp);
   };
 
   const handleResendCode = async () => {
@@ -66,8 +60,6 @@ export function VerificationForm({
       await onResendCode();
       setCountdown(60);
       setError(null);
-    } catch (error) {
-      setError('فشل في إعادة إرسال رمز التحقق');
     } finally {
       setIsResending(false);
     }

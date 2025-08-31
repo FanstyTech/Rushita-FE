@@ -7,10 +7,14 @@ import {
   PlusIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
-import { AppointmentStatus } from '@/lib/api/types/appointment';
+import {
+  AppointmentListDto,
+  AppointmentStatus,
+} from '@/lib/api/types/appointment';
+import { useTranslation } from 'react-i18next';
 
 interface AppointmentHeaderProps {
-  appointmentsByStatus: Record<AppointmentStatus, any[]>;
+  appointmentsByStatus: Record<AppointmentStatus, AppointmentListDto[]>;
   viewMode: 'schedule' | 'kanban';
   setViewMode: (mode: 'schedule' | 'kanban') => void;
   handleAddNewAppointment: () => void;
@@ -22,6 +26,8 @@ export default function AppointmentHeader({
   setViewMode,
   handleAddNewAppointment,
 }: AppointmentHeaderProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
@@ -33,10 +39,10 @@ export default function AppointmentHeader({
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Appointments
+                {t('clinic.appointments.pageTitle')}
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                Manage your clinic appointments efficiently
+                {t('clinic.appointments.description')}
               </p>
             </div>
           </div>
@@ -47,7 +53,7 @@ export default function AppointmentHeader({
               <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
               <span className="text-sm font-medium text-gray-700 dark:text-gray-400">
                 {appointmentsByStatus[AppointmentStatus.Pending]?.length || 0}{' '}
-                Pending
+                {t('clinic.appointments.statuses.pending')}
               </span>
             </div>
 
@@ -55,14 +61,14 @@ export default function AppointmentHeader({
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
               <span className="text-sm font-medium text-blue-700 dark:text-blue-400">
                 {appointmentsByStatus[AppointmentStatus.Scheduled]?.length || 0}{' '}
-                Scheduled
+                {t('clinic.appointments.statuses.scheduled')}
               </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
               <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
               <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
                 {appointmentsByStatus[AppointmentStatus.Confirmed]?.length || 0}{' '}
-                Confirmed
+                {t('clinic.appointments.statuses.confirmed')}
               </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
@@ -70,21 +76,21 @@ export default function AppointmentHeader({
               <span className="text-sm font-medium text-amber-700 dark:text-amber-400">
                 {appointmentsByStatus[AppointmentStatus.InProgress]?.length ||
                   0}{' '}
-                In Progress
+                {t('clinic.appointments.statuses.inProgress')}
               </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-900/20 rounded-lg">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-sm font-medium text-green-700 dark:text-green-400">
                 {appointmentsByStatus[AppointmentStatus.Completed]?.length || 0}{' '}
-                Completed
+                {t('clinic.appointments.statuses.completed')}
               </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50 dark:bg-red-900/20 rounded-lg">
               <div className="w-2 h-2 bg-red-500 rounded-full"></div>
               <span className="text-sm font-medium text-red-700 dark:text-red-400">
                 {appointmentsByStatus[AppointmentStatus.Cancelled]?.length || 0}{' '}
-                Cancelled
+                {t('clinic.appointments.statuses.cancelled')}
               </span>
             </div>
           </div>
@@ -101,7 +107,7 @@ export default function AppointmentHeader({
               className="gap-2 px-4"
             >
               <CalendarDaysIcon className="h-4 w-4" />
-              Schedule
+              {t('clinic.appointments.viewModes.schedule')}
             </Button>
             <Button
               variant={viewMode === 'kanban' ? 'default' : 'ghost'}
@@ -110,7 +116,7 @@ export default function AppointmentHeader({
               className="gap-2 px-4"
             >
               <ViewColumnsIcon className="h-4 w-4" />
-              Kanban
+              {t('clinic.appointments.viewModes.kanban')}
             </Button>
           </div>
 
@@ -119,7 +125,7 @@ export default function AppointmentHeader({
             className="gap-2 px-6 py-2.5 "
           >
             <PlusIcon className="h-4 w-4" />
-            New Appointment
+            {t('clinic.appointments.actions.addNew')}
           </Button>
         </div>
       </div>

@@ -35,6 +35,10 @@ import { VisitType } from '@/lib/api/types/appointment';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { SelectOption } from '@/lib/api/types/select-option';
 import { Pagination, usePagination } from '@/components/ui/pagination';
+import {
+  PatientVisitFilterDto,
+  VisitDiagnosisDto,
+} from '@/lib/api/types/clinic-patient';
 
 // Animation variants for staggered animations
 const containerVariants = {
@@ -68,7 +72,7 @@ export default function VisitsPage() {
 
   // Build API filters object
   const buildApiFilters = () => {
-    const filters: any = {
+    const filters: PatientVisitFilterDto = {
       pageNumber: currentPage,
       pageSize: pageSize,
     };
@@ -221,7 +225,7 @@ export default function VisitsPage() {
                     { value: 'all', label: 'All' },
                     ...Object.entries(VisitType)
                       .filter(([key]) => isNaN(Number(key)))
-                      .map(([_, value]) => ({
+                      .map(([, value]) => ({
                         value: value.toString(),
                         label: getVisitTypeLabel(value as VisitType),
                       })),
@@ -350,7 +354,7 @@ export default function VisitsPage() {
                         <p className="text-sm font-medium mb-1">التشخيص</p>
                         <p className="text-sm text-muted-foreground">
                           {visit.diagnoses
-                            ?.map((d: any) => d.description)
+                            ?.map((d: VisitDiagnosisDto) => d.description)
                             .join(', ') || 'تحت المراجعة'}
                         </p>
                       </div>

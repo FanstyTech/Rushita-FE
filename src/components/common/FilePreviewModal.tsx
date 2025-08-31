@@ -14,6 +14,7 @@ import { AttachmentDto } from '@/lib/api/types/attachment';
 import { attachmentService } from '@/lib/api/services/attachment.service';
 import { formatDate } from '@/utils/dateTimeUtils';
 import LoadingSpinner from './LoadingSpinner';
+import Image from 'next/image';
 
 interface FilePreviewModalProps {
   isOpen: boolean;
@@ -193,8 +194,8 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
                     <Download className="h-4 w-4" />
                   </Button>
                 </div>
-                <img
-                  src={currentAttachment.downloadUrl}
+                <Image
+                  src={currentAttachment.downloadUrl || ''}
                   alt={currentAttachment.fileName}
                   className="max-w-full max-h-full object-contain shadow-lg transition-all duration-300 ease-in-out hover:scale-[1.02]"
                   onLoad={() => setLoading(false)}

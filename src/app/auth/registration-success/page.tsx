@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 
 import {
   CheckCircle,
@@ -21,7 +20,6 @@ import { useTranslation } from 'react-i18next';
 
 export default function RegistrationSuccessPage() {
   const [mounted, setMounted] = useState(false);
-  const router = useRouter();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -65,24 +63,36 @@ export default function RegistrationSuccessPage() {
                 suppressHydrationWarning
               />
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" suppressHydrationWarning>
+                <h1
+                  className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                  suppressHydrationWarning
+                >
                   {t('auth.registrationSuccess.branding.title')}
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400" suppressHydrationWarning>
+                <p
+                  className="text-sm text-gray-600 dark:text-gray-400"
+                  suppressHydrationWarning
+                >
                   {t('auth.registrationSuccess.branding.subtitle')}
                 </p>
               </div>
             </div>
 
             {/* Welcome Message */}
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4" suppressHydrationWarning>
+            <h2
+              className="text-4xl font-bold text-gray-900 dark:text-white mb-4"
+              suppressHydrationWarning
+            >
               {t('auth.registrationSuccess.welcome')}
               <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 {' '}
                 {t('auth.registrationSuccess.family')}
               </span>
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8" suppressHydrationWarning>
+            <p
+              className="text-lg text-gray-600 dark:text-gray-300 mb-8"
+              suppressHydrationWarning
+            >
               {t('auth.registrationSuccess.description')}
             </p>
 
@@ -93,11 +103,19 @@ export default function RegistrationSuccessPage() {
                   <Mail className="w-5 h-5 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white" suppressHydrationWarning>
+                  <h3
+                    className="font-semibold text-gray-900 dark:text-white"
+                    suppressHydrationWarning
+                  >
                     {t('auth.registrationSuccess.nextSteps.checkEmail.title')}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400" suppressHydrationWarning>
-                    {t('auth.registrationSuccess.nextSteps.checkEmail.description')}
+                  <p
+                    className="text-sm text-gray-600 dark:text-gray-400"
+                    suppressHydrationWarning
+                  >
+                    {t(
+                      'auth.registrationSuccess.nextSteps.checkEmail.description'
+                    )}
                   </p>
                 </div>
               </div>
@@ -106,11 +124,21 @@ export default function RegistrationSuccessPage() {
                   <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white" suppressHydrationWarning>
-                    {t('auth.registrationSuccess.nextSteps.accountReview.title')}
+                  <h3
+                    className="font-semibold text-gray-900 dark:text-white"
+                    suppressHydrationWarning
+                  >
+                    {t(
+                      'auth.registrationSuccess.nextSteps.accountReview.title'
+                    )}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400" suppressHydrationWarning>
-                    {t('auth.registrationSuccess.nextSteps.accountReview.description')}
+                  <p
+                    className="text-sm text-gray-600 dark:text-gray-400"
+                    suppressHydrationWarning
+                  >
+                    {t(
+                      'auth.registrationSuccess.nextSteps.accountReview.description'
+                    )}
                   </p>
                 </div>
               </div>
@@ -119,11 +147,19 @@ export default function RegistrationSuccessPage() {
                   <Stethoscope className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white" suppressHydrationWarning>
+                  <h3
+                    className="font-semibold text-gray-900 dark:text-white"
+                    suppressHydrationWarning
+                  >
                     {t('auth.registrationSuccess.nextSteps.getStarted.title')}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400" suppressHydrationWarning>
-                    {t('auth.registrationSuccess.nextSteps.getStarted.description')}
+                  <p
+                    className="text-sm text-gray-600 dark:text-gray-400"
+                    suppressHydrationWarning
+                  >
+                    {t(
+                      'auth.registrationSuccess.nextSteps.getStarted.description'
+                    )}
                   </p>
                 </div>
               </div>
@@ -131,10 +167,16 @@ export default function RegistrationSuccessPage() {
 
             {/* Contact Information */}
             <div className="mt-8 p-6 bg-white/50 dark:bg-gray-800/50 rounded-2xl backdrop-blur-sm border border-white/20 dark:border-gray-700/50">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3" suppressHydrationWarning>
+              <h3
+                className="font-semibold text-gray-900 dark:text-white mb-3"
+                suppressHydrationWarning
+              >
                 {t('auth.registrationSuccess.contactInfo.title')}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3" suppressHydrationWarning>
+              <p
+                className="text-sm text-gray-600 dark:text-gray-400 mb-3"
+                suppressHydrationWarning
+              >
                 {t('auth.registrationSuccess.contactInfo.description')}
               </p>
               <div className="flex items-center gap-3">
@@ -188,10 +230,16 @@ export default function RegistrationSuccessPage() {
               </div>
 
               {/* Success Message */}
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4" suppressHydrationWarning>
+              <h2
+                className="text-3xl font-bold text-gray-900 dark:text-white mb-4"
+                suppressHydrationWarning
+              >
                 {t('auth.registrationSuccess.title')}
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-8" suppressHydrationWarning>
+              <p
+                className="text-gray-600 dark:text-gray-400 mb-8"
+                suppressHydrationWarning
+              >
                 {t('auth.registrationSuccess.subtitle')}
               </p>
 
@@ -202,10 +250,16 @@ export default function RegistrationSuccessPage() {
                     <CheckCircle className="w-4 h-4 text-white" />
                   </div>
                   <div className="text-left">
-                    <h3 className="font-semibold text-green-800 dark:text-green-300" suppressHydrationWarning>
+                    <h3
+                      className="font-semibold text-green-800 dark:text-green-300"
+                      suppressHydrationWarning
+                    >
                       {t('auth.registrationSuccess.status.title')}
                     </h3>
-                    <p className="text-sm text-green-600 dark:text-green-400" suppressHydrationWarning>
+                    <p
+                      className="text-sm text-green-600 dark:text-green-400"
+                      suppressHydrationWarning
+                    >
                       {t('auth.registrationSuccess.status.description')}
                     </p>
                   </div>
@@ -233,14 +287,21 @@ export default function RegistrationSuccessPage() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-500 dark:text-gray-400" suppressHydrationWarning>
+            <div
+              className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-500 dark:text-gray-400"
+              suppressHydrationWarning
+            >
               <div className="flex items-center gap-1">
                 <Shield className="w-3 h-3" />
-                <span>{t('auth.registrationSuccess.trustIndicators.hipaaCompliant')}</span>
+                <span>
+                  {t('auth.registrationSuccess.trustIndicators.hipaaCompliant')}
+                </span>
               </div>
               <div className="flex items-center gap-1">
                 <Heart className="w-3 h-3" />
-                <span>{t('auth.registrationSuccess.trustIndicators.trustedClinics')}</span>
+                <span>
+                  {t('auth.registrationSuccess.trustIndicators.trustedClinics')}
+                </span>
               </div>
             </div>
           </div>

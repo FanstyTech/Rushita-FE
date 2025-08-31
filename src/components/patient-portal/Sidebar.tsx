@@ -11,7 +11,6 @@ import {
   Pill,
   Activity,
   CreditCard,
-  Video,
   X,
   Menu,
   LogOut,
@@ -145,7 +144,7 @@ export function Sidebar({
   const renderNavItem = (item: {
     name: string;
     href: string;
-    icon: any;
+    icon: React.ElementType;
     badge: string;
   }) => {
     const active = isActive(item.href);
@@ -207,7 +206,7 @@ export function Sidebar({
   const renderSubNavItem = (item: {
     name: string;
     href: string;
-    icon: any;
+    icon: React.ElementType;
     badge: string;
   }) => {
     const active = isActive(item.href);

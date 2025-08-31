@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PageLayout from '@/components/layouts/PageLayout';
-import { Line, Doughnut, Bar } from 'react-chartjs-2';
+import { Line, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,7 +25,6 @@ import {
   ServerIcon,
   ShieldCheckIcon,
   ExclamationTriangleIcon,
-  ChartBarIcon,
   ClockIcon,
   CpuChipIcon,
   CloudIcon,
@@ -475,7 +474,7 @@ export default function AdminDashboard() {
             System Health Metrics
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {healthMetrics.map((metric, index) => (
+            {healthMetrics.map((metric) => (
               <div key={metric.title} className="flex items-center space-x-4">
                 <div className={`rounded-lg ${metric.bgColor} p-3`}>
                   <div className={metric.color}>{metric.icon}</div>
@@ -515,7 +514,7 @@ export default function AdminDashboard() {
             Admin Quick Actions
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {adminActions.map((action, index) => (
+            {adminActions.map((action) => (
               <div
                 key={action.title}
                 className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors group cursor-pointer"

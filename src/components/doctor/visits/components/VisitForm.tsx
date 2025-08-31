@@ -15,7 +15,6 @@ import Notes from './Notes';
 
 // File Components
 import FileUpload from '@/components/common/files/FileUpload';
-import AttachmentsList from '@/components/common/files/AttachmentsList';
 
 // Modals
 import MedicationSearchModal from './modals/MedicationSearchModal';
@@ -42,7 +41,7 @@ import { CreateOrUpdateVisitDto } from '@/lib/api/types/visit';
 import { TreatmentFormData, treatmentFormSchema } from './validation';
 import { AttachmentDto, EntityType } from '@/lib/api/types/attachment';
 import { toast } from 'sonner';
-import { formatDate, formatDateForInput } from '@/utils/dateTimeUtils';
+import { formatDate } from '@/utils/dateTimeUtils';
 
 const INITIAL_MEDICINE_FILTER: FilterState = {
   pageNumber: 1,
@@ -301,7 +300,7 @@ export default function TreatmentForm({
     };
 
     // Call the mutation
-    var response = await createOrUpdateClinicVisit.mutateAsync(visitData);
+    const response = await createOrUpdateClinicVisit.mutateAsync(visitData);
     if (response?.result) {
       setCurrentVisitId(response.result);
     }

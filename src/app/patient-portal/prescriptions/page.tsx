@@ -1,26 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import {
   Calendar,
   Clock,
   Search,
   Filter,
   FileText,
-  Download,
-  Printer,
   Pill,
-  User,
-  Building,
-  ChevronLeft,
-  ChevronRight,
   AlertCircle,
   Info,
-  Eye,
   X,
-  Microscope,
   AlertTriangle,
   ChevronDown,
   ChevronUp,
@@ -71,8 +61,6 @@ const itemVariants = {
 };
 
 export default function PrescriptionsPage() {
-  const router = useRouter();
-
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<MedicationStatus | ''>(
@@ -144,19 +132,9 @@ export default function PrescriptionsPage() {
     (prescription) => prescription.medicationStatus === MedicationStatus.Active
   ).length;
 
-  // Get total medications
-  const totalMedications = prescriptions.reduce(
-    (total, prescription) => total + prescription.quantityInfo.quantity,
-    0
-  );
-
   // Handle filter changes
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-  };
-
-  const handleStatusFilter = (status: MedicationStatus | '') => {
-    setSelectedStatus(status);
   };
 
   const handleSpecialtyChange = (specialty: string) => {
@@ -246,7 +224,11 @@ export default function PrescriptionsPage() {
                   وصفات منتهية
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                  {prescriptions.filter(p => p.medicationStatus === MedicationStatus.Completed).length}
+                  {
+                    prescriptions.filter(
+                      (p) => p.medicationStatus === MedicationStatus.Completed
+                    ).length
+                  }
                 </p>
               </div>
               <div className="rounded-full p-3 bg-yellow-100 dark:bg-yellow-900/20">
@@ -265,7 +247,11 @@ export default function PrescriptionsPage() {
                   منتهية الصلاحية
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                  {prescriptions.filter(p => p.medicationStatus === MedicationStatus.Expired).length}
+                  {
+                    prescriptions.filter(
+                      (p) => p.medicationStatus === MedicationStatus.Expired
+                    ).length
+                  }
                 </p>
               </div>
               <div className="rounded-full p-3 bg-red-100 dark:bg-red-900/20">
@@ -302,19 +288,19 @@ export default function PrescriptionsPage() {
             </div>
           </CardHeader>
 
-        <CardContent className="p-6">
+          <CardContent className="p-6">
             <div className="grid gap-4 md:grid-cols-2">
               {/* Search input */}
               <div className="space-y-2">
-              <Input
+                <Input
                   label="بحث"
                   placeholder="ابحث عن دواء، طبيب، أو تشخيص..."
-                value={searchQuery}
+                  value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   startIcon={<Search className="h-4 w-4" />}
                   fullWidth
-              />
-            </div>
+                />
+              </div>
 
               {/* Status filter */}
               {/* <div className="space-y-2">
@@ -340,22 +326,22 @@ export default function PrescriptionsPage() {
 
               {/* Specialty filter */}
               <div className="space-y-2">
-              <Select
+                <Select
                   label="التخصص"
-                value={selectedSpecialty}
+                  value={selectedSpecialty}
                   onChange={(e) => handleSpecialtyChange(e.target.value)}
-                options={[
+                  options={[
                     { value: 'all', label: 'All Specialties' },
                     ...(specialties?.map((specialty: SelectOption<string>) => ({
                       value: specialty.value,
                       label: specialty.label || '',
                     })) || []),
-                ]}
-              />
+                  ]}
+                />
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
       </motion.div>
 
       {/* Prescriptions list */}
@@ -417,7 +403,7 @@ export default function PrescriptionsPage() {
                           </p>
                         </div>
                       </div>
-                      
+
                       {/* Expand/Collapse Button */}
                       <Button
                         variant="ghost"
@@ -438,9 +424,9 @@ export default function PrescriptionsPage() {
                   {expandedCards.has(prescription.id) && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
+                      animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
                       className="overflow-hidden"
                     >
                       <Separator className="bg-border/50" />
@@ -496,7 +482,8 @@ export default function PrescriptionsPage() {
                                   <span className="text-sm">
                                     {prescription.prescriptionDetails.duration}{' '}
                                     {getDurationUnitLabel(
-                                      prescription.prescriptionDetails.durationUnit
+                                      prescription.prescriptionDetails
+                                        .durationUnit
                                     )}
                                   </span>
                                 </div>
@@ -535,7 +522,9 @@ export default function PrescriptionsPage() {
                                     تاريخ انتهاء الصلاحية:
                                   </span>
                                   <span className="text-sm">
-                                    {formatDate(prescription.dateInfo.expiryDate)}
+                                    {formatDate(
+                                      prescription.dateInfo.expiryDate
+                                    )}
                                   </span>
                                 </div>
                               )}

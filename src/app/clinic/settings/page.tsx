@@ -23,11 +23,7 @@ import Input from '@/components/common/form/Input';
 import Select from '@/components/common/form/Select';
 import { useCurrency } from '@/lib/api/hooks/useCurrency';
 import { useClinicSettings } from '@/lib/api/hooks/useClinicSettings';
-import type {
-  ClinicSettingsDto,
-  SaveClinicSettingsDto,
-  ClinicBookingConditionDto,
-} from '@/lib/api/types/clinic-settings';
+import type { SaveClinicSettingsDto } from '@/lib/api/types/clinic-settings';
 
 interface MultilingualCondition {
   nameL: string;
@@ -57,8 +53,7 @@ export default function ClinicSettings() {
   const { useCurrenciesDropdown } = useCurrency();
   const { getClinicSettings, saveClinicSettings } = useClinicSettings();
 
-  const { data: currencies, isLoading: isCurrencyLoading } =
-    useCurrenciesDropdown();
+  const { data: currencies } = useCurrenciesDropdown();
 
   // Get clinic settings from API
   const {
@@ -799,7 +794,7 @@ export default function ClinicSettings() {
                 <Shield className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p className="text-sm">لا توجد شروط حجز مضافة</p>
                 <p className="text-xs mt-1">
-                  انقر على "إضافة شرط" لإضافة شرط جديد
+                  انقر على &quot;إضافة شرط&quot; لإضافة شرط جديد
                 </p>
               </div>
             )}

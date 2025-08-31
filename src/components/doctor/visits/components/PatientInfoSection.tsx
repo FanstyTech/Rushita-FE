@@ -124,7 +124,7 @@ export default function PatientInfoSection({
                     label="Visit Type"
                     options={Object.entries(VisitType)
                       .filter(([key]) => isNaN(Number(key)))
-                      .map(([_, value]) => ({
+                      .map(([, value]) => ({
                         value: value.toString(),
                         label: getVisitTypeLabel(value as VisitType).toString(),
                       }))}

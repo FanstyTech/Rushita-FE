@@ -1,3 +1,4 @@
+import { FieldErrors } from 'react-hook-form';
 import * as z from 'zod';
 
 // Personal Information Schema
@@ -82,7 +83,7 @@ export const profileSchema = z.object({
 export type ProfileFormValues = z.infer<typeof profileSchema>;
 
 // Helper function to check which schema section has errors
-export const findErrorSection = (errors: any) => {
+export const findErrorSection = (errors: FieldErrors) => {
   // Check personal info fields
   const personalInfoFields = Object.keys(personalInfoSchema.shape);
   const hasPersonalInfoErrors = personalInfoFields.some(

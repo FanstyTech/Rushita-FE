@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Phone, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next'; // Add this import
 import {
@@ -24,7 +24,7 @@ interface EmergencyContactCardProps {
   isEditing: boolean;
   formData: ProfileFormValues;
   onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  variants: any;
+  variants: Variants;
   // React Hook Form props
   register: UseFormRegister<ProfileFormValues>;
   errors?: FieldErrors<ProfileFormValues>;

@@ -17,7 +17,6 @@ interface LoginFormProps {
 export function LoginForm({ handleLoginSubmit, isLoading }: LoginFormProps) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,15 +48,6 @@ export function LoginForm({ handleLoginSubmit, isLoading }: LoginFormProps) {
               )}
             </button>
           </div>
-          {error && (
-            <motion.p
-              className="text-destructive text-xs"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              {error}
-            </motion.p>
-          )}
         </div>
         <div className="flex justify-end">
           <a

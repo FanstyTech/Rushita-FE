@@ -50,7 +50,7 @@ class ClinicService {
   }
 
   async getForEdit(id?: string): Promise<ApiResponse<CreateUpdateClinicDto>> {
-    const params: any = {};
+    const params: Record<string, string> = {};
     if (id) {
       params.id = id;
     }

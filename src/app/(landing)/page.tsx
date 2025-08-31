@@ -24,13 +24,11 @@ import { twMerge } from 'tailwind-merge';
 export default function Home() {
   const containerRef = useRef(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [mounted, setMounted] = useState(false);
   const { t } = useTranslation();
   const [isRTL, setIsRTL] = useState(false);
 
   useEffect(() => {
     setLoading(false);
-    setMounted(true);
     setIsRTL(i18n.language === 'ar');
   }, []);
 
@@ -63,12 +61,18 @@ export default function Home() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4" suppressHydrationWarning>
+            <h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4"
+              suppressHydrationWarning
+            >
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                 {t('landing.whyRushita.title')}
               </span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto" suppressHydrationWarning>
+            <p
+              className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
+              suppressHydrationWarning
+            >
               {t('landing.whyRushita.subtitle')}
             </p>
           </div>
@@ -95,7 +99,10 @@ export default function Home() {
 
               {/* Content */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white leading-tight" suppressHydrationWarning>
+                <h3
+                  className="text-lg font-semibold text-gray-900 dark:text-white leading-tight"
+                  suppressHydrationWarning
+                >
                   {t('landing.whyRushita.item1Title')}
                 </h3>
 
@@ -132,7 +139,10 @@ export default function Home() {
 
               {/* Content */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white leading-tight" suppressHydrationWarning>
+                <h3
+                  className="text-lg font-semibold text-gray-900 dark:text-white leading-tight"
+                  suppressHydrationWarning
+                >
                   {t('landing.whyRushita.item2Title')}
                 </h3>
 
@@ -169,7 +179,10 @@ export default function Home() {
 
               {/* Content */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white leading-tight" suppressHydrationWarning>
+                <h3
+                  className="text-lg font-semibold text-gray-900 dark:text-white leading-tight"
+                  suppressHydrationWarning
+                >
                   {t('landing.whyRushita.item3Title')}
                 </h3>
 
@@ -191,12 +204,18 @@ export default function Home() {
       {/* Value Proposition */}
       <section className="py-12 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6" suppressHydrationWarning>
+          <h2
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6"
+            suppressHydrationWarning
+          >
             <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent">
               {t('landing.valueProposition.title')}
             </span>
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto" suppressHydrationWarning>
+          <p
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto"
+            suppressHydrationWarning
+          >
             {t('landing.valueProposition.subtitle')}
           </p>
         </div>
@@ -216,18 +235,27 @@ export default function Home() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-full border border-green-200 dark:border-green-800 mb-6">
               <div className="w-2 h-2 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full animate-pulse"></div>
-              <span className="text-transparent bg-gradient-to-r from-green-700 to-emerald-700 dark:from-green-300 dark:to-emerald-300 bg-clip-text font-medium" suppressHydrationWarning>
+              <span
+                className="text-transparent bg-gradient-to-r from-green-700 to-emerald-700 dark:from-green-300 dark:to-emerald-300 bg-clip-text font-medium"
+                suppressHydrationWarning
+              >
                 {t('landing.cta.offer')}
               </span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6" suppressHydrationWarning>
+            <h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6"
+              suppressHydrationWarning
+            >
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                 {t('landing.cta.title')}
               </span>
             </h2>
 
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8" suppressHydrationWarning>
+            <p
+              className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8"
+              suppressHydrationWarning
+            >
               {t('landing.cta.subtitle')}
             </p>
           </div>
@@ -246,14 +274,20 @@ export default function Home() {
                 {/* Offer Badge */}
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500/10 to-pink-500/10 rounded-full border border-red-200 dark:border-red-800 mb-6">
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                  <span className="text-red-600 dark:text-red-400 text-sm font-semibold" suppressHydrationWarning>
+                  <span
+                    className="text-red-600 dark:text-red-400 text-sm font-semibold"
+                    suppressHydrationWarning
+                  >
                     {t('landing.cta.offerBadge')}
                   </span>
                 </div>
 
-                                 <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6" suppressHydrationWarning>
-                   {t('landing.cta.startYourJourney')}
-                 </h3>
+                <h3
+                  className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6"
+                  suppressHydrationWarning
+                >
+                  {t('landing.cta.startYourJourney')}
+                </h3>
 
                 {/* Benefits Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -274,12 +308,18 @@ export default function Home() {
                       </svg>
                     </div>
                     <div className="text-right">
-                                             <div className="text-green-700 dark:text-green-300 font-semibold text-sm" suppressHydrationWarning>
-                         {t('landing.cta.benefits.0.title')}
-                       </div>
-                       <div className="text-green-600 dark:text-green-400 text-xs" suppressHydrationWarning>
-                         {t('landing.cta.benefits.0.description')}
-                       </div>
+                      <div
+                        className="text-green-700 dark:text-green-300 font-semibold text-sm"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.cta.benefits.0.title')}
+                      </div>
+                      <div
+                        className="text-green-600 dark:text-green-400 text-xs"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.cta.benefits.0.description')}
+                      </div>
                     </div>
                   </div>
 
@@ -300,12 +340,18 @@ export default function Home() {
                       </svg>
                     </div>
                     <div className="text-right">
-                                             <div className="text-blue-700 dark:text-blue-300 font-semibold text-sm" suppressHydrationWarning>
-                         {t('landing.cta.benefits.1.title')}
-                       </div>
-                       <div className="text-blue-600 dark:text-blue-400 text-xs" suppressHydrationWarning>
-                         {t('landing.cta.benefits.1.description')}
-                       </div>
+                      <div
+                        className="text-blue-700 dark:text-blue-300 font-semibold text-sm"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.cta.benefits.1.title')}
+                      </div>
+                      <div
+                        className="text-blue-600 dark:text-blue-400 text-xs"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.cta.benefits.1.description')}
+                      </div>
                     </div>
                   </div>
 
@@ -326,12 +372,18 @@ export default function Home() {
                       </svg>
                     </div>
                     <div className="text-right">
-                                             <div className="text-purple-700 dark:text-purple-300 font-semibold text-sm" suppressHydrationWarning>
-                         {t('landing.cta.benefits.2.title')}
-                       </div>
-                       <div className="text-purple-600 dark:text-purple-400 text-xs" suppressHydrationWarning>
-                         {t('landing.cta.benefits.2.description')}
-                       </div>
+                      <div
+                        className="text-purple-700 dark:text-purple-300 font-semibold text-sm"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.cta.benefits.2.title')}
+                      </div>
+                      <div
+                        className="text-purple-600 dark:text-purple-400 text-xs"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.cta.benefits.2.description')}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -343,14 +395,19 @@ export default function Home() {
                       size="lg"
                       className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white px-12 py-4 text-lg font-semibold shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 rounded-2xl border-0"
                     >
-                                             <span suppressHydrationWarning>{t('landing.cta.button')}</span>
-                       <MoveLeft className="mr-3 scale-125" />
-                     </Button>
-                   </Link>
+                      <span suppressHydrationWarning>
+                        {t('landing.cta.button')}
+                      </span>
+                      <MoveLeft className="mr-3 scale-125" />
+                    </Button>
+                  </Link>
 
-                   <p className="text-gray-600 dark:text-gray-400 text-sm" suppressHydrationWarning>
-                     {t('landing.cta.note')}
-                   </p>
+                  <p
+                    className="text-gray-600 dark:text-gray-400 text-sm"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.cta.note')}
+                  </p>
                 </div>
 
                 {/* Trust Indicators */}
@@ -359,25 +416,34 @@ export default function Home() {
                     <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                       +500
                     </div>
-                                         <div className="text-sm text-gray-600 dark:text-gray-400" suppressHydrationWarning>
-                       {t('landing.cta.trustIndicators.0.title')}
-                     </div>
-                   </div>
-                   <div className="text-center">
-                     <div className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                       99.9%
-                     </div>
-                     <div className="text-sm text-gray-600 dark:text-gray-400" suppressHydrationWarning>
-                       {t('landing.cta.trustIndicators.1.title')}
-                     </div>
-                   </div>
-                   <div className="text-center">
-                     <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                       4.9★
-                     </div>
-                     <div className="text-sm text-gray-600 dark:text-gray-400" suppressHydrationWarning>
-                       {t('landing.cta.trustIndicators.2.title')}
-                     </div>
+                    <div
+                      className="text-sm text-gray-600 dark:text-gray-400"
+                      suppressHydrationWarning
+                    >
+                      {t('landing.cta.trustIndicators.0.title')}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                      99.9%
+                    </div>
+                    <div
+                      className="text-sm text-gray-600 dark:text-gray-400"
+                      suppressHydrationWarning
+                    >
+                      {t('landing.cta.trustIndicators.1.title')}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      4.9★
+                    </div>
+                    <div
+                      className="text-sm text-gray-600 dark:text-gray-400"
+                      suppressHydrationWarning
+                    >
+                      {t('landing.cta.trustIndicators.2.title')}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -401,20 +467,29 @@ export default function Home() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-blue-50 dark:bg-blue-900/20 rounded-full border border-blue-200 dark:border-blue-800 mb-4">
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-                             <span className="text-blue-700 dark:text-blue-300 font-medium" suppressHydrationWarning>
-                 {t('landing.about.title')}
-               </span>
+              <span
+                className="text-blue-700 dark:text-blue-300 font-medium"
+                suppressHydrationWarning
+              >
+                {t('landing.about.title')}
+              </span>
             </div>
 
-                         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4" suppressHydrationWarning>
-               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                 {t('landing.about.subtitle')}
-               </span>
-             </h2>
+            <h2
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4"
+              suppressHydrationWarning
+            >
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                {t('landing.about.subtitle')}
+              </span>
+            </h2>
 
-             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto" suppressHydrationWarning>
-               {t('landing.about.description')}
-             </p>
+            <p
+              className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
+              suppressHydrationWarning
+            >
+              {t('landing.about.description')}
+            </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -423,15 +498,21 @@ export default function Home() {
               {/* Main Message */}
               <div className="space-y-6">
                 <div className="relative">
-                                   <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight" suppressHydrationWarning>
-                   {t('landing.about.mainMessage.title')}
-                 </h3>
+                  <h3
+                    className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.about.mainMessage.title')}
+                  </h3>
                   <div className="absolute -bottom-2 right-0 w-32 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
                 </div>
 
-                                 <h3 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" suppressHydrationWarning>
-                   {t('landing.about.mainMessage.subtitle')}
-                 </h3>
+                <h3
+                  className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                  suppressHydrationWarning
+                >
+                  {t('landing.about.mainMessage.subtitle')}
+                </h3>
               </div>
 
               {/* Story Cards */}
@@ -458,9 +539,12 @@ export default function Home() {
                     </svg>
                   </div>
 
-                                     <p className="text-gray-700 mt-3 dark:text-gray-300 text-lg leading-relaxed pt-8" suppressHydrationWarning>
-                     {t('landing.about.storyCards.0.description')}
-                   </p>
+                  <p
+                    className="text-gray-700 mt-3 dark:text-gray-300 text-lg leading-relaxed pt-8"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.about.storyCards.0.description')}
+                  </p>
                 </div>
 
                 <div className="relative p-6 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 backdrop-blur-sm rounded-2xl border border-purple-200/50 dark:border-purple-700/50 shadow-lg hover:shadow-xl transition-all duration-300">
@@ -486,9 +570,12 @@ export default function Home() {
                     </svg>
                   </div>
 
-                                     <p className="text-purple-700 mt-3 dark:text-purple-300 text-lg font-medium leading-relaxed pt-8" suppressHydrationWarning>
-                     {t('landing.about.storyCards.1.description')}
-                   </p>
+                  <p
+                    className="text-purple-700 mt-3 dark:text-purple-300 text-lg font-medium leading-relaxed pt-8"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.about.storyCards.1.description')}
+                  </p>
                 </div>
               </div>
 
@@ -510,9 +597,12 @@ export default function Home() {
                       />
                     </svg>
                   </div>
-                                     <span className="text-green-700 dark:text-green-300 font-medium" suppressHydrationWarning>
-                     {t('landing.about.keyFeatures.0.title')}
-                   </span>
+                  <span
+                    className="text-green-700 dark:text-green-300 font-medium"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.about.keyFeatures.0.title')}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
@@ -531,9 +621,12 @@ export default function Home() {
                       />
                     </svg>
                   </div>
-                                     <span className="text-blue-700 dark:text-blue-300 font-medium" suppressHydrationWarning>
-                     {t('landing.about.keyFeatures.1.title')}
-                   </span>
+                  <span
+                    className="text-blue-700 dark:text-blue-300 font-medium"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.about.keyFeatures.1.title')}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
@@ -552,9 +645,12 @@ export default function Home() {
                       />
                     </svg>
                   </div>
-                                     <span className="text-purple-700 dark:text-purple-300 font-medium" suppressHydrationWarning>
-                     {t('landing.about.keyFeatures.2.title')}
-                   </span>
+                  <span
+                    className="text-purple-700 dark:text-purple-300 font-medium"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.about.keyFeatures.2.title')}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border border-orange-200 dark:border-orange-800">
@@ -573,9 +669,12 @@ export default function Home() {
                       />
                     </svg>
                   </div>
-                                     <span className="text-orange-700 dark:text-orange-300 font-medium" suppressHydrationWarning>
-                     {t('landing.about.keyFeatures.3.title')}
-                   </span>
+                  <span
+                    className="text-orange-700 dark:text-orange-300 font-medium"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.about.keyFeatures.3.title')}
+                  </span>
                 </div>
               </div>
 
@@ -585,17 +684,23 @@ export default function Home() {
                   <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     1947
                   </div>
-                                     <div className="text-sm text-gray-600 dark:text-gray-400" suppressHydrationWarning>
-                     {t('landing.about.stats.0.title')}
-                   </div>
+                  <div
+                    className="text-sm text-gray-600 dark:text-gray-400"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.about.stats.0.title')}
+                  </div>
                 </div>
                 <div className="text-center p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50">
                   <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     +60
                   </div>
-                                     <div className="text-sm text-gray-600 dark:text-gray-400" suppressHydrationWarning>
-                     {t('landing.about.stats.1.title')}
-                   </div>
+                  <div
+                    className="text-sm text-gray-600 dark:text-gray-400"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.about.stats.1.title')}
+                  </div>
                 </div>
               </div>
             </div>
@@ -622,12 +727,18 @@ export default function Home() {
                   {/* Overlay content */}
                   <div className="absolute bottom-6 left-6 right-6">
                     <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                                             <h4 className="text-white font-bold text-xl mb-2" suppressHydrationWarning>
-                         {t('landing.about.overlay.title')}
-                       </h4>
-                       <p className="text-white/80 text-sm" suppressHydrationWarning>
-                         {t('landing.about.overlay.description')}
-                       </p>
+                      <h4
+                        className="text-white font-bold text-xl mb-2"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.about.overlay.title')}
+                      </h4>
+                      <p
+                        className="text-white/80 text-sm"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.about.overlay.description')}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -654,20 +765,29 @@ export default function Home() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full border border-blue-200 dark:border-blue-800 mb-6">
               <div className="w-2 h-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full animate-pulse"></div>
-                             <span className="text-transparent bg-gradient-to-r from-blue-700 to-purple-700 dark:from-blue-300 dark:to-purple-300 bg-clip-text font-medium" suppressHydrationWarning>
-                 {t('landing.features.title')}
-               </span>
+              <span
+                className="text-transparent bg-gradient-to-r from-blue-700 to-purple-700 dark:from-blue-300 dark:to-purple-300 bg-clip-text font-medium"
+                suppressHydrationWarning
+              >
+                {t('landing.features.title')}
+              </span>
             </div>
 
-                         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6" suppressHydrationWarning>
-               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                 {t('landing.features.subtitle')}
-               </span>
-             </h2>
+            <h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6"
+              suppressHydrationWarning
+            >
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                {t('landing.features.subtitle')}
+              </span>
+            </h2>
 
-             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto mb-8" suppressHydrationWarning>
-               {t('landing.features.description')}
-             </p>
+            <p
+              className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto mb-8"
+              suppressHydrationWarning
+            >
+              {t('landing.features.description')}
+            </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -695,12 +815,18 @@ export default function Home() {
                   {/* Overlay content */}
                   <div className="absolute bottom-6 left-6 right-6">
                     <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20">
-                                             <h4 className="text-gray-900 dark:text-white font-bold text-lg mb-1" suppressHydrationWarning>
-                         {t('landing.features.overlay.title')}
-                       </h4>
-                       <p className="text-gray-600 dark:text-gray-300 text-sm" suppressHydrationWarning>
-                         {t('landing.features.overlay.description')}
-                       </p>
+                      <h4
+                        className="text-gray-900 dark:text-white font-bold text-lg mb-1"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.features.overlay.title')}
+                      </h4>
+                      <p
+                        className="text-gray-600 dark:text-gray-300 text-sm"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.features.overlay.description')}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -729,9 +855,12 @@ export default function Home() {
                     <div className="pt-4">
                       <div className="flex items-start gap-4">
                         <div className="w-3 h-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full mt-2 flex-shrink-0 group-hover:scale-125 transition-transform duration-300"></div>
-                                                 <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed" suppressHydrationWarning>
-                           {t('landing.featuresList.' + index)}
-                         </p>
+                        <p
+                          className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed"
+                          suppressHydrationWarning
+                        >
+                          {t('landing.featuresList.' + index)}
+                        </p>
                       </div>
                     </div>
                     {/* Hover effect */}
@@ -769,24 +898,33 @@ export default function Home() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-full border border-blue-200/50 dark:border-blue-700/50 shadow-lg mb-6">
               <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
-                             <span className="text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text font-semibold" suppressHydrationWarning>
-                 {t('landing.systemIntegration.title')}
-               </span>
+              <span
+                className="text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text font-semibold"
+                suppressHydrationWarning
+              >
+                {t('landing.systemIntegration.title')}
+              </span>
             </div>
 
-                         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6" suppressHydrationWarning>
-               <span className="bg-gradient-to-r from-slate-800 via-blue-700 to-purple-700 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent">
-                 {t('landing.systemIntegration.subtitle')}
-               </span>
-               <br />
-               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                 {t('landing.systemIntegration.description')}
-               </span>
-             </h2>
+            <h2
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+              suppressHydrationWarning
+            >
+              <span className="bg-gradient-to-r from-slate-800 via-blue-700 to-purple-700 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent">
+                {t('landing.systemIntegration.subtitle')}
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                {t('landing.systemIntegration.description')}
+              </span>
+            </h2>
 
-             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed" suppressHydrationWarning>
-               {t('landing.systemIntegration.note')}
-             </p>
+            <p
+              className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed"
+              suppressHydrationWarning
+            >
+              {t('landing.systemIntegration.note')}
+            </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -817,9 +955,12 @@ export default function Home() {
                     <div className="relative z-10 pt-2">
                       <div className="flex items-start gap-4">
                         <div className="w-4 h-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mt-1 flex-shrink-0 group-hover:scale-125 transition-transform duration-300 shadow-lg"></div>
-                                                 <p className="text-gray-700 dark:text-gray-300 text-lg font-medium leading-relaxed group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300" suppressHydrationWarning>
-                           {t('landing.systemIntegration.features.' + index)}
-                         </p>
+                        <p
+                          className="text-gray-700 dark:text-gray-300 text-lg font-medium leading-relaxed group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300"
+                          suppressHydrationWarning
+                        >
+                          {t('landing.systemIntegration.features.' + index)}
+                        </p>
                       </div>
                     </div>
 
@@ -854,12 +995,18 @@ export default function Home() {
                           />
                         </svg>
                       </div>
-                                             <h4 className="text-lg font-bold bg-gradient-to-r from-blue-700 to-purple-700 dark:from-blue-300 dark:to-purple-300 bg-clip-text text-transparent" suppressHydrationWarning>
-                         {t('landing.systemIntegration.hub.title')}
-                       </h4>
-                       <p className="text-sm text-gray-600 dark:text-gray-400 font-medium" suppressHydrationWarning>
-                         {t('landing.systemIntegration.hub.description')}
-                       </p>
+                      <h4
+                        className="text-lg font-bold bg-gradient-to-r from-blue-700 to-purple-700 dark:from-blue-300 dark:to-purple-300 bg-clip-text text-transparent"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.systemIntegration.hub.title')}
+                      </h4>
+                      <p
+                        className="text-sm text-gray-600 dark:text-gray-400 font-medium"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.systemIntegration.hub.description')}
+                      </p>
                     </div>
                   </div>
 
@@ -882,9 +1029,12 @@ export default function Home() {
                       </svg>
                     </div>
                     <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg">
-                                             <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400" suppressHydrationWarning>
-                         {t('landing.systemIntegration.satellite.doctor')}
-                       </span>
+                      <span
+                        className="text-sm font-semibold text-emerald-600 dark:text-emerald-400"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.systemIntegration.satellite.doctor')}
+                      </span>
                     </div>
                   </div>
 
@@ -906,9 +1056,12 @@ export default function Home() {
                       </svg>
                     </div>
                     <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg">
-                                             <span className="text-sm font-semibold text-orange-600 dark:text-orange-400" suppressHydrationWarning>
-                         {t('landing.systemIntegration.satellite.lab')}
-                       </span>
+                      <span
+                        className="text-sm font-semibold text-orange-600 dark:text-orange-400"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.systemIntegration.satellite.lab')}
+                      </span>
                     </div>
                   </div>
 
@@ -930,9 +1083,12 @@ export default function Home() {
                       </svg>
                     </div>
                     <div className="absolute top-1/2 -left-16 transform -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg">
-                                             <span className="text-sm font-semibold text-violet-600 dark:text-violet-400" suppressHydrationWarning>
-                         {t('landing.systemIntegration.satellite.accountant')}
-                       </span>
+                      <span
+                        className="text-sm font-semibold text-violet-600 dark:text-violet-400"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.systemIntegration.satellite.accountant')}
+                      </span>
                     </div>
                   </div>
 
@@ -954,9 +1110,12 @@ export default function Home() {
                       </svg>
                     </div>
                     <div className="absolute top-1/2 -right-20 transform -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg">
-                                             <span className="text-sm font-semibold text-pink-600 dark:text-pink-400" suppressHydrationWarning>
-                         {t('landing.systemIntegration.satellite.secretary')}
-                       </span>
+                      <span
+                        className="text-sm font-semibold text-pink-600 dark:text-pink-400"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.systemIntegration.satellite.secretary')}
+                      </span>
                     </div>
                   </div>
 
@@ -1104,9 +1263,12 @@ export default function Home() {
                 <h4 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
                   100%
                 </h4>
-                                 <p className="text-gray-600 dark:text-gray-400 font-medium" suppressHydrationWarning>
-                   {t('landing.systemIntegration.bottomStats.0.title')}
-                 </p>
+                <p
+                  className="text-gray-600 dark:text-gray-400 font-medium"
+                  suppressHydrationWarning
+                >
+                  {t('landing.systemIntegration.bottomStats.0.title')}
+                </p>
               </div>
             </div>
 
@@ -1132,9 +1294,12 @@ export default function Home() {
                 <h4 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3">
                   24/7
                 </h4>
-                                 <p className="text-gray-600 dark:text-gray-400 font-medium" suppressHydrationWarning>
-                   {t('landing.systemIntegration.bottomStats.1.title')}
-                 </p>
+                <p
+                  className="text-gray-600 dark:text-gray-400 font-medium"
+                  suppressHydrationWarning
+                >
+                  {t('landing.systemIntegration.bottomStats.1.title')}
+                </p>
               </div>
             </div>
 
@@ -1160,9 +1325,12 @@ export default function Home() {
                 <h4 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent mb-3">
                   0
                 </h4>
-                                 <p className="text-gray-600 dark:text-gray-400 font-medium" suppressHydrationWarning>
-                   {t('landing.systemIntegration.bottomStats.2.title')}
-                 </p>
+                <p
+                  className="text-gray-600 dark:text-gray-400 font-medium"
+                  suppressHydrationWarning
+                >
+                  {t('landing.systemIntegration.bottomStats.2.title')}
+                </p>
               </div>
             </div>
           </div>
@@ -1188,25 +1356,34 @@ export default function Home() {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-full border border-green-400/30 mb-8">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                 <span className="text-green-300 text-sm font-medium" suppressHydrationWarning>
-                   {t('landing.finalCta.badge')}
-                 </span>
+                <span
+                  className="text-green-300 text-sm font-medium"
+                  suppressHydrationWarning
+                >
+                  {t('landing.finalCta.badge')}
+                </span>
               </div>
 
               {/* Main Heading */}
-                             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-8" suppressHydrationWarning>
-                 <span className="block text-white mb-4">
-                   {t('landing.finalCta.title')}
-                 </span>
-                 <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x">
-                   {t('landing.finalCta.subtitle')}
-                 </span>
-               </h2>
+              <h2
+                className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-8"
+                suppressHydrationWarning
+              >
+                <span className="block text-white mb-4">
+                  {t('landing.finalCta.title')}
+                </span>
+                <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x">
+                  {t('landing.finalCta.subtitle')}
+                </span>
+              </h2>
 
-               {/* Description */}
-               <p className="text-xl text-white/80 leading-relaxed mb-12 max-w-2xl" suppressHydrationWarning>
-                 {t('landing.finalCta.description')}
-               </p>
+              {/* Description */}
+              <p
+                className="text-xl text-white/80 leading-relaxed mb-12 max-w-2xl"
+                suppressHydrationWarning
+              >
+                {t('landing.finalCta.description')}
+              </p>
 
               {/* Features Grid */}
               <div className="grid grid-cols-2 gap-4 mb-12">
@@ -1226,9 +1403,12 @@ export default function Home() {
                       />
                     </svg>
                   </div>
-                                     <span className="text-white font-medium" suppressHydrationWarning>
-                     {t('landing.finalCta.features.0.title')}
-                   </span>
+                  <span
+                    className="text-white font-medium"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.finalCta.features.0.title')}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
@@ -1247,9 +1427,12 @@ export default function Home() {
                       />
                     </svg>
                   </div>
-                                     <span className="text-white font-medium" suppressHydrationWarning>
-                     {t('landing.finalCta.features.1.title')}
-                   </span>
+                  <span
+                    className="text-white font-medium"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.finalCta.features.1.title')}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
@@ -1268,9 +1451,12 @@ export default function Home() {
                       />
                     </svg>
                   </div>
-                                     <span className="text-white font-medium" suppressHydrationWarning>
-                     {t('landing.finalCta.features.2.title')}
-                   </span>
+                  <span
+                    className="text-white font-medium"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.finalCta.features.2.title')}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
@@ -1289,9 +1475,12 @@ export default function Home() {
                       />
                     </svg>
                   </div>
-                                     <span className="text-white font-medium" suppressHydrationWarning>
-                     {t('landing.finalCta.features.3.title')}
-                   </span>
+                  <span
+                    className="text-white font-medium"
+                    suppressHydrationWarning
+                  >
+                    {t('landing.finalCta.features.3.title')}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1310,17 +1499,23 @@ export default function Home() {
                   <div className="text-center mb-8">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-full border border-green-400/30 mb-4">
                       <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                             <span className="text-green-300 text-sm font-medium" suppressHydrationWarning>
-                         {t('landing.finalCta.subscription.offer')}
-                       </span>
+                      <span
+                        className="text-green-300 text-sm font-medium"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.finalCta.subscription.offer')}
+                      </span>
                     </div>
 
-                                         <h3 className="text-2xl font-bold text-white mb-2" suppressHydrationWarning>
-                       {t('landing.finalCta.subscription.title')}
-                     </h3>
-                     <p className="text-white/70" suppressHydrationWarning>
-                       {t('landing.finalCta.subscription.description')}
-                     </p>
+                    <h3
+                      className="text-2xl font-bold text-white mb-2"
+                      suppressHydrationWarning
+                    >
+                      {t('landing.finalCta.subscription.title')}
+                    </h3>
+                    <p className="text-white/70" suppressHydrationWarning>
+                      {t('landing.finalCta.subscription.description')}
+                    </p>
                   </div>
 
                   <SubscriptionSection />
@@ -1329,21 +1524,30 @@ export default function Home() {
                   <div className="flex items-center justify-center gap-8 mt-8 pt-6 border-t border-white/10">
                     <div className="text-center">
                       <div className="text-2xl font-bold text-white">+500</div>
-                                             <div className="text-sm text-white/60" suppressHydrationWarning>
-                         {t('landing.finalCta.trustIndicators.0.title')}
-                       </div>
-                     </div>
-                     <div className="text-center">
-                       <div className="text-2xl font-bold text-white">99.9%</div>
-                       <div className="text-sm text-white/60" suppressHydrationWarning>
-                         {t('landing.finalCta.trustIndicators.1.title')}
-                       </div>
-                     </div>
-                     <div className="text-center">
-                       <div className="text-2xl font-bold text-white">24/7</div>
-                       <div className="text-sm text-white/60" suppressHydrationWarning>
-                         {t('landing.finalCta.trustIndicators.2.title')}
-                       </div>
+                      <div
+                        className="text-sm text-white/60"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.finalCta.trustIndicators.0.title')}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-white">99.9%</div>
+                      <div
+                        className="text-sm text-white/60"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.finalCta.trustIndicators.1.title')}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-white">24/7</div>
+                      <div
+                        className="text-sm text-white/60"
+                        suppressHydrationWarning
+                      >
+                        {t('landing.finalCta.trustIndicators.2.title')}
+                      </div>
                     </div>
                   </div>
                 </div>

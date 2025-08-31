@@ -6,23 +6,13 @@ import {
   Receipt,
   CreditCard,
   DollarSign,
-  Calendar,
-  Download,
   ArrowLeft,
   CheckCircle,
-  Clock,
   AlertCircle,
   FileText,
   User,
-  Building,
 } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -103,7 +93,6 @@ export default function InvoiceDetailsPage() {
             <p className="text-muted-foreground">تفاصيل الفاتورة والمدفوعات</p>
           </div>
         </div>
-       
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -170,7 +159,8 @@ export default function InvoiceDetailsPage() {
                   >
                     <div className="flex-1">
                       <p className="font-medium text-foreground">
-                        {item?.serviceType && getServiceTypeLabel(item.serviceType)}
+                        {item?.serviceType &&
+                          getServiceTypeLabel(item.serviceType)}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         الكمية: {item.quantity}
@@ -294,8 +284,6 @@ export default function InvoiceDetailsPage() {
               </div>
             </CardContent>
           </Card>
-
-       
         </div>
       </div>
     </div>

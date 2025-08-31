@@ -1,14 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   Calendar,
   Clock,
   ArrowLeft,
-  Printer,
-  Download,
   User,
   Building,
   FileText,

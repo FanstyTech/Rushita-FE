@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import {
   User,
   Calendar,
@@ -23,7 +23,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 
 interface WelcomeSectionProps {
   userName?: string;
-  variants: any;
+  variants: Variants;
 }
 
 export function WelcomeSection({ userName, variants }: WelcomeSectionProps) {

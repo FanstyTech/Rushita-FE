@@ -77,20 +77,16 @@ export default function AuthPage() {
   const { language } = useLanguage();
   const { login } = useAuth();
   const { useCountryPhoneCodes } = useCountry();
-  const { checkUser, sendOtp, verifyOtp, completeRegistration } = useOtp();
+  const { checkUser, sendOtp, verifyOtp } = useOtp();
 
   // Fetch country phone codes
   const { data: countryPhoneCodes, isLoading: isLoadingCountries } =
     useCountryPhoneCodes();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [currentStep, setCurrentStep] = useState<AuthStep>(
     AuthStep.PHONE_INPUT
   );
-  const [isExistingUser, setIsExistingUser] = useState<boolean | null>(null);
-  const [verificationCodeSent, setVerificationCodeSent] = useState(false);
-  const [resendDisabled, setResendDisabled] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(0);
   const [isInvalidCode, setIsInvalidCode] = useState(false);
 
@@ -99,14 +95,6 @@ export default function AuthPage() {
     phoneCode: '+966', // Default to Saudi Arabia
     phoneNumber: '',
     countryCodeId: '', // Will be set when country codes are loaded
-  });
-
-  const [passwordForm, setPasswordForm] = useState({
-    password: '',
-  });
-
-  const [verificationForm, setVerificationForm] = useState({
-    code: '',
   });
 
   // Form errors
@@ -131,8 +119,6 @@ export default function AuthPage() {
       timer = setTimeout(() => {
         setResendCountdown(resendCountdown - 1);
       }, 1000);
-    } else {
-      setResendDisabled(false);
     }
     return () => {
       if (timer) clearTimeout(timer);
@@ -161,29 +147,27 @@ export default function AuthPage() {
     try {
       setIsLoading(true);
 
-      // Check if user exists
       const userExists = await checkUser.mutateAsync({
         countryCodeId: selectedCountry.value,
         phoneNumber: phoneNumber,
       });
 
-      setIsExistingUser(userExists);
-
       if (userExists) {
-        // If user exists, go to password step
         setCurrentStep(AuthStep.PASSWORD_INPUT);
       } else {
-        // If user doesn't exist, send verification code and go to verification step
         await sendVerificationCode(selectedCountry.value, phoneNumber);
         setCurrentStep(AuthStep.VERIFICATION_CODE);
       }
-    } catch (error: any) {
-      console.error('Phone verification error:', error);
+    } catch (error: unknown) {
+      // تحقق من النوع قبل الوصول لـ message
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'حدث خطأ أثناء التحقق من رقم الهاتف. يرجى المحاولة مرة أخرى.';
+
       setErrors((prev) => ({
         ...prev,
-        form:
-          error.message ||
-          'حدث خطأ أثناء التحقق من رقم الهاتف. يرجى المحاولة مرة أخرى.',
+        form: message,
       }));
     } finally {
       setIsLoading(false);
@@ -201,8 +185,6 @@ export default function AuthPage() {
       type: OtpType.Registration,
     });
 
-    setVerificationCodeSent(true);
-    setResendDisabled(true);
     setResendCountdown(60); // 60 seconds countdown
   };
 
@@ -235,8 +217,7 @@ export default function AuthPage() {
           router.push('/patient-portal/dashboard');
         }
       }
-    } catch (error: any) {
-      console.error('Verification error:', error);
+    } catch {
       setIsInvalidCode(true);
     } finally {
       setIsLoading(false);
@@ -251,10 +232,9 @@ export default function AuthPage() {
 
     // Call the login mutation from the useAuth hook
     await login.mutateAsync(data, {
-      onSuccess: (response) => {
+      onSuccess: () => {
         // Get the user's role and redirect to appropriate dashboard
-        const roles = response?.user?.roles || [];
-        let dashboardPath = '/patient-portal/dashboard';
+        const dashboardPath = '/patient-portal/dashboard';
 
         // Get the current language from cookie or use default
         const getCookie = (name: string) => {
@@ -465,7 +445,6 @@ export default function AuthPage() {
             {currentStep === AuthStep.VERIFICATION_CODE && (
               <VerificationForm
                 phoneNumber={phoneForm.phoneNumber}
-                phoneCode={phoneForm.phoneCode}
                 phoneCodeLabel={
                   phoneCodes.find((c) => c.value === phoneForm.countryCodeId)
                     ?.label || phoneForm.phoneCode
@@ -486,7 +465,6 @@ export default function AuthPage() {
             {currentStep === AuthStep.REGISTRATION_FORM && (
               <RegistrationForm
                 phoneNumber={phoneForm.phoneNumber}
-                phoneCode={phoneForm.phoneCode}
                 countryCodeId={phoneForm.countryCodeId}
               />
             )}

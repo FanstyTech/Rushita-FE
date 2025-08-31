@@ -17,8 +17,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  AreaChart,
-  Area,
 } from 'recharts';
 import {
   DollarSign,
@@ -30,7 +28,6 @@ import {
   CreditCard,
   Receipt,
   BarChart3,
-  PieChart as PieChartIcon,
   Wallet,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -38,16 +35,6 @@ import PageLayout from '@/components/layouts/PageLayout';
 import { useInvoice } from '@/lib/api/hooks/useInvoice';
 import { useExpense } from '@/lib/api/hooks/useExpense';
 import { useRevenue } from '@/lib/api/hooks/useRevenue';
-import { useTransaction } from '@/lib/api/hooks/useTransaction';
-
-interface MonthlyData {
-  month: string;
-  revenue: number;
-  expenses: number;
-  profit: number;
-  patients: number;
-  avgRevenuePerPatient: number;
-}
 
 export default function FinancialDashboardPage() {
   const router = useRouter();
@@ -116,15 +103,6 @@ export default function FinancialDashboardPage() {
     endDate: dateRange.endDate,
   });
 
-  const {
-    data: transactionDashboard,
-    isLoading: isLoadingTransactionDashboard,
-    refetch: refetchTransactions,
-  } = useTransaction().useTransactionDashboardStats({
-    startDate: dateRange.startDate,
-    endDate: dateRange.endDate,
-  });
-
   // Navigation functions
   const navigateToTransactions = () =>
     router.push('/clinic/financial/transactions');
@@ -134,7 +112,6 @@ export default function FinancialDashboardPage() {
     refetchInvoices();
     refetchExpenses();
     refetchRevenue();
-    refetchTransactions();
   };
 
   // Format currency
@@ -163,8 +140,7 @@ export default function FinancialDashboardPage() {
   const isLoading =
     isLoadingInvoiceDashboard ||
     isLoadingExpenseDashboard ||
-    isLoadingRevenueDashboard ||
-    isLoadingTransactionDashboard;
+    isLoadingRevenueDashboard;
 
   // Combine revenue and expense data for charts
   const combineChartData = () => {
@@ -226,20 +202,12 @@ export default function FinancialDashboardPage() {
   const chartData = combineChartData();
 
   useEffect(() => {
-    const dateRange = getDateRange();
     // Instead of passing parameters to refetch, we need to invalidate and refetch the queries
     // The queries will automatically use the current dateRange values
     refetchInvoices();
     refetchExpenses();
     refetchRevenue();
-    refetchTransactions();
-  }, [
-    selectedPeriod,
-    refetchInvoices,
-    refetchExpenses,
-    refetchRevenue,
-    refetchTransactions,
-  ]);
+  }, [selectedPeriod, refetchInvoices, refetchExpenses, refetchRevenue]);
 
   return (
     <PageLayout>

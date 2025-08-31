@@ -4,6 +4,7 @@ import { useClinic } from '@/lib/api/hooks/useClinic';
 import { TimeRange } from '@/lib/api/types/clinic';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import PageLayout from '@/components/layouts/PageLayout';
 import ClinicDashboardSkeleton from '@/components/skeletons/clinic/ClinicDashboardSkeleton';
 import { Line, Doughnut } from 'react-chartjs-2';
@@ -38,7 +39,7 @@ import {
   getTimeRangeLabel,
   getVisitTypeLabel,
 } from '@/utils/textUtils';
-import { formatTime, formatTimeForInput } from '@/utils/dateTimeUtils';
+import { formatTimeForInput } from '@/utils/dateTimeUtils';
 import { AppointmentStatus } from '@/lib/api/types/appointment';
 
 ChartJS.register(
@@ -54,6 +55,7 @@ ChartJS.register(
 
 export default function ClinicDashboard() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState<TimeRange>(TimeRange.Weekly);
 
   const { useClinicDashboard } = useClinic();
@@ -80,7 +82,7 @@ export default function ClinicDashboard() {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <ExclamationCircleIcon className="w-12 h-12 text-red-500 mx-auto mb-4" />
-            <p className="text-red-600">Error loading dashboard</p>
+            <p className="text-red-600">{t('clinic.dashboard.errorLoading')}</p>
             <p className="text-gray-500 text-sm mt-2">{error.message}</p>
           </div>
         </div>
@@ -114,7 +116,7 @@ export default function ClinicDashboard() {
   // Enhanced stats cards with better design
   const statsCards = [
     {
-      title: 'Total Patients',
+      title: t('clinic.dashboard.stats.totalPatients'),
       value: stats?.totalPatients?.toLocaleString() || '0',
       change: stats?.patientsChange || 0,
       icon: <UserGroupIcon className="w-6 h-6" />,
@@ -123,7 +125,7 @@ export default function ClinicDashboard() {
       borderColor: 'border-blue-200',
     },
     {
-      title: "Today's Appointments",
+      title: t('clinic.dashboard.stats.todayAppointments'),
       value: stats?.todayAppointments?.toString() || '0',
       change: stats?.appointmentsChange || 0,
       icon: <CalendarIcon className="w-6 h-6" />,
@@ -132,7 +134,7 @@ export default function ClinicDashboard() {
       borderColor: 'border-purple-200',
     },
     {
-      title: 'Completed Today',
+      title: t('clinic.dashboard.stats.completedToday'),
       value: stats?.completedToday?.toString() || '0',
       change: stats?.completedChange || 0,
       icon: <CheckCircleIcon className="w-6 h-6" />,
@@ -141,7 +143,7 @@ export default function ClinicDashboard() {
       borderColor: 'border-green-200',
     },
     {
-      title: "Today's Revenue",
+      title: t('clinic.dashboard.stats.todayRevenue'),
       value: `$${stats?.todayRevenue?.toLocaleString() || '0'}`,
       change: stats?.revenueChange || 0,
       icon: <CurrencyDollarIcon className="w-6 h-6" />,
@@ -154,35 +156,41 @@ export default function ClinicDashboard() {
   // Quick Actions
   const quickActions = [
     {
-      title: 'New Patient Registration',
+      title: t('clinic.dashboard.quickActions.newPatientRegistration.title'),
       icon: <UserIcon className="w-5 h-5" />,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
-      description: 'Register a new patient',
+      description: t(
+        'clinic.dashboard.quickActions.newPatientRegistration.description'
+      ),
       action: () => router.push('/clinic/patients/add'),
     },
     {
-      title: 'Schedule Appointment',
+      title: t('clinic.dashboard.quickActions.scheduleAppointment.title'),
       icon: <CalendarIcon className="w-5 h-5" />,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
-      description: 'Book new appointment',
+      description: t(
+        'clinic.dashboard.quickActions.scheduleAppointment.description'
+      ),
       action: () => router.push('/clinic/appointments'),
     },
     {
-      title: 'View Patient Records',
+      title: t('clinic.dashboard.quickActions.viewPatientRecords.title'),
       icon: <DocumentTextIcon className="w-5 h-5" />,
       color: 'text-emerald-600',
       bgColor: 'bg-emerald-50',
-      description: 'Access patient files',
+      description: t(
+        'clinic.dashboard.quickActions.viewPatientRecords.description'
+      ),
       action: () => router.push('/clinic/patients'),
     },
     {
-      title: 'Settings',
+      title: t('clinic.dashboard.quickActions.settings.title'),
       icon: <CogIcon className="w-5 h-5" />,
       color: 'text-gray-600',
       bgColor: 'bg-gray-50',
-      description: 'Clinic configuration',
+      description: t('clinic.dashboard.quickActions.settings.description'),
       action: () => router.push('/clinic/settings'),
     },
   ];
@@ -192,7 +200,7 @@ export default function ClinicDashboard() {
     labels: currentChartData?.labels || [],
     datasets: [
       {
-        label: 'Total Appointments',
+        label: t('clinic.dashboard.charts.totalAppointments'),
         data: currentChartData?.appointments || [],
         borderColor: 'rgb(99, 102, 241)',
         backgroundColor: 'rgba(99, 102, 241, 0.1)',
@@ -201,7 +209,7 @@ export default function ClinicDashboard() {
         borderWidth: 3,
       },
       {
-        label: 'Completed',
+        label: t('clinic.dashboard.charts.completed'),
         data: currentChartData?.completed || [],
         borderColor: 'rgb(34, 197, 94)',
         backgroundColor: 'rgba(34, 197, 94, 0.1)',
@@ -328,7 +336,7 @@ export default function ClinicDashboard() {
                       {stat.change}
                     </span>
                     <span className="text-sm text-gray-500 ml-1">
-                      from yesterday
+                      {t('clinic.dashboard.stats.changeFromYesterday')}
                     </span>
                   </div>
                 </div>
@@ -349,10 +357,10 @@ export default function ClinicDashboard() {
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6"
         >
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-            Quick Actions
+            {t('clinic.dashboard.quickActions.title')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {quickActions.map((action, index) => (
+            {quickActions.map((action) => (
               <div
                 key={action.title}
                 className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors group"
@@ -372,7 +380,7 @@ export default function ClinicDashboard() {
                   className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                   onClick={action.action}
                 >
-                  Take Action
+                  {t('clinic.dashboard.quickActions.takeAction')}
                 </button>
               </div>
             ))}
@@ -389,7 +397,7 @@ export default function ClinicDashboard() {
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Appointments Overview
+                {t('clinic.dashboard.charts.appointmentsOverview')}
               </h3>
               <div className="flex gap-2 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
                 {Object.values(TimeRange)
@@ -415,7 +423,7 @@ export default function ClinicDashboard() {
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-gray-500">
-                    No data available for this time range
+                    {t('clinic.dashboard.charts.noDataAvailable')}
                   </p>
                 </div>
               )}
@@ -429,7 +437,7 @@ export default function ClinicDashboard() {
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-              Appointment Status
+              {t('clinic.dashboard.charts.appointmentStatus')}
             </h3>
             <div className="h-[300px]">
               <Doughnut data={doughnutData} options={doughnutOptions} />
@@ -446,7 +454,7 @@ export default function ClinicDashboard() {
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-              Upcoming Appointments
+              {t('clinic.dashboard.upcomingAppointments.title')}
             </h3>
             <div className="space-y-4">
               {upcomingAppointments && upcomingAppointments.length > 0 ? (
@@ -490,7 +498,9 @@ export default function ClinicDashboard() {
               ) : (
                 <div className="text-center py-8">
                   <CalendarIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No upcoming appointments</p>
+                  <p className="text-gray-500">
+                    {t('clinic.dashboard.upcomingAppointments.noAppointments')}
+                  </p>
                 </div>
               )}
             </div>
@@ -503,7 +513,7 @@ export default function ClinicDashboard() {
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-              Recent Activities
+              {t('clinic.dashboard.recentActivities.title')}
             </h3>
             <div className="space-y-4">
               {recentActivities && recentActivities.length > 0 ? (
@@ -552,7 +562,9 @@ export default function ClinicDashboard() {
               ) : (
                 <div className="text-center py-8">
                   <InformationCircleIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No recent activities</p>
+                  <p className="text-gray-500">
+                    {t('clinic.dashboard.recentActivities.noActivities')}
+                  </p>
                 </div>
               )}
             </div>

@@ -37,7 +37,9 @@ export default function RadiologyTestsPage() {
   const clinicId = user?.clinicInfo?.id || '';
 
   // States
-  const [selectedTest, setSelectedTest] = useState<RadiologyTestItemDto | null>(null);
+  const [selectedTest, setSelectedTest] = useState<RadiologyTestItemDto | null>(
+    null
+  );
   const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState<boolean>(false);
   const [isStatusUpdateModalOpen, setIsStatusUpdateModalOpen] =
@@ -72,16 +74,14 @@ export default function RadiologyTestsPage() {
   const { useClinicStaffForDropdown } = useClinicStaff();
 
   // Get data
-  const {
-    data: visitsWithRadiologyTestsData,
-    isLoading: isVisitsLoading,
-    refetch: refetchVisits,
-  } = getVisitsWithRadiologyTests(filter);
+  const { data: visitsWithRadiologyTestsData, isLoading: isVisitsLoading } =
+    getVisitsWithRadiologyTests(filter);
 
-  const { data: summaryData, isLoading: isSummaryLoading } = getRadiologyTestSummary({
-    clinicId: clinicId,
-    doctorId: filter?.doctorId?.toString() || undefined,
-  });
+  const { data: summaryData, isLoading: isSummaryLoading } =
+    getRadiologyTestSummary({
+      clinicId: clinicId,
+      doctorId: filter?.doctorId?.toString() || undefined,
+    });
 
   const { data: doctors } = useClinicStaffForDropdown({ clinicId: clinicId });
 

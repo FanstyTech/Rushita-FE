@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { User, Mail, Phone, Calendar, MapPin, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -32,7 +32,7 @@ interface PersonalInformationCardProps {
   cities: SelectOption[] | undefined;
   isEditing: boolean;
   formData: ProfileFormValues;
-  variants: any;
+  variants: Variants;
   register: UseFormRegister<ProfileFormValues>;
   errors?: FieldErrors<ProfileFormValues>;
   setValue?: UseFormSetValue<ProfileFormValues>;
@@ -191,7 +191,7 @@ export function PersonalInformationCard({
                 value={formData.idType.toString() || ''}
                 options={Object.entries(IdentificationType)
                   .filter(([key]) => isNaN(Number(key)))
-                  .map(([key, value]) => ({
+                  .map(([, value]) => ({
                     value: value.toString(),
                     label: getIdentificationTypeLabel(
                       value as IdentificationType

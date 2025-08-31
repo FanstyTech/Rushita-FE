@@ -69,9 +69,10 @@ export default function InvoicesPage() {
 
   // Get data
   const { data: invoices, isLoading } = useInvoicesList(filter);
-  const { data: summary, isLoading: isLoadingSummary } = useInvoiceSummary({});
-  const { data: invoice, isLoading: isLoadingInvoiceDetails, refetchInvoice } =
-    useInvoiceDetails(selectedInvoice?.id || null);
+  const { data: summary } = useInvoiceSummary({});
+  const { data: invoice, refetchInvoice } = useInvoiceDetails(
+    selectedInvoice?.id || null
+  );
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {

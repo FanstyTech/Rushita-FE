@@ -59,7 +59,6 @@ export default function CurrencyPage() {
     handleSubmit,
     reset,
     watch,
-    setValue,
     formState: { errors },
   } = useForm<CurrencyFormData>({
     resolver: zodResolver(currencySchema),
@@ -75,8 +74,6 @@ export default function CurrencyPage() {
       exchangeRateDate: undefined,
     },
   });
-
-  const isDefault = watch('isDefault');
 
   // Handlers
   const onSubmit: SubmitHandler<CurrencyFormData> = async (formData) => {

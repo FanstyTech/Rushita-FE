@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { RevenueType } from '@/lib/api/types/revenue';
 import { ExpenseType } from '@/lib/api/types/expense';
 
 export const expenseSchema = z.object({

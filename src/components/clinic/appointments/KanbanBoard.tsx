@@ -11,76 +11,9 @@ import {
   ClockIcon as ClockSolidIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
 
 import { CircleDashed } from 'lucide-react';
-const KANBAN_COLUMNS = [
-  {
-    id: 'pending',
-    title: 'Pending',
-    status: AppointmentStatus.Pending,
-    gradient: 'from-gray-500 to-gray-600',
-    bgColor: 'bg-gradient-to-br from-gray-50 to-gray-100',
-    borderColor: 'border-gray-200',
-    icon: CircleDashed,
-    iconColor: 'text-gray-600',
-    count: 0,
-  },
-  {
-    id: 'scheduled',
-    title: 'Scheduled',
-    status: AppointmentStatus.Scheduled,
-    gradient: 'from-blue-500 to-blue-600',
-    bgColor: 'bg-gradient-to-br from-blue-50 to-blue-100',
-    borderColor: 'border-blue-200',
-    icon: ClockSolidIcon,
-    iconColor: 'text-blue-600',
-    count: 0,
-  },
-  {
-    id: 'confirmed',
-    title: 'Confirmed',
-    status: AppointmentStatus.Confirmed,
-    gradient: 'from-emerald-500 to-emerald-600',
-    bgColor: 'bg-gradient-to-br from-emerald-50 to-emerald-100',
-    borderColor: 'border-emerald-200',
-    icon: CheckCircleIcon,
-    iconColor: 'text-emerald-600',
-    count: 0,
-  },
-  {
-    id: 'in-progress',
-    title: 'In Progress',
-    status: AppointmentStatus.InProgress,
-    gradient: 'from-amber-500 to-amber-600',
-    bgColor: 'bg-gradient-to-br from-amber-50 to-amber-100',
-    borderColor: 'border-amber-200',
-    icon: ExclamationTriangleIcon,
-    iconColor: 'text-amber-600',
-    count: 0,
-  },
-  {
-    id: 'completed',
-    title: 'Completed',
-    status: AppointmentStatus.Completed,
-    gradient: 'from-green-500 to-green-600',
-    bgColor: 'bg-gradient-to-br from-green-50 to-green-100',
-    borderColor: 'border-green-200',
-    icon: CheckCircleIcon,
-    iconColor: 'text-green-600',
-    count: 0,
-  },
-  {
-    id: 'cancelled',
-    title: 'Cancelled',
-    status: AppointmentStatus.Cancelled,
-    gradient: 'from-red-500 to-red-600',
-    bgColor: 'bg-gradient-to-br from-red-50 to-red-100',
-    borderColor: 'border-red-200',
-    icon: XCircleIcon,
-    iconColor: 'text-red-600',
-    count: 0,
-  },
-];
 
 interface KanbanBoardProps {
   appointmentsByStatus: Record<AppointmentStatus, AppointmentListDto[]>;
@@ -99,6 +32,77 @@ export default function KanbanBoard({
   onShowDetails,
   onStartVisit,
 }: KanbanBoardProps) {
+  const { t } = useTranslation();
+
+  const KANBAN_COLUMNS = [
+    {
+      id: 'pending',
+      title: t('clinic.appointments.kanban.pending'),
+      status: AppointmentStatus.Pending,
+      gradient: 'from-gray-500 to-gray-600',
+      bgColor: 'bg-gradient-to-br from-gray-50 to-gray-100',
+      borderColor: 'border-gray-200',
+      icon: CircleDashed,
+      iconColor: 'text-gray-600',
+      count: 0,
+    },
+    {
+      id: 'scheduled',
+      title: t('clinic.appointments.kanban.scheduled'),
+      status: AppointmentStatus.Scheduled,
+      gradient: 'from-blue-500 to-blue-600',
+      bgColor: 'bg-gradient-to-br from-blue-50 to-blue-100',
+      borderColor: 'border-blue-200',
+      icon: ClockSolidIcon,
+      iconColor: 'text-blue-600',
+      count: 0,
+    },
+    {
+      id: 'confirmed',
+      title: t('clinic.appointments.kanban.confirmed'),
+      status: AppointmentStatus.Confirmed,
+      gradient: 'from-emerald-500 to-emerald-600',
+      bgColor: 'bg-gradient-to-br from-emerald-50 to-emerald-100',
+      borderColor: 'border-emerald-200',
+      icon: CheckCircleIcon,
+      iconColor: 'text-emerald-600',
+      count: 0,
+    },
+    {
+      id: 'in-progress',
+      title: t('clinic.appointments.kanban.inProgress'),
+      status: AppointmentStatus.InProgress,
+      gradient: 'from-amber-500 to-amber-600',
+      bgColor: 'bg-gradient-to-br from-amber-50 to-amber-100',
+      borderColor: 'border-amber-200',
+      icon: ExclamationTriangleIcon,
+      iconColor: 'text-amber-600',
+      count: 0,
+    },
+    {
+      id: 'completed',
+      title: t('clinic.appointments.kanban.completed'),
+      status: AppointmentStatus.Completed,
+      gradient: 'from-green-500 to-green-600',
+      bgColor: 'bg-gradient-to-br from-green-50 to-green-100',
+      borderColor: 'border-green-200',
+      icon: CheckCircleIcon,
+      iconColor: 'text-green-600',
+      count: 0,
+    },
+    {
+      id: 'cancelled',
+      title: t('clinic.appointments.kanban.cancelled'),
+      status: AppointmentStatus.Cancelled,
+      gradient: 'from-red-500 to-red-600',
+      bgColor: 'bg-gradient-to-br from-red-50 to-red-100',
+      borderColor: 'border-red-200',
+      icon: XCircleIcon,
+      iconColor: 'text-red-600',
+      count: 0,
+    },
+  ];
+
   return (
     <div className="w-full">
       <div className="flex gap-6 pb-6 px-2 overflow-x-auto custom-scrollbar">
@@ -207,7 +211,7 @@ export default function KanbanBoard({
                         className={`h-12 w-12 mx-auto mb-3 ${column.iconColor} opacity-30`}
                       />
                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                        No {column.title.toLowerCase()}
+                        {t('clinic.appointments.messages.noAppointments')}
                       </p>
                     </div>
                   )}

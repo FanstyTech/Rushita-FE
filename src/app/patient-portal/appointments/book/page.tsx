@@ -63,17 +63,15 @@ export default function BookAppointmentPage() {
   const { useClinicStaffForDropdown } = useClinicStaff();
   const { useClinicBookingConditionsDropdown } = useClinicBookingCondition();
 
-  const { data: clinics, isLoading: isClinicsLoadding } =
-    useClinicsForDropdown();
-  const { data: clinicSpecialties, isLoading: isClinicSpecialtiesLoadding } =
-    useClinicSpecialtiesForDropdown(selectedClinic?.value || '');
+  const { data: clinics } = useClinicsForDropdown();
+  const { data: clinicSpecialties } = useClinicSpecialtiesForDropdown(
+    selectedClinic?.value || ''
+  );
 
-  const { data: conditions, isLoading: isConditionsLoadding } =
-    useClinicBookingConditionsDropdown({
-      clinicId: selectedClinic?.value,
-    });
-  const { data: doctors, isLoading: isDoctorsLoadding } =
-    useClinicStaffForDropdown(staffFilter);
+  const { data: conditions } = useClinicBookingConditionsDropdown({
+    clinicId: selectedClinic?.value,
+  });
+  const { data: doctors } = useClinicStaffForDropdown(staffFilter);
 
   // Get available time slots
   const availableTimeSlots = generateTimeSlots();

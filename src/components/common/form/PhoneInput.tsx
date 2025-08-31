@@ -1,10 +1,11 @@
 'use client';
 
-import { forwardRef, useState, useEffect, useRef } from 'react';
-import { AlertCircle, Smartphone } from 'lucide-react';
+import { forwardRef, useRef } from 'react';
+import { Smartphone } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import { PhoneCodeOption } from '@/lib/api/types/country';
 import { Select } from '@/components/common/form';
+import Image from 'next/image';
 
 interface PhoneInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -42,20 +43,7 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
     },
     ref
   ) => {
-    const [isOpen, setIsOpen] = useState(false);
     const selectRef = useRef<HTMLDivElement>(null);
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (selectRef.current && !selectRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    useEffect(() => {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () =>
-        document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
 
     const errorMessage = phoneCodeError || error;
 
@@ -103,7 +91,7 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
                   <div className="flex items-center gap-2">
                     {showFlags && option.flag && (
                       <div className="w-6 h-4 overflow-hidden rounded-sm flex items-center justify-center shadow-sm">
-                        <img
+                        <Image
                           src={`https://flagcdn.com/w20/${option.flag.toLocaleLowerCase()}.png`}
                           alt={option.label || ''}
                           className="max-w-full max-h-full object-cover"

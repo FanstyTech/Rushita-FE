@@ -1,5 +1,5 @@
 import { AttachmentDto } from './attachment';
-import { PaginationRequest, PaginationResponse } from './pagination';
+import { PaginationRequest } from './pagination';
 import { VisitStatus } from './visit';
 
 // Test status enum

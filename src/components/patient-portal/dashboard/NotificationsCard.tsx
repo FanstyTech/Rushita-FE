@@ -1,8 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Bell, Calendar, Pill, FlaskConical, MessageSquare, Info, Check, ChevronRight } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
+import {
+  Bell,
+  Calendar,
+  Pill,
+  FlaskConical,
+  MessageSquare,
+  Info,
+  Check,
+  ChevronRight,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next'; // Add this import
 import {
   Card,
@@ -29,11 +38,15 @@ interface Notification {
 
 interface NotificationsCardProps {
   notifications: Notification[];
-  variants: any;
+  variants: Variants;
   formatRelativeTime: (date: Date) => string;
 }
 
-export function NotificationsCard({ notifications, variants, formatRelativeTime }: NotificationsCardProps) {
+export function NotificationsCard({
+  notifications,
+  variants,
+  formatRelativeTime,
+}: NotificationsCardProps) {
   const { t } = useTranslation(); // Add this hook
 
   return (
@@ -47,7 +60,9 @@ export function NotificationsCard({ notifications, variants, formatRelativeTime 
             </CardTitle>
             <Button variant="ghost" size="sm" className="h-8 gap-1">
               <Check className="h-4 w-4" />
-              <span>{t('patientPortal.dashboard.notifications.markAllRead')}</span>
+              <span>
+                {t('patientPortal.dashboard.notifications.markAllRead')}
+              </span>
             </Button>
           </div>
           <CardDescription>
@@ -72,8 +87,7 @@ export function NotificationsCard({ notifications, variants, formatRelativeTime 
                   }}
                   className={cn(
                     'flex gap-4 p-6 relative',
-                    !notification.read &&
-                      'bg-primary/5 dark:bg-primary/10'
+                    !notification.read && 'bg-primary/5 dark:bg-primary/10'
                   )}
                 >
                   <div
@@ -133,7 +147,8 @@ export function NotificationsCard({ notifications, variants, formatRelativeTime 
                         {notification.title}
                       </h4>
                       <span className="text-xs text-muted-foreground flex-shrink-0">
-                        {t('patientPortal.dashboard.notifications.ago')} {formatRelativeTime(notification.timestamp)}
+                        {t('patientPortal.dashboard.notifications.ago')}{' '}
+                        {formatRelativeTime(notification.timestamp)}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-2">
@@ -147,7 +162,10 @@ export function NotificationsCard({ notifications, variants, formatRelativeTime 
                           asChild
                         >
                           <Link href={notification.actionUrl}>
-                            {notification.actionText || t('patientPortal.dashboard.notifications.viewDetails')}
+                            {notification.actionText ||
+                              t(
+                                'patientPortal.dashboard.notifications.viewDetails'
+                              )}
                           </Link>
                         </Button>
                       </div>
@@ -165,9 +183,15 @@ export function NotificationsCard({ notifications, variants, formatRelativeTime 
                 <div className="rounded-full bg-muted p-3 mb-3">
                   <Bell className="h-6 w-6 text-muted-foreground" />
                 </div>
-                <h3 className="font-medium">{t('patientPortal.dashboard.notifications.noNotifications.title')}</h3>
+                <h3 className="font-medium">
+                  {t(
+                    'patientPortal.dashboard.notifications.noNotifications.title'
+                  )}
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  {t('patientPortal.dashboard.notifications.noNotifications.description')}
+                  {t(
+                    'patientPortal.dashboard.notifications.noNotifications.description'
+                  )}
                 </p>
               </div>
             )}

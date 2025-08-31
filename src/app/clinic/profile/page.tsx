@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -84,7 +83,6 @@ const defaultHours: WorkingHours[] = [
 ];
 
 export default function ClinicProfile() {
-  const { t } = useTranslation();
   const { useClinicForEdit, createOrUpdateClinic } = useClinic();
   const [isEditing, setIsEditing] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<string>('');
@@ -221,17 +219,16 @@ export default function ClinicProfile() {
     }
   };
 
-  const handleHourChange = (
+  const handleHourChange = <K extends keyof WorkingHours>(
     index: number,
-    field: keyof WorkingHours,
-    value: any
+    field: K,
+    value: WorkingHours[K]
   ) => {
     const currentHours = watchedValues.hours || [];
     const updatedHours = [...currentHours];
     updatedHours[index] = { ...updatedHours[index], [field]: value };
     setValue('hours', updatedHours);
   };
-
   const ToggleSwitch = ({
     checked,
     onChange,

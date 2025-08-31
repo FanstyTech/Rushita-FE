@@ -1,14 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import {
-  Stethoscope,
-  FileText,
-  Tag,
-  Calendar,
-  ChevronRight,
-} from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
+import { Stethoscope, FileText, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next'; // Add this import
 import {
   Card,
@@ -20,13 +14,12 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { PatientPortalVisitsDto } from '@/lib/api/types/clinic-patient';
 import { formatDate } from '@/utils/dateTimeUtils';
 
 interface RecentVisitsCardProps {
   visits: PatientPortalVisitsDto[];
-  variants: any;
+  variants: Variants;
 }
 
 export function RecentVisitsCard({ visits, variants }: RecentVisitsCardProps) {
@@ -85,7 +78,9 @@ export function RecentVisitsCard({ visits, variants }: RecentVisitsCardProps) {
                       {visit.symptoms && (
                         <span className="flex items-center">
                           <FileText className="h-3 w-3 mr-1" />
-                          {visit.symptoms.length > 20 ? `${visit.symptoms.substring(0, 20)}...` : visit.symptoms}
+                          {visit.symptoms.length > 20
+                            ? `${visit.symptoms.substring(0, 20)}...`
+                            : visit.symptoms}
                         </span>
                       )}
                     </div>

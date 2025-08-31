@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
-import { SelectOption } from '@/lib/api/types/select-option';
 import Avatar from '@/components/common/Avatar';
 import { GetClinicsForDropdownDto } from '@/lib/api/types/clinic';
 import { Badge } from '@/components/ui/badge';

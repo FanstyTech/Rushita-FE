@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ import { AppointmentStatus } from '@/lib/api/types/appointment';
 
 interface AppointmentCardProps {
   appointment: PatientPortalAppointmentsDto;
-  variants: any;
+  variants: Variants;
 }
 
 export function AppointmentCard({

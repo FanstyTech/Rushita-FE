@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Bell, Menu, LogOut, Settings, User } from 'lucide-react';
+import { Bell, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import {
@@ -18,7 +17,6 @@ import ThemeToggle from '../ThemeToggle';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { t } from 'i18next';
 import { useLanguage, Language } from '@/i18n/LanguageProvider';
-import { AuthenticationUserResult } from '@/lib/api/types/auth';
 import { languages } from '@/middleware';
 
 interface HeaderProps {
@@ -26,7 +24,6 @@ interface HeaderProps {
 }
 
 export function Header({ setSidebarOpen }: HeaderProps) {
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { language, setLanguage, direction, isChangingLanguage } =
@@ -43,15 +40,7 @@ export function Header({ setSidebarOpen }: HeaderProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleLogout = async () => {
-    // await logout();
-    router.push('/patient-portal/auth');
-  };
-
   if (!mounted) return null;
-  function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(' ');
-  }
 
   return (
     <motion.header

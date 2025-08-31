@@ -24,7 +24,6 @@ import {
   PatientPortalPrescriptionsDto,
   PatientPortalProfileDto,
   PatientPortalVisitsDto,
-  PatientPrescriptionFilterDto,
   PatientProfileDto,
   PatientStatus,
   PatientVisitFilterDto,

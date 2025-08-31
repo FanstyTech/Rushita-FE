@@ -12,24 +12,17 @@ import {
 import { BellIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { BsGrid } from 'react-icons/bs';
 import Avatar from './common/Avatar';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+
 import { FaBars } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
 
 export default function Header() {
   const { logout, user } = useAuth();
   const { t } = useTranslation();
-  const { language, setLanguage, direction, isChangingLanguage, toggolemenue } =
-    useLanguage();
+  const { direction, toggolemenue } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   // Use useEffect to handle client-side operations

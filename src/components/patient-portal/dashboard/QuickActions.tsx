@@ -1,25 +1,23 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { CalendarCheck, Stethoscope, FilePlus2, User } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '@/i18n/LanguageProvider';
 
 interface QuickAction {
   id: string;
   titleKey: string;
-  icon: any;
+  icon: React.ElementType;
   url: string;
   color: 'blue' | 'purple' | 'green' | 'amber';
 }
 
 interface QuickActionsProps {
   actions: QuickAction[];
-  containerVariants: any;
-  itemVariants: any;
+  containerVariants: Variants;
+  itemVariants: Variants;
 }
 
 export function QuickActions({
@@ -28,7 +26,6 @@ export function QuickActions({
   itemVariants,
 }: QuickActionsProps) {
   const { t } = useTranslation();
-  const { direction } = useLanguage();
 
   return (
     <motion.div

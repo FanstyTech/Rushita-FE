@@ -1,6 +1,6 @@
 import { AppointmentStatus } from './appointment';
 import { PaginationRequest } from './pagination';
-import { TestStatus, VisitLabTestDto } from './visit-lab-test';
+import { VisitLabTestDto } from './visit-lab-test';
 import { FrequencyType, VisitPrescriptionDto } from './visit-prescription';
 import { VisitRadiologyTestDto } from './visit-radiology-test';
 
@@ -530,9 +530,7 @@ export interface PatientPortalAppointmentsDto {
   statusDisplay: string;
 }
 
-export interface PatientAppointmentFilterDto {
-  pageNumber?: number;
-  pageSize?: number;
+export interface PatientAppointmentFilterDto extends PaginationRequest {
   fromDate?: string;
   toDate?: string;
   status?: string;
@@ -563,15 +561,14 @@ export interface PatientPortalVisitsDto {
   radiologyTests: VisitRadiologyTestDto[];
 }
 
-export interface PatientVisitFilterDto {
-  pageNumber?: number;
-  pageSize?: number;
+export interface PatientVisitFilterDto extends PaginationRequest {
   fromDate?: string;
   toDate?: string;
   status?: string;
   type?: string;
   clinicId?: string;
   staffId?: string;
+  specialtyId?: string;
 }
 
 export interface VisitDiagnosisDto {

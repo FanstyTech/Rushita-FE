@@ -3,11 +3,9 @@ import { toast } from '@/components/ui/Toast';
 import { clinicService } from '../services/clinic.service';
 import type {
   ClinicDashboardFilterDto,
-  ClinicDto,
   ClinicFilterDto,
   ClinicStatus,
   CreateUpdateClinicDto,
-  TimeRange,
 } from '../types/clinic';
 
 export const useClinic = () => {

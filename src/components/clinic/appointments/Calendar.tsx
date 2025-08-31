@@ -23,6 +23,7 @@ import {
 import { AppointmentListDto, VisitType } from '@/lib/api/types/appointment';
 import { Button } from '@/components/ui/button';
 import { formatTimeForAPI } from '@/utils/dateTimeUtils';
+import { useTranslation } from 'react-i18next';
 
 interface CalendarProps {
   appointments: AppointmentListDto[];
@@ -31,59 +32,38 @@ interface CalendarProps {
   onAppointmentClick?: (appointment: AppointmentListDto) => void;
 }
 
-// Treatment type configuration
-const TREATMENT_CONFIG = {
-  [VisitType.New]: {
-    label: 'New Patient',
-    color:
-      'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-700',
-    dotColor: 'bg-blue-500',
-  },
-  [VisitType.Followup]: {
-    label: 'Follow-up',
-    color:
-      'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-700',
-    dotColor: 'bg-purple-500',
-  },
-};
-
-// Time slots for the calendar - focusing on business hours but including early morning
-const TIME_SLOTS = [
-  '00:00',
-  '01:00',
-  '02:00',
-  '03:00',
-  '04:00',
-  '05:00',
-  '06:00',
-  '07:00',
-  '08:00',
-  '09:00',
-  '10:00',
-  '11:00',
-  '12:00',
-  '13:00',
-  '14:00',
-  '15:00',
-  '16:00',
-  '17:00',
-  '18:00',
-  '19:00',
-  '20:00',
-  '21:00',
-  '22:00',
-  '23:00',
-];
-
 export function Calendar({
   appointments,
   onDaySelect,
   selectedDate,
   onAppointmentClick,
 }: CalendarProps) {
+  const { t } = useTranslation();
   const [currentWeek, setCurrentWeek] = useState(new Date());
-  const [selectedAppointment, setSelectedAppointment] =
-    useState<AppointmentListDto | null>(null);
+
+  const [hoveredAppointment, setHoveredAppointment] = useState<string | null>(
+    null
+  );
+  const [tooltipPosition, setTooltipPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  // Treatment type configuration with translations
+  const TREATMENT_CONFIG = {
+    [VisitType.New]: {
+      label: t('clinic.appointments.visitTypes.new'),
+      color:
+        'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-700',
+      dotColor: 'bg-blue-500',
+    },
+    [VisitType.Followup]: {
+      label: t('clinic.appointments.visitTypes.followUp'),
+      color:
+        'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-700',
+      dotColor: 'bg-purple-500',
+    },
+  };
 
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 0 });
   const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 0 });
@@ -133,11 +113,61 @@ export function Calendar({
     event: React.MouseEvent
   ) => {
     event.stopPropagation();
-    setSelectedAppointment(appointment);
     if (onAppointmentClick) {
       onAppointmentClick(appointment);
     }
   };
+
+  const handleMouseOver = (
+    appointment: AppointmentListDto,
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    setHoveredAppointment(appointment.id);
+    const rect = event.currentTarget.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    if (x + 200 > viewportWidth) {
+      setTooltipPosition({ x: x - 200, y });
+    } else {
+      setTooltipPosition({ x, y });
+    }
+  };
+
+  const handleMouseOut = () => {
+    setHoveredAppointment(null);
+    setTooltipPosition(null);
+  };
+
+  // Time slots for the calendar - focusing on business hours but including early morning
+  const TIME_SLOTS = [
+    '00:00',
+    '01:00',
+    '02:00',
+    '03:00',
+    '04:00',
+    '05:00',
+    '06:00',
+    '07:00',
+    '08:00',
+    '09:00',
+    '10:00',
+    '11:00',
+    '12:00',
+    '13:00',
+    '14:00',
+    '15:00',
+    '16:00',
+    '17:00',
+    '18:00',
+    '19:00',
+    '20:00',
+    '21:00',
+    '22:00',
+    '23:00',
+  ];
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -167,7 +197,7 @@ export function Calendar({
               onClick={() => setCurrentWeek(new Date())}
               className="px-3 py-2 text-sm"
             >
-              Today
+              {t('clinic.appointments.calendarView.today')}
             </Button>
             <Button
               variant="outline"
@@ -211,7 +241,7 @@ export function Calendar({
         {/* Days Grid */}
         <div className="flex-1 overflow-x-auto">
           <div className="grid grid-cols-7 min-w-full">
-            {weekDays.map((day, dayIndex) => {
+            {weekDays.map((day) => {
               const dayKey = format(day, 'yyyy-MM-dd');
               const dayAppointments = appointmentsByDay[dayKey] || [];
               const isToday = isSameDay(day, new Date());
@@ -247,7 +277,7 @@ export function Calendar({
 
                   {/* Time Slots */}
                   <div className="relative">
-                    {TIME_SLOTS.map((time, timeIndex) => (
+                    {TIME_SLOTS.map((time) => (
                       <div
                         key={`${dayKey}-${time}`}
                         className="h-12 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-25 dark:hover:bg-gray-900/30"
@@ -255,13 +285,15 @@ export function Calendar({
                     ))}
 
                     {/* Appointments */}
-                    {dayAppointments.map((appointment, index) => {
+                    {dayAppointments.map((appointment) => {
                       const style = getAppointmentStyle(appointment);
                       return (
                         <div
                           key={appointment.id}
                           className="absolute left-0.5 right-0.5 z-10 cursor-pointer group"
                           style={style}
+                          onMouseOver={(e) => handleMouseOver(appointment, e)}
+                          onMouseOut={handleMouseOut}
                           onClick={(e) =>
                             handleAppointmentClick(appointment, e)
                           }
@@ -287,216 +319,246 @@ export function Calendar({
                           </div>
 
                           {/* Hover Tooltip */}
-                          <div className="absolute left-full top-0 ml-2 w-72 bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[99999]">
-                            {/* Patient Header */}
-                            <div className="bg-blue-50 dark:bg-blue-900/30 px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                              <div className="flex items-center gap-3">
-                                <div className="relative">
-                                  <div className="w-10 h-10 bg-blue-500 dark:bg-blue-500 rounded-full flex items-center justify-center">
-                                    <UserIcon className="h-5 w-5 text-white" />
-                                  </div>
-                                  <div
-                                    className={`absolute -bottom-1 -right-1 w-4 h-4 ${
-                                      TREATMENT_CONFIG[appointment.type]
-                                        .dotColor
-                                    } rounded-full border-2 border-white dark:border-gray-900 flex items-center justify-center`}
-                                  ></div>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">
-                                    {appointment.patientName}
-                                  </h3>
-                                  <div className="text-xs text-gray-600 dark:text-gray-500 space-y-1">
-                                    <div className="flex items-center gap-1">
-                                      <PhoneIcon className="h-3 w-3" />
-                                      <span>+12383843</span>
+                          {hoveredAppointment === appointment.id &&
+                            tooltipPosition && (
+                              <div
+                                className="fixed w-72 bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden opacity-100 visible transition-all duration-200 pointer-events-auto max-h-[80vh] overflow-y-auto"
+                                style={{
+                                  left: `${tooltipPosition.x}px`,
+                                  top: `${tooltipPosition.y}px`,
+                                  zIndex: 99999,
+                                }}
+                              >
+                                {/* Patient Header */}
+                                <div className="bg-blue-50 dark:bg-blue-900/30 px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                                  <div className="flex items-center gap-3">
+                                    <div className="relative">
+                                      <div className="w-10 h-10 bg-blue-500 dark:bg-blue-500 rounded-full flex items-center justify-center">
+                                        <UserIcon className="h-5 w-5 text-white" />
+                                      </div>
+                                      <div
+                                        className={`absolute -bottom-1 -right-1 w-4 h-4 ${
+                                          TREATMENT_CONFIG[appointment.type]
+                                            .dotColor
+                                        } rounded-full border-2 border-white dark:border-gray-900 flex items-center justify-center`}
+                                      ></div>
                                     </div>
-                                    <div className="flex items-center gap-1">
-                                      <EnvelopeIcon className="h-3 w-3" />
-                                      <span className="truncate">
-                                        patient@email.com
-                                      </span>
+                                    <div className="flex-1 min-w-0">
+                                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">
+                                        {appointment.patientName}
+                                      </h3>
+                                      <div className="text-xs text-gray-600 dark:text-gray-500 space-y-1">
+                                        <div className="flex items-center gap-1">
+                                          <PhoneIcon className="h-3 w-3" />
+                                          <span>+12383843</span>
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                          <EnvelopeIcon className="h-3 w-3" />
+                                          <span className="truncate">
+                                            patient@email.com
+                                          </span>
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                            </div>
 
-                            <div className="p-4">
-                              {/* Treatment & Doctor */}
-                              <div className="grid grid-cols-2 gap-3 mb-4">
-                                <div>
-                                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
-                                    Treatment
-                                  </p>
-                                  <div
-                                    className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
-                                      TREATMENT_CONFIG[appointment.type].color
-                                    }`}
-                                  >
-                                    {TREATMENT_CONFIG[appointment.type].label}
-                                  </div>
-                                </div>
-                                <div>
-                                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
-                                    Doctor
-                                  </p>
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full"></div>
-                                    <span className="text-xs text-gray-700 dark:text-gray-500 truncate">
-                                      Dr. {appointment.staffName}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Time Schedule */}
-                              <div className="mb-4">
-                                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
-                                  Schedule
-                                </p>
-                                <div className="bg-gray-50 dark:bg-gray-900/30 rounded p-3 space-y-2">
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                      <div className="w-2 h-2 bg-blue-500 dark:bg-blue-500 rounded-full"></div>
-                                      <span className="text-xs text-gray-700 dark:text-gray-500">
+                                <div className="p-4">
+                                  {/* Treatment & Doctor */}
+                                  <div className="grid grid-cols-2 gap-3 mb-4">
+                                    <div>
+                                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                                        {t(
+                                          'clinic.appointments.calendarView.treatment'
+                                        )}
+                                      </p>
+                                      <div
+                                        className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                                          TREATMENT_CONFIG[appointment.type]
+                                            .color
+                                        }`}
+                                      >
                                         {
                                           TREATMENT_CONFIG[appointment.type]
                                             .label
                                         }
-                                      </span>
+                                      </div>
                                     </div>
-                                    <span className="text-xs font-medium text-blue-600 dark:text-blue-500 bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 rounded">
-                                      {formatTimeForAPI(appointment.startTime)}
+                                    <div>
+                                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                                        {t(
+                                          'clinic.appointments.calendarView.doctor'
+                                        )}
+                                      </p>
+                                      <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full"></div>
+                                        <span className="text-xs text-gray-700 dark:text-gray-500 truncate">
+                                          Dr. {appointment.staffName}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Time Schedule */}
+                                  <div className="mb-4">
+                                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                      {t(
+                                        'clinic.appointments.calendarView.schedule'
+                                      )}
+                                    </p>
+                                    <div className="bg-gray-50 dark:bg-gray-900/30 rounded p-3 space-y-2">
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                          <div className="w-2 h-2 bg-blue-500 dark:bg-blue-500 rounded-full"></div>
+                                          <span className="text-xs text-gray-700 dark:text-gray-500">
+                                            {
+                                              TREATMENT_CONFIG[appointment.type]
+                                                .label
+                                            }
+                                          </span>
+                                        </div>
+                                        <span className="text-xs font-medium text-blue-600 dark:text-blue-500 bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 rounded">
+                                          {formatTimeForAPI(
+                                            appointment.startTime
+                                          )}
+                                        </span>
+                                      </div>
+                                      {appointment.type === VisitType.New && (
+                                        <>
+                                          <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-purple-500 dark:bg-purple-500 rounded-full"></div>
+                                              <span className="text-xs text-gray-700 dark:text-gray-500">
+                                                {t(
+                                                  'clinic.appointments.calendarView.prostheticTooth'
+                                                )}
+                                              </span>
+                                            </div>
+                                            <span className="text-xs font-medium text-purple-600 dark:text-purple-500 bg-purple-100 dark:bg-purple-900/30 px-2 py-0.5 rounded">
+                                              {(() => {
+                                                const start = new Date(
+                                                  `2000-01-01T${appointment.startTime}`
+                                                );
+                                                const next = new Date(
+                                                  start.getTime() + 30 * 60000
+                                                );
+                                                return next.toLocaleTimeString(
+                                                  'en-US',
+                                                  {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: false,
+                                                  }
+                                                );
+                                              })()}
+                                            </span>
+                                          </div>
+                                          <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full"></div>
+                                              <span className="text-xs text-gray-700 dark:text-gray-500">
+                                                {t(
+                                                  'clinic.appointments.calendarView.postSurgicalCare'
+                                                )}
+                                              </span>
+                                            </div>
+                                            <span className="text-xs font-medium text-green-600 dark:text-green-500 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded">
+                                              {(() => {
+                                                const start = new Date(
+                                                  `2000-01-01T${appointment.startTime}`
+                                                );
+                                                const next = new Date(
+                                                  start.getTime() + 60 * 60000
+                                                );
+                                                return next.toLocaleTimeString(
+                                                  'en-US',
+                                                  {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: false,
+                                                  }
+                                                );
+                                              })()}
+                                            </span>
+                                          </div>
+                                        </>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Action Buttons */}
+                                  <div className="flex gap-3 mb-4">
+                                    <Button
+                                      variant="outline"
+                                      className="bg-teal-100 text-teal-800"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        // Edit appointment logic
+                                      }}
+                                    >
+                                      <PencilIcon className="h-4 w-4" />
+                                      {t('clinic.appointments.actions.edit')}
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      className="bg-blue-100 text-blue-800"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        // Start visit logic
+                                      }}
+                                    >
+                                      <ClipboardIcon className="h-4 w-4" />
+                                      {t(
+                                        'clinic.appointments.details.startVisit'
+                                      )}
+                                    </Button>
+
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="bg-pink-100 text-pink-800"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        // Cancel appointment logic
+                                      }}
+                                    >
+                                      <TrashIcon className="h-3 w-3" />
+                                      {t('clinic.appointments.actions.cancel')}
+                                    </Button>
+                                  </div>
+
+                                  {/* Patient Details Button */}
+                                  <Button className="w-full bg-gray-100 dark:bg-gray-900/30 hover:bg-gray-200 dark:hover:bg-gray-900/50 text-gray-700 dark:text-gray-500 text-xs font-medium py-2 px-3 rounded-md border border-gray-200 dark:border-gray-700 transition-colors flex items-center justify-center gap-1">
+                                    {t(
+                                      'clinic.appointments.calendarView.seePatientDetails'
+                                    )}
+                                    <svg
+                                      className="w-3 h-3"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M9 5l7 7-7 7"
+                                      />
+                                    </svg>
+                                  </Button>
+
+                                  {/* Time Display */}
+                                  <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 text-center">
+                                    <span className="text-xs font-medium text-gray-600 dark:text-gray-500">
+                                      {formatTimeForAPI(appointment.startTime)}{' '}
+                                      - {formatTimeForAPI(appointment.endTime)}
                                     </span>
                                   </div>
-                                  {appointment.type === VisitType.New && (
-                                    <>
-                                      <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                          <div className="w-2 h-2 bg-purple-500 dark:bg-purple-500 rounded-full"></div>
-                                          <span className="text-xs text-gray-700 dark:text-gray-500">
-                                            Prosthetic Tooth
-                                          </span>
-                                        </div>
-                                        <span className="text-xs font-medium text-purple-600 dark:text-purple-500 bg-purple-100 dark:bg-purple-900/30 px-2 py-0.5 rounded">
-                                          {(() => {
-                                            const start = new Date(
-                                              `2000-01-01T${appointment.startTime}`
-                                            );
-                                            const next = new Date(
-                                              start.getTime() + 30 * 60000
-                                            );
-                                            return next.toLocaleTimeString(
-                                              'en-US',
-                                              {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                hour12: false,
-                                              }
-                                            );
-                                          })()}
-                                        </span>
-                                      </div>
-                                      <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                          <div className="w-2 h-2 bg-green-500 dark:bg-green-500 rounded-full"></div>
-                                          <span className="text-xs text-gray-700 dark:text-gray-500">
-                                            Post-Surgical Care
-                                          </span>
-                                        </div>
-                                        <span className="text-xs font-medium text-green-600 dark:text-green-500 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded">
-                                          {(() => {
-                                            const start = new Date(
-                                              `2000-01-01T${appointment.startTime}`
-                                            );
-                                            const next = new Date(
-                                              start.getTime() + 60 * 60000
-                                            );
-                                            return next.toLocaleTimeString(
-                                              'en-US',
-                                              {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                hour12: false,
-                                              }
-                                            );
-                                          })()}
-                                        </span>
-                                      </div>
-                                    </>
-                                  )}
                                 </div>
                               </div>
-
-                              {/* Action Buttons */}
-                              <div className="flex gap-3 mb-4">
-                                <Button
-                                  variant="outline"
-                                  className="bg-teal-100 text-teal-800"
-                                  size="sm"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // Edit appointment logic
-                                  }}
-                                >
-                                  <PencilIcon className="h-4 w-4" />
-                                  Edit
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  className="bg-blue-100 text-blue-800"
-                                  size="sm"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // Start visit logic
-                                  }}
-                                >
-                                  <ClipboardIcon className="h-4 w-4" />
-                                  Start Visit
-                                </Button>
-
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="bg-pink-100 text-pink-800"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // Cancel appointment logic
-                                  }}
-                                >
-                                  <TrashIcon className="h-3 w-3" />
-                                  Cancel
-                                </Button>
-                              </div>
-
-                              {/* Patient Details Button */}
-                              <Button className="w-full bg-gray-100 dark:bg-gray-900/30 hover:bg-gray-200 dark:hover:bg-gray-900/50 text-gray-700 dark:text-gray-500 text-xs font-medium py-2 px-3 rounded-md border border-gray-200 dark:border-gray-700 transition-colors flex items-center justify-center gap-1">
-                                See Patient Details
-                                <svg
-                                  className="w-3 h-3"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 5l7 7-7 7"
-                                  />
-                                </svg>
-                              </Button>
-
-                              {/* Time Display */}
-                              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 text-center">
-                                <span className="text-xs font-medium text-gray-600 dark:text-gray-500">
-                                  {formatTimeForAPI(appointment.startTime)} -{' '}
-                                  {formatTimeForAPI(appointment.endTime)}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
+                            )}
                         </div>
                       );
                     })}

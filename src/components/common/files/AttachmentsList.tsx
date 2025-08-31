@@ -17,7 +17,6 @@ import { attachmentService } from '@/lib/api/services/attachment.service';
 import { useAttachment } from '@/lib/api/hooks/useAttachment';
 import FilePreviewModal from '../FilePreviewModal';
 import { ConfirmationModal } from '../ConfirmationModal';
-import { toast } from 'sonner';
 
 interface AttachmentsListProps {
   attachments: AttachmentDto[];

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Table, type Column } from '@/components/common/Table';
-import { ActivitySquare, Eye, Pencil, Trash2 } from 'lucide-react';
+import { ActivitySquare, Eye } from 'lucide-react';
 import { useVisit } from '@/lib/api/hooks/useVisit';
 import { VisitListDto, VisitStatus } from '@/lib/api/types/visit';
 import {
@@ -33,7 +33,7 @@ export default function VisitsPage() {
   });
 
   // Get visits using the hook
-  const { useVisitList: getVisits, deleteVisit } = useVisit();
+  const { useVisitList: getVisits } = useVisit();
   const { data: visitsData, isLoading } = getVisits(filter);
 
   const visits = visitsData?.items || [];

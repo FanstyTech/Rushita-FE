@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Calendar, Clock, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,7 +14,6 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { PatientPortalAppointmentsDto } from '@/lib/api/types/clinic-patient';
 import { formatDate } from '@/utils/dateTimeUtils';
 import {
@@ -25,7 +24,7 @@ import { cn } from '@/lib/utils';
 
 interface AppointmentsCardProps {
   appointments: PatientPortalAppointmentsDto[];
-  variants: any;
+  variants: Variants;
 }
 
 export function AppointmentsCard({
@@ -79,7 +78,7 @@ export function AppointmentsCard({
                     <Badge
                       variant="outline"
                       className={cn(
-                        "text-xs",
+                        'text-xs',
                         getAppointmentStatusClass(appointment.status)
                       )}
                     >

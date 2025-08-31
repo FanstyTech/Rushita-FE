@@ -1,8 +1,6 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import { PatientFormData } from '../../validation';
 import PatientForm from '@/components/clinic/patients/PatientForm';

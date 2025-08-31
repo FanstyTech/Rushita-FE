@@ -65,7 +65,7 @@ export default function ExpensesPage() {
 
   // Get data
   const { data: expenses, isLoading } = useExpensesList(filter);
-  const { data: summary, isLoading: isLoadingSummary } = useExpenseSummary({});
+  const { data: summary } = useExpenseSummary({});
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {

@@ -16,10 +16,7 @@ import FilterBar, { FilterState } from '@/components/common/FilterBar';
 import { useSalary } from '@/lib/api/hooks/useSalary';
 import { salarySchema, type SalaryFormData } from './validation';
 import { SalaryStatus, StaffSalaryListDto } from '@/lib/api/types/salary';
-import {
-  GetClinicStaffForDropdownInput,
-  StaffType,
-} from '@/lib/api/types/clinic-staff';
+import { GetClinicStaffForDropdownInput } from '@/lib/api/types/clinic-staff';
 import { useClinicStaff } from '@/lib/api/hooks/useClinicStaff';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { formatDate } from '@/utils/dateTimeUtils';

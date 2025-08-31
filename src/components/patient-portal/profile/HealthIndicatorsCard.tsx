@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import {
   Activity,
   Heart,
@@ -28,7 +28,7 @@ import {
 
 interface HealthIndicatorsCardProps {
   healthIndicators: HealthIndicatorsDto;
-  variants: any;
+  variants: Variants;
   isEditing: boolean;
   // React Hook Form props
   register?: UseFormRegister<ProfileFormValues>;

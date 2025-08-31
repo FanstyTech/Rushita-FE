@@ -19,20 +19,8 @@ import {
 } from '@/lib/api/types/appointment';
 import { formatTimeForAPI } from '@/utils/dateTimeUtils';
 import { twMerge } from 'tailwind-merge';
-const TREATMENT_CONFIG = {
-  [VisitType.New]: {
-    icon: '🦷',
-    label: 'New Patient',
-    color: 'bg-blue-100 text-blue-800 border-blue-200',
-    dotColor: 'bg-blue-500',
-  },
-  [VisitType.Followup]: {
-    icon: '🔄',
-    label: 'Follow-up',
-    color: 'bg-purple-100 text-purple-800 border-purple-200',
-    dotColor: 'bg-purple-500',
-  },
-};
+import { useTranslation } from 'react-i18next';
+
 interface AppointmentCardProps {
   appointment: AppointmentListDto;
   columnStatus: AppointmentStatus;
@@ -50,6 +38,21 @@ export default function AppointmentCard({
   onShowDetails,
   onStartVisit,
 }: AppointmentCardProps) {
+  const { t } = useTranslation();
+
+  const TREATMENT_CONFIG = {
+    [VisitType.New]: {
+      label: t('clinic.appointments.visitTypes.new'),
+      color: 'bg-blue-100 text-blue-800 border-blue-200',
+      dotColor: 'bg-blue-500',
+    },
+    [VisitType.Followup]: {
+      label: t('clinic.appointments.visitTypes.followUp'),
+      color: 'bg-purple-100 text-purple-800 border-purple-200',
+      dotColor: 'bg-purple-500',
+    },
+  };
+
   return (
     <div
       className="group bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-move hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
@@ -71,11 +74,7 @@ export default function AppointmentCard({
               className={`absolute -bottom-1 -right-1 w-4 h-4 ${
                 TREATMENT_CONFIG[appointment.type].dotColor
               } rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center`}
-            >
-              <span className="text-xs">
-                {TREATMENT_CONFIG[appointment.type].icon}
-              </span>
-            </div>
+            ></div>
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="font-semibold text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -138,7 +137,7 @@ export default function AppointmentCard({
             }}
           >
             <CalendarIcon className="h-3 w-3 mr-1" />
-            Schedule
+            {t('clinic.appointments.buttons.schedule')}
           </Button>
         )}
         {columnStatus === AppointmentStatus.Scheduled && (
@@ -152,7 +151,7 @@ export default function AppointmentCard({
             }}
           >
             <CheckCircleIcon className="h-3 w-3 mr-1" />
-            Confirm
+            {t('clinic.appointments.appointmentCard.actions.confirm')}
           </Button>
         )}
         {columnStatus === AppointmentStatus.Confirmed && (
@@ -166,7 +165,7 @@ export default function AppointmentCard({
             }}
           >
             <ExclamationTriangleIcon className="h-3 w-3 mr-1" />
-            Start
+            {t('clinic.appointments.appointmentCard.actions.start')}
           </Button>
         )}
         {columnStatus === AppointmentStatus.InProgress && (
@@ -180,7 +179,7 @@ export default function AppointmentCard({
             }}
           >
             <CheckCircleIcon className="h-3 w-3 mr-1" />
-            Complete
+            {t('clinic.appointments.appointmentCard.actions.complete')}
           </Button>
         )}
 
