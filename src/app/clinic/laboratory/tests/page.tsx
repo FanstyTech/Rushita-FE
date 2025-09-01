@@ -63,8 +63,8 @@ export default function MedicalTestsPage() {
 
   // API Hooks
   const {
-    getVisitsWithLabTests,
-    getLabTestSummary,
+    useGetVisitsWithLabTests: getVisitsWithLabTests,
+    useGetLabTestSummary: getLabTestSummary,
     updateStatus,
     updateResult,
   } = useVisitLabTest();

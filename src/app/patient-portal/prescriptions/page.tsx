@@ -115,7 +115,8 @@ export default function PrescriptionsPage() {
   };
 
   // Fetch prescriptions using the hook
-  const { getPatientPortalPrescriptions } = useVisitPrescription();
+  const { useGetPatientPortalPrescriptions: getPatientPortalPrescriptions } =
+    useVisitPrescription();
   const {
     data: prescriptionsData,
     isLoading,

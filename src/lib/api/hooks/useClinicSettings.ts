@@ -13,7 +13,7 @@ export function useClinicSettings() {
   };
 
   // Get clinic settings
-  const getClinicSettings = () =>
+  const useGetClinicSettings = () =>
     useQuery({
       queryKey: queryKeys.settings(),
       queryFn: async () => {
@@ -48,7 +48,7 @@ export function useClinicSettings() {
 
   return {
     // Queries
-    getClinicSettings,
+    useGetClinicSettings,
 
     // Mutations
     saveClinicSettings,

@@ -11,7 +11,6 @@ import {
   GetPatientDropdownInput,
   PatientAppointmentFilterDto,
   PatientVisitFilterDto,
-  PatientPrescriptionFilterDto,
   UpdatePatientAppointmentDto,
   UpdatePatientPrescriptionDto,
   SavePatientAppointmentDto,

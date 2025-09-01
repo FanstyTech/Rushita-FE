@@ -53,7 +53,8 @@ export default function LabResultDetailsPage() {
   const labTestId = params.id as string;
 
   // Fetch lab test details using the hook
-  const { getPatientLabTestDetails } = useVisitLabTest();
+  const { useGetPatientLabTestDetails: getPatientLabTestDetails } =
+    useVisitLabTest();
   const {
     data: labResult,
     isLoading,

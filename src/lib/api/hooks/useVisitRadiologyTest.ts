@@ -42,7 +42,7 @@ export function useVisitRadiologyTest() {
   };
 
   // Get paginated list
-  const getVisitRadiologyTests = (filter: VisitRadiologyTestFilterDto) =>
+  const useGetVisitRadiologyTests = (filter: VisitRadiologyTestFilterDto) =>
     useQuery({
       queryKey: queryKeys.list(filter),
       queryFn: async () => {
@@ -57,7 +57,7 @@ export function useVisitRadiologyTest() {
     });
 
   // Get single visit radiology test
-  const getVisitRadiologyTest = (id: string) =>
+  const useGetVisitRadiologyTest = (id: string) =>
     useQuery({
       queryKey: queryKeys.detail(id),
       queryFn: async () => {
@@ -73,7 +73,7 @@ export function useVisitRadiologyTest() {
     });
 
   // Get visit radiology tests by visit ID
-  const getVisitRadiologyTestsByVisitId = (visitId: string) =>
+  const useGetVisitRadiologyTestsByVisitId = (visitId: string) =>
     useQuery({
       queryKey: queryKeys.byVisitId(visitId),
       queryFn: async () => {
@@ -91,7 +91,7 @@ export function useVisitRadiologyTest() {
     });
 
   // Get visit radiology tests by radiology test ID
-  const getVisitRadiologyTestsByRadiologyTestId = (radiologyTestId: string) =>
+  const useGetVisitRadiologyTestsByRadiologyTestId = (radiologyTestId: string) =>
     useQuery({
       queryKey: queryKeys.byRadiologyTestId(radiologyTestId),
       queryFn: async () => {
@@ -110,7 +110,7 @@ export function useVisitRadiologyTest() {
     });
 
   // Get visits with radiology tests
-  const getVisitsWithRadiologyTests = (
+  const useGetVisitsWithRadiologyTests = (
     input: GetVisitsWithRadiologyTestsInput
   ) =>
     useQuery({
@@ -128,7 +128,7 @@ export function useVisitRadiologyTest() {
     });
 
   // Get radiology test summary statistics
-  const getRadiologyTestSummary = (input: RadiologySummaryStatsInput) =>
+  const useGetRadiologyTestSummary = (input: RadiologySummaryStatsInput) =>
     useQuery({
       queryKey: [...queryKeys.visitsWithTests(), 'summary', input],
       queryFn: async () => {
@@ -263,12 +263,12 @@ export function useVisitRadiologyTest() {
 
   return {
     // Queries
-    getVisitRadiologyTests,
-    getVisitRadiologyTest,
-    getVisitRadiologyTestsByVisitId,
-    getVisitRadiologyTestsByRadiologyTestId,
-    getVisitsWithRadiologyTests,
-    getRadiologyTestSummary,
+    useGetVisitRadiologyTests,
+    useGetVisitRadiologyTest,
+    useGetVisitRadiologyTestsByVisitId,
+    useGetVisitRadiologyTestsByRadiologyTestId,
+    useGetVisitsWithRadiologyTests,
+    useGetRadiologyTestSummary,
     getPatientRadiologyTests,
     getPatientRadiologyTestDetails,
 

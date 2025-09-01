@@ -232,11 +232,9 @@ export default function ClinicProfile() {
   const ToggleSwitch = ({
     checked,
     onChange,
-    name,
   }: {
     checked: boolean;
     onChange: (checked: boolean) => void;
-    name: string;
   }) => (
     <label className="relative inline-flex items-center cursor-pointer">
       <input
@@ -245,7 +243,6 @@ export default function ClinicProfile() {
         className="sr-only peer"
         onChange={(e) => {
           onChange(e.target.checked);
-          setValue(name as any, e.target.checked);
         }}
         disabled={!isEditing}
       />
@@ -501,7 +498,6 @@ export default function ClinicProfile() {
                   onChange={(checked) =>
                     handleHourChange(index, 'isOpen', checked)
                   }
-                  name={`hours.${index}.isOpen`}
                 />
 
                 {hour.isOpen && (

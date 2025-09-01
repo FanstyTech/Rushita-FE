@@ -11,7 +11,7 @@ export function useDoctorDashboard() {
   };
 
   // Get doctor dashboard data
-  const getDashboard = (filter: DoctorDashboardFilterDto = {}) =>
+  const useGetDashboard = (filter: DoctorDashboardFilterDto = {}) =>
     useQuery({
       queryKey: queryKeys.dashboard(filter),
       queryFn: async () => {
@@ -29,7 +29,7 @@ export function useDoctorDashboard() {
 
   return {
     // Queries
-    getDashboard,
+    useGetDashboard,
 
     // Query keys (for manual cache management)
     queryKeys,

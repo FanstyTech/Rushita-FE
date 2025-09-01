@@ -51,7 +51,8 @@ interface SettingsFormData {
 export default function ClinicSettings() {
   const { t } = useTranslation();
   const { useCurrenciesDropdown } = useCurrency();
-  const { getClinicSettings, saveClinicSettings } = useClinicSettings();
+  const { useGetClinicSettings: getClinicSettings, saveClinicSettings } =
+    useClinicSettings();
 
   const { data: currencies } = useCurrenciesDropdown();
 
@@ -108,7 +109,10 @@ export default function ClinicSettings() {
     }
   }, [apiSettings]);
 
-  const handleInputChange = (field: keyof SettingsFormData, value: any) => {
+  const handleInputChange = (
+    field: keyof SettingsFormData,
+    value: SettingsFormData[keyof SettingsFormData]
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 

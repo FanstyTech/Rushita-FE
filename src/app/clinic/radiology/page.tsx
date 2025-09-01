@@ -66,8 +66,8 @@ export default function RadiologyTestsPage() {
 
   // API Hooks
   const {
-    getVisitsWithRadiologyTests,
-    getRadiologyTestSummary,
+    useGetVisitsWithRadiologyTests: getVisitsWithRadiologyTests,
+    useGetRadiologyTestSummary: getRadiologyTestSummary,
     updateStatus,
     updateResult,
   } = useVisitRadiologyTest();

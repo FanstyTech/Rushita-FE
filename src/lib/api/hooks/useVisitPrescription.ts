@@ -3,7 +3,6 @@ import { visitPrescriptionService } from '../services/visit-prescription.service
 import type {
   VisitPrescriptionFilterDto,
   CreateUpdateVisitPrescriptionDto,
-  UpdatePrescriptionStatusDto,
   DispenseMedicineDto,
 } from '../types/visit-prescription';
 import { toast } from '@/components/ui/Toast';
@@ -28,7 +27,7 @@ export function useVisitPrescription() {
   };
 
   // Get paginated list
-  const getVisitPrescriptions = (filter: VisitPrescriptionFilterDto) =>
+  const useGetVisitPrescriptions = (filter: VisitPrescriptionFilterDto) =>
     useQuery({
       queryKey: queryKeys.list(filter),
       queryFn: async () => {
@@ -46,7 +45,7 @@ export function useVisitPrescription() {
     });
 
   // Get single visit prescription
-  const getVisitPrescription = (id: string) =>
+  const useGetVisitPrescription = (id: string) =>
     useQuery({
       queryKey: queryKeys.detail(id),
       queryFn: async () => {
@@ -63,7 +62,7 @@ export function useVisitPrescription() {
     });
 
   // Get visit prescriptions by visit ID
-  const getVisitPrescriptionsByVisitId = (visitId: string) =>
+  const useGetVisitPrescriptionsByVisitId = (visitId: string) =>
     useQuery({
       queryKey: queryKeys.byVisitId(visitId),
       queryFn: async () => {
@@ -81,7 +80,7 @@ export function useVisitPrescription() {
     });
 
   // Get prescribed medications by visit ID
-  const getPrescribedMedicationsByVisitId = (visitId: string) =>
+  const useGetPrescribedMedicationsByVisitId = (visitId: string) =>
     useQuery({
       queryKey: queryKeys.prescribedMedicationsByVisit(visitId),
       queryFn: async () => {
@@ -205,7 +204,7 @@ export function useVisitPrescription() {
   };
 
   // Get patient portal prescriptions
-  const getPatientPortalPrescriptions = (filter: VisitPrescriptionFilterDto) =>
+  const useGetPatientPortalPrescriptions = (filter: VisitPrescriptionFilterDto) =>
     useQuery({
       queryKey: patientPortalQueryKeys.patientPortalList(filter),
       queryFn: async () => {
@@ -224,11 +223,11 @@ export function useVisitPrescription() {
 
   return {
     // Queries
-    getVisitPrescriptions,
-    getVisitPrescription,
-    getVisitPrescriptionsByVisitId,
-    getPrescribedMedicationsByVisitId,
-    getPatientPortalPrescriptions,
+    useGetVisitPrescriptions,
+    useGetVisitPrescription,
+    useGetVisitPrescriptionsByVisitId,
+    useGetPrescribedMedicationsByVisitId,
+    useGetPatientPortalPrescriptions,
 
     // Mutations
     createOrUpdateVisitPrescription,

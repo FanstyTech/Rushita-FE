@@ -1,4 +1,4 @@
-import { CreateOrUpdateVisitLabTestDto } from '@/lib/api/types/visit';
+import { CreateUpdateVisitLabTestDto } from '@/lib/api/types/visit-lab-test';
 
 export interface AdvancedSearchForm {
   name: string;
@@ -7,6 +7,6 @@ export interface AdvancedSearchForm {
   email: string;
 }
 export type LabTestFormData = {
-  labTests: CreateOrUpdateVisitLabTestDto[];
+  labTests: CreateUpdateVisitLabTestDto[];
   [key: string]: unknown;
 };

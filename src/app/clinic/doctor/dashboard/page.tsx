@@ -50,7 +50,7 @@ ChartJS.register(
 export default function DoctorDashboard() {
   const [timeRange, setTimeRange] = useState<TimeRange>(TimeRange.Weekly);
 
-  const { getDashboard } = useDoctorDashboard();
+  const { useGetDashboard: getDashboard } = useDoctorDashboard();
   const { data: dashboardData, isLoading, error } = getDashboard({ timeRange });
 
   // Animation variants

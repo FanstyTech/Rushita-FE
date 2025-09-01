@@ -69,7 +69,7 @@ export const attachmentService = {
     return apiClient.post(API_ENDPOINTS.ATTACHMENT.UPLOAD, formData, {
       headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       onUploadProgress: handleUploadProgress(onProgress),
-    } as any);
+    });
   },
 
   async uploadMultiple(
@@ -83,7 +83,7 @@ export const attachmentService = {
     return apiClient.post(API_ENDPOINTS.ATTACHMENT.UPLOAD_MULTIPLE, formData, {
       headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       onUploadProgress: handleUploadProgress(onProgress),
-    } as any);
+    });
   },
 
   async delete(id: string): Promise<ApiResponse<void>> {

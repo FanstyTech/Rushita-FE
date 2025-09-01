@@ -7,6 +7,7 @@ import { ApiResponse, AuthenticationResult } from './types/auth';
 interface RequestConfig extends RequestInit {
   params?: Record<string, string>;
   suppressError?: boolean;
+  onUploadProgress?: (progressEvent: ProgressEvent) => void;
 }
 
 type RequestBody = object | FormData | string | null;

@@ -35,6 +35,38 @@ import { motion, Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Skeleton from '@/components/ui/Skeleton';
 
+// Local interfaces for mock data structure
+interface MedicationItem {
+  id: string;
+  name: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  instructions: string;
+  refillable: boolean;
+  refillsRemaining: number;
+  sideEffects: string;
+  contraindications: string;
+}
+
+interface PrescriptionData {
+  id: string;
+  prescriptionNumber: string;
+  visitId: string;
+  doctorName: string;
+  doctorSpecialty: string;
+  doctorId: string;
+  clinicName: string;
+  clinicId: string;
+  date: string;
+  issuedDate: string;
+  expiryDate: string;
+  status: string;
+  medications: MedicationItem[];
+  diagnosis: string;
+  notes: string;
+}
+
 // Animation variants
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -271,7 +303,7 @@ export default function PrescriptionDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [prescription, setPrescription] = useState<any>(null);
+  const [prescription, setPrescription] = useState<PrescriptionData | null>(null);
 
   // Format date to Arabic format
   const formatDate = (dateString: string) => {
@@ -521,7 +553,7 @@ export default function PrescriptionDetailsPage() {
                 </h3>
 
                 <div className="space-y-4">
-                  {prescription.medications.map((medication: any) => (
+                  {prescription.medications.map((medication: MedicationItem) => (
                     <Card
                       key={medication.id}
                       className="overflow-hidden border border-border/50"

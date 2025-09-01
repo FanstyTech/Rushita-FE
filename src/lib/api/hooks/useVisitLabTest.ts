@@ -42,7 +42,7 @@ export function useVisitLabTest() {
   };
 
   // Get paginated list
-  const getVisitLabTests = (filter: VisitLabTestFilterDto) =>
+  const useGetVisitLabTests = (filter: VisitLabTestFilterDto) =>
     useQuery({
       queryKey: queryKeys.list(filter),
       queryFn: async () => {
@@ -57,7 +57,7 @@ export function useVisitLabTest() {
     });
 
   // Get single visit lab test
-  const getVisitLabTest = (id: string) =>
+  const useGetVisitLabTest = (id: string) =>
     useQuery({
       queryKey: queryKeys.detail(id),
       queryFn: async () => {
@@ -71,7 +71,7 @@ export function useVisitLabTest() {
     });
 
   // Get visit lab tests by visit ID
-  const getVisitLabTestsByVisitId = (visitId: string) =>
+  const useGetVisitLabTestsByVisitId = (visitId: string) =>
     useQuery({
       queryKey: queryKeys.byVisitId(visitId),
       queryFn: async () => {
@@ -88,7 +88,7 @@ export function useVisitLabTest() {
     });
 
   // Get visit lab tests by lab test ID
-  const getVisitLabTestsByLabTestId = (labTestId: string) =>
+  const useGetVisitLabTestsByLabTestId = (labTestId: string) =>
     useQuery({
       queryKey: queryKeys.byLabTestId(labTestId),
       queryFn: async () => {
@@ -104,7 +104,7 @@ export function useVisitLabTest() {
     });
 
   // Get visits with lab tests
-  const getVisitsWithLabTests = (input: GetVisitsWithLabTestsInput) =>
+  const useGetVisitsWithLabTests = (input: GetVisitsWithLabTestsInput) =>
     useQuery({
       queryKey: queryKeys.visitsWithTestsList(input),
       queryFn: async () => {
@@ -119,7 +119,7 @@ export function useVisitLabTest() {
     });
 
   // Get lab test summary statistics
-  const getLabTestSummary = (input: LabSummaryStatsInput) =>
+  const useGetLabTestSummary = (input: LabSummaryStatsInput) =>
     useQuery({
       queryKey: [...queryKeys.visitsWithTests(), 'summary', input],
       queryFn: async () => {
@@ -233,7 +233,7 @@ export function useVisitLabTest() {
   });
 
   // Get patient lab tests for patient portal
-  const getPatientLabTests = (filter: PatientLabTestFilterDto) =>
+  const useGetPatientLabTests = (filter: PatientLabTestFilterDto) =>
     useQuery({
       queryKey: patientQueryKeys.patientList(filter),
       queryFn: async () => {
@@ -248,7 +248,7 @@ export function useVisitLabTest() {
     });
 
   // Get patient lab test details
-  const getPatientLabTestDetails = (id: string) =>
+  const useGetPatientLabTestDetails = (id: string) =>
     useQuery({
       queryKey: patientQueryKeys.patientDetail(id),
       queryFn: async () => {
@@ -265,12 +265,12 @@ export function useVisitLabTest() {
 
   return {
     // Queries
-    getVisitLabTests,
-    getVisitLabTest,
-    getVisitLabTestsByVisitId,
-    getVisitLabTestsByLabTestId,
-    getVisitsWithLabTests,
-    getLabTestSummary,
+    useGetVisitLabTests,
+    useGetVisitLabTest,
+    useGetVisitLabTestsByVisitId,
+    useGetVisitLabTestsByLabTestId,
+    useGetVisitsWithLabTests,
+    useGetLabTestSummary,
 
     // Mutations
     createOrUpdateVisitLabTest,
@@ -281,7 +281,7 @@ export function useVisitLabTest() {
     queryKeys,
 
     // Patient Portal specific methods
-    getPatientLabTests,
-    getPatientLabTestDetails,
+    useGetPatientLabTests,
+    useGetPatientLabTestDetails,
   };
 }

@@ -28,7 +28,7 @@ export function useAttachment() {
     toast.error(message);
   };
 
-  const getAttachments = (entityId: string, entityType: EntityType) =>
+  const useGetAttachments = (entityId: string, entityType: EntityType) =>
     useQuery({
       queryKey: [ATTACHMENTS_QUERY_KEY, entityId, entityType],
       queryFn: async () => {
@@ -116,7 +116,7 @@ export function useAttachment() {
   });
 
   return {
-    getAttachments,
+    useGetAttachments,
     uploadFile,
     uploadMultipleFiles,
     deleteAttachment,

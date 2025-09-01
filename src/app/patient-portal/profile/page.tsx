@@ -223,7 +223,7 @@ export default function ProfilePage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setValue(name as keyof ProfileFormValues, value);
+    setValue(name as keyof ProfileFormValues, value as string);
   };
 
   const handleEdit = () => {

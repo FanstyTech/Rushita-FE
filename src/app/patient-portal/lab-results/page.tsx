@@ -99,7 +99,7 @@ export default function LabResultsPage() {
   };
 
   // Fetch lab tests using the hook
-  const { getPatientLabTests } = useVisitLabTest();
+  const { useGetPatientLabTests: getPatientLabTests } = useVisitLabTest();
   const {
     data: labTestsData,
     isLoading,

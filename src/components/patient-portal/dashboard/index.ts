@@ -11,14 +11,3 @@ export { DashboardSkeleton } from './DashboardSkeleton';
 
 // Utils
 export { formatDate, formatRelativeTime } from './utils';
-
-// Mock Data
-export {
-  quickActions,
-  upcomingAppointments,
-  activeMedications,
-  recentVisits,
-  notifications,
-  healthAlerts,
-  healthMetrics,
-} from './mockData';

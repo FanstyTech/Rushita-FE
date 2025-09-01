@@ -22,7 +22,7 @@ export type familyHistoryFormData = z.infer<typeof familyHistorySchema>;
 export const defaultfamilyHistoryValues: familyHistoryFormData = {
   condition: '',
   ageOfOnset: '',
-  relationship: Relationship.Father,
+  relationship: Relationship.Parent,
   status: FamilyHistoryStatus.Living,
   notes: '',
 };

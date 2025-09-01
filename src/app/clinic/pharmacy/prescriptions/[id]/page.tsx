@@ -45,8 +45,10 @@ export default function PrescribedMedicationsPage() {
   const params = useParams();
   const visitId = params?.id as string;
 
-  const { getPrescribedMedicationsByVisitId, dispenseMedicine } =
-    useVisitPrescription();
+  const {
+    useGetPrescribedMedicationsByVisitId: getPrescribedMedicationsByVisitId,
+    dispenseMedicine,
+  } = useVisitPrescription();
   const { data: prescribedMedicationsit, isLoading } =
     getPrescribedMedicationsByVisitId(visitId);
   // State
