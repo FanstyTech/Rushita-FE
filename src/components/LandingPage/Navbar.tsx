@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { MoveLeft } from 'lucide-react';
+import { MoveLeft, MoveRight } from 'lucide-react';
 import ThemeToggle from '../ThemeToggle';
 import LanguageToggle from '../LanguageToggle';
 import { useTranslation } from 'react-i18next';
@@ -13,21 +13,34 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [pathname, setpathName] = useState('home');
   const [scrolled, setScrolled] = useState(false);
-  const { t } = useTranslation();
+  const [mounted, setMounted] = useState(false);
+  const { t, i18n } = useTranslation();
 
+  // Check if current language is RTL
+  const isRTL = i18n.language === 'ar';
+  const ArrowIcon = isRTL ? MoveLeft : MoveRight;
+
+  // Handle client-side mounting to prevent hydration mismatch
   useEffect(() => {
-    const savedPath = localStorage.getItem('pathname') || 'home';
-    setpathName(savedPath);
+    setMounted(true);
+    // Only access localStorage after component mounts on client
+    if (typeof window !== 'undefined') {
+      const savedPath = localStorage.getItem('pathname') || 'home';
+      setpathName(savedPath);
+    }
   }, []);
 
   useEffect(() => {
-    if (pathname !== '') {
+    // Only update localStorage after component is mounted and on client
+    if (mounted && typeof window !== 'undefined' && pathname !== '') {
       localStorage.setItem('pathname', pathname);
     }
-  }, [pathname]);
+  }, [pathname, mounted]);
 
   // Scroll effect
   useEffect(() => {
+    if (!mounted) return;
+
     const handleScroll = () => {
       const isScrolled = window.scrollY > 20;
       setScrolled(isScrolled);
@@ -35,10 +48,12 @@ export const Navbar = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [mounted]);
 
   // Scroll observer
   useEffect(() => {
+    if (!mounted) return;
+
     const handleIntersect = (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -63,18 +78,25 @@ export const Navbar = () => {
         if (section) observer.unobserve(section);
       });
     };
-  }, []);
+  }, [mounted]);
 
   const toggleMenu = () => {
-    document.body.classList.toggle('overflow-y-hidden');
+    if (typeof document !== 'undefined') {
+      document.body.classList.toggle('overflow-y-hidden');
+    }
     setIsOpen(!isOpen);
   };
 
   const closeMenu = () => {
     setIsOpen(false);
+    if (typeof document !== 'undefined') {
+      document.body.classList.remove('overflow-y-hidden');
+    }
   };
 
   useEffect(() => {
+    if (!mounted) return;
+
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
       const mobileMenu = document.getElementById('mobile-menu');
@@ -95,7 +117,48 @@ export const Navbar = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, mounted]);
+
+  // Prevent rendering until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <nav className="fixed w-full z-50 top-0 left-0 transition-all duration-300">
+        <div className="bg-transparent transition-all duration-300">
+          <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-20">
+              {/* Logo */}
+              <div className="flex-shrink-0">
+                <div className="relative">
+                  <Image
+                    src="/images/image4.png"
+                    alt="روشيتة"
+                    width={160}
+                    height={60}
+                    className="h-12 w-auto"
+                  />
+                </div>
+              </div>
+              {/* Placeholder for other elements */}
+              <div className="hidden lg:flex items-center gap-8">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 mr-4">
+                    <ThemeToggle />
+                    <LanguageToggle />
+                  </div>
+                </div>
+              </div>
+              <div className="lg:hidden flex items-center">
+                <div className="flex items-center gap-1">
+                  <ThemeToggle />
+                  <LanguageToggle />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="fixed w-full z-50 top-0 left-0 transition-all duration-300">
@@ -161,7 +224,7 @@ export const Navbar = () => {
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium px-6 py-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                 >
                   {t(`landing.nav.getStarted`)}
-                  <MoveLeft className="mr-1 h-4 w-4" />
+                  <ArrowIcon className="mr-1 h-4 w-4" />
                 </Button>
               </Link>
             </div>
@@ -238,7 +301,7 @@ export const Navbar = () => {
                   className="w-full text-lg font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                 >
                   {t(`landing.nav.getStarted`)}
-                  <MoveLeft className="mr-2 h-5 w-5" />
+                  <ArrowIcon className="mr-2 h-5 w-5" />
                 </Button>
               </Link>
             </div>

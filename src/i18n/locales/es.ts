@@ -1,6 +1,5 @@
 export const es = {
   translation: {
-  
     // Navigation
     navigation: {
       dashboard: 'Panel de Control',
@@ -109,7 +108,8 @@ export const es = {
       },
       completeRegistration: {
         title: 'Completa Tu Registro',
-        subtitle: 'Crea una contraseña segura para completar la configuración de tu cuenta y unirte a la plataforma médica Rousheta.',
+        subtitle:
+          'Crea una contraseña segura para completar la configuración de tu cuenta y unirte a la plataforma médica Rousheta.',
         formTitle: 'Crear Contraseña',
         formSubtitle: 'Configura una contraseña segura para tu cuenta',
         password: 'Contraseña',
@@ -135,11 +135,13 @@ export const es = {
         features: {
           secure: {
             title: 'Seguro y Encriptado',
-            description: 'Tu contraseña está encriptada con seguridad de nivel industrial',
+            description:
+              'Tu contraseña está encriptada con seguridad de nivel industrial',
           },
           hipaa: {
             title: 'Cumple con HIPAA',
-            description: 'Cumpliendo estándares de protección de datos de salud',
+            description:
+              'Cumpliendo estándares de protección de datos de salud',
           },
         },
         trustIndicators: {
@@ -155,14 +157,17 @@ export const es = {
       },
       registrationSuccess: {
         title: '¡Registro Exitoso!',
-        subtitle: 'Gracias por unirte a Rousheta. Tu solicitud ha sido enviada y está siendo revisada.',
+        subtitle:
+          'Gracias por unirte a Rousheta. Tu solicitud ha sido enviada y está siendo revisada.',
         welcome: 'Bienvenido a la',
         family: 'Familia Rousheta',
-        description: 'Tu registro ha sido enviado exitosamente. Nuestro equipo revisará tu solicitud y te responderá pronto.',
+        description:
+          'Tu registro ha sido enviado exitosamente. Nuestro equipo revisará tu solicitud y te responderá pronto.',
         nextSteps: {
           checkEmail: {
             title: 'Revisa tu Email',
-            description: 'Hemos enviado un email de confirmación con los siguientes pasos',
+            description:
+              'Hemos enviado un email de confirmación con los siguientes pasos',
           },
           accountReview: {
             title: 'Revisión de Cuenta',
@@ -175,7 +180,8 @@ export const es = {
         },
         contactInfo: {
           title: '¿Necesitas Ayuda?',
-          description: 'Nuestro equipo de soporte está aquí para ayudarte con cualquier pregunta.',
+          description:
+            'Nuestro equipo de soporte está aquí para ayudarte con cualquier pregunta.',
           emailSupport: 'Soporte por Email',
           whatsapp: 'WhatsApp',
         },
@@ -665,7 +671,7 @@ export const es = {
           description:
             'Sistema de gestión de clínicas inteligente que hace que tu jornada laboral sea más fácil y organizada. Desde la primera cita hasta el último seguimiento.',
           email: 'contact@rousheta.net',
-          phone: '+966 50 123 4567',
+          phone: ' +970 59 664 80097',
           address: 'Riad, Arabia Saudita',
         },
         quickLinks: 'Enlaces Rápidos',

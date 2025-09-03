@@ -2,6 +2,7 @@ import './globals.css';
 import { Providers } from '@/providers/Providers';
 import { languages, defaultLanguage } from '@/middleware';
 import ConditionalLayout from '@/components/ConditionalLayout';
+import { metadata as siteMetadata } from './metadata';
 
 import { cookies, headers } from 'next/headers';
 import { Cairo } from 'next/font/google';
@@ -12,6 +13,10 @@ const cairo = Cairo({
   display: 'swap',
   preload: true,
 });
+
+// Export metadata for Next.js
+export const metadata = siteMetadata;
+
 export default async function RootLayout({
   children,
 }: {

@@ -111,7 +111,8 @@ export const en = {
       },
       completeRegistration: {
         title: 'Complete Your Registration',
-        subtitle: 'Create a secure password to complete your account setup and join the Rousheta medical platform.',
+        subtitle:
+          'Create a secure password to complete your account setup and join the Rousheta medical platform.',
         formTitle: 'Create Password',
         formSubtitle: 'Set up a secure password for your account',
         password: 'Password',
@@ -137,7 +138,8 @@ export const en = {
         features: {
           secure: {
             title: 'Secure & Encrypted',
-            description: 'Your password is encrypted with industry-standard security',
+            description:
+              'Your password is encrypted with industry-standard security',
           },
           hipaa: {
             title: 'HIPAA Compliant',
@@ -157,10 +159,12 @@ export const en = {
       },
       registrationSuccess: {
         title: 'Registration Successful!',
-        subtitle: 'Thank you for joining Rousheta. Your application has been submitted and is now under review.',
+        subtitle:
+          'Thank you for joining Rousheta. Your application has been submitted and is now under review.',
         welcome: 'Welcome to',
         family: 'Rousheta Family',
-        description: 'Your registration has been submitted successfully. Our team will review your application and get back to you soon.',
+        description:
+          'Your registration has been submitted successfully. Our team will review your application and get back to you soon.',
         nextSteps: {
           checkEmail: {
             title: 'Check Your Email',
@@ -168,16 +172,18 @@ export const en = {
           },
           accountReview: {
             title: 'Account Review',
-            description: 'Our team will review your application within 24-48 hours',
+            description:
+              'Our team will review your application within 24-48 hours',
           },
           getStarted: {
             title: 'Get Started',
-            description: 'Once approved, you\'ll receive login credentials',
+            description: "Once approved, you'll receive login credentials",
           },
         },
         contactInfo: {
           title: 'Need Help?',
-          description: 'Our support team is here to assist you with any questions.',
+          description:
+            'Our support team is here to assist you with any questions.',
           emailSupport: 'Email Support',
           whatsapp: 'WhatsApp',
         },
@@ -645,7 +651,7 @@ export const en = {
           description:
             'Smart clinic management system that makes your workday easier and more organized. From the first appointment to the last follow-up.',
           email: 'contact@rousheta.net',
-          phone: '+966 50 123 4567',
+          phone: ' +970 59 664 80097',
           address: 'Riyadh, Saudi Arabia',
         },
         quickLinks: 'Quick Links',

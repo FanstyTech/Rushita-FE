@@ -18,13 +18,13 @@ import {
   Heart,
   Users,
   MessageCircle,
-  Instagram,
 } from 'lucide-react';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import Cookies from 'js-cookie';
 import ThemeToggle from '@/components/ThemeToggle';
 import LanguageToggle from '@/components/LanguageToggle';
 import { useTranslation } from 'react-i18next';
+import { FaInstagram } from 'react-icons/fa';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -357,7 +357,7 @@ export default function LoginPage() {
                 </p>
                 <div className="flex items-center justify-center gap-3">
                   <a
-                    href="https://wa.me/966500000000"
+                    href="https://wa.me/+970566480097"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors duration-200 text-xs font-medium"
@@ -366,12 +366,12 @@ export default function LoginPage() {
                     {isClient ? t('auth.login.whatsapp') : 'WhatsApp'}
                   </a>
                   <a
-                    href="https://instagram.com/rushita_medical"
+                    href="https://www.instagram.com/rousheta.app"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-colors duration-200 text-xs font-medium"
                   >
-                    <Instagram className="w-3 h-3" />
+                    <FaInstagram className="w-3 h-3" />
                     {isClient ? t('auth.login.instagram') : 'Instagram'}
                   </a>
                 </div>

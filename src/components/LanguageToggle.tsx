@@ -19,7 +19,7 @@ export default function LanguageToggle() {
   const languages = [
     { code: 'ar', name: 'العربية', shortCode: 'ع' },
     { code: 'en', name: 'English', shortCode: 'EN' },
-    { code: 'es', name: 'Español', shortCode: 'ES' },
+    // { code: 'es', name: 'Español', shortCode: 'ES' },
   ];
 
   // Get current language display info

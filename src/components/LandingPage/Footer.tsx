@@ -3,32 +3,32 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from 'react-icons/fa';
-import { Mail, Phone, MapPin, ArrowUp } from 'lucide-react';
+import { Mail, Phone, ArrowUp } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useTranslation } from 'react-i18next';
 
 const socialLinks = [
   {
     icon: FaFacebook,
-    href: '#',
+    href: 'https://www.facebook.com/share/1E2SsYRKSg',
     color: 'hover:text-blue-500',
     label: 'Facebook',
   },
   {
     icon: FaTwitter,
-    href: '#',
+    href: 'https://x.com/rousheta_app',
     color: 'hover:text-blue-400',
     label: 'Twitter',
   },
   {
     icon: FaLinkedin,
-    href: '#',
+    href: 'https://www.linkedin.com/company/108789506/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BljgcMlREToCVKfzorYqbsQ%3D%3D',
     color: 'hover:text-blue-600',
     label: 'LinkedIn',
   },
   {
     icon: FaInstagram,
-    href: '#',
+    href: 'https://www.instagram.com/rousheta.app/',
     color: 'hover:text-pink-500',
     label: 'Instagram',
   },
@@ -79,10 +79,10 @@ function Footer() {
                 <Phone className="w-5 h-5 text-green-400" />
                 <span dir="ltr">{t('landing.footer.companyInfo.phone')}</span>
               </div>
-              <div className="flex items-center gap-3 text-gray-300">
+              {/* <div className="flex items-center gap-3 text-gray-300">
                 <MapPin className="w-5 h-5 text-red-400" />
                 <span>{t('landing.footer.companyInfo.address')}</span>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -113,13 +113,13 @@ function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="#"
+                  href="http://wa.me/+970566480097"
                   className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
                 >
                   {t('landing.footer.supportResources.helpCenter')}
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   href="#"
                   className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
@@ -142,7 +142,7 @@ function Footer() {
                 >
                   {t('landing.footer.supportResources.contactUs')}
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
