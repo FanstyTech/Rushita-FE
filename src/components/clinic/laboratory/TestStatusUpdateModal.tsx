@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from '@/components/common/Modal';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -22,6 +23,7 @@ export default function TestStatusUpdateModal({
   isUpdating,
   onStatusUpdate,
 }: TestStatusUpdateModalProps) {
+  const { t } = useTranslation();
   const [selectedStatus, setSelectedStatus] = useState<TestStatus | null>(
     test ? test.status : null
   );
@@ -42,7 +44,7 @@ export default function TestStatusUpdateModal({
   const modalFooter = (
     <div className="flex justify-end gap-3">
       <Button variant="outline" onClick={onClose}>
-        Cancel
+        {t('clinic.laboratory.modals.updateStatus.buttons.cancel')}
       </Button>
       <Button
         variant="default"
@@ -52,10 +54,10 @@ export default function TestStatusUpdateModal({
         {isUpdating ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Updating...
+            {t('clinic.laboratory.modals.updateStatus.buttons.updating')}
           </>
         ) : (
-          'Update Status'
+          t('clinic.laboratory.modals.updateStatus.buttons.updateStatus')
         )}
       </Button>
     </div>
@@ -64,7 +66,9 @@ export default function TestStatusUpdateModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Update Test Status: ${test.testName}`}
+      title={t('clinic.laboratory.modals.updateStatus.title', {
+        testName: test.testName,
+      })}
       maxWidth="3xl"
       footer={modalFooter}
     >
@@ -73,7 +77,7 @@ export default function TestStatusUpdateModal({
           <div className="flex flex-col space-y-2">
             <div className="flex items-center gap-2">
               <span className="font-medium text-gray-700 dark:text-gray-300">
-                Patient Name:
+                {t('clinic.laboratory.modals.updateStatus.patientName')}:
               </span>
               <span className="text-gray-900 dark:text-gray-100">
                 {test.patientName}
@@ -82,7 +86,7 @@ export default function TestStatusUpdateModal({
 
             <div className="flex items-center gap-2">
               <span className="font-medium text-gray-700 dark:text-gray-300">
-                Current Status:
+                {t('clinic.laboratory.modals.updateStatus.currentStatus')}:
               </span>
               <span
                 className={`px-2 py-0.5 rounded-full text-xs font-medium ${getTestStatusColor(
@@ -96,7 +100,9 @@ export default function TestStatusUpdateModal({
         </div>
 
         <div className="space-y-4">
-          <Label className="text-base font-medium">Choose New Status</Label>
+          <Label className="text-base font-medium">
+            {t('clinic.laboratory.modals.updateStatus.chooseNewStatus')}
+          </Label>
           <div className="grid grid-cols-1 gap-3">
             {/* Pending */}
             <div

@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 
 // Components
 import PatientInfoSection from './PatientInfoSection';
@@ -38,7 +39,7 @@ import { useVisit } from '@/lib/api/hooks/useVisit';
 import { useDiagnosis } from '@/lib/api/hooks/useDiagnosis';
 import { Button } from '@/components/ui/button';
 import { CreateOrUpdateVisitDto } from '@/lib/api/types/visit';
-import { TreatmentFormData, treatmentFormSchema } from './validation';
+import { createTreatmentFormSchema, TreatmentFormData } from './validation';
 import { AttachmentDto, EntityType } from '@/lib/api/types/attachment';
 import { toast } from 'sonner';
 import { formatDate } from '@/utils/dateTimeUtils';
@@ -61,6 +62,8 @@ export default function TreatmentForm({
   visitId?: string;
   appointmentId?: string | undefined;
 }) {
+  const { t } = useTranslation();
+
   // Form State
   const {
     register,
@@ -70,7 +73,7 @@ export default function TreatmentForm({
     watch,
     control,
   } = useForm<TreatmentFormData>({
-    resolver: zodResolver(treatmentFormSchema),
+    resolver: zodResolver(createTreatmentFormSchema(t)),
     defaultValues: {
       patientId: '',
       visitType: VisitType.New,
@@ -340,12 +343,13 @@ export default function TreatmentForm({
               <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div className="border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    Treatment Information
+                    {t('clinic.visits.form.sections.treatmentInformation')}
                   </h2>
                   {appointmentData && (
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      Linked to appointment: {appointmentData.appointmentNumber}{' '}
-                      - {formatDate(appointmentData.date)}
+                      {t('clinic.visits.form.labels.linkedToAppointment')}{' '}
+                      {appointmentData.appointmentNumber} -{' '}
+                      {formatDate(appointmentData.date)}
                     </p>
                   )}
                 </div>
@@ -401,7 +405,7 @@ export default function TreatmentForm({
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Attachments
+                        {t('clinic.visits.form.sections.attachments')}
                       </h3>
                     </div>
 
@@ -410,12 +414,14 @@ export default function TreatmentForm({
                       entityId={currentVisitId || undefined}
                       entityType={EntityType.Visit}
                       uploadedBy={user?.id || ''}
-                      description="Visit attachment"
+                      description={t(
+                        'clinic.visits.form.fileUpload.description'
+                      )}
                       multiple={true}
                       accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx"
                       maxSize={10}
                       label=""
-                      helperText="Upload visit-related files, images, or documents"
+                      helperText={t('clinic.visits.form.fileUpload.helperText')}
                       showSuccessMsg={false}
                       onFileUploaded={handleFileUploaded}
                       onError={handleFileUploadError}
@@ -432,7 +438,7 @@ export default function TreatmentForm({
                       className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
                     >
                       <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                      Previous
+                      {t('clinic.visits.form.buttons.previous')}
                     </button>
 
                     <div className="flex space-x-3">
@@ -441,7 +447,7 @@ export default function TreatmentForm({
                         onClick={() => setShowTreatmentDetails(true)}
                         className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
                       >
-                        Preview
+                        {t('clinic.visits.form.buttons.preview')}
                       </button>
                       <Button
                         variant="default"
@@ -449,8 +455,8 @@ export default function TreatmentForm({
                         disabled={createOrUpdateClinicVisit.isPending}
                       >
                         {createOrUpdateClinicVisit.isPending
-                          ? 'Saving...'
-                          : 'Save Visit'}
+                          ? t('clinic.visits.form.buttons.saving')
+                          : t('clinic.visits.form.buttons.saveVisit')}
                       </Button>
                     </div>
                   </div>
@@ -477,7 +483,7 @@ export default function TreatmentForm({
             onClose={() => setShowAddPatient(false)}
             onSubmit={() => {}}
             isSubmitting={isMedicineLoading}
-            title="Add New Patient"
+            title={t('clinic.visits.form.modals.addNewPatient')}
           />
 
           <TreatmentDetailsModal

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import {
   Calendar,
   Clock,
@@ -57,6 +58,8 @@ const itemVariants = {
 };
 
 export default function VisitsPage() {
+  const { t } = useTranslation();
+
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('all');
@@ -132,12 +135,14 @@ export default function VisitsPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-          <p className="text-red-500 mb-2">Failed to load visits</p>
+          <p className="text-red-500 mb-2">
+            {t('patientPortal.visits.list.error.title')}
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Retry
+            {t('patientPortal.visits.list.error.retry')}
           </button>
         </div>
       </div>
@@ -150,11 +155,10 @@ export default function VisitsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            سجل الزيارات الطبية
+            {t('patientPortal.visits.list.title')}
           </h1>
           <p className="text-muted-foreground">
-            عرض سجل زياراتك الطبية السابقة والاطلاع على التشخيصات والوصفات
-            الطبية
+            {t('patientPortal.visits.list.subtitle')}
           </p>
         </div>
       </div>
@@ -167,10 +171,10 @@ export default function VisitsPage() {
               <div>
                 <CardTitle className="text-lg font-semibold flex items-center gap-2">
                   <Filter className="h-5 w-5 text-primary" />
-                  تصفية النتائج
+                  {t('patientPortal.visits.list.filters.title')}
                 </CardTitle>
                 <CardDescription className="mt-1">
-                  يمكنك تصفية الزيارات حسب التخصص أو نوع الزيارة أو البحث بالاسم
+                  {t('patientPortal.visits.list.filters.subtitle')}
                 </CardDescription>
               </div>
               <Button
@@ -180,7 +184,7 @@ export default function VisitsPage() {
                 onClick={handleResetFilters}
               >
                 <X className="h-3 w-3" />
-                إعادة ضبط الفلاتر
+                {t('patientPortal.visits.list.filters.resetFilters')}
               </Button>
             </div>
           </CardHeader>
@@ -190,8 +194,10 @@ export default function VisitsPage() {
               {/* Search input */}
               <div className="space-y-2">
                 <Input
-                  label="بحث"
-                  placeholder="ابحث عن طبيب، تشخيص، أو شكوى..."
+                  label={t('patientPortal.visits.list.filters.search')}
+                  placeholder={t(
+                    'patientPortal.visits.list.filters.searchPlaceholder'
+                  )}
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   startIcon={<Search className="h-4 w-4" />}
@@ -202,11 +208,16 @@ export default function VisitsPage() {
               {/* Specialty filter */}
               <div className="space-y-2">
                 <Select
-                  label="التخصص"
+                  label={t('patientPortal.visits.list.filters.specialty')}
                   value={selectedSpecialty}
                   onChange={(e) => handleSpecialtyChange(e.target.value)}
                   options={[
-                    { value: 'all', label: 'All Specialties' },
+                    {
+                      value: 'all',
+                      label: t(
+                        'patientPortal.visits.list.filters.allSpecialties'
+                      ),
+                    },
                     ...(specialties?.map((specialty: SelectOption<string>) => ({
                       value: specialty.value,
                       label: specialty.label || '',
@@ -218,11 +229,14 @@ export default function VisitsPage() {
               {/* Visit type filter */}
               <div className="space-y-2">
                 <Select
-                  label="نوع الزيارة"
+                  label={t('patientPortal.visits.list.filters.visitType')}
                   value={selectedType}
                   onChange={(e) => handleTypeChange(e.target.value)}
                   options={[
-                    { value: 'all', label: 'All' },
+                    {
+                      value: 'all',
+                      label: t('patientPortal.visits.list.filters.allTypes'),
+                    },
                     ...Object.entries(VisitType)
                       .filter(([key]) => isNaN(Number(key)))
                       .map(([, value]) => ({
@@ -344,18 +358,22 @@ export default function VisitsPage() {
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="rounded-md bg-muted/50 p-3">
                         <p className="text-sm font-medium mb-1">
-                          الشكوى الرئيسية
+                          {t('patientPortal.visits.list.card.mainComplaint')}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {visit.symptoms || 'غير محدد'}
+                          {visit.symptoms ||
+                            t('patientPortal.visits.list.card.notSpecified')}
                         </p>
                       </div>
                       <div className="rounded-md bg-muted/50 p-3">
-                        <p className="text-sm font-medium mb-1">التشخيص</p>
+                        <p className="text-sm font-medium mb-1">
+                          {t('patientPortal.visits.list.card.diagnosis')}
+                        </p>
                         <p className="text-sm text-muted-foreground">
                           {visit.diagnoses
                             ?.map((d: VisitDiagnosisDto) => d.description)
-                            .join(', ') || 'تحت المراجعة'}
+                            .join(', ') ||
+                            t('patientPortal.visits.list.card.underReview')}
                         </p>
                       </div>
                     </div>
@@ -368,7 +386,8 @@ export default function VisitsPage() {
                           className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-800"
                         >
                           <Pill className="h-3 w-3 mr-1" />
-                          {visit.prescriptions.length} وصفة طبية
+                          {visit.prescriptions.length}{' '}
+                          {t('patientPortal.visits.list.card.prescriptions')}
                         </Badge>
                       )}
                       {(visit.radiologyTests?.length || 0) > 0 && (
@@ -377,7 +396,8 @@ export default function VisitsPage() {
                           className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-800"
                         >
                           <FileText className="h-3 w-3 mr-1" />
-                          {visit.radiologyTests.length} أشعة
+                          {visit.radiologyTests.length}{' '}
+                          {t('patientPortal.visits.list.card.radiologyTests')}
                         </Badge>
                       )}
                       {(visit.labTests?.length || 0) > 0 && (
@@ -386,7 +406,8 @@ export default function VisitsPage() {
                           className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/20 dark:text-purple-400 dark:border-purple-800"
                         >
                           <FileCheck className="h-3 w-3 mr-1" />
-                          {visit.labTests.length} تحاليل
+                          {visit.labTests.length}{' '}
+                          {t('patientPortal.visits.list.card.labTests')}
                         </Badge>
                       )}
                       {visit.followUpInstructions && (
@@ -395,7 +416,7 @@ export default function VisitsPage() {
                           className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-800"
                         >
                           <Calendar className="h-3 w-3 mr-1" />
-                          متابعة
+                          {t('patientPortal.visits.list.card.followUp')}
                         </Badge>
                       )}
                     </div>
@@ -407,7 +428,7 @@ export default function VisitsPage() {
                       href={`/patient-portal/visits/${visit.id}`}
                       className="flex items-center justify-center"
                     >
-                      عرض تفاصيل الزيارة
+                      {t('patientPortal.visits.list.card.viewDetails')}
                       <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </Button>
@@ -424,10 +445,11 @@ export default function VisitsPage() {
               <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
                 <FileText className="h-8 w-8 text-muted-foreground" />
               </div>
-              <h3 className="font-medium text-lg mb-1">لا توجد زيارات</h3>
+              <h3 className="font-medium text-lg mb-1">
+                {t('patientPortal.visits.list.emptyState.title')}
+              </h3>
               <p className="text-sm text-muted-foreground max-w-md">
-                لم يتم العثور على أي زيارات تطابق معايير البحث. يرجى تعديل
-                معايير البحث أو حجز موعد جديد.
+                {t('patientPortal.visits.list.emptyState.message')}
               </p>
             </CardContent>
           </Card>

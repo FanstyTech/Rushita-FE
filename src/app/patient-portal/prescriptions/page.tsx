@@ -43,6 +43,7 @@ import { formatDate } from '@/utils/dateTimeUtils';
 import { Pagination, usePagination } from '@/components/ui/pagination';
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { SelectOption } from '@/lib/api/types/select-option';
+import { useTranslation } from 'react-i18next';
 
 // Animation variants for staggered animations
 const containerVariants = {
@@ -61,6 +62,8 @@ const itemVariants = {
 };
 
 export default function PrescriptionsPage() {
+  const { t } = useTranslation();
+
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<MedicationStatus | ''>(
@@ -154,12 +157,14 @@ export default function PrescriptionsPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-          <p className="text-red-500 mb-2">فشل في تحميل الوصفات الطبية</p>
+          <p className="text-red-500 mb-2">
+            {t('patientPortal.prescriptions.list.error.title')}
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            إعادة المحاولة
+            {t('patientPortal.prescriptions.list.error.retry')}
           </button>
         </div>
       </div>
@@ -170,9 +175,11 @@ export default function PrescriptionsPage() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">الوصفات الطبية</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t('patientPortal.prescriptions.list.title')}
+        </h1>
         <p className="text-muted-foreground">
-          عرض وإدارة الوصفات الطبية الخاصة بك
+          {t('patientPortal.prescriptions.list.description')}
         </p>
       </div>
 
@@ -184,7 +191,7 @@ export default function PrescriptionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  إجمالي الوصفات
+                  {t('patientPortal.prescriptions.list.stats.total')}
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {prescriptions.length}
@@ -203,7 +210,7 @@ export default function PrescriptionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  وصفات سارية
+                  {t('patientPortal.prescriptions.list.status.active')}
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {activePrescriptions}
@@ -222,7 +229,7 @@ export default function PrescriptionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  وصفات منتهية
+                  {t('patientPortal.prescriptions.list.status.completed')}
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {
@@ -245,7 +252,7 @@ export default function PrescriptionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  منتهية الصلاحية
+                  {t('patientPortal.prescriptions.list.status.expired')}
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {
@@ -271,10 +278,10 @@ export default function PrescriptionsPage() {
               <div>
                 <CardTitle className="text-lg font-semibold flex items-center gap-2">
                   <Filter className="h-5 w-5 text-primary" />
-                  تصفية النتائج
+                  {t('patientPortal.prescriptions.list.filters.search')}
                 </CardTitle>
                 <CardDescription className="mt-1">
-                  يمكنك تصفية الوصفات حسب الحالة أو التخصص أو البحث بالاسم
+                  {t('patientPortal.prescriptions.list.filters.description')}
                 </CardDescription>
               </div>
               <Button
@@ -284,7 +291,7 @@ export default function PrescriptionsPage() {
                 onClick={handleResetFilters}
               >
                 <X className="h-3 w-3" />
-                إعادة ضبط الفلاتر
+                {t('patientPortal.prescriptions.list.actions.reset')}
               </Button>
             </div>
           </CardHeader>
@@ -294,8 +301,10 @@ export default function PrescriptionsPage() {
               {/* Search input */}
               <div className="space-y-2">
                 <Input
-                  label="بحث"
-                  placeholder="ابحث عن دواء، طبيب، أو تشخيص..."
+                  label={t('patientPortal.prescriptions.list.filters.search')}
+                  placeholder={t(
+                    'patientPortal.prescriptions.list.filters.searchPlaceholder'
+                  )}
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   startIcon={<Search className="h-4 w-4" />}
@@ -303,36 +312,21 @@ export default function PrescriptionsPage() {
                 />
               </div>
 
-              {/* Status filter */}
-              {/* <div className="space-y-2">
-              <Select
-                  label="حالة الوصفة"
-                value={selectedStatus}
-                  onChange={(e) =>
-                    handleStatusFilter(e.target.value as MedicationStatus | '')
-                  }
-                options={[
-                  { value: '', label: 'جميع الحالات' },
-                    ...Object.entries(MedicationStatus)
-                      .filter(([key]) => isNaN(Number(key)))
-                      .map(([_, value]) => ({
-                        value: value.toString(),
-                        label: getMedicationStatusLabel(
-                          value as MedicationStatus
-                        ),
-                      })),
-                  ]}
-                />
-              </div> */}
-
               {/* Specialty filter */}
               <div className="space-y-2">
                 <Select
-                  label="التخصص"
+                  label={t(
+                    'patientPortal.prescriptions.list.filters.specialty'
+                  )}
                   value={selectedSpecialty}
                   onChange={(e) => handleSpecialtyChange(e.target.value)}
                   options={[
-                    { value: 'all', label: 'All Specialties' },
+                    {
+                      value: 'all',
+                      label: t(
+                        'patientPortal.prescriptions.list.filters.specialtyAll'
+                      ),
+                    },
                     ...(specialties?.map((specialty: SelectOption<string>) => ({
                       value: specialty.value,
                       label: specialty.label || '',
@@ -378,8 +372,10 @@ export default function PrescriptionsPage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <h3 className="text-lg font-semibold">
-                              وصفة طبية -{' '}
-                              {prescription.doctorInfo.doctorSpecialty}
+                              {t(
+                                'patientPortal.prescriptions.list.card.prescriptionNumber'
+                              )}{' '}
+                              - {prescription.doctorInfo.doctorSpecialty}
                             </h3>
                             <Badge
                               variant="outline"
@@ -435,7 +431,9 @@ export default function PrescriptionsPage() {
                       <div className="p-6">
                         <h4 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
                           <Pill className="h-4 w-4" />
-                          تفاصيل الدواء
+                          {t(
+                            'patientPortal.prescriptions.list.card.medicineDetails'
+                          )}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="bg-muted/20 backdrop-blur-sm rounded-lg p-4 border border-border/30">
@@ -446,11 +444,16 @@ export default function PrescriptionsPage() {
                                   {prescription.medicineInfo.medicineName}
                                 </h5>
                                 <p className="text-sm text-muted-foreground">
-                                  كود: {prescription.medicineInfo.medicineCode}
+                                  {t(
+                                    'patientPortal.prescriptions.list.card.medicineCode'
+                                  )}{' '}
+                                  {prescription.medicineInfo.medicineCode}
                                 </p>
                                 {prescription.medicineInfo.scientificName && (
                                   <p className="text-xs text-muted-foreground">
-                                    الاسم العلمي:{' '}
+                                    {t(
+                                      'patientPortal.prescriptions.list.card.scientificName'
+                                    )}{' '}
                                     {prescription.medicineInfo.scientificName}
                                   </p>
                                 )}
@@ -460,7 +463,9 @@ export default function PrescriptionsPage() {
                               <div className="space-y-2">
                                 <div className="flex justify-between items-center">
                                   <span className="text-sm font-medium">
-                                    الجرعة:
+                                    {t(
+                                      'patientPortal.prescriptions.list.card.dosage'
+                                    )}
                                   </span>
                                   <span className="text-sm">
                                     {prescription.prescriptionDetails.dosage}
@@ -468,7 +473,9 @@ export default function PrescriptionsPage() {
                                 </div>
                                 <div className="flex justify-between items-center">
                                   <span className="text-sm font-medium">
-                                    التكرار:
+                                    {t(
+                                      'patientPortal.prescriptions.list.card.frequency'
+                                    )}
                                   </span>
                                   <span className="text-sm">
                                     {getFrequencyTypeLabel(
@@ -478,7 +485,9 @@ export default function PrescriptionsPage() {
                                 </div>
                                 <div className="flex justify-between items-center">
                                   <span className="text-sm font-medium">
-                                    المدة:
+                                    {t(
+                                      'patientPortal.prescriptions.list.card.duration'
+                                    )}
                                   </span>
                                   <span className="text-sm">
                                     {prescription.prescriptionDetails.duration}{' '}
@@ -496,11 +505,17 @@ export default function PrescriptionsPage() {
                           <div className="bg-muted/20 backdrop-blur-sm rounded-lg p-4 border border-border/30">
                             <h5 className="font-medium mb-3 flex items-center gap-2">
                               <Calendar className="h-4 w-4" />
-                              تواريخ العلاج
+                              {t(
+                                'patientPortal.prescriptions.list.card.treatmentDates'
+                              )}
                             </h5>
                             <div className="space-y-2">
                               <div className="flex justify-between items-center">
-                                <span className="text-sm">تاريخ الوصفة:</span>
+                                <span className="text-sm">
+                                  {t(
+                                    'patientPortal.prescriptions.list.card.prescriptionDate'
+                                  )}
+                                </span>
                                 <span className="text-sm">
                                   {formatDate(
                                     prescription.doctorInfo.prescribeDate
@@ -509,7 +524,9 @@ export default function PrescriptionsPage() {
                               </div>
                               <div className="flex justify-between items-center">
                                 <span className="text-sm">
-                                  تاريخ انتهاء العلاج:
+                                  {t(
+                                    'patientPortal.prescriptions.list.card.treatmentEndDate'
+                                  )}
                                 </span>
                                 <span className="text-sm">
                                   {formatDate(
@@ -520,7 +537,9 @@ export default function PrescriptionsPage() {
                               {prescription.dateInfo.expiryDate && (
                                 <div className="flex justify-between items-center">
                                   <span className="text-sm">
-                                    تاريخ انتهاء الصلاحية:
+                                    {t(
+                                      'patientPortal.prescriptions.list.card.expiryDate'
+                                    )}
                                   </span>
                                   <span className="text-sm">
                                     {formatDate(
@@ -531,7 +550,11 @@ export default function PrescriptionsPage() {
                               )}
                               {prescription.dateInfo.lastDispensedDate && (
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm">آخر صرف:</span>
+                                  <span className="text-sm">
+                                    {t(
+                                      'patientPortal.prescriptions.list.card.lastDispensedDate'
+                                    )}
+                                  </span>
                                   <span className="text-sm">
                                     {formatDate(
                                       prescription.dateInfo.lastDispensedDate
@@ -553,7 +576,11 @@ export default function PrescriptionsPage() {
                                 <Info className="h-4 w-4 text-green-500" />
                               </div>
                               <div>
-                                <p className="font-medium">التشخيص</p>
+                                <p className="font-medium">
+                                  {t(
+                                    'patientPortal.prescriptions.list.card.diagnosis'
+                                  )}
+                                </p>
                                 <p className="text-muted-foreground">
                                   {prescription.additionalInfo.diagnosis}
                                 </p>
@@ -572,7 +599,11 @@ export default function PrescriptionsPage() {
                                 <AlertCircle className="h-4 w-4 text-amber-500" />
                               </div>
                               <div>
-                                <p className="font-medium">ملاحظات</p>
+                                <p className="font-medium">
+                                  {t(
+                                    'patientPortal.prescriptions.list.card.notes'
+                                  )}
+                                </p>
                                 <p className="text-muted-foreground">
                                   {prescription.prescriptionDetails.notes}
                                 </p>
@@ -593,9 +624,11 @@ export default function PrescriptionsPage() {
               <div className="rounded-full p-3 bg-muted/50 mx-auto mb-3 w-fit">
                 <FileText className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-medium">لا توجد وصفات طبية</h3>
+              <h3 className="text-lg font-medium">
+                {t('patientPortal.prescriptions.list.empty.title')}
+              </h3>
               <p className="text-muted-foreground">
-                لم يتم العثور على وصفات طبية تطابق معايير البحث
+                {t('patientPortal.prescriptions.list.empty.description')}
               </p>
             </CardContent>
           </Card>

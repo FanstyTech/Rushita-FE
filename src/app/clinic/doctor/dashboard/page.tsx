@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import PageLayout from '@/components/layouts/PageLayout';
 import DoctorDashboardSkeleton from '@/components/skeletons/doctor/DoctorDashboardSkeleton';
 import { useDoctorDashboard } from '@/lib/api/hooks/useDoctorDashboard';
@@ -48,6 +49,7 @@ ChartJS.register(
 );
 
 export default function DoctorDashboard() {
+  const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState<TimeRange>(TimeRange.Weekly);
 
   const { useGetDashboard: getDashboard } = useDoctorDashboard();
@@ -84,28 +86,28 @@ export default function DoctorDashboard() {
   // Stats card configuration
   const statsCards = [
     {
-      title: 'إجمالي المرضى',
+      title: t('clinic.doctor.dashboard.stats.totalPatients'),
       value: dashboardData?.stats?.totalPatients || 0,
       change: dashboardData?.stats?.patientsChange || 0,
       icon: Users,
       bgGradient: 'from-blue-500 to-blue-600',
     },
     {
-      title: 'مواعيد اليوم',
+      title: t('clinic.doctor.dashboard.stats.todayAppointments'),
       value: dashboardData?.stats?.todayAppointments || 0,
       change: dashboardData?.stats?.appointmentsChange || 0,
       icon: Calendar,
       bgGradient: 'from-purple-500 to-purple-600',
     },
     {
-      title: 'مكتملة اليوم',
+      title: t('clinic.doctor.dashboard.stats.completedToday'),
       value: dashboardData?.stats?.completedToday || 0,
       change: dashboardData?.stats?.completedChange || 0,
       icon: CheckCircle,
       bgGradient: 'from-green-500 to-green-600',
     },
     {
-      title: 'إجمالي الزيارات',
+      title: t('clinic.doctor.dashboard.stats.totalVisits'),
       value: dashboardData?.stats?.totalVisits || 0,
       change: dashboardData?.stats?.visitsChange || 0,
       icon: Activity,
@@ -134,7 +136,7 @@ export default function DoctorDashboard() {
     labels: currentChartData?.labels || [],
     datasets: [
       {
-        label: 'Total Appointments',
+        label: t('clinic.doctor.dashboard.charts.totalAppointments'),
         data: currentChartData?.appointments || [],
         borderColor: 'rgb(99, 102, 241)',
         backgroundColor: 'rgba(99, 102, 241, 0.1)',
@@ -143,7 +145,7 @@ export default function DoctorDashboard() {
         borderWidth: 3,
       },
       {
-        label: 'Completed',
+        label: t('clinic.doctor.dashboard.charts.completed'),
         data: currentChartData?.completed || [],
         borderColor: 'rgb(34, 197, 94)',
         backgroundColor: 'rgba(34, 197, 94, 0.1)',
@@ -272,10 +274,11 @@ export default function DoctorDashboard() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="text-red-500 text-lg font-medium mb-2">
-              خطأ في تحميل البيانات
+              {t('clinic.doctor.dashboard.errors.loadingData')}
             </div>
             <div className="text-gray-500">
-              {error.message || 'حدث خطأ أثناء تحميل بيانات لوحة التحكم'}
+              {error.message ||
+                t('clinic.doctor.dashboard.errors.dashboardError')}
             </div>
           </div>
         </div>
@@ -336,7 +339,7 @@ export default function DoctorDashboard() {
                           {card.change}%
                         </span>
                         <span className="text-sm text-gray-500 ml-1">
-                          من الشهر الماضي
+                          {t('clinic.doctor.dashboard.stats.fromLastMonth')}
                         </span>
                       </div>
                     </div>
@@ -362,7 +365,7 @@ export default function DoctorDashboard() {
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Appointments Overview
+                {t('clinic.doctor.dashboard.charts.appointmentsOverview')}
               </h3>
               <div className="flex gap-2 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
                 {Object.values(TimeRange)
@@ -388,7 +391,7 @@ export default function DoctorDashboard() {
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-gray-500">
-                    No data available for this time range
+                    {t('clinic.doctor.dashboard.charts.noDataAvailable')}
                   </p>
                 </div>
               )}
@@ -402,7 +405,7 @@ export default function DoctorDashboard() {
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-              Appointment Status
+              {t('clinic.doctor.dashboard.charts.appointmentStatus')}
             </h3>
             <div className="h-[300px]">
               <Doughnut data={doughnutData} options={doughnutOptions} />
@@ -419,7 +422,7 @@ export default function DoctorDashboard() {
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-              المواعيد القادمة
+              {t('clinic.doctor.dashboard.upcomingAppointments.title')}
             </h3>
             <div className="space-y-4">
               {dashboardData?.upcomingAppointments?.length ? (
@@ -476,7 +479,9 @@ export default function DoctorDashboard() {
                 <div className="text-center py-8">
                   <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-500 dark:text-gray-400">
-                    لا توجد مواعيد قادمة
+                    {t(
+                      'clinic.doctor.dashboard.upcomingAppointments.noAppointments'
+                    )}
                   </p>
                 </div>
               )}
@@ -490,7 +495,7 @@ export default function DoctorDashboard() {
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-              الأنشطة الأخيرة
+              {t('clinic.doctor.dashboard.recentActivities.title')}
             </h3>
             <div className="space-y-4">
               {dashboardData?.recentActivities?.length ? (
@@ -537,7 +542,7 @@ export default function DoctorDashboard() {
                 <div className="text-center py-8">
                   <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-500 dark:text-gray-400">
-                    لا توجد أنشطة حديثة
+                    {t('clinic.doctor.dashboard.recentActivities.noActivities')}
                   </p>
                 </div>
               )}

@@ -4,6 +4,7 @@ import { TextArea, DiagnosisTreeSelector } from '@/components/common/form';
 import { GetDiagnosesTreeDto } from '@/lib/api/types/diagnosis';
 import { UseFormRegister, FieldErrors, Control } from 'react-hook-form';
 import { TreatmentFormData } from './validation';
+import { useTranslation } from 'react-i18next';
 
 interface SymptomsAndDiagnosisProps {
   diagnosesTree: GetDiagnosesTreeDto[];
@@ -18,19 +19,24 @@ export default function SymptomsAndDiagnosis({
   errors,
   control,
 }: SymptomsAndDiagnosisProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
       <div className="mb-3">
         <h4 className="text-base font-medium text-gray-800 dark:text-gray-200">
-          Symptoms & Diagnosis
+          {t('clinic.visits.form.symptomsAndDiagnosis.title')}
         </h4>
       </div>
 
       {/* Symptoms */}
       <TextArea
+        required={true}
         {...register(`symptoms`)}
-        placeholder="Enter patient symptoms..."
-        label="Symptoms"
+        placeholder={t(
+          'clinic.visits.form.symptomsAndDiagnosis.symptomsPlaceholder'
+        )}
+        label={t('clinic.visits.form.symptomsAndDiagnosis.symptoms')}
         rows={3}
         error={errors.symptoms?.message as string}
       />
@@ -40,8 +46,10 @@ export default function SymptomsAndDiagnosis({
         diagnosesTree={diagnosesTree}
         name="diagnosis"
         control={control}
-        label="Diagnosis (ICD-10)"
-        placeholder="Select ICD-10 diagnosis code..."
+        label={t('clinic.visits.form.symptomsAndDiagnosis.diagnosis')}
+        placeholder={t(
+          'clinic.visits.form.symptomsAndDiagnosis.diagnosisPlaceholder'
+        )}
         error={errors.diagnosis?.message as string}
         required
       />

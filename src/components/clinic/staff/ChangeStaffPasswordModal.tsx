@@ -1,5 +1,6 @@
 // src/components/modals/ChangeStaffPasswordModal.tsx
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import Modal from '@/components/common/Modal';
 import { Input } from '@/components/common/form';
 import Button from '@/components/common/Button';
@@ -22,6 +23,7 @@ export default function ChangeStaffPasswordModal({
   onSubmit,
   isLoading,
 }: ChangeStaffPasswordModalProps) {
+  const { t } = useTranslation();
   const { register, handleSubmit, reset } = useForm<FormInputs>();
 
   const handleFormSubmit: SubmitHandler<FormInputs> = async (data) => {
@@ -34,7 +36,7 @@ export default function ChangeStaffPasswordModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Change Password"
+      title={t('clinic.staff.changePasswordModal.title')}
       footer={
         <div className="flex justify-end gap-3">
           <Button
@@ -44,18 +46,21 @@ export default function ChangeStaffPasswordModal({
               await handleSubmit(handleFormSubmit)();
             }}
           >
-            Change Password
+            {t('clinic.staff.changePasswordModal.changePasswordButton')}
           </Button>
         </div>
       }
     >
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Input
-          label="New Password"
+          label={t('clinic.staff.changePasswordModal.newPasswordLabel')}
           type="password"
           {...register('newPassword', {
-            required: 'Password is required',
-            minLength: 6,
+            required: t('clinic.staff.changePasswordModal.passwordRequired'),
+            minLength: {
+              value: 6,
+              message: t('clinic.staff.changePasswordModal.passwordMinLength'),
+            },
           })}
         />
       </form>

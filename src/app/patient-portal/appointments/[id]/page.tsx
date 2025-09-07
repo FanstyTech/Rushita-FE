@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import {
   Calendar,
   Clock,
@@ -29,6 +30,7 @@ import { AppointmentDetailsSkeleton } from '@/components/skeletons/AppointmentDe
 import Modal from '@/components/common/Modal';
 
 export default function AppointmentDetailsPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
@@ -98,7 +100,16 @@ export default function AppointmentDetailsPage() {
     if (appointment) {
       setFollowUpData({
         preferredDate: '',
-        appointmentReason: `متابعة - ${appointment.notes || 'موعد متابعة'}`,
+        appointmentReason: t(
+          'patientPortal.appointments.details.modals.followUp.reasonDefault',
+          {
+            reason:
+              appointment.notes ||
+              t(
+                'patientPortal.appointments.details.modals.followUp.reasonFallback'
+              ),
+          }
+        ),
       });
     }
     setShowFollowUpModal(true);
@@ -114,12 +125,17 @@ export default function AppointmentDetailsPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
         <AlertTriangle className="h-16 w-16 text-destructive mb-4" />
-        <h1 className="text-2xl font-bold mb-2">حدث خطأ</h1>
+        <h1 className="text-2xl font-bold mb-2">
+          {t('patientPortal.appointments.details.errors.title')}
+        </h1>
         <p className="text-muted-foreground mb-6">
-          {error.message || 'حدث خطأ أثناء تحميل تفاصيل الموعد'}
+          {error.message ||
+            t('patientPortal.appointments.details.errors.loadingMessage')}
         </p>
         <Button asChild>
-          <Link href="/patient-portal/appointments">العودة إلى المواعيد</Link>
+          <Link href="/patient-portal/appointments">
+            {t('patientPortal.appointments.details.errors.backToAppointments')}
+          </Link>
         </Button>
       </div>
     );
@@ -130,13 +146,18 @@ export default function AppointmentDetailsPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
         <AlertTriangle className="h-16 w-16 text-muted-foreground mb-4" />
-        <h1 className="text-2xl font-bold mb-2">الموعد غير موجود</h1>
+        <h1 className="text-2xl font-bold mb-2">
+          {t('patientPortal.appointments.details.notFound.title')}
+        </h1>
         <p className="text-muted-foreground mb-6">
-          لم يتم العثور على الموعد المطلوب. قد يكون تم حذفه أو أن الرابط غير
-          صحيح.
+          {t('patientPortal.appointments.details.notFound.message')}
         </p>
         <Button asChild>
-          <Link href="/patient-portal/appointments">العودة إلى المواعيد</Link>
+          <Link href="/patient-portal/appointments">
+            {t(
+              'patientPortal.appointments.details.notFound.backToAppointments'
+            )}
+          </Link>
         </Button>
       </div>
     );
@@ -158,12 +179,18 @@ export default function AppointmentDetailsPage() {
         >
           <Link href="/patient-portal/appointments">
             <ArrowLeft className="h-4 w-4" />
-            <span className="sr-only">العودة</span>
+            <span className="sr-only">
+              {t('patientPortal.appointments.details.backButton')}
+            </span>
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">تفاصيل الموعد</h1>
-          <p className="text-muted-foreground">عرض تفاصيل الموعد وإدارته</p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('patientPortal.appointments.details.pageTitle')}
+          </h1>
+          <p className="text-muted-foreground">
+            {t('patientPortal.appointments.details.pageSubtitle')}
+          </p>
         </div>
       </div>
 
@@ -200,7 +227,7 @@ export default function AppointmentDetailsPage() {
               <div className="rounded-full p-1 bg-blue-500/10">
                 <Calendar className="h-4 w-4 text-blue-500" />
               </div>
-              معلومات الموعد
+              {t('patientPortal.appointments.details.appointmentInfo.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-5 p-5">
@@ -209,7 +236,9 @@ export default function AppointmentDetailsPage() {
                 <Calendar className="h-4 w-4 text-blue-500" />
               </div>
               <div>
-                <p className="font-medium">التاريخ</p>
+                <p className="font-medium">
+                  {t('patientPortal.appointments.details.appointmentInfo.date')}
+                </p>
                 <p className="text-muted-foreground">
                   {formatDate(appointment.date)}
                 </p>
@@ -221,7 +250,9 @@ export default function AppointmentDetailsPage() {
                 <Clock className="h-4 w-4 text-amber-500" />
               </div>
               <div>
-                <p className="font-medium">الوقت</p>
+                <p className="font-medium">
+                  {t('patientPortal.appointments.details.appointmentInfo.time')}
+                </p>
                 <p className="text-muted-foreground">
                   {appointment.timeRange}{' '}
                 </p>
@@ -234,7 +265,11 @@ export default function AppointmentDetailsPage() {
                   <FileText className="h-4 w-4 text-indigo-500" />
                 </div>
                 <div>
-                  <p className="font-medium">ملاحظات</p>
+                  <p className="font-medium">
+                    {t(
+                      'patientPortal.appointments.details.appointmentInfo.notes'
+                    )}
+                  </p>
                   <p className="text-muted-foreground">{appointment.notes}</p>
                 </div>
               </div>
@@ -246,7 +281,11 @@ export default function AppointmentDetailsPage() {
                   <X className="h-4 w-4 text-red-500" />
                 </div>
                 <div>
-                  <p className="font-medium">سبب الإلغاء</p>
+                  <p className="font-medium">
+                    {t(
+                      'patientPortal.appointments.details.appointmentInfo.cancellationReason'
+                    )}
+                  </p>
                   <p className="text-muted-foreground">
                     {appointment.cancellationReason}
                   </p>
@@ -266,8 +305,8 @@ export default function AppointmentDetailsPage() {
                 >
                   <X className="mr-2 h-4 w-4" />
                   {updatePatientAppointment.isPending
-                    ? 'جاري الإلغاء...'
-                    : 'إلغاء الموعد'}
+                    ? t('patientPortal.appointments.details.actions.canceling')
+                    : t('patientPortal.appointments.details.actions.cancel')}
                 </Button>
               )}
 
@@ -278,7 +317,7 @@ export default function AppointmentDetailsPage() {
                   onClick={() => setShowRescheduleModal(true)}
                 >
                   <CalendarRange className="mr-2 h-4 w-4" />
-                  إعادة جدولة الموعد
+                  {t('patientPortal.appointments.details.actions.reschedule')}
                 </Button>
               )}
 
@@ -290,7 +329,7 @@ export default function AppointmentDetailsPage() {
                 onClick={handleOpenFollowUpModal}
               >
                 <Calendar className="mr-2 h-4 w-4" />
-                حجز موعد متابعة
+                {t('patientPortal.appointments.details.actions.bookFollowUp')}
               </Button>
               {/* )} */}
             </div>
@@ -304,7 +343,7 @@ export default function AppointmentDetailsPage() {
               <div className="rounded-full p-1 bg-purple-500/10">
                 <User className="h-4 w-4 text-purple-500" />
               </div>
-              تفاصيل العيادة والطبيب
+              {t('patientPortal.appointments.details.clinicDoctorInfo.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 p-5">
@@ -332,7 +371,11 @@ export default function AppointmentDetailsPage() {
                   <Building className="h-4 w-4 text-green-500" />
                 </div>
                 <div>
-                  <p className="font-medium">العيادة</p>
+                  <p className="font-medium">
+                    {t(
+                      'patientPortal.appointments.details.clinicDoctorInfo.clinic'
+                    )}
+                  </p>
                   <p className="text-muted-foreground">
                     {appointment.clinicName}
                   </p>
@@ -344,7 +387,11 @@ export default function AppointmentDetailsPage() {
                   <MapPin className="h-4 w-4 text-red-500" />
                 </div>
                 <div>
-                  <p className="font-medium">العنوان</p>
+                  <p className="font-medium">
+                    {t(
+                      'patientPortal.appointments.details.clinicDoctorInfo.address'
+                    )}
+                  </p>
                   <p className="text-muted-foreground">
                     {appointment.clinicAddress || '-'}
                   </p>
@@ -358,7 +405,11 @@ export default function AppointmentDetailsPage() {
                 <FileText className="h-4 w-4 text-blue-500" />
               </div>
               <div>
-                <p className="font-medium">رقم الموعد</p>
+                <p className="font-medium">
+                  {t(
+                    'patientPortal.appointments.details.appointmentInfo.appointmentNumber'
+                  )}
+                </p>
                 <p className="text-muted-foreground">
                   {appointment.appointmentNumber}
                 </p>
@@ -372,7 +423,7 @@ export default function AppointmentDetailsPage() {
       <Modal
         isOpen={showCancelModal}
         onClose={() => setShowCancelModal(false)}
-        title="إلغاء الموعد"
+        title={t('patientPortal.appointments.details.modals.cancel.title')}
         maxWidth="2xl"
         footer={
           <div className="flex justify-end gap-3">
@@ -381,28 +432,35 @@ export default function AppointmentDetailsPage() {
               onClick={() => setShowCancelModal(false)}
               disabled={updatePatientAppointment.isPending}
             >
-              إلغاء
+              {t(
+                'patientPortal.appointments.details.modals.cancel.cancelButton'
+              )}
             </Button>
             <Button
               variant="destructive"
               onClick={handleCancelAppointment}
               isLoading={updatePatientAppointment.isPending}
             >
-              تأكيد الإلغاء
+              {t(
+                'patientPortal.appointments.details.modals.cancel.confirmButton'
+              )}
             </Button>
           </div>
         }
       >
         <div className="space-y-4">
           <p className="text-muted-foreground">
-            هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟ لا يمكن التراجع عن هذا
-            الإجراء.
+            {t('patientPortal.appointments.details.modals.cancel.message')}
           </p>
           <div className="space-y-2">
             <TextArea
               id="reason"
-              label="سبب الإلغاء (اختياري)"
-              placeholder="يرجى ذكر سبب الإلغاء..."
+              label={t(
+                'patientPortal.appointments.details.modals.cancel.reasonLabel'
+              )}
+              placeholder={t(
+                'patientPortal.appointments.details.modals.cancel.reasonPlaceholder'
+              )}
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
               className="min-h-[100px]"
@@ -415,7 +473,7 @@ export default function AppointmentDetailsPage() {
       <Modal
         isOpen={showRescheduleModal}
         onClose={() => setShowRescheduleModal(false)}
-        title="إعادة جدولة الموعد"
+        title={t('patientPortal.appointments.details.modals.reschedule.title')}
         maxWidth="2xl"
         footer={
           <div className="flex justify-end gap-3">
@@ -424,19 +482,23 @@ export default function AppointmentDetailsPage() {
               onClick={() => setShowRescheduleModal(false)}
               disabled={updatePatientAppointment.isPending}
             >
-              إلغاء
+              {t(
+                'patientPortal.appointments.details.modals.reschedule.cancelButton'
+              )}
             </Button>
             <Button
               onClick={handleRescheduleAppointment}
               isLoading={updatePatientAppointment.isPending}
             >
-              متابعة
+              {t(
+                'patientPortal.appointments.details.modals.reschedule.continueButton'
+              )}
             </Button>
           </div>
         }
       >
         <p className="text-muted-foreground">
-          سيتم توجيهك إلى صفحة حجز المواعيد لاختيار وقت جديد.
+          {t('patientPortal.appointments.details.modals.reschedule.message')}
         </p>
       </Modal>
 
@@ -444,7 +506,7 @@ export default function AppointmentDetailsPage() {
       <Modal
         isOpen={showFollowUpModal}
         onClose={() => setShowFollowUpModal(false)}
-        title="حجز موعد متابعة"
+        title={t('patientPortal.appointments.details.modals.followUp.title')}
         maxWidth="2xl"
         footer={
           <div className="flex justify-end gap-3">
@@ -453,27 +515,32 @@ export default function AppointmentDetailsPage() {
               onClick={() => setShowFollowUpModal(false)}
               disabled={bookFollowUpAppointment.isPending}
             >
-              إلغاء
+              {t(
+                'patientPortal.appointments.details.modals.followUp.cancelButton'
+              )}
             </Button>
             <Button
               onClick={handleBookFollowUp}
               isLoading={bookFollowUpAppointment.isPending}
             >
-              حجز الموعد
+              {t(
+                'patientPortal.appointments.details.modals.followUp.bookButton'
+              )}
             </Button>
           </div>
         }
       >
         <div className="space-y-4">
           <p className="text-muted-foreground">
-            سيتم حجز موعد متابعة مع نفس الطبيب والعيادة. يمكنك اختيار التاريخ
-            المفضل وسبب الموعد.
+            {t('patientPortal.appointments.details.modals.followUp.message')}
           </p>
 
           <div className="grid gap-4 md:grid-cols-2">
             <Input
               type="date"
-              label="التاريخ المفضل (اختياري)"
+              label={t(
+                'patientPortal.appointments.details.modals.followUp.preferredDateLabel'
+              )}
               value={followUpData.preferredDate}
               onChange={(e) =>
                 setFollowUpData((prev) => ({
@@ -486,8 +553,12 @@ export default function AppointmentDetailsPage() {
           </div>
 
           <TextArea
-            label="سبب الموعد"
-            placeholder="يرجى ذكر سبب الموعد..."
+            label={t(
+              'patientPortal.appointments.details.modals.followUp.reasonLabel'
+            )}
+            placeholder={t(
+              'patientPortal.appointments.details.modals.followUp.reasonPlaceholder'
+            )}
             value={followUpData.appointmentReason}
             onChange={(e) =>
               setFollowUpData((prev) => ({
@@ -500,8 +571,12 @@ export default function AppointmentDetailsPage() {
 
           <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
             <p className="text-sm text-blue-700 dark:text-blue-300">
-              <strong>ملاحظة:</strong> إذا لم تختر تاريخاً، سيتم حجز الموعد بعد
-              أسبوعين من اليوم.
+              <strong>
+                {t(
+                  'patientPortal.appointments.details.modals.followUp.noteLabel'
+                )}
+              </strong>{' '}
+              {t('patientPortal.appointments.details.modals.followUp.note')}
             </p>
           </div>
         </div>

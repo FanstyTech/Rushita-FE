@@ -98,7 +98,11 @@ const HeroSection = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-1400">
-              <Link href="/auth/login" className="flex-1 sm:flex-none">
+              <Link
+                href="http://wa.me/+970566480097"
+                target="_blank"
+                className="flex-1 sm:flex-none"
+              >
                 <Button
                   size="lg"
                   className="group relative w-full sm:w-auto px-8 py-4 text-lg font-semibold bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-purple-600 hover:to-pink-600 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-500 animate-pulse-glow overflow-hidden"

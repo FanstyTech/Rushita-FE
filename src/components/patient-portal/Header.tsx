@@ -7,17 +7,15 @@ import { motion } from 'framer-motion';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import ThemeToggle from '../ThemeToggle';
-import { GlobeAltIcon } from '@heroicons/react/24/outline';
-import { t } from 'i18next';
-import { useLanguage, Language } from '@/i18n/LanguageProvider';
-import { languages } from '@/middleware';
+import { useTranslation } from 'react-i18next';
+import LanguageToggle from '../LanguageToggle';
+import { useLanguage } from '@/i18n/LanguageProvider';
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void;
@@ -26,8 +24,9 @@ interface HeaderProps {
 export function Header({ setSidebarOpen }: HeaderProps) {
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { language, setLanguage, direction, isChangingLanguage } =
-    useLanguage();
+  const { t } = useTranslation();
+  const { direction } = useLanguage();
+
   useEffect(() => {
     setMounted(true);
 
@@ -79,7 +78,9 @@ export function Header({ setSidebarOpen }: HeaderProps) {
               onClick={() => setSidebarOpen(true)}
             >
               <Menu className="h-5 w-5" />
-              <span className="sr-only">فتح القائمة</span>
+              <span className="sr-only">
+                {t('patientPortal.header.menu.openMenu')}
+              </span>
             </Button>
 
             {/* Logo */}
@@ -109,7 +110,7 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                     scrolled ? 'text-xs text-muted-foreground' : 'text-sm'
                   )}
                 >
-                  Health Portal
+                  {t('patientPortal.header.logo.healthPortal')}
                 </span>
               </div>
             </div>
@@ -121,45 +122,7 @@ export function Header({ setSidebarOpen }: HeaderProps) {
             <ThemeToggle />
 
             {/* Language Dropdown */}
-            <div className="">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="rounded-full p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
-                    <span className="sr-only">{t('settings.language')}</span>
-                    <GlobeAltIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent asChild>
-                  <div>
-                    {languages.map((lang, index) => (
-                      <DropdownMenuItem
-                        key={index}
-                        className="mx-auto p-0 my-1 flex justify-center items-center"
-                      >
-                        <button
-                          onClick={() => setLanguage(lang as Language)}
-                          disabled={isChangingLanguage}
-                          className={cn(
-                            'block w-full px-4 py-2 text-start text-sm text-gray-700 dark:text-gray-300',
-                            language === lang
-                              ? 'bg-gray-50 dark:bg-gray-700/50'
-                              : '',
-                            isChangingLanguage
-                              ? 'opacity-50 cursor-not-allowed'
-                              : ''
-                          )}
-                        >
-                          {t(`languages.${lang}`)}
-                          {isChangingLanguage && language === lang && (
-                            <span className="ml-2 inline-block h-3 w-3 animate-pulse rounded-full bg-blue-500"></span>
-                          )}
-                        </button>
-                      </DropdownMenuItem>
-                    ))}
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            <LanguageToggle />
 
             {/* Notifications */}
             <DropdownMenu>
@@ -174,7 +137,9 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                 >
                   <Bell className="h-5 w-5" />
                   <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                  <span className="sr-only">الإشعارات</span>
+                  <span className="sr-only">
+                    {t('patientPortal.header.notifications.title')}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -182,13 +147,13 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                 className="w-80 rounded-xl border-border/50 shadow-lg"
               >
                 <DropdownMenuLabel className="flex justify-between items-center">
-                  <span>الإشعارات</span>
+                  <span>{t('patientPortal.header.notifications.title')}</span>
                   <Button
                     variant="ghost"
                     size="sm"
                     className="h-8 text-xs hover:bg-primary/10"
                   >
-                    تحديد الكل كمقروء
+                    {t('patientPortal.header.notifications.markAllAsRead')}
                   </Button>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -199,13 +164,21 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                     transition={{ duration: 0.2 }}
                   >
                     <div className="flex justify-between items-start">
-                      <p className="font-medium text-sm">تذكير بالموعد</p>
+                      <p className="font-medium text-sm">
+                        {t(
+                          'patientPortal.header.notifications.appointmentReminder'
+                        )}
+                      </p>
                       <span className="text-xs text-muted-foreground">
-                        منذ ساعة
+                        {t(
+                          'patientPortal.header.notifications.timeAgo.oneHour'
+                        )}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      لديك موعد مع د. أحمد غداً الساعة 10:00 صباحاً
+                      {t(
+                        'patientPortal.header.notifications.messages.appointmentTomorrow'
+                      )}
                     </p>
                   </motion.div>
                   <motion.div
@@ -214,13 +187,19 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                     transition={{ duration: 0.2 }}
                   >
                     <div className="flex justify-between items-start">
-                      <p className="font-medium text-sm">نتائج الفحص جاهزة</p>
+                      <p className="font-medium text-sm">
+                        {t('patientPortal.header.notifications.testResults')}
+                      </p>
                       <span className="text-xs text-muted-foreground">
-                        منذ 3 ساعات
+                        {t(
+                          'patientPortal.header.notifications.timeAgo.threeHours'
+                        )}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      نتائج فحص الدم الخاص بك جاهزة للاطلاع
+                      {t(
+                        'patientPortal.header.notifications.messages.testResultsReady'
+                      )}
                     </p>
                   </motion.div>
                   <motion.div
@@ -229,13 +208,21 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                     transition={{ duration: 0.2 }}
                   >
                     <div className="flex justify-between items-start">
-                      <p className="font-medium text-sm">تذكير بالدواء</p>
+                      <p className="font-medium text-sm">
+                        {t(
+                          'patientPortal.header.notifications.medicationReminder'
+                        )}
+                      </p>
                       <span className="text-xs text-muted-foreground">
-                        منذ 5 ساعات
+                        {t(
+                          'patientPortal.header.notifications.timeAgo.fiveHours'
+                        )}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      حان وقت تناول دواء الضغط
+                      {t(
+                        'patientPortal.header.notifications.messages.medicationTime'
+                      )}
                     </p>
                   </motion.div>
                 </div>
@@ -244,7 +231,7 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                   variant="ghost"
                   className="w-full justify-center text-sm rounded-lg hover:bg-primary/10"
                 >
-                  عرض كل الإشعارات
+                  {t('patientPortal.header.notifications.viewAll')}
                 </Button>
               </DropdownMenuContent>
             </DropdownMenu>

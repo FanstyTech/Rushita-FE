@@ -10,11 +10,20 @@ interface TextAreaProps
   helperText?: string;
   fullWidth?: boolean;
   hasBorder?: boolean;
+  required?: boolean;
 }
 
 const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   (
-    { label, error, helperText, className, fullWidth = true, ...props },
+    {
+      label,
+      error,
+      helperText,
+      className,
+      fullWidth = true,
+      required = false,
+      ...props
+    },
     ref
   ) => {
     return (
@@ -22,6 +31,9 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         {label && (
           <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
             {label}
+            {required && (
+              <span className="text-red-500 dark:text-red-400 ml-1">*</span>
+            )}
           </label>
         )}
         <textarea

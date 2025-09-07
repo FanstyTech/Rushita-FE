@@ -67,6 +67,12 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     );
     const [searchQuery, setSearchQuery] = useState('');
 
+    // Detect RTL direction
+    const isRTL =
+      typeof document !== 'undefined' &&
+      (document.documentElement.dir === 'rtl' ||
+        document.documentElement.getAttribute('data-direction') === 'rtl' ||
+        getComputedStyle(document.documentElement).direction === 'rtl');
 
     useEffect(() => {
       setSelectedValue(value as string | undefined);
@@ -93,10 +99,22 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+          <label
+            className={twMerge(
+              'block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300',
+              isRTL ? 'text-right' : 'text-left'
+            )}
+          >
             {label}
             {required && (
-              <span className="text-red-500 dark:text-red-400 ml-1">*</span>
+              <span
+                className={twMerge(
+                  'text-red-500 dark:text-red-400',
+                  isRTL ? 'mr-1' : 'ml-1'
+                )}
+              >
+                *
+              </span>
             )}
           </label>
         )}
@@ -121,25 +139,41 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 'focus:outline-none focus-visible:outline-none focus-visible:ring-0',
                 'hover:bg-transparent hover:text-current',
                 disabled &&
-                'opacity-70 cursor-not-allowed bg-gray-100 dark:bg-gray-700',
-                startIcon && 'pl-10',
+                  'opacity-70 cursor-not-allowed bg-gray-100 dark:bg-gray-700',
+                startIcon && (isRTL ? 'pr-10' : 'pl-10'),
                 className
               )}
             >
               {startIcon && (
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+                <div
+                  className={twMerge(
+                    'absolute inset-y-0 flex items-center pointer-events-none text-gray-400 dark:text-gray-500',
+                    isRTL ? 'right-3' : 'left-3'
+                  )}
+                >
                   {startIcon}
                 </div>
               )}
 
-              <span className="flex-grow text-left truncate text-gray-900 dark:text-gray-100">
+              <span
+                className={twMerge(
+                  'flex-grow truncate text-gray-900 dark:text-gray-100',
+                  isRTL ? 'text-right' : 'text-left'
+                )}
+              >
                 {selectedValue
                   ? (() => {
-                      const selectedOption = options.find((item) => item.value === selectedValue);
-                      if (!selectedOption) return placeholder || `Select ${label || ''}...`;
-                      
+                      const selectedOption = options.find(
+                        (item) => item.value === selectedValue
+                      );
+                      if (!selectedOption)
+                        return placeholder || `Select ${label || ''}...`;
+
                       const selectedLabel = selectedOption.label;
-                      if (typeof selectedLabel === 'string' || selectedLabel === null) {
+                      if (
+                        typeof selectedLabel === 'string' ||
+                        selectedLabel === null
+                      ) {
                         return selectedLabel || `Select ${label || ''}...`;
                       } else {
                         // For ReactNode labels, render them directly
@@ -151,7 +185,12 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
               {endIcon ? (
                 endIcon
               ) : (
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-gray-500 dark:text-gray-400" />
+                <ChevronsUpDown
+                  className={twMerge(
+                    'h-4 w-4 shrink-0 opacity-50 text-gray-500 dark:text-gray-400',
+                    isRTL ? 'mr-2' : 'ml-2'
+                  )}
+                />
               )}
             </Button>
           </PopoverTrigger>
@@ -167,7 +206,10 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
               <Command className="bg-transparent" shouldFilter={false}>
                 <CommandInput
                   placeholder={`Search ${label || ''}...`}
-                  className="h-9 border-none focus:ring-0 bg-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                  className={twMerge(
+                    'h-9 border-none focus:ring-0 bg-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500',
+                    isRTL ? 'text-right' : 'text-left'
+                  )}
                   value={searchQuery}
                   onValueChange={(value) => {
                     setSearchQuery(value);
@@ -193,21 +235,37 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                           key={String(option.value)}
                           value={String(option.value)}
                           onSelect={handleSelect}
-                          className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100"
-                        >
-                          {typeof option.label === 'string' || option.label === null ? (
-                            option.label
-                          ) : (
-                            <div className="flex items-center">{option.label}</div>
+                          className={twMerge(
+                            'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100',
+                            isRTL ? 'text-right' : 'text-left'
                           )}
-                          <Check
+                        >
+                          <div
                             className={twMerge(
-                              'ml-auto h-4 w-4 text-blue-600 dark:text-blue-400',
-                              selectedValue === String(option.value)
-                                ? 'opacity-100'
-                                : 'opacity-0'
+                              'flex items-center w-full',
+                              isRTL ? 'flex-row-reverse' : 'flex-row'
                             )}
-                          />
+                          >
+                            <div className="flex-grow">
+                              {typeof option.label === 'string' ||
+                              option.label === null ? (
+                                option.label
+                              ) : (
+                                <div className="flex items-center">
+                                  {option.label}
+                                </div>
+                              )}
+                            </div>
+                            <Check
+                              className={twMerge(
+                                'h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0',
+                                isRTL ? 'mr-auto' : 'ml-auto',
+                                selectedValue === String(option.value)
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              )}
+                            />
+                          </div>
                         </CommandItem>
                       ))}
                     </CommandGroup>
@@ -224,7 +282,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
               'mt-1 text-xs',
               error
                 ? 'text-red-500 dark:text-red-400'
-                : 'text-gray-500 dark:text-gray-400'
+                : 'text-gray-500 dark:text-gray-400',
+              isRTL ? 'text-right' : 'text-left'
             )}
           >
             {error || helperText}
@@ -246,8 +305,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </option>
           {options.map((option) => (
             <option key={String(option.value)} value={String(option.value)}>
-              {typeof option.label === 'string' || option.label === null 
-                ? option.label 
+              {typeof option.label === 'string' || option.label === null
+                ? option.label
                 : String(option.value)}
             </option>
           ))}

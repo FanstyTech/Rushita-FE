@@ -13,6 +13,8 @@ import { CreateUpdateVisitPrescriptionDto } from '@/lib/api/types/visit-prescrip
 import { Trash, Plus, Search } from 'lucide-react';
 import { TreatmentFormData } from './validation';
 import { FrequencyType } from '@/lib/api/types/visit-prescription';
+import { useTranslation } from 'react-i18next';
+import { getFrequencyTypeLabel } from '@/utils/textUtils';
 
 interface MedicationsProps {
   medications: CreateUpdateVisitPrescriptionDto[];
@@ -33,6 +35,8 @@ export default function Medications({
   control,
   errors,
 }: MedicationsProps) {
+  const { t } = useTranslation();
+
   const handleAddMedication = () => {
     // Generate a unique ID for the new medication
     const newId = `med-${Date.now()}-${Math.random()
@@ -62,14 +66,14 @@ export default function Medications({
     <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg mt-4">
       <div className="flex justify-between items-center mb-3">
         <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          Medications
+          {t('clinic.visits.form.medications.title')}
         </h4>
         <Button
           type="button"
           variant={'ghost'}
           onClick={handleAddMedication}
           className="p-2 text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-          title="Add Medication"
+          title={t('clinic.visits.form.medications.addMedication')}
         >
           <Plus className="h-4 w-4 " />
         </Button>
@@ -82,7 +86,8 @@ export default function Medications({
           >
             <div className="flex justify-between items-center mb-3">
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Medication #{index + 1}
+                {t('clinic.visits.form.medications.medicationNumber')}{' '}
+                {index + 1}
               </h4>
               {medications.length > 1 && (
                 <Button
@@ -90,7 +95,7 @@ export default function Medications({
                   onClick={() => handleRemoveMedication(index)}
                   variant="ghost"
                   className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
-                  title="Remove Medication"
+                  title={t('clinic.visits.form.medications.removeMedication')}
                 >
                   <Trash className="h-4 w-4 " />
                 </Button>
@@ -104,9 +109,11 @@ export default function Medications({
                   control={control}
                   render={({ field }) => (
                     <Input
-                      label="Medication Name"
+                      label={t('clinic.visits.form.medications.medicationName')}
                       required={true}
-                      placeholder="Search medicine..."
+                      placeholder={t(
+                        'clinic.visits.form.medications.searchMedicine'
+                      )}
                       value={field.value}
                       onClick={() => onShowMedicationSearch(index)}
                       readOnly
@@ -120,17 +127,21 @@ export default function Medications({
                   errors.medications[index]?.name && (
                     <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                       {(errors.medications[index]?.name?.message as string) ||
-                        'Medication name is required'}
+                        t(
+                          'clinic.visits.form.medications.medicationNameRequired'
+                        )}
                     </p>
                   )}
               </div>
 
               <div className="col-span-6 md:col-span-2">
                 <Input
-                  label="Dosage"
+                  label={t('clinic.visits.form.medications.dosage')}
                   type="number"
                   required={true}
-                  placeholder="Dosage"
+                  placeholder={t(
+                    'clinic.visits.form.medications.dosagePlaceholder'
+                  )}
                   {...register(`medications.${index}.dosage`, {
                     required: true,
                   })}
@@ -147,7 +158,7 @@ export default function Medications({
 
               <div className="col-span-6 md:col-span-3">
                 <Select
-                  label="Frequency"
+                  label={t('clinic.visits.form.medications.frequency')}
                   {...register(`medications.${index}.frequency`, {
                     required: true,
                   })}
@@ -155,9 +166,9 @@ export default function Medications({
                   required={true}
                   options={Object.entries(FrequencyType)
                     .filter(([key]) => isNaN(Number(key)))
-                    .map(([key, value]) => ({
+                    .map(([, value]) => ({
                       value: value.toString(),
-                      label: key,
+                      label: getFrequencyTypeLabel(value as FrequencyType),
                     }))}
                   error={
                     errors.medications &&
@@ -172,10 +183,12 @@ export default function Medications({
 
               <div className="col-span-6 md:col-span-3">
                 <Input
-                  label="Duration (days)"
+                  label={t('clinic.visits.form.medications.duration')}
                   type="number"
                   required={true}
-                  placeholder="Duration"
+                  placeholder={t(
+                    'clinic.visits.form.medications.durationPlaceholder'
+                  )}
                   {...register(`medications.${index}.duration`, {})}
                   className="w-full"
                   error={
@@ -190,11 +203,13 @@ export default function Medications({
 
               <div className="col-span-12 md:col-span-12 mt-2">
                 <TextArea
-                  label="Notes"
+                  label={t('clinic.visits.form.medications.notes')}
                   {...register(`medications.${index}.notes`, {
                     required: true,
                   })}
-                  placeholder="Additional instructions or notes about this medication"
+                  placeholder={t(
+                    'clinic.visits.form.medications.notesPlaceholder'
+                  )}
                   rows={2}
                   className="w-full"
                   error={

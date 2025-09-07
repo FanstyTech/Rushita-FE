@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Input, Select, TextArea } from '@/components/common/form';
 import { Button } from '@/components/ui/button';
 import Modal from '@/components/common/Modal';
@@ -16,7 +17,7 @@ import { ConfirmationModal } from '@/components/common';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
 import { useInvoice } from '@/lib/api/hooks/useInvoice';
 import { InvoiceStatus, InvoiceListDto } from '@/lib/api/types/invoice';
-import { PaymentFormData, paymentSchema } from './validation';
+import { PaymentFormData, createPaymentSchema } from './validation';
 import { PaymentMethod } from '@/lib/api/types/invoice';
 import { formatDate } from '@/utils/dateTimeUtils';
 import {
@@ -27,6 +28,7 @@ import {
 } from '@/utils/textUtils';
 
 export default function InvoicesPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -48,7 +50,7 @@ export default function InvoicesPage() {
 
   // Forms
   const paymentForm = useForm<PaymentFormData>({
-    resolver: zodResolver(paymentSchema),
+    resolver: zodResolver(createPaymentSchema(t)),
     defaultValues: {
       amount: 0,
       paymentDate: new Date().toISOString().split('T')[0],
@@ -85,7 +87,7 @@ export default function InvoicesPage() {
 
   const columns: Column<InvoiceListDto>[] = [
     {
-      header: 'Invoice #',
+      header: t('clinic.financial.invoices.table.columns.invoiceNumber'),
       accessor: 'invoiceNumber',
       cell: ({ row }) => (
         <span className="font-mono font-medium text-gray-900 dark:text-white">
@@ -94,7 +96,7 @@ export default function InvoicesPage() {
       ),
     },
     {
-      header: 'Patient',
+      header: t('clinic.financial.invoices.table.columns.patientName'),
       accessor: 'patientName',
       cell: ({ row }) => (
         <span className="font-medium text-gray-900 dark:text-white">
@@ -103,7 +105,7 @@ export default function InvoicesPage() {
       ),
     },
     {
-      header: 'Doctor',
+      header: t('clinic.financial.invoices.table.columns.doctorName'),
       accessor: 'doctorName',
       cell: ({ row }) => (
         <span className="text-gray-600 dark:text-gray-400">
@@ -112,7 +114,7 @@ export default function InvoicesPage() {
       ),
     },
     {
-      header: 'Total Amount',
+      header: t('clinic.financial.invoices.table.columns.totalAmount'),
       accessor: 'totalAmount',
       cell: ({ row }) => (
         <span className="font-semibold text-gray-900 dark:text-white">
@@ -121,23 +123,25 @@ export default function InvoicesPage() {
       ),
     },
     {
-      header: 'Paid/Unpaid',
+      header: t('clinic.financial.invoices.table.columns.paidUnpaid'),
       accessor: 'paidAmount',
       cell: ({ row }) => (
         <div className="text-sm">
           <div className="text-green-600 dark:text-green-400">
-            Paid: {formatCurrency(row.original.paidAmount)}
+            {t('clinic.financial.invoices.table.columns.paid')}:{' '}
+            {formatCurrency(row.original.paidAmount)}
           </div>
           {row.original.unpaidAmount > 0 && (
             <div className="text-red-600 dark:text-red-400">
-              Unpaid: {formatCurrency(row.original.unpaidAmount)}
+              {t('clinic.financial.invoices.table.columns.unpaid')}:{' '}
+              {formatCurrency(row.original.unpaidAmount)}
             </div>
           )}
         </div>
       ),
     },
     {
-      header: 'Status',
+      header: t('clinic.financial.invoices.table.columns.status'),
       accessor: 'status',
       cell: ({ row }) => (
         <Badge className={getInvoiceStatusColor(row.original.status)}>
@@ -146,7 +150,7 @@ export default function InvoicesPage() {
       ),
     },
     {
-      header: 'Due Date',
+      header: t('clinic.financial.invoices.table.columns.dueDate'),
       accessor: 'dueDate',
       cell: ({ row }) => (
         <span className="text-gray-600 dark:text-gray-400">
@@ -155,7 +159,7 @@ export default function InvoicesPage() {
       ),
     },
     {
-      header: 'Actions',
+      header: t('clinic.financial.invoices.table.columns.actions'),
       accessor: 'id',
       cell: ({ row }) => (
         <div className="flex gap-2">
@@ -163,7 +167,7 @@ export default function InvoicesPage() {
             variant="ghost"
             onClick={() => handleView(row.original)}
             className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-            title="View"
+            title={t('clinic.financial.invoices.actions.view')}
           >
             <Eye className="w-4 h-4" />
           </Button>
@@ -172,7 +176,7 @@ export default function InvoicesPage() {
               variant="ghost"
               onClick={() => handleAddPayment(row.original)}
               className="p-1 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
-              title="Add Payment"
+              title={t('clinic.financial.invoices.actions.addPayment')}
             >
               <DollarSign className="w-4 h-4" />
             </Button>
@@ -181,7 +185,7 @@ export default function InvoicesPage() {
             variant="ghost"
             onClick={() => handleDelete(row.original)}
             className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-            title="Delete"
+            title={t('clinic.financial.invoices.actions.delete')}
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -256,7 +260,7 @@ export default function InvoicesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Invoices
+                  {t('clinic.financial.invoices.summary.cards.totalInvoices')}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {summary?.totalInvoices || 0}
@@ -272,7 +276,7 @@ export default function InvoicesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Amount
+                  {t('clinic.financial.invoices.summary.cards.totalAmount')}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(summary?.totalAmount || 0)}
@@ -288,7 +292,7 @@ export default function InvoicesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Paid
+                  {t('clinic.financial.invoices.summary.cards.totalPaid')}
                 </p>
                 <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {formatCurrency(summary?.totalPaid || 0)}
@@ -304,13 +308,14 @@ export default function InvoicesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Overdue Invoices
+                  {t('clinic.financial.invoices.summary.cards.overdueInvoices')}
                 </p>
                 <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                   {summary?.overdueInvoices || 0}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {formatCurrency(summary?.totalUnpaid || 0)} unpaid
+                  {formatCurrency(summary?.totalUnpaid || 0)}{' '}
+                  {t('clinic.financial.invoices.summary.cards.unpaid')}
                 </p>
               </div>
               <div className="p-3 bg-red-100 dark:bg-red-900 rounded-full">
@@ -337,9 +342,12 @@ export default function InvoicesPage() {
           additionalFilters={[
             {
               icon: <FileText className="w-4 h-4" />,
-              label: 'Status',
+              label: t('clinic.financial.invoices.filters.status'),
               options: [
-                { value: '', label: 'All Statuses' },
+                {
+                  value: '',
+                  label: t('clinic.financial.invoices.filters.allStatuses'),
+                },
                 ...Object.entries(InvoiceStatus)
                   .filter(([key]) => isNaN(Number(key)))
                   .map(([key, value]) => ({
@@ -383,21 +391,21 @@ export default function InvoicesPage() {
               disabled={addPayment.isPending}
               onClick={handleClosePaymentModal}
             >
-              Cancel
+              {t('clinic.financial.invoices.actions.cancel')}
             </Button>
             <Button
               onClick={paymentForm.handleSubmit(onSubmitPayment)}
               isLoading={addPayment.isPending}
             >
-              Add Payment
+              {t('clinic.financial.invoices.modals.payment.buttons.addPayment')}
             </Button>
           </div>
         }
-        title="Add Payment"
+        title={t('clinic.financial.invoices.modals.payment.title')}
       >
         <form className="space-y-6">
           <Input
-            label="Amount"
+            label={t('clinic.financial.invoices.modals.payment.labels.amount')}
             required={true}
             type="number"
             step="0.01"
@@ -408,7 +416,9 @@ export default function InvoicesPage() {
           />
 
           <Input
-            label="Payment Date"
+            label={t(
+              'clinic.financial.invoices.modals.payment.labels.paymentDate'
+            )}
             required={true}
             type="date"
             {...paymentForm.register('paymentDate')}
@@ -416,7 +426,9 @@ export default function InvoicesPage() {
           />
 
           <Select
-            label="Payment Method"
+            label={t(
+              'clinic.financial.invoices.modals.payment.labels.paymentMethod'
+            )}
             required={true}
             value={String(paymentForm.watch('method'))}
             {...paymentForm.register('method')}
@@ -428,15 +440,9 @@ export default function InvoicesPage() {
                 label: key,
               }))}
           />
-          {/* 
-          <Input
-            label="Reference Number"
-            {...paymentForm.register('referenceNumber')}
-            error={paymentForm.formState.errors.referenceNumber?.message}
-          /> */}
 
           <TextArea
-            label="Notes"
+            label={t('clinic.financial.invoices.modals.payment.labels.notes')}
             {...paymentForm.register('notes')}
             error={paymentForm.formState.errors.notes?.message}
           />
@@ -450,7 +456,7 @@ export default function InvoicesPage() {
         footer={
           <div className="flex justify-end gap-3">
             <Button variant="secondary" onClick={handleCloseViewModal}>
-              Close
+              {t('clinic.financial.invoices.actions.close')}
             </Button>
             <Button
               onClick={() => {
@@ -459,11 +465,13 @@ export default function InvoicesPage() {
               }}
               disabled={selectedInvoice?.unpaidAmount === 0}
             >
-              Add Payment
+              {t('clinic.financial.invoices.actions.addPayment')}
             </Button>
           </div>
         }
-        title={`Invoice Details - ${selectedInvoice?.invoiceNumber}`}
+        title={t('clinic.financial.invoices.modals.view.title', {
+          invoiceNumber: selectedInvoice?.invoiceNumber,
+        })}
         maxWidth="3xl"
       >
         {invoice && (
@@ -472,12 +480,16 @@ export default function InvoicesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Invoice Information
+                  {t(
+                    'clinic.financial.invoices.modals.view.sections.invoiceInformation'
+                  )}
                 </h4>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">
-                      Invoice Number:
+                      {t(
+                        'clinic.financial.invoices.modals.view.labels.invoiceNumber'
+                      )}
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {invoice?.invoiceNumber}
@@ -485,7 +497,9 @@ export default function InvoicesPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">
-                      Invoice Date:
+                      {t(
+                        'clinic.financial.invoices.modals.view.labels.invoiceDate'
+                      )}
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {invoice && formatDate(invoice?.invoiceDate || '')}
@@ -493,7 +507,9 @@ export default function InvoicesPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">
-                      Due Date:
+                      {t(
+                        'clinic.financial.invoices.modals.view.labels.dueDate'
+                      )}
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {invoice && formatDate(invoice?.dueDate || '')}
@@ -501,7 +517,7 @@ export default function InvoicesPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">
-                      Status:
+                      {t('clinic.financial.invoices.modals.view.labels.status')}
                     </span>
                     {invoice && (
                       <Badge className={getInvoiceStatusColor(invoice?.status)}>
@@ -514,12 +530,16 @@ export default function InvoicesPage() {
 
               <div>
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Patient & Doctor
+                  {t(
+                    'clinic.financial.invoices.modals.view.sections.patientDoctor'
+                  )}
                 </h4>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">
-                      Patient:
+                      {t(
+                        'clinic.financial.invoices.modals.view.labels.patient'
+                      )}
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {invoice?.patientName}
@@ -527,7 +547,7 @@ export default function InvoicesPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">
-                      Doctor:
+                      {t('clinic.financial.invoices.modals.view.labels.doctor')}
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {invoice?.doctorName}
@@ -540,7 +560,9 @@ export default function InvoicesPage() {
             {/* Invoice Items */}
             <div>
               <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Invoice Items
+                {t(
+                  'clinic.financial.invoices.modals.view.sections.invoiceItems'
+                )}
               </h4>
               <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                 <div className="space-y-3">
@@ -563,7 +585,9 @@ export default function InvoicesPage() {
                   <hr className="border-gray-200 dark:border-gray-700" />
                   <div className="flex justify-between items-center font-semibold">
                     <span className="text-gray-900 dark:text-white">
-                      Total Amount
+                      {t(
+                        'clinic.financial.invoices.modals.view.labels.totalAmount'
+                      )}
                     </span>
                     <span className="text-gray-900 dark:text-white">
                       {invoice && formatCurrency(invoice?.totalAmount)}
@@ -576,13 +600,17 @@ export default function InvoicesPage() {
             {/* Payment Summary */}
             <div>
               <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Payment Summary
+                {t(
+                  'clinic.financial.invoices.modals.view.sections.paymentSummary'
+                )}
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
                   <div className="text-center">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Total Amount
+                      {t(
+                        'clinic.financial.invoices.modals.view.labels.totalAmount'
+                      )}
                     </p>
                     <p className="text-xl font-bold text-green-600 dark:text-green-400">
                       {formatCurrency(invoice?.totalAmount || 0)}
@@ -592,7 +620,9 @@ export default function InvoicesPage() {
                 <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                   <div className="text-center">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Paid Amount
+                      {t(
+                        'clinic.financial.invoices.modals.view.labels.paidAmount'
+                      )}
                     </p>
                     <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
                       {formatCurrency(invoice?.paidAmount || 0)}
@@ -602,7 +632,9 @@ export default function InvoicesPage() {
                 <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4">
                   <div className="text-center">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Unpaid Amount
+                      {t(
+                        'clinic.financial.invoices.modals.view.labels.unpaidAmount'
+                      )}
                     </p>
                     <p className="text-xl font-bold text-red-600 dark:text-red-400">
                       {formatCurrency(invoice?.unpaidAmount || 0)}
@@ -616,7 +648,9 @@ export default function InvoicesPage() {
             {invoice?.payments?.length != 0 && (
               <div>
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Payment History
+                  {t(
+                    'clinic.financial.invoices.modals.view.sections.paymentHistory'
+                  )}
                 </h4>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                   <div className="space-y-3">
@@ -627,7 +661,10 @@ export default function InvoicesPage() {
                       >
                         <div>
                           <p className="font-medium text-gray-900 dark:text-white">
-                            Payment #{index + 1}
+                            {t(
+                              'clinic.financial.invoices.modals.view.labels.payment',
+                              { number: index + 1 }
+                            )}
                           </p>
                           <p className="text-sm text-gray-600 dark:text-gray-400">
                             {formatDate(item.paymentDate || '')}-{' '}
@@ -647,11 +684,12 @@ export default function InvoicesPage() {
             {/* Notes */}
             <div>
               <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Notes
+                {t('clinic.financial.invoices.modals.view.sections.notes')}
               </h4>
               <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                 <p className="text-gray-600 dark:text-gray-400">
-                  {invoice?.notes || 'No additional notes for this invoice.'}
+                  {invoice?.notes ||
+                    t('clinic.financial.invoices.modals.view.messages.noNotes')}
                 </p>
               </div>
             </div>
@@ -664,11 +702,13 @@ export default function InvoicesPage() {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-        title="Delete Invoice"
-        message="Are you sure you want to delete this invoice?"
-        secondaryMessage="This action cannot be undone."
+        title={t('clinic.financial.invoices.modals.delete.title')}
+        message={t('clinic.financial.invoices.modals.delete.message')}
+        secondaryMessage={t(
+          'clinic.financial.invoices.modals.delete.secondaryMessage'
+        )}
         variant="error"
-        confirmText="Delete"
+        confirmText={t('clinic.financial.invoices.modals.delete.confirmText')}
         isLoading={deleteInvoice.isPending}
       />
     </PageLayout>

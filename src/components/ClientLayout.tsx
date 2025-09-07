@@ -12,9 +12,9 @@ const Header = dynamic(() => import('@/components/Header'), { ssr: false });
 const QuickMenu = dynamic(() => import('@/components/QuickMenu'), {
   ssr: false,
 });
-const QuickActions = dynamic(() => import('@/components/QuickActions'), {
-  ssr: false,
-});
+// const QuickActions = dynamic(() => import('@/components/QuickActions'), {
+//   ssr: false,
+// });
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -61,7 +61,7 @@ export default function ClientLayout({
               <div className="relative">
                 <Header />
                 <QuickMenu />
-                <QuickActions />
+                {/* <QuickActions /> */}
                 <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-6">
                   {children}
                 </main>

@@ -7,8 +7,10 @@ import PatientForm from '@/components/clinic/patients/PatientForm';
 import PageLayout from '@/components/layouts/PageLayout';
 import { CreateUpdateClinicPatientDto } from '@/lib/api/types/clinic-patient';
 import { toast } from '@/components/ui/Toast';
+import { useTranslation } from 'react-i18next';
 
 export default function PatientActionPage() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const { createOrUpdatePatient } = useClinicPatients();
@@ -16,17 +18,17 @@ export default function PatientActionPage() {
   const handleSubmit = async (data: PatientFormData) => {
     // Validate required fields
     if (!data.fNameF) {
-      toast.error('First name is required');
+      toast.error(t('clinic.patients.form.validation.firstNameRequired'));
       return;
     }
 
     if (!data.phoneNumber) {
-      toast.error('Phone number is required');
+      toast.error(t('clinic.patients.form.validation.phoneRequired'));
       return;
     }
 
     if (!data.dateOfBirth) {
-      toast.error('Date of birth is required');
+      toast.error(t('clinic.patients.form.validation.dateOfBirthRequired'));
       return;
     }
 
@@ -52,6 +54,7 @@ export default function PatientActionPage() {
     const result = await createOrUpdatePatient.mutateAsync(formattedData);
 
     if (result) {
+      toast.success(t('clinic.patients.form.success.patientAdded'));
       router.push('/clinic/patients');
       router.refresh();
     }

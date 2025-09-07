@@ -12,6 +12,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { SelectOption } from '@/lib/api/types/select-option';
 import { formatDate } from '@/utils/dateTimeUtils';
+import { useTranslation } from 'react-i18next';
 
 interface AppointmentConfirmationProps {
   selectedClinic: SelectOption | null;
@@ -47,6 +48,8 @@ export function AppointmentConfirmation({
   appointmentReason,
   conditions,
 }: AppointmentConfirmationProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       variants={containerVariants}
@@ -54,7 +57,7 @@ export function AppointmentConfirmation({
       animate="show"
       className="space-y-6"
     >
-      <h2 className="text-xl font-semibold">تأكيد الموعد</h2>
+      <h2 className="text-xl font-semibold">{t('patientPortal.appointments.booking.confirmation.title')}</h2>
 
       <motion.div variants={itemVariants}>
         <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200">
@@ -63,13 +66,13 @@ export function AppointmentConfirmation({
               <div className="rounded-full p-1 bg-blue-500/10">
                 <FileText className="h-4 w-4 text-blue-500" />
               </div>
-              تفاصيل الموعد
+              {t('patientPortal.appointments.booking.confirmation.appointmentDetails')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 p-6">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">العيادة</p>
+                <p className="text-sm text-muted-foreground">{t('patientPortal.appointments.booking.confirmation.clinicLabel')}</p>
                 <div className="font-medium flex items-center gap-2">
                   <div className="rounded-full p-1 bg-blue-500/10">
                     <Building className="h-4 w-4 text-blue-500" />
@@ -79,7 +82,7 @@ export function AppointmentConfirmation({
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">التخصص</p>
+                <p className="text-sm text-muted-foreground">{t('patientPortal.appointments.booking.confirmation.specialtyLabel')}</p>
                 <div className="font-medium flex items-center gap-2">
                   <div className="rounded-full p-1 bg-green-500/10">
                     <Stethoscope className="h-4 w-4 text-green-500" />
@@ -89,7 +92,7 @@ export function AppointmentConfirmation({
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">الطبيب</p>
+                <p className="text-sm text-muted-foreground">{t('patientPortal.appointments.booking.confirmation.doctorLabel')}</p>
                 <div className="font-medium flex items-center gap-2">
                   <div className="rounded-full p-1 bg-purple-500/10">
                     <User className="h-4 w-4 text-purple-500" />
@@ -99,7 +102,7 @@ export function AppointmentConfirmation({
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">التاريخ والوقت</p>
+                <p className="text-sm text-muted-foreground">{t('patientPortal.appointments.booking.confirmation.dateTimeLabel')}</p>
                 <div className="font-medium flex items-center gap-2">
                   <div className="rounded-full p-1 bg-amber-500/10">
                     <CalendarDays className="h-4 w-4 text-amber-500" />
@@ -115,7 +118,7 @@ export function AppointmentConfirmation({
                   <div className="rounded-full p-1 bg-indigo-500/10">
                     <FileText className="h-4 w-4 text-indigo-500" />
                   </div>
-                  سبب الزيارة
+                  {t('patientPortal.appointments.booking.confirmation.reasonLabel')}
                 </p>
                 <p className="font-medium pr-7">{appointmentReason}</p>
               </div>
@@ -130,7 +133,7 @@ export function AppointmentConfirmation({
             <div className="rounded-full p-1 bg-orange-500/10">
               <FileText className="h-4 w-4 text-orange-500" />
             </div>
-            شروط الحجز
+            {t('patientPortal.appointments.booking.confirmation.bookingConditions')}
           </Label>
           <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200">
             <CardContent className="p-5 text-sm space-y-3">

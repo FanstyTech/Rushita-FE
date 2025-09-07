@@ -7,6 +7,7 @@ import {
   Control,
   FieldErrors,
 } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { TreatmentFormData } from './validation';
 
 interface NotesProps {
@@ -16,6 +17,8 @@ interface NotesProps {
 }
 
 export default function Notes({ register, control, errors }: NotesProps) {
+  const { t } = useTranslation();
+
   return (
     <div>
       <Controller
@@ -23,11 +26,11 @@ export default function Notes({ register, control, errors }: NotesProps) {
         control={control}
         render={({ field }) => (
           <TextArea
-            label="Additional Notes"
+            label={t('clinic.visits.form.notes.title')}
             value={field.value}
             {...register('notes')}
             rows={3}
-            placeholder="Enter any additional notes..."
+            placeholder={t('clinic.visits.form.notes.placeholder')}
             error={errors.notes?.message as string}
           />
         )}

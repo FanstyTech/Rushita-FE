@@ -176,7 +176,6 @@ export function useVisitPrescription() {
       return response.result;
     },
     onSuccess: (data) => {
-      console.log('Medicine dispensed:', data);
       // Invalidate and refetch relevant queries
       toast.success('Medicine dispensed successfully');
       queryClient.invalidateQueries({ queryKey: queryKeys.lists() });
@@ -190,9 +189,6 @@ export function useVisitPrescription() {
         queryKey: queryKeys.prescribedMedicationsByVisit(data?.visitId || ''),
       });
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
     retry: false,
   });
 
@@ -204,11 +200,14 @@ export function useVisitPrescription() {
   };
 
   // Get patient portal prescriptions
-  const useGetPatientPortalPrescriptions = (filter: VisitPrescriptionFilterDto) =>
+  const useGetPatientPortalPrescriptions = (
+    filter: VisitPrescriptionFilterDto
+  ) =>
     useQuery({
       queryKey: patientPortalQueryKeys.patientPortalList(filter),
       queryFn: async () => {
-        const response = await visitPrescriptionService.getPatientPortalPrescriptions(filter);
+        const response =
+          await visitPrescriptionService.getPatientPortalPrescriptions(filter);
         if (!response.success) {
           throw new Error(
             response.message || 'Failed to fetch patient portal prescriptions'

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from '@/components/common/Modal';
 import { Button } from '@/components/ui/button';
 import { TextArea } from '@/components/common/form';
@@ -28,6 +29,7 @@ export default function TestResultUploadModal({
   test,
   onUpload,
 }: TestResultUploadModalProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { uploadMultipleFiles } = useAttachment();
 
@@ -68,7 +70,7 @@ export default function TestResultUploadModal({
       setUploadedAttachmentIds([]);
     } catch (error) {
       console.error('Error uploading test results:', error);
-      toast.error('Failed to upload test results');
+      toast.error(t('clinic.radiology.modals.uploadResults.error'));
     }
   };
 
@@ -84,7 +86,7 @@ export default function TestResultUploadModal({
   const modalFooter = (
     <div className="flex justify-end gap-3">
       <Button variant="outline" onClick={handleClose} disabled={isUploading}>
-        Cancel
+        {t('clinic.radiology.modals.uploadResults.buttons.cancel')}
       </Button>
       <Button
         variant="default"
@@ -96,12 +98,12 @@ export default function TestResultUploadModal({
         {isUploading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Uploading...
+            {t('clinic.radiology.loading.uploadingResults')}
           </>
         ) : (
           <>
             <Check className="mr-2 h-4 w-4" />
-            Save Results
+            {t('clinic.radiology.modals.uploadResults.buttons.upload')}
           </>
         )}
       </Button>
@@ -112,7 +114,9 @@ export default function TestResultUploadModal({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={`Upload Test Results: ${test.testName}`}
+      title={`${t('clinic.radiology.modals.uploadResults.title')}: ${
+        test.testName
+      }`}
       maxWidth="4xl"
       footer={modalFooter}
     >
@@ -122,7 +126,7 @@ export default function TestResultUploadModal({
           <div className="flex flex-col space-y-2">
             <div className="flex items-center gap-2">
               <span className="font-medium text-gray-700 dark:text-gray-300">
-                Patient:
+                {t('clinic.radiology.table.columns.patient')}:
               </span>
               <span className="text-gray-900 dark:text-gray-100">
                 {test.patientName}
@@ -130,7 +134,7 @@ export default function TestResultUploadModal({
             </div>
             <div className="flex items-center gap-2">
               <span className="font-medium text-gray-700 dark:text-gray-300">
-                Test Type:
+                {t('clinic.radiology.table.columns.testName')}:
               </span>
               <span className="text-gray-900 dark:text-gray-100">
                 {test.testName}
@@ -142,13 +146,15 @@ export default function TestResultUploadModal({
         {/* Results Text */}
         <div className="space-y-2">
           <Label htmlFor="results" className="text-base font-medium">
-            Test Results
+            {t('clinic.radiology.modals.uploadResults.form.results')}
           </Label>
           <TextArea
             id="results"
             value={results}
             onChange={(e) => setResults(e.target.value)}
-            placeholder="Enter test results here..."
+            placeholder={t(
+              'clinic.radiology.modals.uploadResults.form.resultsPlaceholder'
+            )}
             rows={6}
             className="resize-none"
             disabled={isUploading}
@@ -157,7 +163,9 @@ export default function TestResultUploadModal({
 
         {/* File Upload Section */}
         <div className="space-y-4">
-          <Label className="text-base font-medium">Upload Attachments</Label>
+          <Label className="text-base font-medium">
+            {t('clinic.radiology.modals.uploadResults.form.attachments')}
+          </Label>
 
           <FileUpload
             entityId={test.id}
@@ -168,7 +176,9 @@ export default function TestResultUploadModal({
             accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx"
             maxSize={10}
             label=""
-            helperText="Upload test result files, images, or documents"
+            helperText={t(
+              'clinic.radiology.modals.uploadResults.form.attachmentsPlaceholder'
+            )}
             showSuccessMsg={false}
             onFileUploaded={(attachment) => handleFileUploaded(attachment.id)}
             onError={(error) => toast.error(error)}

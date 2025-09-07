@@ -9,6 +9,7 @@ import { getTestStatusColor, getTestStatusLabel } from '@/utils/textUtils';
 import { cn } from '@/lib/utils';
 import { formatDate, formatTime } from '@/utils/dateTimeUtils';
 import AttachmentsList from '@/components/common/files/AttachmentsList';
+import { useTranslation } from 'react-i18next';
 
 interface TestDetailsModalProps {
   isOpen: boolean;
@@ -21,16 +22,18 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
   onClose,
   test,
 }) => {
+  const { t } = useTranslation();
+
   // Footer buttons
   const modalFooter = (
     <div className="flex gap-3">
       <Button variant="outline" onClick={onClose}>
-        Close
+        {t('clinic.laboratory.modals.testDetails.buttons.close')}
       </Button>
 
       <Button variant="lineargradian">
         <Printer className="h-4 w-4 mr-2" />
-        Print
+        {t('clinic.laboratory.modals.testDetails.buttons.print')}
       </Button>
     </div>
   );
@@ -39,7 +42,9 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Test Details: ${test.testName}`}
+      title={`${t('clinic.laboratory.modals.testDetails.title')}: ${
+        test.testName
+      }`}
       maxWidth="5xl"
       footer={modalFooter}
     >
@@ -47,7 +52,7 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
         {/* Test Info */}
         <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-            Test Information
+            {t('clinic.laboratory.modals.testDetails.testInformation')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-3">
@@ -56,7 +61,7 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
                   <FileText className="h-5 w-5 text-blue-500 dark:text-blue-400" />
                 </div>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  Test Name:
+                  {t('clinic.laboratory.modals.testDetails.testName')}:
                 </span>
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {test.testName}
@@ -67,7 +72,7 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
                   <User className="h-5 w-5 text-blue-500 dark:text-blue-400" />
                 </div>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  Patient Name:
+                  {t('clinic.laboratory.modals.testDetails.patientName')}:
                 </span>
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {test.patientName}
@@ -78,7 +83,7 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
                   <Calendar className="h-5 w-5 text-blue-500 dark:text-blue-400" />
                 </div>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  Test Date:
+                  {t('clinic.laboratory.modals.testDetails.testDate')}:
                 </span>
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {formatDate(test.createdAt)}
@@ -91,7 +96,7 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
                   <Clock className="h-5 w-5 text-blue-500 dark:text-blue-400" />
                 </div>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  Test Time:
+                  {t('clinic.laboratory.modals.testDetails.testTime')}:
                 </span>
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {formatTime(test.createdAt)}
@@ -102,7 +107,7 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
                   <div className="h-5 w-5" />
                 </div>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  Test Status:
+                  {t('clinic.laboratory.modals.testDetails.testStatus')}:
                 </span>
                 <Badge
                   variant="outline"
@@ -119,7 +124,7 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
         {test.details && (
           <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-              Test Details
+              {t('clinic.laboratory.modals.testDetails.testDetailsSection')}
             </h3>
             <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
               {test.details}
@@ -130,8 +135,8 @@ const TestDetailsModal: React.FC<TestDetailsModalProps> = ({
         {/* Test Attachments */}
         {test.attachments && test.attachments.length > 0 && (
           <AttachmentsList
-            title="Test Attachments"
-            attachments={test.attachments}           
+            title={t('clinic.laboratory.modals.testDetails.testAttachments')}
+            attachments={test.attachments}
             showDeleteButton={true}
           />
         )}

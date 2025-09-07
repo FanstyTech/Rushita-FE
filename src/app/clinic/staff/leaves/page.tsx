@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { useClinicStaffLeaves } from '@/lib/api/hooks/useClinicStaffLeaves';
 import PageLayout from '@/components/layouts/PageLayout';
@@ -17,6 +18,8 @@ import { ConfirmationModal } from '@/components/common';
 import LeaveCard from '@/components/clinic/staff/leaves/LeaveCard';
 
 export default function ClinicStaffLeavesPage() {
+  const { t } = useTranslation();
+
   // Auth and access control
   const { user } = useAuth();
 
@@ -112,14 +115,14 @@ export default function ClinicStaffLeavesPage() {
     .filter(([key]) => isNaN(Number(key)))
     .map(([key, value]) => ({
       value: value.toString(),
-      label: key,
+      label: t(`clinic.staff.leaves.types.${key.toLowerCase()}`) || key,
     }));
 
   const leaveStatusOptions = Object.entries(LeaveStatus)
     .filter(([key]) => isNaN(Number(key)))
     .map(([key, value]) => ({
       value: value.toString(),
-      label: key,
+      label: t(`clinic.staff.leaves.status.${key.toLowerCase()}`) || key,
     }));
 
   return (
@@ -139,12 +142,13 @@ export default function ClinicStaffLeavesPage() {
           }}
           haveStatusFilter={false}
           onAddNew={handleAddNew}
+          searchPlaceholder={t('clinic.staff.leaves.filters.searchPlaceholder')}
           additionalFilters={[
             {
               icon: <CalendarDays className="w-4 h-4" />,
-              label: 'Type',
+              label: t('clinic.staff.leaves.filters.type'),
               options: [
-                { value: '', label: 'All Types' },
+                { value: '', label: t('clinic.staff.leaves.filters.allTypes') },
                 ...(leaveTypeOptions?.map((type: SelectOption<string>) => ({
                   value: type.value,
                   label: type.label || '',
@@ -160,12 +164,15 @@ export default function ClinicStaffLeavesPage() {
 
             {
               icon: <ActivitySquare className="w-4 h-4" />,
-              label: 'Status',
+              label: t('clinic.staff.leaves.filters.status'),
               options: [
-                { value: '', label: 'All Status' },
-                ...(leaveStatusOptions?.map((city: SelectOption<string>) => ({
-                  value: city.value,
-                  label: city.label || '',
+                {
+                  value: '',
+                  label: t('clinic.staff.leaves.filters.allStatus'),
+                },
+                ...(leaveStatusOptions?.map((status: SelectOption<string>) => ({
+                  value: status.value,
+                  label: status.label || '',
                 })) || []),
               ],
               value: String(filters.status || ''),
@@ -186,9 +193,9 @@ export default function ClinicStaffLeavesPage() {
           ) : leavesList?.items.length === 0 ? (
             <EmptyState
               icon={Calendar}
-              title="No Leave Requests Found"
-              description="Get started by adding your first leave request"
-              buttonText="Add Leave Request"
+              title={t('clinic.staff.leaves.emptyState.title')}
+              description={t('clinic.staff.leaves.emptyState.description')}
+              buttonText={t('clinic.staff.leaves.emptyState.buttonText')}
               onAction={handleAddNew}
               hasFilters={
                 !!(filters.searchValue || filters.status || filters.type)
@@ -212,11 +219,13 @@ export default function ClinicStaffLeavesPage() {
           isOpen={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
           onConfirm={handleConfirmDelete}
-          title="Delete Item"
-          message="Are you sure you want to delete this item?"
-          secondaryMessage="This action cannot be undone."
+          title={t('clinic.staff.leaves.deleteModal.title')}
+          message={t('clinic.staff.leaves.deleteModal.message')}
+          secondaryMessage={t(
+            'clinic.staff.leaves.deleteModal.secondaryMessage'
+          )}
           variant="error"
-          confirmText="Delete"
+          confirmText={t('clinic.staff.leaves.deleteModal.confirm')}
           isLoading={deleteLeave.isPending}
         />
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import {
@@ -14,6 +15,7 @@ import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { PatientAppointmentFilterDto } from '@/lib/api/types/clinic-patient';
 
 export default function AppointmentsPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('upcoming');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('all');
@@ -71,12 +73,14 @@ export default function AppointmentsPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-          <p className="text-red-500 mb-2">Failed to load appointments</p>
+          <p className="text-red-500 mb-2">
+            {t('patientPortal.appointments.messages.failedToLoad')}
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Retry
+            {t('patientPortal.appointments.messages.retry')}
           </button>
         </div>
       </div>
@@ -132,10 +136,10 @@ export default function AppointmentsPage() {
       >
         <TabsList className="grid grid-cols-2 mb-4 w-full sm:w-auto h-full">
           <TabsTrigger value="upcoming" className="py-4">
-            المواعيد القادمة
+            {t('patientPortal.appointments.tabs.upcoming')}
           </TabsTrigger>
           <TabsTrigger value="past" className="py-4">
-            المواعيد السابقة
+            {t('patientPortal.appointments.tabs.past')}
           </TabsTrigger>
         </TabsList>
 
@@ -179,11 +183,15 @@ export default function AppointmentsPage() {
         appointmentsResponse.totalCount === 0 && (
           <div className="text-center py-12">
             <div className="text-muted-foreground">
-              <p className="text-lg font-medium mb-2">لا توجد مواعيد</p>
+              <p className="text-lg font-medium mb-2">
+                {t('patientPortal.appointments.messages.noAppointments')}
+              </p>
               <p className="text-sm">
                 {activeTab === 'upcoming'
-                  ? 'لا توجد مواعيد قادمة حالياً'
-                  : 'لا توجد مواعيد سابقة'}
+                  ? t(
+                      'patientPortal.appointments.messages.noUpcomingAppointments'
+                    )
+                  : t('patientPortal.appointments.messages.noPastAppointments')}
               </p>
             </div>
           </div>

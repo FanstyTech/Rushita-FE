@@ -23,9 +23,11 @@ import FilterBar, { FilterState } from '@/components/common/FilterBar';
 import { useExpense } from '@/lib/api/hooks/useExpense';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { ExpenseType, ClinicExpenseListDto } from '@/lib/api/types/expense';
-import { ExpenseFormData, expenseSchema } from './validation';
+import { ExpenseFormData, createExpenseSchema } from './validation';
+import { useTranslation } from 'react-i18next';
 
 export default function ExpensesPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const clinicId = user?.clinicInfo?.id || '';
 
@@ -46,7 +48,7 @@ export default function ExpensesPage() {
   });
 
   const form = useForm<ExpenseFormData>({
-    resolver: zodResolver(expenseSchema),
+    resolver: zodResolver(createExpenseSchema(t)),
     defaultValues: {
       expenseType: ExpenseType.Rent,
       amount: 0,
@@ -102,22 +104,36 @@ export default function ExpensesPage() {
 
   const getExpenseTypeLabel = (type: ExpenseType) => {
     const labels: { [key: number]: string } = {
-      [ExpenseType.Rent]: 'Rent',
-      [ExpenseType.Utilities]: 'Utilities',
-      [ExpenseType.Salaries]: 'Salaries',
-      [ExpenseType.Supplies]: 'Supplies',
-      [ExpenseType.Equipment]: 'Equipment',
-      [ExpenseType.Maintenance]: 'Maintenance',
-      [ExpenseType.Insurance]: 'Insurance',
-      [ExpenseType.Marketing]: 'Marketing',
-      [ExpenseType.Other]: 'Other',
+      [ExpenseType.Rent]: t('clinic.financial.expenses.expenseTypes.rent'),
+      [ExpenseType.Utilities]: t(
+        'clinic.financial.expenses.expenseTypes.utilities'
+      ),
+      [ExpenseType.Salaries]: t(
+        'clinic.financial.expenses.expenseTypes.salaries'
+      ),
+      [ExpenseType.Supplies]: t(
+        'clinic.financial.expenses.expenseTypes.supplies'
+      ),
+      [ExpenseType.Equipment]: t(
+        'clinic.financial.expenses.expenseTypes.equipment'
+      ),
+      [ExpenseType.Maintenance]: t(
+        'clinic.financial.expenses.expenseTypes.maintenance'
+      ),
+      [ExpenseType.Insurance]: t(
+        'clinic.financial.expenses.expenseTypes.insurance'
+      ),
+      [ExpenseType.Marketing]: t(
+        'clinic.financial.expenses.expenseTypes.marketing'
+      ),
+      [ExpenseType.Other]: t('clinic.financial.expenses.expenseTypes.other'),
     };
-    return labels[type] || 'Other';
+    return labels[type] || t('clinic.financial.expenses.expenseTypes.other');
   };
 
   const columns: Column<ClinicExpenseListDto>[] = [
     {
-      header: 'Expense Type',
+      header: t('clinic.financial.expenses.table.columns.expenseType'),
       accessor: 'expenseType',
       cell: ({ row }) => (
         <Badge className={getExpenseTypeColor(row.original.expenseType)}>
@@ -126,7 +142,7 @@ export default function ExpensesPage() {
       ),
     },
     {
-      header: 'Amount',
+      header: t('clinic.financial.expenses.table.columns.amount'),
       accessor: 'amount',
       cell: ({ row }) => (
         <span className="font-semibold text-red-600 dark:text-red-400">
@@ -135,7 +151,7 @@ export default function ExpensesPage() {
       ),
     },
     {
-      header: 'Date',
+      header: t('clinic.financial.expenses.table.columns.date'),
       accessor: 'expenseDate',
       cell: ({ row }) => (
         <span className="text-gray-600 dark:text-gray-400">
@@ -144,7 +160,7 @@ export default function ExpensesPage() {
       ),
     },
     {
-      header: 'Description',
+      header: t('clinic.financial.expenses.table.columns.description'),
       accessor: 'description',
       cell: ({ row }) => (
         <span className="font-medium text-gray-900 dark:text-white">
@@ -153,7 +169,7 @@ export default function ExpensesPage() {
       ),
     },
     {
-      header: 'Actions',
+      header: t('clinic.financial.expenses.table.columns.actions'),
       accessor: 'id',
       cell: ({ row }) => (
         <div className="flex gap-2">
@@ -161,7 +177,7 @@ export default function ExpensesPage() {
             variant="ghost"
             onClick={() => handleEdit(row.original)}
             className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-            title="Edit"
+            title={t('clinic.financial.expenses.actions.edit')}
           >
             <Pencil className="w-4 h-4" />
           </Button>
@@ -169,7 +185,7 @@ export default function ExpensesPage() {
             variant="ghost"
             onClick={() => handleDelete(row.original)}
             className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-            title="Delete"
+            title={t('clinic.financial.expenses.actions.delete')}
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -243,7 +259,7 @@ export default function ExpensesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Expenses
+                  {t('clinic.financial.expenses.summary.cards.totalExpenses')}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(summary?.totalExpenses || 0)}
@@ -259,7 +275,7 @@ export default function ExpensesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  This Month
+                  {t('clinic.financial.expenses.summary.cards.thisMonth')}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(summary?.thisMonthExpenses || 0)}
@@ -275,7 +291,7 @@ export default function ExpensesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Average Expenses
+                  {t('clinic.financial.expenses.summary.cards.averageExpenses')}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(summary?.averageExpenses || 0)}
@@ -291,7 +307,9 @@ export default function ExpensesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Transactions
+                  {t(
+                    'clinic.financial.expenses.summary.cards.totalTransactions'
+                  )}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {summary?.totalTransactions || 0}
@@ -322,14 +340,17 @@ export default function ExpensesPage() {
           additionalFilters={[
             {
               icon: <DollarSign className="w-4 h-4" />,
-              label: 'Expense Type',
+              label: t('clinic.financial.expenses.filters.expenseType'),
               options: [
-                { value: '', label: 'All Types' },
+                {
+                  value: '',
+                  label: t('clinic.financial.expenses.filters.allTypes'),
+                },
                 ...Object.entries(ExpenseType)
                   .filter(([key]) => isNaN(Number(key)))
-                  .map(([key, value]) => ({
+                  .map(([, value]) => ({
                     value: value.toString(),
-                    label: key,
+                    label: getExpenseTypeLabel(value as ExpenseType),
                   })),
               ],
               value: String(filter.expenseType || ''),
@@ -364,35 +385,41 @@ export default function ExpensesPage() {
         footer={
           <div className="flex justify-end gap-3">
             <Button variant="secondary" onClick={handleCloseModal}>
-              Cancel
+              {t('clinic.financial.expenses.actions.cancel')}
             </Button>
             <Button
               onClick={form.handleSubmit(onSubmit)}
               isLoading={createOrUpdateExpense.isPending}
             >
-              {selectedExpense ? 'Update Expense' : 'Add Expense'}
+              {selectedExpense
+                ? t('clinic.financial.expenses.actions.updateExpense')
+                : t('clinic.financial.expenses.actions.addExpense')}
             </Button>
           </div>
         }
-        title={selectedExpense ? 'Edit Expense' : 'Add New Expense'}
+        title={
+          selectedExpense
+            ? t('clinic.financial.expenses.form.title.edit')
+            : t('clinic.financial.expenses.form.title.add')
+        }
       >
         <form className="space-y-6">
           <Select
-            label="Expense Type"
+            label={t('clinic.financial.expenses.form.labels.expenseType')}
             required={true}
             value={String(form.watch('expenseType'))}
             {...form.register('expenseType', { valueAsNumber: true })}
             error={form.formState.errors.expenseType?.message}
             options={Object.entries(ExpenseType)
               .filter(([key]) => isNaN(Number(key)))
-              .map(([key, value]) => ({
+              .map(([, value]) => ({
                 value: value.toString(),
-                label: key,
+                label: getExpenseTypeLabel(value as ExpenseType),
               }))}
           />
 
           <Input
-            label="Amount"
+            label={t('clinic.financial.expenses.form.labels.amount')}
             required={true}
             type="number"
             step="0.01"
@@ -403,7 +430,7 @@ export default function ExpensesPage() {
           />
 
           <Input
-            label="Date"
+            label={t('clinic.financial.expenses.form.labels.date')}
             required={true}
             type="date"
             {...form.register('expenseDate')}
@@ -411,7 +438,7 @@ export default function ExpensesPage() {
           />
 
           <TextArea
-            label="Description"
+            label={t('clinic.financial.expenses.form.labels.description')}
             {...form.register('description')}
             error={form.formState.errors.description?.message}
           />
@@ -423,11 +450,13 @@ export default function ExpensesPage() {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-        title="Delete Expense"
-        message="Are you sure you want to delete this expense record?"
-        secondaryMessage="This action cannot be undone."
+        title={t('clinic.financial.expenses.deleteModal.title')}
+        message={t('clinic.financial.expenses.deleteModal.message')}
+        secondaryMessage={t(
+          'clinic.financial.expenses.deleteModal.secondaryMessage'
+        )}
         variant="error"
-        confirmText="Delete"
+        confirmText={t('clinic.financial.expenses.deleteModal.confirmText')}
         isLoading={deleteExpense.isPending}
       />
     </PageLayout>

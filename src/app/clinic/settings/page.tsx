@@ -199,332 +199,332 @@ export default function ClinicSettings() {
   const appointmentDurationOptions = [
     {
       value: '15',
-      label: t('settings.clinic.appointments.durationOptions.15'),
+      label: t('clinic.settings.appointments.durationOptions.15'),
     },
     {
       value: '30',
-      label: t('settings.clinic.appointments.durationOptions.30'),
+      label: t('clinic.settings.appointments.durationOptions.30'),
     },
     {
       value: '45',
-      label: t('settings.clinic.appointments.durationOptions.45'),
+      label: t('clinic.settings.appointments.durationOptions.45'),
     },
     {
       value: '60',
-      label: t('settings.clinic.appointments.durationOptions.60'),
+      label: t('clinic.settings.appointments.durationOptions.60'),
     },
   ];
 
   const reminderHoursOptions = [
-    { value: '1', label: t('settings.clinic.notifications.reminderOptions.1') },
-    { value: '2', label: t('settings.clinic.notifications.reminderOptions.2') },
-    { value: '6', label: t('settings.clinic.notifications.reminderOptions.6') },
+    { value: '1', label: t('clinic.settings.notifications.reminderOptions.1') },
+    { value: '2', label: t('clinic.settings.notifications.reminderOptions.2') },
+    { value: '6', label: t('clinic.settings.notifications.reminderOptions.6') },
     {
       value: '12',
-      label: t('settings.clinic.notifications.reminderOptions.12'),
+      label: t('clinic.settings.notifications.reminderOptions.12'),
     },
     {
       value: '24',
-      label: t('settings.clinic.notifications.reminderOptions.24'),
+      label: t('clinic.settings.notifications.reminderOptions.24'),
     },
     {
       value: '48',
-      label: t('settings.clinic.notifications.reminderOptions.48'),
+      label: t('clinic.settings.notifications.reminderOptions.48'),
     },
   ];
 
   const languageOptions = [
-    { value: 'ar', label: t('settings.clinic.system.languageOptions.ar') },
-    { value: 'en', label: t('settings.clinic.system.languageOptions.en') },
-    { value: 'fr', label: t('settings.clinic.system.languageOptions.fr') },
+    { value: 'ar', label: t('clinic.settings.system.languageOptions.ar') },
+    { value: 'en', label: t('clinic.settings.system.languageOptions.en') },
+    // { value: 'fr', label: t('clinic.settings.system.languageOptions.fr') },
   ];
 
   const timezoneOptions = [
     {
       value: 'Asia/Riyadh',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Riyadh'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Riyadh'),
     },
     {
       value: 'Asia/Dubai',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Dubai'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Dubai'),
     },
     {
       value: 'Asia/Kuwait',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Kuwait'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Kuwait'),
     },
     {
       value: 'Asia/Qatar',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Qatar'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Qatar'),
     },
     {
       value: 'Asia/Bahrain',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Bahrain'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Bahrain'),
     },
     {
       value: 'Asia/Oman',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Oman'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Oman'),
     },
     {
       value: 'Asia/Amman',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Amman'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Amman'),
     },
     {
       value: 'Asia/Beirut',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Beirut'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Beirut'),
     },
     {
       value: 'Asia/Damascus',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Damascus'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Damascus'),
     },
     {
       value: 'Asia/Baghdad',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Baghdad'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Baghdad'),
     },
     {
       value: 'Asia/Tehran',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Tehran'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Tehran'),
     },
     {
       value: 'Asia/Jerusalem',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Jerusalem'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Jerusalem'),
     },
     {
       value: 'Africa/Cairo',
-      label: t('settings.clinic.system.timezoneOptions.Africa/Cairo'),
+      label: t('clinic.settings.system.timezoneOptions.Africa/Cairo'),
     },
     {
       value: 'Africa/Casablanca',
-      label: t('settings.clinic.system.timezoneOptions.Africa/Casablanca'),
+      label: t('clinic.settings.system.timezoneOptions.Africa/Casablanca'),
     },
     {
       value: 'Africa/Algiers',
-      label: t('settings.clinic.system.timezoneOptions.Africa/Algiers'),
+      label: t('clinic.settings.system.timezoneOptions.Africa/Algiers'),
     },
     {
       value: 'Africa/Tunis',
-      label: t('settings.clinic.system.timezoneOptions.Africa/Tunis'),
+      label: t('clinic.settings.system.timezoneOptions.Africa/Tunis'),
     },
     {
       value: 'Africa/Tripoli',
-      label: t('settings.clinic.system.timezoneOptions.Africa/Tripoli'),
+      label: t('clinic.settings.system.timezoneOptions.Africa/Tripoli'),
     },
     {
       value: 'Europe/London',
-      label: t('settings.clinic.system.timezoneOptions.Europe/London'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/London'),
     },
     {
       value: 'Europe/Paris',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Paris'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Paris'),
     },
     {
       value: 'Europe/Berlin',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Berlin'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Berlin'),
     },
     {
       value: 'Europe/Rome',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Rome'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Rome'),
     },
     {
       value: 'Europe/Madrid',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Madrid'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Madrid'),
     },
     {
       value: 'Europe/Amsterdam',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Amsterdam'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Amsterdam'),
     },
     {
       value: 'Europe/Brussels',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Brussels'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Brussels'),
     },
     {
       value: 'Europe/Vienna',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Vienna'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Vienna'),
     },
     {
       value: 'Europe/Zurich',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Zurich'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Zurich'),
     },
     {
       value: 'Europe/Stockholm',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Stockholm'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Stockholm'),
     },
     {
       value: 'Europe/Oslo',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Oslo'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Oslo'),
     },
     {
       value: 'Europe/Copenhagen',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Copenhagen'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Copenhagen'),
     },
     {
       value: 'Europe/Helsinki',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Helsinki'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Helsinki'),
     },
     {
       value: 'Europe/Warsaw',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Warsaw'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Warsaw'),
     },
     {
       value: 'Europe/Prague',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Prague'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Prague'),
     },
     {
       value: 'Europe/Budapest',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Budapest'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Budapest'),
     },
     {
       value: 'Europe/Athens',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Athens'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Athens'),
     },
     {
       value: 'Europe/Istanbul',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Istanbul'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Istanbul'),
     },
     {
       value: 'Europe/Moscow',
-      label: t('settings.clinic.system.timezoneOptions.Europe/Moscow'),
+      label: t('clinic.settings.system.timezoneOptions.Europe/Moscow'),
     },
     {
       value: 'America/New_York',
-      label: t('settings.clinic.system.timezoneOptions.America/New_York'),
+      label: t('clinic.settings.system.timezoneOptions.America/New_York'),
     },
     {
       value: 'America/Chicago',
-      label: t('settings.clinic.system.timezoneOptions.America/Chicago'),
+      label: t('clinic.settings.system.timezoneOptions.America/Chicago'),
     },
     {
       value: 'America/Denver',
-      label: t('settings.clinic.system.timezoneOptions.America/Denver'),
+      label: t('clinic.settings.system.timezoneOptions.America/Denver'),
     },
     {
       value: 'America/Los_Angeles',
-      label: t('settings.clinic.system.timezoneOptions.America/Los_Angeles'),
+      label: t('clinic.settings.system.timezoneOptions.America/Los_Angeles'),
     },
     {
       value: 'America/Toronto',
-      label: t('settings.clinic.system.timezoneOptions.America/Toronto'),
+      label: t('clinic.settings.system.timezoneOptions.America/Toronto'),
     },
     {
       value: 'America/Vancouver',
-      label: t('settings.clinic.system.timezoneOptions.America/Vancouver'),
+      label: t('clinic.settings.system.timezoneOptions.America/Vancouver'),
     },
     {
       value: 'America/Mexico_City',
-      label: t('settings.clinic.system.timezoneOptions.America/Mexico_City'),
+      label: t('clinic.settings.system.timezoneOptions.America/Mexico_City'),
     },
     {
       value: 'Asia/Tokyo',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Tokyo'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Tokyo'),
     },
     {
       value: 'Asia/Shanghai',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Shanghai'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Shanghai'),
     },
     {
       value: 'Asia/Seoul',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Seoul'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Seoul'),
     },
     {
       value: 'Asia/Singapore',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Singapore'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Singapore'),
     },
     {
       value: 'Asia/Bangkok',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Bangkok'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Bangkok'),
     },
     {
       value: 'Asia/Manila',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Manila'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Manila'),
     },
     {
       value: 'Asia/Jakarta',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Jakarta'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Jakarta'),
     },
     {
       value: 'Asia/Kuala_Lumpur',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Kuala_Lumpur'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Kuala_Lumpur'),
     },
     {
       value: 'Asia/Ho_Chi_Minh',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Ho_Chi_Minh'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Ho_Chi_Minh'),
     },
     {
       value: 'Asia/Hong_Kong',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Hong_Kong'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Hong_Kong'),
     },
     {
       value: 'Asia/Taipei',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Taipei'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Taipei'),
     },
     {
       value: 'Asia/Kolkata',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Kolkata'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Kolkata'),
     },
     {
       value: 'Asia/Dhaka',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Dhaka'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Dhaka'),
     },
     {
       value: 'Asia/Karachi',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Karachi'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Karachi'),
     },
     {
       value: 'Asia/Tashkent',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Tashkent'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Tashkent'),
     },
     {
       value: 'Asia/Almaty',
-      label: t('settings.clinic.system.timezoneOptions.Asia/Almaty'),
+      label: t('clinic.settings.system.timezoneOptions.Asia/Almaty'),
     },
     {
       value: 'Australia/Sydney',
-      label: t('settings.clinic.system.timezoneOptions.Australia/Sydney'),
+      label: t('clinic.settings.system.timezoneOptions.Australia/Sydney'),
     },
     {
       value: 'Australia/Melbourne',
-      label: t('settings.clinic.system.timezoneOptions.Australia/Melbourne'),
+      label: t('clinic.settings.system.timezoneOptions.Australia/Melbourne'),
     },
     {
       value: 'Australia/Perth',
-      label: t('settings.clinic.system.timezoneOptions.Australia/Perth'),
+      label: t('clinic.settings.system.timezoneOptions.Australia/Perth'),
     },
     {
       value: 'Australia/Brisbane',
-      label: t('settings.clinic.system.timezoneOptions.Australia/Brisbane'),
+      label: t('clinic.settings.system.timezoneOptions.Australia/Brisbane'),
     },
     {
       value: 'Australia/Adelaide',
-      label: t('settings.clinic.system.timezoneOptions.Australia/Adelaide'),
+      label: t('clinic.settings.system.timezoneOptions.Australia/Adelaide'),
     },
     {
       value: 'Pacific/Auckland',
-      label: t('settings.clinic.system.timezoneOptions.Pacific/Auckland'),
+      label: t('clinic.settings.system.timezoneOptions.Pacific/Auckland'),
     },
     {
       value: 'America/Sao_Paulo',
-      label: t('settings.clinic.system.timezoneOptions.America/Sao_Paulo'),
+      label: t('clinic.settings.system.timezoneOptions.America/Sao_Paulo'),
     },
     {
       value: 'America/Argentina/Buenos_Aires',
       label: t(
-        'settings.clinic.system.timezoneOptions.America/Argentina/Buenos_Aires'
+        'clinic.settings.system.timezoneOptions.America/Argentina/Buenos_Aires'
       ),
     },
     {
       value: 'America/Santiago',
-      label: t('settings.clinic.system.timezoneOptions.America/Santiago'),
+      label: t('clinic.settings.system.timezoneOptions.America/Santiago'),
     },
     {
       value: 'America/Lima',
-      label: t('settings.clinic.system.timezoneOptions.America/Lima'),
+      label: t('clinic.settings.system.timezoneOptions.America/Lima'),
     },
     {
       value: 'America/Bogota',
-      label: t('settings.clinic.system.timezoneOptions.America/Bogota'),
+      label: t('clinic.settings.system.timezoneOptions.America/Bogota'),
     },
     {
       value: 'America/Caracas',
-      label: t('settings.clinic.system.timezoneOptions.America/Caracas'),
+      label: t('clinic.settings.system.timezoneOptions.America/Caracas'),
     },
   ];
 
@@ -540,10 +540,10 @@ export default function ClinicSettings() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {t('settings.clinic.title')}
+                  {t('clinic.settings.title')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {t('settings.clinic.description')}
+                  {t('clinic.settings.description')}
                 </p>
               </div>
             </div>
@@ -551,7 +551,7 @@ export default function ClinicSettings() {
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-4 text-gray-600 dark:text-gray-400">
-              Loading settings...
+              Loading clinic.settings...
             </p>
           </div>
         </div>
@@ -571,7 +571,7 @@ export default function ClinicSettings() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {t('settings.clinic.title')}
+                  {t('clinic.settings.title')}
                 </h1>
                 <p className="text-red-600 dark:text-red-400">
                   Error loading settings: {settingsError.message}
@@ -595,10 +595,10 @@ export default function ClinicSettings() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {t('settings.clinic.title')}
+                {t('clinic.settings.title')}
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                {t('settings.clinic.description')}
+                {t('clinic.settings.description')}
               </p>
             </div>
           </div>
@@ -612,17 +612,17 @@ export default function ClinicSettings() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {t('settings.clinic.appointments.title')}
+                {t('clinic.settings.appointments.title')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t('settings.clinic.appointments.description')}
+                {t('clinic.settings.appointments.description')}
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Select
-              label={t('settings.clinic.appointments.duration')}
+              label={t('clinic.settings.appointments.duration')}
               options={appointmentDurationOptions}
               value={String(formData.appointmentDuration || 30)}
               onChange={(e) =>
@@ -631,7 +631,7 @@ export default function ClinicSettings() {
             />
 
             <Input
-              label={t('settings.clinic.appointments.maxAdvanceBooking')}
+              label={t('clinic.settings.appointments.maxAdvanceBooking')}
               type="number"
               value={formData.maxAdvanceBookingDays}
               onChange={(e) =>
@@ -645,7 +645,7 @@ export default function ClinicSettings() {
             />
 
             <Input
-              label={t('settings.clinic.appointments.cancellationHours')}
+              label={t('clinic.settings.appointments.cancellationHours')}
               type="number"
               value={formData.cancellationHours}
               onChange={(e) =>
@@ -658,7 +658,8 @@ export default function ClinicSettings() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('settings.clinic.appointments.allowOnlineBooking')}
+                  {/* {t('clinic.settings.appointments.allowOnlineBooking')} */}
+                  {t('clinic.settings.appointments.allowOnlineBooking')}
                 </span>
                 <ToggleSwitch
                   checked={formData.allowOnlineBooking}
@@ -670,7 +671,7 @@ export default function ClinicSettings() {
 
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('settings.clinic.appointments.requireApproval')}
+                  {t('clinic.settings.appointments.requireApproval')}
                 </span>
                 <ToggleSwitch
                   checked={formData.requireApproval}
@@ -684,7 +685,7 @@ export default function ClinicSettings() {
                 <div className="flex items-center gap-2">
                   <Repeat className="w-4 h-4 text-gray-500" />
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t('settings.clinic.appointments.allowRecurring')}
+                    {t('clinic.settings.appointments.allowRecurring')}
                   </span>
                 </div>
                 <ToggleSwitch
@@ -707,10 +708,10 @@ export default function ClinicSettings() {
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {t('settings.clinic.bookingConditions.title')}
+                  {t('clinic.settings.bookingConditions.title')}
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {t('settings.clinic.bookingConditions.description')}
+                  {t('clinic.settings.bookingConditions.description')}
                 </p>
               </div>
             </div>
@@ -796,9 +797,13 @@ export default function ClinicSettings() {
             {formData.bookingConditions.length === 0 && (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 <Shield className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p className="text-sm">لا توجد شروط حجز مضافة</p>
+                <p className="text-sm">
+                  {t('clinic.settings.bookingConditions.noConditions')}
+                </p>
                 <p className="text-xs mt-1">
-                  انقر على &quot;إضافة شرط&quot; لإضافة شرط جديد
+                  {t(
+                    'clinic.settings.bookingConditions.noConditionsDescription'
+                  )}
                 </p>
               </div>
             )}
@@ -813,10 +818,10 @@ export default function ClinicSettings() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {t('settings.clinic.notifications.title')}
+                {t('clinic.settings.notifications.title')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t('settings.clinic.notifications.description')}
+                {t('clinic.settings.notifications.description')}
               </p>
             </div>
           </div>
@@ -827,7 +832,7 @@ export default function ClinicSettings() {
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-gray-500" />
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t('settings.clinic.notifications.emailNotifications')}
+                    {t('clinic.settings.notifications.emailNotifications')}
                   </span>
                 </div>
                 <ToggleSwitch
@@ -842,7 +847,7 @@ export default function ClinicSettings() {
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-gray-500" />
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t('settings.clinic.notifications.smsNotifications')}
+                    {t('clinic.settings.notifications.smsNotifications')}
                   </span>
                 </div>
                 <ToggleSwitch
@@ -857,7 +862,7 @@ export default function ClinicSettings() {
                 <div className="flex items-center gap-2">
                   <Bell className="w-4 h-4 text-gray-500" />
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t('settings.clinic.notifications.pushNotifications')}
+                    {t('clinic.settings.notifications.pushNotifications')}
                   </span>
                 </div>
                 <ToggleSwitch
@@ -870,7 +875,7 @@ export default function ClinicSettings() {
             </div>
 
             <Select
-              label={t('settings.clinic.notifications.reminderTiming')}
+              label={t('clinic.settings.notifications.reminderTiming')}
               options={reminderHoursOptions}
               value={String(formData.reminderHours || 24)}
               onChange={(e) =>
@@ -888,17 +893,17 @@ export default function ClinicSettings() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {t('settings.clinic.system.title')}
+                {t('clinic.settings.system.title')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t('settings.clinic.system.description')}
+                {t('clinic.settings.system.description')}
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Select
-              label={t('settings.clinic.system.defaultCurrency')}
+              label={t('clinic.settings.system.defaultCurrency')}
               options={currencies || []}
               value={formData.defaultCurrency || ''}
               onChange={(e) =>
@@ -908,7 +913,7 @@ export default function ClinicSettings() {
             />
 
             <Select
-              label={t('settings.clinic.system.defaultLanguage')}
+              label={t('clinic.settings.system.defaultLanguage')}
               options={languageOptions}
               value={formData.defaultLanguage || 'ar'}
               onChange={(e) =>
@@ -917,7 +922,7 @@ export default function ClinicSettings() {
             />
 
             <Select
-              label={t('settings.clinic.system.timezone')}
+              label={t('clinic.settings.system.timezone')}
               options={timezoneOptions}
               value={formData.timezone || 'Asia/Riyadh'}
               onChange={(e) => handleInputChange('timezone', e.target.value)}
@@ -934,7 +939,7 @@ export default function ClinicSettings() {
             className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2"
           >
             <Save className="w-4 h-4" />
-            {t('settings.clinic.saveSettings')}
+            {t('clinic.settings.saveSettings')}
           </Button>
         </div>
       </div>

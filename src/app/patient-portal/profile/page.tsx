@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '@/i18n/LanguageProvider';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, Variants } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import {
   EmergencyContactCard,
   HealthIndicatorsCard,
@@ -19,9 +21,9 @@ import {
 import { formatDate } from '@/utils/dateTimeUtils';
 import { toast } from 'sonner';
 import {
-  profileSchema,
   findErrorSection,
   ProfileFormValues,
+  createProfileSchema,
 } from './validation';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import {
@@ -51,6 +53,7 @@ const itemVariants: Variants = {
 
 export default function ProfilePage() {
   const { t } = useTranslation();
+  const { direction } = useLanguage();
 
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
@@ -75,7 +78,7 @@ export default function ProfilePage() {
     watch,
     reset,
   } = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema),
+    resolver: zodResolver(createProfileSchema(t)),
   });
 
   const { data: countries = [] } = useCountryDropdown();
@@ -369,7 +372,8 @@ export default function ProfilePage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="space-y-6"
+      className={cn('space-y-6', direction === 'rtl' ? 'rtl' : 'ltr')}
+      dir={direction}
     >
       {/* Profile header */}
       <ProfileHeader
@@ -389,22 +393,36 @@ export default function ProfilePage() {
         onValueChange={setActiveTab}
         className="space-y-6"
       >
-        <TabsList className="grid grid-cols-3 mb-4 w-full sm:w-auto h-full">
+        <TabsList
+          className={cn(
+            'grid grid-cols-3 mb-4 w-full sm:w-auto h-full',
+            direction === 'rtl' ? 'flex-row-reverse' : ''
+          )}
+        >
           <TabsTrigger
             value="personal"
-            className="py-3 data-[state=active]:shadow-sm"
+            className={cn(
+              'py-3 data-[state=active]:shadow-sm',
+              direction === 'rtl' ? 'text-right' : 'text-left'
+            )}
           >
             {t('patientPortal.profile.tabs.personalInfo')}
           </TabsTrigger>
           <TabsTrigger
             value="medical"
-            className="py-3 data-[state=active]:shadow-sm"
+            className={cn(
+              'py-3 data-[state=active]:shadow-sm',
+              direction === 'rtl' ? 'text-right' : 'text-left'
+            )}
           >
             {t('patientPortal.profile.tabs.medicalInfo')}
           </TabsTrigger>
           <TabsTrigger
             value="healthIndicators"
-            className="py-3 data-[state=active]:shadow-sm"
+            className={cn(
+              'py-3 data-[state=active]:shadow-sm',
+              direction === 'rtl' ? 'text-right' : 'text-left'
+            )}
           >
             {t('patientPortal.profile.tabs.healthIndicators')}
           </TabsTrigger>
@@ -416,7 +434,7 @@ export default function ProfilePage() {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="space-y-6"
+            className={cn('space-y-6', direction === 'rtl' ? 'rtl' : 'ltr')}
           >
             <PersonalInformationCard
               patientData={patientProfile?.personalInfo}
@@ -449,7 +467,7 @@ export default function ProfilePage() {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="space-y-6"
+            className={cn('space-y-6', direction === 'rtl' ? 'rtl' : 'ltr')}
           >
             <MedicalInformationCard
               patientData={patientProfile.medicalInfo}
@@ -480,7 +498,7 @@ export default function ProfilePage() {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="space-y-6"
+            className={cn('space-y-6', direction === 'rtl' ? 'rtl' : 'ltr')}
           >
             <HealthIndicatorsCard
               healthIndicators={patientProfile.healthIndicators}

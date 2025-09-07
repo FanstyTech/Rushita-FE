@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input, Select, TextArea } from '@/components/common/form';
@@ -23,9 +24,10 @@ import FilterBar, { FilterState } from '@/components/common/FilterBar';
 import { useRevenue } from '@/lib/api/hooks/useRevenue';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { RevenueType, ClinicRevenueListDto } from '@/lib/api/types/revenue';
-import { RevenueFormData, revenueSchema } from './validation';
+import { RevenueFormData, createRevenueSchema } from './validation';
 
 export default function RevenuePage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const clinicId = user?.clinicInfo?.id || '';
 
@@ -46,12 +48,12 @@ export default function RevenuePage() {
   });
 
   const form = useForm<RevenueFormData>({
-    resolver: zodResolver(revenueSchema),
+    resolver: zodResolver(createRevenueSchema(t)),
 
     defaultValues: {
       revenueType: RevenueType.Visit,
       amount: 0,
-      revenueDate: new Date().toISOString().split('T')[0],
+      revenueDate: '',
       description: '',
     },
   });
@@ -93,17 +95,21 @@ export default function RevenuePage() {
 
   const getRevenueTypeLabel = (type: RevenueType) => {
     const labels: { [key: number]: string } = {
-      [RevenueType.Visit]: 'Visit',
-      [RevenueType.Donations]: 'Donations',
-      [RevenueType.GovernmentSupport]: 'Government Support',
-      [RevenueType.Other]: 'Other',
+      [RevenueType.Visit]: t('clinic.financial.revenues.revenueTypes.visit'),
+      [RevenueType.Donations]: t(
+        'clinic.financial.revenues.revenueTypes.donations'
+      ),
+      [RevenueType.GovernmentSupport]: t(
+        'clinic.financial.revenues.revenueTypes.governmentSupport'
+      ),
+      [RevenueType.Other]: t('clinic.financial.revenues.revenueTypes.other'),
     };
-    return labels[type] || 'Other';
+    return labels[type] || t('clinic.financial.revenues.revenueTypes.other');
   };
 
   const columns: Column<ClinicRevenueListDto>[] = [
     {
-      header: 'Revenue Type',
+      header: t('clinic.financial.revenues.table.columns.revenueType'),
       accessor: 'revenueType',
       cell: ({ row }) => (
         <Badge className={getRevenueTypeColor(row.original.revenueType)}>
@@ -112,7 +118,7 @@ export default function RevenuePage() {
       ),
     },
     {
-      header: 'Amount',
+      header: t('clinic.financial.revenues.table.columns.amount'),
       accessor: 'amount',
       cell: ({ row }) => (
         <span className="font-semibold text-green-600 dark:text-green-400">
@@ -121,7 +127,7 @@ export default function RevenuePage() {
       ),
     },
     {
-      header: 'Date',
+      header: t('clinic.financial.revenues.table.columns.date'),
       accessor: 'revenueDate',
       cell: ({ row }) => (
         <span className="text-gray-600 dark:text-gray-400">
@@ -130,7 +136,7 @@ export default function RevenuePage() {
       ),
     },
     {
-      header: 'Description',
+      header: t('clinic.financial.revenues.table.columns.description'),
       accessor: 'description',
       cell: ({ row }) => (
         <span className="font-medium text-gray-900 dark:text-white">
@@ -139,7 +145,7 @@ export default function RevenuePage() {
       ),
     },
     {
-      header: 'Actions',
+      header: t('clinic.financial.revenues.table.columns.actions'),
       accessor: 'id',
       cell: ({ row }) => (
         <div className="flex gap-2">
@@ -147,7 +153,7 @@ export default function RevenuePage() {
             variant="ghost"
             onClick={() => handleEdit(row.original)}
             className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-            title="Edit"
+            title={t('clinic.financial.revenues.actions.edit')}
           >
             <Pencil className="w-4 h-4" />
           </Button>
@@ -155,7 +161,7 @@ export default function RevenuePage() {
             variant="ghost"
             onClick={() => handleDelete(row.original)}
             className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-            title="Delete"
+            title={t('clinic.financial.revenues.actions.delete')}
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -180,7 +186,7 @@ export default function RevenuePage() {
     form.reset({
       revenueType: RevenueType.Visit,
       amount: 0,
-      revenueDate: new Date().toISOString().split('T')[0],
+      revenueDate: '',
       description: '',
     });
     setIsModalOpen(true);
@@ -229,7 +235,7 @@ export default function RevenuePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Revenue
+                  {t('clinic.financial.revenues.summary.cards.totalRevenue')}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(summary?.totalRevenue || 0)}
@@ -245,7 +251,7 @@ export default function RevenuePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  This Month
+                  {t('clinic.financial.revenues.summary.cards.thisMonth')}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(summary?.thisMonthRevenue || 0)}
@@ -261,7 +267,7 @@ export default function RevenuePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Average Revenue
+                  {t('clinic.financial.revenues.summary.cards.averageRevenue')}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(summary?.averageRevenue || 0)}
@@ -277,7 +283,9 @@ export default function RevenuePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Transactions
+                  {t(
+                    'clinic.financial.revenues.summary.cards.totalTransactions'
+                  )}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {summary?.totalTransactions || 0}
@@ -308,14 +316,17 @@ export default function RevenuePage() {
           additionalFilters={[
             {
               icon: <DollarSign className="w-4 h-4" />,
-              label: 'Revenue Type',
+              label: t('clinic.financial.revenues.filters.revenueType'),
               options: [
-                { value: '', label: 'All Types' },
+                {
+                  value: '',
+                  label: t('clinic.financial.revenues.filters.allTypes'),
+                },
                 ...Object.entries(RevenueType)
                   .filter(([key]) => isNaN(Number(key)))
                   .map(([key, value]) => ({
                     value: value.toString(),
-                    label: key,
+                    label: t(`clinic.financial.revenues.revenueTypes.${key}`),
                   })),
               ],
               value: String(filter.revenueType || ''),
@@ -350,21 +361,27 @@ export default function RevenuePage() {
         footer={
           <div className="flex justify-end gap-3">
             <Button variant="secondary" onClick={handleCloseModal}>
-              Cancel
+              {t('clinic.financial.revenues.actions.cancel')}
             </Button>
             <Button
               onClick={form.handleSubmit(onSubmit)}
               isLoading={createOrUpdateRevenue.isPending}
             >
-              {selectedRevenue ? 'Update Revenue' : 'Add Revenue'}
+              {selectedRevenue
+                ? t('clinic.financial.revenues.actions.updateRevenue')
+                : t('clinic.financial.revenues.actions.addRevenue')}
             </Button>
           </div>
         }
-        title={selectedRevenue ? 'Edit Revenue' : 'Add New Revenue'}
+        title={
+          selectedRevenue
+            ? t('clinic.financial.revenues.form.title.edit')
+            : t('clinic.financial.revenues.form.title.add')
+        }
       >
         <form className="space-y-6">
           <Select
-            label="Revenue Type"
+            label={t('clinic.financial.revenues.form.labels.revenueType')}
             required={true}
             value={String(form.watch('revenueType'))}
             {...form.register('revenueType', { valueAsNumber: true })}
@@ -378,7 +395,7 @@ export default function RevenuePage() {
           />
 
           <Input
-            label="Amount"
+            label={t('clinic.financial.revenues.form.labels.amount')}
             required={true}
             type="number"
             step="0.01"
@@ -389,7 +406,7 @@ export default function RevenuePage() {
           />
 
           <Input
-            label="Date"
+            label={t('clinic.financial.revenues.form.labels.date')}
             required={true}
             type="date"
             {...form.register('revenueDate')}
@@ -397,7 +414,7 @@ export default function RevenuePage() {
           />
 
           <TextArea
-            label="Description"
+            label={t('clinic.financial.revenues.form.labels.description')}
             {...form.register('description')}
             error={form.formState.errors.description?.message}
           />
@@ -409,11 +426,13 @@ export default function RevenuePage() {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-        title="Delete Revenue"
-        message="Are you sure you want to delete this revenue record?"
-        secondaryMessage="This action cannot be undone."
+        title={t('clinic.financial.revenues.deleteModal.title')}
+        message={t('clinic.financial.revenues.deleteModal.message')}
+        secondaryMessage={t(
+          'clinic.financial.revenues.deleteModal.secondaryMessage'
+        )}
         variant="error"
-        confirmText="Delete"
+        confirmText={t('clinic.financial.revenues.deleteModal.confirmText')}
         isLoading={deleteRevenue.isPending}
       />
     </PageLayout>

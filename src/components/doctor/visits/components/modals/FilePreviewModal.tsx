@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from '@/components/common/Modal';
 import Image from 'next/image';
+import { useTranslation } from 'react-i18next';
 
 interface Attachment {
   id: string;
@@ -21,6 +22,8 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   onClose,
   file,
 }) => {
+  const { t } = useTranslation();
+
   const isPreviewable = (fileType: string) => {
     return fileType.startsWith('image/') || fileType === 'application/pdf';
   };
@@ -47,14 +50,14 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
         ) : (
           <div className="text-center py-10">
             <p className="text-gray-500">
-              Preview not available for this file type. Please download to view.
+              {t('clinic.visits.modals.filePreview.previewNotAvailable')}
             </p>
             <a
               href={file.url}
               download={file.name}
               className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Download File
+              {t('clinic.visits.modals.filePreview.downloadFile')}
             </a>
           </div>
         )}

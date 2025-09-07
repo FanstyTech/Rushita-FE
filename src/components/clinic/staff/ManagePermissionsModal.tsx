@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePermission } from '@/lib/api/hooks/usePermission';
 import Modal from '@/components/common/Modal';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,7 @@ export default function ManagePermissionsModal({
   clinicId,
   staffName,
 }: ManagePermissionsModalProps) {
+  const { t } = useTranslation();
   const [selectedPermissions, setSelectedPermissions] = useState<
     PermissionSelectionDto[]
   >([]);
@@ -139,7 +141,11 @@ export default function ManagePermissionsModal({
 
   if (isLoading) {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} title="Loading permissions...">
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={t('clinic.staff.managePermissionsModal.loadingTitle')}
+      >
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
@@ -149,11 +155,17 @@ export default function ManagePermissionsModal({
 
   if (error) {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} title="Error">
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={t('clinic.staff.managePermissionsModal.errorTitle')}
+      >
         <div className="text-center py-8">
-          <p className="text-red-600">Failed to load permissions</p>
+          <p className="text-red-600">
+            {t('clinic.staff.managePermissionsModal.errorMessage')}
+          </p>
           <Button onClick={onClose} className="mt-4">
-            Close
+            {t('clinic.staff.managePermissionsModal.close')}
           </Button>
         </div>
       </Modal>
@@ -164,7 +176,7 @@ export default function ManagePermissionsModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Manage Permissions - ${staffName}`}
+      title={t('clinic.staff.managePermissionsModal.title', { staffName })}
       maxWidth="6xl"
     >
       <div className="space-y-6">
@@ -173,7 +185,7 @@ export default function ManagePermissionsModal({
           <div className="flex items-center gap-2 mb-4">
             <Zap className="w-5 h-5 text-blue-600" />
             <h3 className="text-lg font-semibold text-gray-900">
-              Quick Actions
+              {t('clinic.staff.managePermissionsModal.quickActions')}
             </h3>
           </div>
 
@@ -183,7 +195,7 @@ export default function ManagePermissionsModal({
               <div className="flex items-center gap-2">
                 <Target className="w-4 h-4 text-blue-600" />
                 <span className="text-sm font-medium text-gray-700">
-                  Bulk Selection
+                  {t('clinic.staff.managePermissionsModal.bulkSelection')}
                 </span>
               </div>
               <div className="flex flex-col gap-2">
@@ -201,7 +213,9 @@ export default function ManagePermissionsModal({
                   className="justify-start text-left"
                 >
                   <Check className="w-4 h-4 mr-2" />
-                  Select All Permissions
+                  {t(
+                    'clinic.staff.managePermissionsModal.selectAllPermissions'
+                  )}
                 </Button>
                 <Button
                   variant="outline"
@@ -210,7 +224,7 @@ export default function ManagePermissionsModal({
                   className="justify-start text-left"
                 >
                   <X className="w-4 h-4 mr-2" />
-                  Clear All Selections
+                  {t('clinic.staff.managePermissionsModal.clearAllSelections')}
                 </Button>
               </div>
             </div>
@@ -220,7 +234,7 @@ export default function ManagePermissionsModal({
               <div className="flex items-center gap-2">
                 <Settings className="w-4 h-4 text-green-600" />
                 <span className="text-sm font-medium text-gray-700">
-                  Smart Selection
+                  {t('clinic.staff.managePermissionsModal.smartSelection')}
                 </span>
               </div>
               <div className="flex flex-col gap-2">
@@ -240,7 +254,9 @@ export default function ManagePermissionsModal({
                   className="justify-start text-left"
                 >
                   <Check className="w-4 h-4 mr-2" />
-                  Select Currently Granted
+                  {t(
+                    'clinic.staff.managePermissionsModal.selectCurrentlyGranted'
+                  )}
                 </Button>
                 <Button
                   variant="outline"
@@ -261,7 +277,9 @@ export default function ManagePermissionsModal({
                   className="justify-start text-left"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Select Non-Granted Only
+                  {t(
+                    'clinic.staff.managePermissionsModal.selectNonGrantedOnly'
+                  )}
                 </Button>
               </div>
             </div>
@@ -271,7 +289,7 @@ export default function ManagePermissionsModal({
               <div className="flex items-center gap-2">
                 <FolderOpen className="w-4 h-4 text-purple-600" />
                 <span className="text-sm font-medium text-gray-700">
-                  Module Management
+                  {t('clinic.staff.managePermissionsModal.moduleManagement')}
                 </span>
               </div>
               <div className="flex flex-col gap-2">
@@ -288,7 +306,7 @@ export default function ManagePermissionsModal({
                   className="justify-start text-left"
                 >
                   <ChevronDown className="w-4 h-4 mr-2" />
-                  Expand All Modules
+                  {t('clinic.staff.managePermissionsModal.expandAllModules')}
                 </Button>
                 <Button
                   variant="outline"
@@ -297,7 +315,7 @@ export default function ManagePermissionsModal({
                   className="justify-start text-left"
                 >
                   <ChevronUp className="w-4 h-4 mr-2" />
-                  Collapse All Modules
+                  {t('clinic.staff.managePermissionsModal.collapseAllModules')}
                 </Button>
               </div>
             </div>
@@ -311,7 +329,9 @@ export default function ManagePermissionsModal({
                   {userPermissions?.modules.flatMap((m) => m.permissions)
                     .length || 0}
                 </div>
-                <div className="text-xs text-gray-600">Total Permissions</div>
+                <div className="text-xs text-gray-600">
+                  {t('clinic.staff.managePermissionsModal.totalPermissions')}
+                </div>
               </div>
               <div className="bg-green-50 p-3 rounded-lg">
                 <div className="text-2xl font-bold text-green-600">
@@ -319,19 +339,25 @@ export default function ManagePermissionsModal({
                     .flatMap((m) => m.permissions)
                     .filter((p) => p.isGranted).length || 0}
                 </div>
-                <div className="text-xs text-gray-600">Currently Granted</div>
+                <div className="text-xs text-gray-600">
+                  {t('clinic.staff.managePermissionsModal.currentlyGranted')}
+                </div>
               </div>
               <div className="bg-purple-50 p-3 rounded-lg">
                 <div className="text-2xl font-bold text-purple-600">
                   {selectedPermissions.length}
                 </div>
-                <div className="text-xs text-gray-600">Selected</div>
+                <div className="text-xs text-gray-600">
+                  {t('clinic.staff.managePermissionsModal.selected')}
+                </div>
               </div>
               <div className="bg-orange-50 p-3 rounded-lg">
                 <div className="text-2xl font-bold text-orange-600">
                   {userPermissions?.modules.length || 0}
                 </div>
-                <div className="text-xs text-gray-600">Modules</div>
+                <div className="text-xs text-gray-600">
+                  {t('clinic.staff.managePermissionsModal.modules')}
+                </div>
               </div>
             </div>
           </div>
@@ -340,14 +366,16 @@ export default function ManagePermissionsModal({
         {/* Notes Section */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Notes (Optional)
+            {t('clinic.staff.managePermissionsModal.notesLabel')}
           </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows={2}
-            placeholder="Add notes about the granted permissions..."
+            placeholder={t(
+              'clinic.staff.managePermissionsModal.notesPlaceholder'
+            )}
           />
         </div>
 
@@ -390,13 +418,18 @@ export default function ManagePermissionsModal({
                           </h3>
                           <div className="flex items-center gap-3">
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              {moduleTotalCount} Total
+                              {moduleTotalCount}{' '}
+                              {t('clinic.staff.managePermissionsModal.total')}
                             </span>
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              {moduleGrantedCount} Granted
+                              {moduleGrantedCount}{' '}
+                              {t('clinic.staff.managePermissionsModal.granted')}
                             </span>
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                              {moduleSelectedCount} Selected
+                              {moduleSelectedCount}{' '}
+                              {t(
+                                'clinic.staff.managePermissionsModal.selected'
+                              )}
                             </span>
                           </div>
                         </div>
@@ -431,7 +464,7 @@ export default function ManagePermissionsModal({
                             className="flex items-center gap-1"
                           >
                             <Check className="w-3 h-3" />
-                            Select All
+                            {t('clinic.staff.managePermissionsModal.selectAll')}
                           </Button>
                           <Button
                             variant="outline"
@@ -442,7 +475,7 @@ export default function ManagePermissionsModal({
                             className="flex items-center gap-1"
                           >
                             <X className="w-3 h-3" />
-                            Clear All
+                            {t('clinic.staff.managePermissionsModal.clearAll')}
                           </Button>
                         </div>
                       )}
@@ -492,7 +525,9 @@ export default function ManagePermissionsModal({
                                   </span>
                                   {isCurrentlyGranted && (
                                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0">
-                                      Currently Granted
+                                      {t(
+                                        'clinic.staff.managePermissionsModal.currentlyGrantedBadge'
+                                      )}
                                     </span>
                                   )}
                                 </div>
@@ -513,7 +548,10 @@ export default function ManagePermissionsModal({
                                   {permission.expiresAt && (
                                     <span className="flex items-center gap-1 flex-shrink-0">
                                       <Clock className="w-3 h-3" />
-                                      Expires:{' '}
+                                      {t(
+                                        'clinic.staff.managePermissionsModal.expires'
+                                      )}
+                                      :{' '}
                                       {new Date(
                                         permission.expiresAt
                                       ).toLocaleDateString('en-US')}
@@ -525,7 +563,12 @@ export default function ManagePermissionsModal({
 
                             {permission.notes && (
                               <div className="mt-3 text-xs text-gray-500 bg-gray-50 p-2 rounded border-l-2 border-blue-200">
-                                <span className="font-medium">Notes:</span>{' '}
+                                <span className="font-medium">
+                                  {t(
+                                    'clinic.staff.managePermissionsModal.notes'
+                                  )}
+                                  :
+                                </span>{' '}
                                 {permission.notes}
                               </div>
                             )}
@@ -545,17 +588,21 @@ export default function ManagePermissionsModal({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-blue-900">
-                Total Selected Permissions: {selectedPermissions.length}
+                {t(
+                  'clinic.staff.managePermissionsModal.totalSelectedPermissions'
+                )}
+                : {selectedPermissions.length}
               </span>
               <span className="text-sm text-blue-700">
-                out of{' '}
+                {t('clinic.staff.managePermissionsModal.outOf')}{' '}
                 {userPermissions?.modules.flatMap((m) => m.permissions)
                   .length || 0}{' '}
-                available permissions
+                {t('clinic.staff.managePermissionsModal.availablePermissions')}
               </span>
             </div>
             <div className="text-sm text-gray-600">
-              {filteredModules.length} modules displayed
+              {filteredModules.length}{' '}
+              {t('clinic.staff.managePermissionsModal.modulesDisplayed')}
             </div>
           </div>
         </div>
@@ -563,14 +610,14 @@ export default function ManagePermissionsModal({
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
-            Cancel
+            {t('clinic.staff.managePermissionsModal.cancel')}
           </Button>
           <Button
             onClick={handleSave}
             disabled={isSubmitting}
             isLoading={isSubmitting}
           >
-            Save Permissions
+            {t('clinic.staff.managePermissionsModal.savePermissions')}
           </Button>
         </div>
       </div>

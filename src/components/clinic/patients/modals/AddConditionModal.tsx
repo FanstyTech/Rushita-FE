@@ -8,11 +8,12 @@ import {
 import { useForm } from 'react-hook-form';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import {
+  createConditionSchema,
   conditionFormData,
-  conditionSchema,
   defaultConditionValues,
 } from './validationCondition';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 
 interface AddConditionModalProps {
   isOpen: boolean;
@@ -25,10 +26,16 @@ export const AddConditionModal = ({
   patientId,
   onClose,
 }: AddConditionModalProps) => {
+  const { t } = useTranslation();
+
+  // Create the schema with translations
+  const conditionSchema = createConditionSchema(t);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<conditionFormData>({
     resolver: zodResolver(conditionSchema),
     defaultValues: defaultConditionValues,
@@ -37,53 +44,53 @@ export const AddConditionModal = ({
   const { createOrUpdateCondition } = useClinicPatients();
 
   const onSubmitHandler = async (data: conditionFormData) => {
-    try {
-      const formattedData: CreateOrUpdateMedicalConditionDto = {
-        ...data,
-        id: data.id || undefined,
-        patientId: patientId,
-      };
+    const formattedData: CreateOrUpdateMedicalConditionDto = {
+      ...data,
+      id: data.id || undefined,
+      patientId: patientId,
+    };
 
-      await createOrUpdateCondition.mutateAsync(formattedData);
-      onClose();
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    await createOrUpdateCondition.mutateAsync(formattedData);
+    onClose();
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Medical Condition"
+      title={t('clinic.patients.modals.addCondition.title')}
       footer={
         <div className="flex justify-end gap-3">
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t('clinic.patients.modals.addCondition.buttons.cancel')}
           </Button>
           <Button
             onClick={handleSubmit(onSubmitHandler)}
             isLoading={createOrUpdateCondition.isPending}
           >
-            Add Condition
+            {t('clinic.patients.modals.addCondition.buttons.add')}
           </Button>
         </div>
       }
     >
       <form className="space-y-4">
         <Input
-          label="Condition Name"
+          required={true}
+          label={t('clinic.patients.modals.addCondition.fields.conditionName')}
           error={errors.name?.message}
           {...register('name')}
         />
         <Input
-          label="Diagnose Date"
+          required={true}
+          label={t('clinic.patients.modals.addCondition.fields.diagnoseDate')}
           type="date"
           {...register('diagnosedDate')}
           error={errors.diagnosedDate?.message}
         />
         <Select
-          label="ConditioStatus"
+          required={true}
+          label={t('clinic.patients.modals.addCondition.fields.status')}
+          value={watch('status').toString()}
           error={errors.status?.message}
           {...register('status', { valueAsNumber: true })}
           options={Object.entries(MedicalConditionStatus)

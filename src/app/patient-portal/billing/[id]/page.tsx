@@ -25,8 +25,10 @@ import {
   getServiceTypeLabel,
 } from '@/utils/textUtils';
 import { formatDate } from '@/utils/dateTimeUtils';
+import { useTranslation } from 'react-i18next';
 
 export default function InvoiceDetailsPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const invoiceId = params.id as string;
   const formatCurrency = (amount: number) => {
@@ -66,9 +68,17 @@ export default function InvoiceDetailsPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-          <p className="text-red-500 mb-2">فشل في تحميل تفاصيل الفاتورة</p>
+          <p className="text-red-500 mb-2">
+            {t('patientPortal.billing.details.error.title')}
+          </p>
+          <p className="text-muted-foreground mb-4">
+            {t('patientPortal.billing.details.error.description')}
+          </p>
           <Link href="/patient-portal/billing">
-            <Button>العودة للفواتير</Button>
+            <Button variant="outline">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {t('patientPortal.billing.details.error.backToList')}
+            </Button>
           </Link>
         </div>
       </div>
@@ -83,14 +93,16 @@ export default function InvoiceDetailsPage() {
           <Button variant="ghost" size="sm" asChild>
             <Link href="/patient-portal/billing">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              العودة للفواتير
+              {t('patientPortal.billing.details.backToList')}
             </Link>
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              فاتورة رقم: {invoice.invoiceNumber}
+              {t('patientPortal.billing.details.title')} {invoice.invoiceNumber}
             </h1>
-            <p className="text-muted-foreground">تفاصيل الفاتورة والمدفوعات</p>
+            <p className="text-muted-foreground">
+              {t('patientPortal.billing.details.subtitle')}
+            </p>
           </div>
         </div>
       </div>
@@ -103,14 +115,14 @@ export default function InvoiceDetailsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Receipt className="h-5 w-5" />
-                ملخص الفاتورة
+                {t('patientPortal.billing.details.sections.invoiceSummary')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    تاريخ الفاتورة
+                    {t('patientPortal.billing.details.invoiceInfo.invoiceDate')}
                   </p>
                   <p className="font-medium">
                     {formatDate(invoice.invoiceDate)}
@@ -118,12 +130,14 @@ export default function InvoiceDetailsPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    تاريخ الاستحقاق
+                    {t('patientPortal.billing.details.invoiceInfo.dueDate')}
                   </p>
                   <p className="font-medium">{formatDate(invoice.dueDate)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">الحالة</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t('patientPortal.billing.details.invoiceInfo.status')}
+                  </p>
                   <Badge
                     variant="outline"
                     className={cn(
@@ -135,7 +149,11 @@ export default function InvoiceDetailsPage() {
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">رقم الفاتورة</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t(
+                      'patientPortal.billing.details.invoiceInfo.invoiceNumber'
+                    )}
+                  </p>
                   <p className="font-medium">{invoice.invoiceNumber}</p>
                 </div>
               </div>
@@ -147,7 +165,7 @@ export default function InvoiceDetailsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
-                تفاصيل الخدمات
+                {t('patientPortal.billing.details.sections.serviceDetails')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -163,7 +181,10 @@ export default function InvoiceDetailsPage() {
                           getServiceTypeLabel(item.serviceType)}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        الكمية: {item.quantity}
+                        {t(
+                          'patientPortal.billing.details.serviceDetails.quantity'
+                        )}
+                        : {item.quantity}
                       </p>
                     </div>
                     <div className="text-right">
@@ -183,7 +204,7 @@ export default function InvoiceDetailsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CreditCard className="h-5 w-5" />
-                  سجل المدفوعات
+                  {t('patientPortal.billing.details.sections.paymentHistory')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -210,7 +231,9 @@ export default function InvoiceDetailsPage() {
                       <div className="text-right">
                         <p className="text-sm text-muted-foreground">
                           {payment.referenceNumber &&
-                            `رقم المرجع: ${payment.referenceNumber}`}
+                            `${t(
+                              'patientPortal.billing.details.paymentHistory.referenceNumber'
+                            )}: ${payment.referenceNumber}`}
                         </p>
                       </div>
                     </div>
@@ -228,25 +251,40 @@ export default function InvoiceDetailsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5" />
-                الملخص المالي
+                {t('patientPortal.billing.details.sections.financialSummary')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
-                <span>المبلغ الإجمالي:</span>
+                <span>
+                  {t(
+                    'patientPortal.billing.details.financialSummary.totalAmount'
+                  )}
+                  :
+                </span>
                 <span className="font-semibold">
                   {formatCurrency(invoice.totalAmount)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span>المدفوع:</span>
+                <span>
+                  {t(
+                    'patientPortal.billing.details.financialSummary.paidAmount'
+                  )}
+                  :
+                </span>
                 <span className="font-semibold text-green-600">
                   {formatCurrency(invoice.paidAmount)}
                 </span>
               </div>
               <Separator />
               <div className="flex justify-between items-center">
-                <span>المتبقي:</span>
+                <span>
+                  {t(
+                    'patientPortal.billing.details.financialSummary.remainingAmount'
+                  )}
+                  :
+                </span>
                 <span
                   className={cn(
                     'font-semibold text-lg',
@@ -266,20 +304,26 @@ export default function InvoiceDetailsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
-                معلومات المريض والطبيب
+                {t('patientPortal.billing.details.sections.patientDoctorInfo')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm text-muted-foreground">المريض</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('patientPortal.billing.details.patientInfo.patient')}
+                </p>
                 <p className="font-medium">{invoice.patientName}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">الطبيب</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('patientPortal.billing.details.patientInfo.doctor')}
+                </p>
                 <p className="font-medium">{invoice.doctorName}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">العيادة</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('patientPortal.billing.details.patientInfo.clinic')}
+                </p>
                 <p className="font-medium">{invoice.clinicName}</p>
               </div>
             </CardContent>

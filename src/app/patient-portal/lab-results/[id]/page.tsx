@@ -30,6 +30,7 @@ import { useVisitLabTest } from '@/lib/api/hooks/useVisitLabTest';
 import { TestStatus } from '@/lib/api/types/visit-lab-test';
 import { formatDate } from '@/utils/dateTimeUtils';
 import { getTestStatusColor, getTestStatusLabel } from '@/utils/textUtils';
+import { useTranslation } from 'react-i18next';
 
 // Animation variants
 const containerVariants = {
@@ -48,6 +49,7 @@ const itemVariants = {
 };
 
 export default function LabResultDetailsPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const labTestId = params.id as string;
@@ -134,15 +136,15 @@ export default function LabResultDetailsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
-              خطأ في تحميل نتيجة التحليل
+              {t('patientPortal.labResults.details.error.title')}
             </h1>
             <p className="text-muted-foreground">
-              فشل في تحميل تفاصيل نتيجة التحليل
+              {t('patientPortal.labResults.details.error.description')}
             </p>
           </div>
           <Button variant="outline" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            العودة
+            {t('patientPortal.labResults.details.notFound.backButton')}
           </Button>
         </div>
 
@@ -152,21 +154,21 @@ export default function LabResultDetailsPage() {
               <AlertCircle className="h-8 w-8 text-red-500" />
             </div>
             <h3 className="font-medium text-lg mb-1">
-              فشل في تحميل نتيجة التحليل
+              {t('patientPortal.labResults.details.error.title')}
             </h3>
             <p className="text-sm text-muted-foreground max-w-md mb-6">
-              حدث خطأ أثناء تحميل تفاصيل نتيجة التحليل. يرجى المحاولة مرة أخرى.
+              {t('patientPortal.labResults.details.error.loadingFailed')}
             </p>
             <div className="flex gap-2">
               <Button
                 variant="outline"
                 onClick={() => window.location.reload()}
               >
-                إعادة المحاولة
+                {t('patientPortal.labResults.details.error.retry')}
               </Button>
               <Button variant="default" asChild>
                 <Link href="/patient-portal/lab-results">
-                  عرض جميع نتائج التحاليل
+                  {t('patientPortal.labResults.details.notFound.viewAllButton')}
                 </Link>
               </Button>
             </div>
@@ -183,15 +185,15 @@ export default function LabResultDetailsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
-              نتيجة التحليل غير موجودة
+              {t('patientPortal.labResults.details.notFound.title')}
             </h1>
             <p className="text-muted-foreground">
-              لم يتم العثور على نتيجة التحليل المطلوبة
+              {t('patientPortal.labResults.details.notFound.description')}
             </p>
           </div>
           <Button variant="outline" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            العودة
+            {t('patientPortal.labResults.details.notFound.backButton')}
           </Button>
         </div>
 
@@ -201,15 +203,14 @@ export default function LabResultDetailsPage() {
               <FileText className="h-8 w-8 text-muted-foreground" />
             </div>
             <h3 className="font-medium text-lg mb-1">
-              نتيجة التحليل غير موجودة
+              {t('patientPortal.labResults.details.notFound.title')}
             </h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              لم يتم العثور على نتيجة التحليل المطلوبة. قد تكون النتيجة قد تم
-              حذفها أو أن الرابط غير صحيح.
+              {t('patientPortal.labResults.details.notFound.message')}
             </p>
             <Button variant="default" className="mt-6" asChild>
               <Link href="/patient-portal/lab-results">
-                عرض جميع نتائج التحاليل
+                {t('patientPortal.labResults.details.notFound.viewAllButton')}
               </Link>
             </Button>
           </CardContent>
@@ -234,7 +235,7 @@ export default function LabResultDetailsPage() {
           <Button variant="ghost" size="sm" asChild>
             <Link href="/patient-portal/lab-results">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              العودة للنتائج
+              {t('patientPortal.labResults.details.backToList')}
             </Link>
           </Button>
           <div>
@@ -272,9 +273,15 @@ export default function LabResultDetailsPage() {
           <CardContent className="p-6">
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="details">تفاصيل التحليل</TabsTrigger>
-                <TabsTrigger value="results">النتائج</TabsTrigger>
-                <TabsTrigger value="notes">الملاحظات</TabsTrigger>
+                <TabsTrigger value="details">
+                  {t('patientPortal.labResults.details.tabs.details')}
+                </TabsTrigger>
+                <TabsTrigger value="results">
+                  {t('patientPortal.labResults.details.tabs.results')}
+                </TabsTrigger>
+                <TabsTrigger value="notes">
+                  {t('patientPortal.labResults.details.tabs.notes')}
+                </TabsTrigger>
               </TabsList>
 
               {/* Details Tab */}
@@ -283,12 +290,16 @@ export default function LabResultDetailsPage() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold flex items-center gap-2">
                       <Calendar className="h-5 w-5 text-blue-500" />
-                      معلومات التحليل
+                      {t(
+                        'patientPortal.labResults.details.sections.testInformation'
+                      )}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">
-                          كود التحليل:
+                          {t(
+                            'patientPortal.labResults.details.testInfo.testCode'
+                          )}
                         </span>
                         <span className="font-medium">
                           {labResult.labTestCode}
@@ -296,7 +307,9 @@ export default function LabResultDetailsPage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">
-                          تاريخ الطلب:
+                          {t(
+                            'patientPortal.labResults.details.testInfo.requestDate'
+                          )}
                         </span>
                         <span className="font-medium">
                           {formatDate(labResult.requestDate)}
@@ -305,7 +318,9 @@ export default function LabResultDetailsPage() {
                       {labResult.resultDate && (
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">
-                            تاريخ النتيجة:
+                            {t(
+                              'patientPortal.labResults.details.testInfo.resultDate'
+                            )}
                           </span>
                           <span className="font-medium">
                             {formatDate(labResult.resultDate)}
@@ -318,11 +333,17 @@ export default function LabResultDetailsPage() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold flex items-center gap-2">
                       <Activity className="h-5 w-5 text-green-500" />
-                      حالة التحليل
+                      {t(
+                        'patientPortal.labResults.details.sections.testStatus'
+                      )}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground">الحالة:</span>
+                        <span className="text-muted-foreground">
+                          {t(
+                            'patientPortal.labResults.details.testInfo.status'
+                          )}
+                        </span>
                         <Badge
                           variant={'default'}
                           className={cn(getTestStatusColor(labResult.status))}
@@ -341,7 +362,9 @@ export default function LabResultDetailsPage() {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-muted-foreground">
-                          نوع التحليل:
+                          {t(
+                            'patientPortal.labResults.details.testInfo.testType'
+                          )}
                         </span>
                         <Badge
                           variant="outline"
@@ -353,23 +376,33 @@ export default function LabResultDetailsPage() {
                       {labResult.abnormalFlags > 0 && (
                         <div className="flex justify-between items-center">
                           <span className="text-muted-foreground">
-                            نتائج غير طبيعية:
+                            {t(
+                              'patientPortal.labResults.details.testInfo.abnormalResults'
+                            )}
                           </span>
                           <Badge
                             variant="outline"
                             className="bg-yellow-50 text-yellow-700"
                           >
-                            {labResult.abnormalFlags} معايير
+                            {labResult.abnormalFlags}{' '}
+                            {t(
+                              'patientPortal.labResults.details.testInfo.criteria'
+                            )}
                           </Badge>
                         </div>
                       )}
                       {labResult.criticalFlags > 0 && (
                         <div className="flex justify-between items-center">
                           <span className="text-muted-foreground">
-                            نتائج حرجة:
+                            {t(
+                              'patientPortal.labResults.details.testInfo.criticalResults'
+                            )}
                           </span>
                           <Badge variant="destructive">
-                            {labResult.criticalFlags} معايير
+                            {labResult.criticalFlags}{' '}
+                            {t(
+                              'patientPortal.labResults.details.testInfo.criteria'
+                            )}
                           </Badge>
                         </div>
                       )}
@@ -384,7 +417,7 @@ export default function LabResultDetailsPage() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold flex items-center gap-2">
                       <Dna className="h-5 w-5 text-purple-500" />
-                      نتائج التحليل
+                      {t('patientPortal.labResults.details.results.title')}
                     </h3>
                     <div className="bg-muted/50 rounded-lg p-4">
                       <pre className="whitespace-pre-wrap text-sm">
@@ -398,10 +431,12 @@ export default function LabResultDetailsPage() {
                       <Beaker className="h-8 w-8 text-muted-foreground" />
                     </div>
                     <h3 className="font-medium text-lg mb-2">
-                      النتائج قيد المعالجة
+                      {t('patientPortal.labResults.details.results.processing')}
                     </h3>
                     <p className="text-muted-foreground">
-                      النتائج التفصيلية ستكون متاحة بعد اكتمال التحليل
+                      {t(
+                        'patientPortal.labResults.details.results.processingDescription'
+                      )}
                     </p>
                   </div>
                 )}
@@ -412,7 +447,7 @@ export default function LabResultDetailsPage() {
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Info className="h-5 w-5 text-blue-500" />
-                    الملاحظات والتوصيات
+                    {t('patientPortal.labResults.details.notes.title')}
                   </h3>
                   {labResult.notes ? (
                     <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
@@ -424,10 +459,12 @@ export default function LabResultDetailsPage() {
                         <Info className="h-8 w-8 text-muted-foreground" />
                       </div>
                       <h3 className="font-medium text-lg mb-2">
-                        لا توجد ملاحظات
+                        {t('patientPortal.labResults.details.notes.noNotes')}
                       </h3>
                       <p className="text-muted-foreground">
-                        لم يتم إضافة أي ملاحظات خاصة لهذا التحليل
+                        {t(
+                          'patientPortal.labResults.details.notes.noNotesDescription'
+                        )}
                       </p>
                     </div>
                   )}
@@ -444,21 +481,27 @@ export default function LabResultDetailsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building className="h-5 w-5" />
-              معلومات الزيارة
+              {t('patientPortal.labResults.details.sections.visitInformation')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
               <div>
-                <p className="text-sm text-muted-foreground">رقم الزيارة</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('patientPortal.labResults.details.visitInfo.visitNumber')}
+                </p>
                 <p className="font-medium">{labResult.visitNumber}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">العيادة</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('patientPortal.labResults.details.visitInfo.clinic')}
+                </p>
                 <p className="font-medium">{labResult.clinicName}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">التخصص</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('patientPortal.labResults.details.visitInfo.specialty')}
+                </p>
                 <p className="font-medium">{labResult.specialtyName}</p>
               </div>
             </div>

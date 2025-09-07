@@ -21,6 +21,7 @@ import { twMerge } from 'tailwind-merge';
 import { Input } from '@/components/ui/input';
 import { GetDiagnosesTreeDto } from '@/lib/api/types/diagnosis';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface DiagnosisTreeSelectorProps<T extends FieldValues> {
   name: Path<T>;
@@ -37,14 +38,15 @@ interface DiagnosisTreeSelectorProps<T extends FieldValues> {
 export default function DiagnosisTreeSelector<T extends FieldValues>({
   name,
   control,
-  label = 'Diagnosis (ICD-10)',
-  placeholder = 'Select ICD-10 diagnosis code...',
+  label,
+  placeholder,
   error,
   disabled = false,
   required = false,
   className,
   diagnosesTree,
 }: DiagnosisTreeSelectorProps<T>) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
@@ -53,7 +55,7 @@ export default function DiagnosisTreeSelector<T extends FieldValues>({
   const [filteredData, setFilteredData] =
     useState<GetDiagnosesTreeDto[]>(diagnosesTree);
 
-  // بحث داخل الشجرة وتصفية النتائج
+  // Search within tree and filter results
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredData(diagnosesTree);
@@ -91,7 +93,7 @@ export default function DiagnosisTreeSelector<T extends FieldValues>({
     setFilteredData(searchTree(diagnosesTree));
   }, [searchQuery, diagnosesTree]);
 
-  // دالة فتح/إغلاق العقد في الشجرة مع حفظ الحالة
+  // Function to open/close tree nodes with state preservation
   const toggleNode = (nodeId: string) => {
     setExpandedNodes((prev) => {
       const newSet = new Set(prev);
@@ -104,9 +106,12 @@ export default function DiagnosisTreeSelector<T extends FieldValues>({
     });
   };
 
-  // دالة البحث عن التشخيص حسب id مع useCallback لمنع إعادة الإنشاء غير الضرورية
+  // Function to search for diagnosis by id with useCallback to prevent unnecessary re-creation
   const findDiagnosisById = useCallback(
-    (id: string, nodes: GetDiagnosesTreeDto[] = diagnosesTree): GetDiagnosesTreeDto | null => {
+    (
+      id: string,
+      nodes: GetDiagnosesTreeDto[] = diagnosesTree
+    ): GetDiagnosesTreeDto | null => {
       for (const node of nodes) {
         if (node.id === id) return node;
         if (node.children.length > 0) {
@@ -119,14 +124,17 @@ export default function DiagnosisTreeSelector<T extends FieldValues>({
     [diagnosesTree]
   );
 
-  // مراقبة قيمة الحقل لمزامنة selectedDiagnosis
+  // Watch field value to sync selectedDiagnosis
   const fieldValue = useWatch({
     control,
     name,
   });
 
   useEffect(() => {
-    if (fieldValue && (!selectedDiagnosis || selectedDiagnosis.id !== fieldValue)) {
+    if (
+      fieldValue &&
+      (!selectedDiagnosis || selectedDiagnosis.id !== fieldValue)
+    ) {
       const diagnosis = findDiagnosisById(fieldValue);
       if (diagnosis) {
         setSelectedDiagnosis(diagnosis);
@@ -134,7 +142,7 @@ export default function DiagnosisTreeSelector<T extends FieldValues>({
     }
   }, [fieldValue, selectedDiagnosis, findDiagnosisById]);
 
-  // عرض عقدة الشجرة بشكل متكرر مع التوسع والاختيار
+  // Render tree node recursively with expansion and selection
   const renderTreeNode = (node: GetDiagnosesTreeDto, level: number = 0) => {
     const isExpanded = expandedNodes.has(node.id);
     const hasChildren = node.children.length > 0;
@@ -249,18 +257,27 @@ export default function DiagnosisTreeSelector<T extends FieldValues>({
                     <span className="flex-grow text-left truncate">
                       {selectedDiagnosis
                         ? `${selectedDiagnosis.code} - ${selectedDiagnosis.name}`
-                        : placeholder}
+                        : placeholder ||
+                          t(
+                            'clinic.visits.form.symptomsAndDiagnosis.diagnosisPlaceholder'
+                          )}
                     </span>
                     <ChevronRight className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-hidden flex flex-col">
                   <DialogHeader>
-                    <DialogTitle>Select ICD-10 Diagnosis</DialogTitle>
+                    <DialogTitle>
+                      {t(
+                        'clinic.visits.form.symptomsAndDiagnosis.selectDiagnosis'
+                      )}
+                    </DialogTitle>
                     <div className="relative mt-2">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
                       <Input
-                        placeholder="Search by code or description..."
+                        placeholder={t(
+                          'clinic.visits.form.symptomsAndDiagnosis.searchPlaceholder'
+                        )}
                         className="pl-10 pr-4 py-2"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -273,7 +290,9 @@ export default function DiagnosisTreeSelector<T extends FieldValues>({
                       filteredData.map((node) => renderTreeNode(node))
                     ) : (
                       <div className="py-4 text-center text-gray-500">
-                        No diagnosis codes found matching your search
+                        {t(
+                          'clinic.visits.form.symptomsAndDiagnosis.noDiagnosisFound'
+                        )}
                       </div>
                     )}
                   </div>
@@ -282,13 +301,20 @@ export default function DiagnosisTreeSelector<T extends FieldValues>({
                     <div className="text-sm">
                       {selectedDiagnosis ? (
                         <span className="font-medium">
-                          Selected:{' '}
+                          {t(
+                            'clinic.visits.form.symptomsAndDiagnosis.selected'
+                          )}
+                          :{' '}
                           <span className="text-blue-600">
                             {selectedDiagnosis.code} - {selectedDiagnosis.name}
                           </span>
                         </span>
                       ) : (
-                        <span className="text-gray-500">No diagnosis selected</span>
+                        <span className="text-gray-500">
+                          {t(
+                            'clinic.visits.form.symptomsAndDiagnosis.noDiagnosisSelected'
+                          )}
+                        </span>
                       )}
                     </div>
                     <div className="flex gap-2">
@@ -299,7 +325,7 @@ export default function DiagnosisTreeSelector<T extends FieldValues>({
                           setSearchQuery('');
                         }}
                       >
-                        Cancel
+                        {t('common.cancel')}
                       </Button>
                       <Button
                         onClick={() => {
@@ -311,7 +337,7 @@ export default function DiagnosisTreeSelector<T extends FieldValues>({
                         }}
                         disabled={!selectedDiagnosis}
                       >
-                        Confirm Selection
+                        {t('common.confirm')}
                       </Button>
                     </div>
                   </div>

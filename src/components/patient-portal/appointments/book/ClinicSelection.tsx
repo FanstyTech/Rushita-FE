@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import Avatar from '@/components/common/Avatar';
 import { GetClinicsForDropdownDto } from '@/lib/api/types/clinic';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
 
 interface ClinicSelectionProps {
   clinics: GetClinicsForDropdownDto[];
@@ -33,6 +34,8 @@ export function ClinicSelection({
   selectedClinic,
   onClinicSelect,
 }: ClinicSelectionProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       variants={containerVariants}
@@ -40,7 +43,7 @@ export function ClinicSelection({
       animate="show"
       className="space-y-4"
     >
-      <h2 className="text-xl font-semibold">اختر العيادة</h2>
+      <h2 className="text-xl font-semibold">{t('patientPortal.appointments.booking.clinicSelection.title')}</h2>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {clinics.map((clinic) => (
           <motion.div key={clinic.value} variants={itemVariants}>
@@ -60,7 +63,7 @@ export function ClinicSelection({
                     variant="default"
                     className="bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1 rounded-full shadow-sm"
                   >
-                    لديك حجوزات سابقة
+                    {t('patientPortal.appointments.booking.clinicSelection.previousBookingsTag')}
                   </Badge>
                 </div>
               )}

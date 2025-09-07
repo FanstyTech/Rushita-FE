@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import {
   MoreVertical,
@@ -33,6 +34,8 @@ export default function LeaveCard({
   onDelete,
   onStatusChange,
 }: LeaveCardProps) {
+  const { t } = useTranslation();
+
   const getStatusColor = (status: LeaveStatus) => {
     switch (status) {
       case LeaveStatus.Approved:
@@ -44,6 +47,16 @@ export default function LeaveCard({
       default:
         return 'bg-yellow-100 text-yellow-800';
     }
+  };
+
+  const getStatusLabel = (status: LeaveStatus) => {
+    const statusKey = LeaveStatus[status].toLowerCase();
+    return t(`clinic.staff.leaves.status.${statusKey}`);
+  };
+
+  const getTypeLabel = (type: LeaveType) => {
+    const typeKey = LeaveType[type].toLowerCase();
+    return t(`clinic.staff.leaves.types.${typeKey}`);
   };
 
   return (
@@ -69,7 +82,7 @@ export default function LeaveCard({
                   leave.status
                 )}`}
               >
-                {LeaveStatus[leave.status]}
+                {getStatusLabel(leave.status)}
               </span>
             </div>
           </div>
@@ -90,7 +103,7 @@ export default function LeaveCard({
                     } flex items-center px-4 py-2 text-sm w-full text-left`}
                   >
                     <Edit2 className="w-4 h-4 mr-3" />
-                    Edit Leave
+                    {t('clinic.staff.leaves.actions.editLeave')}
                   </button>
                 )}
               </MenuItem>
@@ -107,7 +120,7 @@ export default function LeaveCard({
                         } flex items-center px-4 py-2 text-sm text-green-600 w-full text-left`}
                       >
                         <CheckCircle className="w-4 h-4 mr-3" />
-                        Approve
+                        {t('clinic.staff.leaves.actions.approve')}
                       </button>
                     )}
                   </MenuItem>
@@ -122,7 +135,7 @@ export default function LeaveCard({
                         } flex items-center px-4 py-2 text-sm text-red-600 w-full text-left`}
                       >
                         <XCircle className="w-4 h-4 mr-3" />
-                        Reject
+                        {t('clinic.staff.leaves.actions.reject')}
                       </button>
                     )}
                   </MenuItem>
@@ -137,7 +150,7 @@ export default function LeaveCard({
                     } flex items-center px-4 py-2 text-sm text-red-600 w-full text-left`}
                   >
                     <Trash2 className="w-4 h-4 mr-3" />
-                    Delete Leave
+                    {t('clinic.staff.leaves.actions.deleteLeave')}
                   </button>
                 )}
               </MenuItem>
@@ -152,7 +165,7 @@ export default function LeaveCard({
 
       <div className=" flex items-center gap-3 text-xs">
         <span className="px-2 py-1 rounded-md bg-blue-50 text-blue-700">
-          {LeaveType[leave.type]}
+          {getTypeLabel(leave.type)}
         </span>
       </div>
     </Card>

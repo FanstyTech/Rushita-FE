@@ -22,8 +22,10 @@ import { SelectOption } from '@/lib/api/types/select-option';
 import Link from 'next/link';
 import { User } from 'lucide-react';
 import Avatar from '@/components/common/Avatar';
+import { useTranslation } from 'react-i18next';
 
 export default function ClinicPatientsPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -84,12 +86,15 @@ export default function ClinicPatientsPage() {
     .filter(([key]) => isNaN(Number(key)))
     .map(([key, value]) => ({
       value: value.toString(),
-      label: key,
+      label:
+        key === 'Male'
+          ? t('clinic.patients.filters.male')
+          : t('clinic.patients.filters.female'),
     }));
 
   const columns: Column<ClinicPatientListDto>[] = [
     {
-      header: 'Name',
+      header: t('clinic.patients.table.name'),
       accessor: 'fullName',
       cell: ({ row }: { row: { original: ClinicPatientListDto } }) => (
         <div className="flex items-center gap-3">
@@ -101,7 +106,7 @@ export default function ClinicPatientsPage() {
       ),
     },
     {
-      header: 'Contact',
+      header: t('clinic.patients.table.contact'),
       accessor: 'phoneNumber',
       cell: ({ row }: { row: { original: ClinicPatientListDto } }) => (
         <div>
@@ -111,7 +116,7 @@ export default function ClinicPatientsPage() {
       ),
     },
     {
-      header: 'Gender',
+      header: t('clinic.patients.table.gender'),
       accessor: 'gender',
       cell: ({ row }: { row: { original: ClinicPatientListDto } }) => (
         <div>
@@ -120,34 +125,35 @@ export default function ClinicPatientsPage() {
       ),
     },
     {
-      header: 'Date of Birth',
+      header: t('clinic.patients.table.dateOfBirth'),
       accessor: 'dateOfBirth',
       cell: ({ row }: { row: { original: ClinicPatientListDto } }) =>
         row.original.dateOfBirth
           ? format(new Date(row.original.dateOfBirth), 'MMM d, yyyy')
-          : '-',
+          : t('clinic.patients.dateFormat.noDate'),
     },
     {
-      header: 'Total Visits',
+      header: t('clinic.patients.table.totalVisits'),
       accessor: 'totalVisits',
     },
     {
-      header: 'Last Visit Date',
+      header: t('clinic.patients.table.lastVisitDate'),
       accessor: 'lastVisitDate',
       cell: ({ row }: { row: { original: ClinicPatientListDto } }) =>
         row.original.lastVisitDate
           ? format(new Date(row.original.lastVisitDate), 'MMM d, yyyy')
-          : '-',
+          : t('clinic.patients.dateFormat.noDate'),
     },
 
     {
-      header: 'Actions',
+      header: t('clinic.patients.table.actions'),
       accessor: 'id',
       cell: ({ row }: { row: { original: ClinicPatientListDto } }) => (
         <div className="flex gap-2">
           <Link
             href={`/clinic/patients/${row.original.id}`}
             className="p-1 text-gray-600 hover:text-gray-800 transition-colors"
+            title={t('clinic.patients.actions.view')}
           >
             <User className="w-4 h-4" />
           </Link>
@@ -155,6 +161,7 @@ export default function ClinicPatientsPage() {
           <button
             onClick={() => handleEdit(row.original.id)}
             className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
+            title={t('clinic.patients.actions.edit')}
           >
             <Pencil className="w-4 h-4" />
           </button>
@@ -162,6 +169,7 @@ export default function ClinicPatientsPage() {
           <button
             onClick={() => handleDelete(row.original.id)}
             className="p-1 text-red-600 hover:text-red-800 transition-colors"
+            title={t('clinic.patients.actions.delete')}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -190,9 +198,9 @@ export default function ClinicPatientsPage() {
           additionalFilters={[
             {
               icon: <FiList className="w-4 h-4" />,
-              label: 'Gender',
+              label: t('clinic.patients.filters.gender'),
               options: [
-                { value: '', label: 'All' },
+                { value: '', label: t('clinic.patients.filters.all') },
                 ...(genderOptions?.map((gender: SelectOption<string>) => ({
                   value: gender.value,
                   label: gender.label || '',
@@ -226,9 +234,9 @@ export default function ClinicPatientsPage() {
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={handleConfirmDelete}
-          title="Delete Patient"
-          message="Are you sure you want to delete this item?"
-          secondaryMessage="This action cannot be undone."
+          title={t('clinic.patients.deleteModal.title')}
+          message={t('clinic.patients.deleteModal.message')}
+          secondaryMessage={t('clinic.patients.deleteModal.secondaryMessage')}
           isLoading={deletePatient.isPending}
         />
       </div>

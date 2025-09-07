@@ -2,6 +2,98 @@ export const es = {
   translation: {
     // Navigation
     navigation: {
+      searchPlaceholder: 'Buscar navegación...',
+      sections: {
+        admin: 'Administración',
+        clinic: 'Clínica',
+        doctor: 'Doctor',
+      },
+      // Admin Navigation
+      admin: {
+        quickMenu: 'Menu rápido',
+        dashboard: 'Panel de Control',
+        users: 'Usuarios',
+        clinics: {
+          title: 'Clínicas',
+          management: {
+            title: 'Gestión de Clínicas',
+            list: 'Lista de Clínicas',
+            add: 'Agregar Clínica',
+          },
+          reports: {
+            title: 'Reportes de Clínicas',
+            performance: 'Reportes de Rendimiento',
+            analytics: 'Reportes de Análisis',
+          },
+        },
+        lookups: {
+          title: 'Datos de Referencia',
+          specialty: 'Especialidades',
+          country: 'Países',
+          city: 'Ciudades',
+          clinicType: 'Tipos de Clínica',
+          currency: 'Monedas',
+          radiologyTestCategory: 'Categorías de Pruebas de Radiología',
+          radiologyTest: 'Pruebas de Radiología',
+          medicationType: 'Tipos de Medicamentos',
+          medicine: 'Medicinas',
+          labTestCategory: 'Categorías de Pruebas de Laboratorio',
+          labTest: 'Pruebas de Laboratorio',
+          diagnosisCategory: 'Categorías de Diagnóstico',
+          diagnosis: 'Diagnósticos',
+          dentalProcedure: 'Procedimientos Dentales',
+        },
+      },
+      // Clinic Navigation
+      clinic: {
+        dashboard: 'Panel de Control',
+        appointments: 'Citas',
+        patients: 'Pacientes',
+        staff: {
+          title: 'Personal',
+          list: 'Lista de Personal',
+          leaves: 'Permisos',
+        },
+        laboratory: {
+          title: 'Laboratorio',
+          tests: 'Pruebas de Laboratorio',
+        },
+        radiology: {
+          title: 'Radiología',
+          tests: 'Pruebas de Radiología',
+        },
+        pharmacy: {
+          title: 'Farmacia',
+          prescriptions: 'Recetas',
+        },
+        financial: {
+          title: 'Financiero',
+          dashboard: 'Panel Financiero',
+          servicePrices: 'Precios de Servicios',
+          expenses: 'Gastos',
+          invoices: 'Facturas',
+          revenues: 'Ingresos',
+          salaries: 'Salarios',
+          transactions: 'Transacciones',
+        },
+        reports: {
+          title: 'Reportes',
+          view: 'Ver Reportes',
+          generate: 'Generar Reportes',
+        },
+        settings: {
+          title: 'Configuración',
+          general: 'Configuración General',
+          profile: 'Perfil de Clínica',
+        },
+      },
+      // Doctor Navigation
+      doctor: {
+        dashboard: 'Panel de Control',
+        visits: 'Visitas',
+        leaves: 'Permisos',
+        profile: 'Perfil',
+      },
       dashboard: 'Panel de Control',
       patients: 'Pacientes',
       appointments: 'Citas',
@@ -10,6 +102,18 @@ export const es = {
       settings: 'Configuración',
       clinicAI: 'IA de Clínica',
       medicalIntelligence: 'Inteligencia Médica',
+    },
+
+    // User interface
+    user: {
+      notifications: 'Notificaciones',
+      profile: 'Perfil',
+      logout: 'Cerrar Sesión',
+    },
+
+    // Settings
+    settings: {
+      settings: 'Configuración',
     },
 
     // Breadcrumb routes
@@ -204,115 +308,6 @@ export const es = {
       },
     },
 
-    // Settings page
-    settings: {
-      title: 'Configuración de Clínica',
-      description: 'Gestionar configuración y ajustes de la clínica',
-
-      // Appointment Settings
-      appointments: {
-        title: 'Configuración de Citas',
-        description: 'Gestionar configuración y políticas de reserva de citas',
-        duration: 'Duración de Cita (minutos)',
-        maxAdvanceBooking: 'Reserva Máxima Anticipada (días)',
-        cancellationPolicy: 'Política de Cancelación (horas antes de la cita)',
-        onlineBooking: 'Permitir Reserva en Línea',
-        requireApproval: 'Requerir Aprobación de Cita',
-      },
-
-      // Notification Settings
-      notifications: {
-        title: 'Configuración de Notificaciones',
-        description: 'Controlar entrega de notificaciones y recordatorios',
-        emailNotifications: 'Notificaciones por Email',
-        smsNotifications: 'Notificaciones SMS',
-        pushNotifications: 'Notificaciones Push',
-        reminderTiming: 'Tiempo de Recordatorio (horas antes de la cita)',
-      },
-
-      // Clinic Information
-      clinicInfo: {
-        title: 'Información de Clínica',
-        description: 'Gestionar información básica de la clínica',
-        name: 'Nombre de Clínica',
-        phone: 'Número de Teléfono',
-        email: 'Correo Electrónico',
-        address: 'Dirección',
-        namePlaceholder: 'Ingresa nombre de clínica',
-        phonePlaceholder: 'Ingresa número de teléfono',
-        emailPlaceholder: 'Ingresa correo electrónico',
-        addressPlaceholder: 'Ingresa dirección de clínica',
-      },
-
-      // System Preferences
-      system: {
-        title: 'Preferencias del Sistema',
-        description: 'Gestionar configuración general del sistema',
-        currency: 'Moneda Predeterminada',
-        language: 'Idioma Predeterminado',
-        timezone: 'Zona Horaria',
-        autoBackup: 'Respaldo Automático',
-        twoFactorAuth: 'Autenticación de Dos Factores',
-        currencies: {
-          SAR: 'Riyal Saudí (SAR)',
-          AED: 'Dirham EAU (AED)',
-          USD: 'Dólar Estadounidense (USD)',
-          EUR: 'Euro (EUR)',
-        },
-        languages: {
-          ar: 'Árabe',
-          en: 'Inglés',
-          fr: 'Francés',
-        },
-        timezones: {
-          'Asia/Riyadh': 'Riad (GMT+3)',
-          'Asia/Dubai': 'Dubái (GMT+4)',
-          'Europe/London': 'Londres (GMT+0)',
-          'America/New_York': 'Nueva York (GMT-5)',
-          'Asia/Tokyo': 'Tokio (GMT+9)',
-        },
-      },
-
-      // Booking Conditions
-      bookingConditions: {
-        title: 'Condiciones de Reserva',
-        description:
-          'Ingresa condiciones y requisitos de reserva (uno por línea)',
-        patientInfoRequired: 'Requerir Información Completa del Paciente',
-        insuranceRequired: 'Requerir Información de Seguro',
-        medicalHistoryRequired: 'Requerir Historial Médico',
-        minAge: 'Edad Mínima',
-        maxAge: 'Edad Máxima',
-        emergencyContactRequired: 'Requerir Contacto de Emergencia',
-        sameDayBooking: 'Permitir Reserva el Mismo Día',
-        depositRequired: 'Requerir Depósito de Reserva',
-        depositAmount: 'Monto del Depósito',
-        termsRequired: 'Requerir Aceptación de Términos y Condiciones',
-      },
-
-      // Clinic Rooms Management
-      rooms: {
-        title: 'Salas de Clínica y Equipos',
-        description: 'Gestionar salas de clínica y equipos médicos',
-        enableRoomManagement: 'Habilitar Gestión de Salas',
-        defaultRoom: 'Sala Predeterminada para Citas',
-        roomCapacity: 'Gestión de Capacidad de Salas',
-        equipmentTracking: 'Seguimiento de Equipos',
-        maintenanceScheduling: 'Programación de Mantenimiento',
-        roomOptions: {
-          room1: 'Sala de Examen 1',
-          room2: 'Sala de Examen 2',
-          room3: 'Sala de Examen 3',
-          consultation: 'Sala de Consulta',
-          procedure: 'Sala de Procedimientos',
-          emergency: 'Sala de Emergencias',
-        },
-      },
-
-      // Actions
-      saveSettings: 'Guardar Configuración',
-    },
-
     // Languages
     languages: {
       en: 'Inglés',
@@ -322,10 +317,9 @@ export const es = {
 
     // Common
     common: {
-      search: 'Buscar',
-      filter: 'Filtrar',
-      sort: 'Ordenar',
-      add: 'Añadir',
+      loading: 'Cargando...',
+      // Actions
+      add: 'Agregar',
       edit: 'Editar',
       delete: 'Eliminar',
       cancel: 'Cancelar',
@@ -334,12 +328,79 @@ export const es = {
       back: 'Atrás',
       next: 'Siguiente',
       submit: 'Enviar',
-      loading: 'Cargando...',
-      noResults: 'No se encontraron resultados',
+      close: 'Cerrar',
+      open: 'Abrir',
+      view: 'Ver',
+      create: 'Crear',
+      update: 'Actualizar',
+      remove: 'Remover',
+      search: 'Buscar',
+      filter: 'Filtrar',
+      sort: 'Ordenar',
+      export: 'Exportar',
+      import: 'Importar',
+      print: 'Imprimir',
+      download: 'Descargar',
+      upload: 'Subir',
+      refresh: 'Actualizar',
+      reset: 'Restablecer',
+      clear: 'Limpiar',
+      select: 'Seleccionar',
+      selectAll: 'Seleccionar Todo',
+      deselectAll: 'Deseleccionar Todo',
+      // Status
+      active: 'Activo',
+      inactive: 'Inactivo',
+      enabled: 'Habilitado',
+      disabled: 'Deshabilitado',
+      pending: 'Pendiente',
+      approved: 'Aprobado',
+      rejected: 'Rechazado',
+      completed: 'Completado',
+      inProgress: 'En Progreso',
+      draft: 'Borrador',
+      published: 'Publicado',
+      // Messages
       success: 'Éxito',
       error: 'Error',
       warning: 'Advertencia',
       info: 'Información',
+      noResults: 'No se encontraron resultados',
+      noData: 'No hay datos disponibles',
+      // Confirmations
+      areYouSure: '¿Estás seguro?',
+      deleteConfirmation:
+        '¿Estás seguro de que quieres eliminar este elemento?',
+      unsavedChanges:
+        'Tienes cambios sin guardar. ¿Estás seguro de que quieres salir?',
+      // Form validation
+      required: 'Este campo es obligatorio',
+      invalidEmail: 'Por favor ingresa una dirección de correo válida',
+      invalidPhone: 'Por favor ingresa un número de teléfono válido',
+      passwordTooShort: 'La contraseña debe tener al menos 8 caracteres',
+      passwordsDoNotMatch: 'Las contraseñas no coinciden',
+      // Time and date
+      today: 'Hoy',
+      yesterday: 'Ayer',
+      tomorrow: 'Mañana',
+      thisWeek: 'Esta Semana',
+      thisMonth: 'Este Mes',
+      thisYear: 'Este Año',
+      // Pagination
+      previous: 'Anterior',
+      page: 'Página',
+      of: 'de',
+      showing: 'Mostrando',
+      to: 'a',
+      entries: 'entradas',
+      // File operations
+      file: 'Archivo',
+      files: 'Archivos',
+      folder: 'Carpeta',
+      folders: 'Carpetas',
+      size: 'Tamaño',
+      type: 'Tipo',
+      lastModified: 'Última Modificación',
     },
 
     // Messages
@@ -685,7 +746,7 @@ export const es = {
         },
 
         socialMedia: 'Síguenos',
-        rights: '© {year} Rousheta. Todos los derechos reservados.',
+        rights: ' Rousheta. Todos los derechos reservados.',
         terms: 'Términos de Servicio',
         privacy: 'Política de Privacidad',
         scrollToTop: 'Volver arriba',

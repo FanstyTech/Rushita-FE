@@ -9,4 +9,3 @@ export { HealthIndicatorsCard } from './HealthIndicatorsCard';
 export { ProfileSkeleton } from './ProfileSkeleton';
 export * from './types';
 export * from './utils';
-export * from './mockData';

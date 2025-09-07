@@ -3,9 +3,183 @@ export const en = {
     // Common
     common: {
       loading: 'Loading...',
+      // Actions
+      add: 'Add',
+      edit: 'Edit',
+      delete: 'Delete',
+      cancel: 'Cancel',
+      save: 'Save',
+      confirm: 'Confirm',
+      back: 'Back',
+      next: 'Next',
+      submit: 'Submit',
+      close: 'Close',
+      open: 'Open',
+      view: 'View',
+      create: 'Create',
+      update: 'Update',
+      remove: 'Remove',
+      search: 'Search',
+      filter: 'Filter',
+      sort: 'Sort',
+      export: 'Export',
+      import: 'Import',
+      print: 'Print',
+      download: 'Download',
+      upload: 'Upload',
+      refresh: 'Refresh',
+      reset: 'Reset',
+      clear: 'Clear',
+      select: 'Select',
+      selectAll: 'Select All',
+      deselectAll: 'Deselect All',
+      // Status
+      active: 'Active',
+      inactive: 'Inactive',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
+      pending: 'Pending',
+      approved: 'Approved',
+      rejected: 'Rejected',
+      completed: 'Completed',
+      inProgress: 'In Progress',
+      draft: 'Draft',
+      published: 'Published',
+      // Messages
+      success: 'Success',
+      error: 'Error',
+      warning: 'Warning',
+      info: 'Information',
+      noResults: 'No results found',
+      noData: 'No data available',
+      // Confirmations
+      areYouSure: 'Are you sure?',
+      deleteConfirmation: 'Are you sure you want to delete this item?',
+      unsavedChanges:
+        'You have unsaved changes. Are you sure you want to leave?',
+      // Form validation
+      required: 'This field is required',
+      invalidEmail: 'Please enter a valid email address',
+      invalidPhone: 'Please enter a valid phone number',
+      passwordTooShort: 'Password must be at least 8 characters',
+      passwordsDoNotMatch: 'Passwords do not match',
+      // Time and date
+      today: 'Today',
+      yesterday: 'Yesterday',
+      tomorrow: 'Tomorrow',
+      thisWeek: 'This Week',
+      thisMonth: 'This Month',
+      thisYear: 'This Year',
+      // Pagination
+      previous: 'Previous',
+      page: 'Page',
+      of: 'of',
+      showing: 'Showing',
+      to: 'to',
+      entries: 'entries',
+      // File operations
+      file: 'File',
+      files: 'Files',
+      folder: 'Folder',
+      folders: 'Folders',
+      size: 'Size',
+      type: 'Type',
+      lastModified: 'Last Modified',
     },
     // Navigation
     navigation: {
+      quickMenu: 'Quick Menu',
+      searchPlaceholder: 'Search navigation...',
+      sections: {
+        admin: 'Admin',
+        clinic: 'Clinic',
+        doctor: 'Doctor',
+      },
+      // Admin Navigation
+      admin: {
+        dashboard: 'Dashboard',
+        users: 'Users',
+        clinics: {
+          title: 'Clinics',
+          management: {
+            title: 'Clinic Management',
+            list: 'Clinic List',
+            add: 'Add Clinic',
+          },
+          reports: {
+            title: 'Clinic Reports',
+            performance: 'Performance Reports',
+            analytics: 'Analytics Reports',
+          },
+        },
+        lookups: {
+          title: 'Lookups',
+          specialty: 'Specialties',
+          country: 'Countries',
+          city: 'Cities',
+          clinicType: 'Clinic Types',
+          currency: 'Currencies',
+          radiologyTestCategory: 'Radiology Test Categories',
+          radiologyTest: 'Radiology Tests',
+          medicationType: 'Medication Types',
+          medicine: 'Medicines',
+          labTestCategory: 'Lab Test Categories',
+          labTest: 'Lab Tests',
+          diagnosisCategory: 'Diagnosis Categories',
+          diagnosis: 'Diagnoses',
+          dentalProcedure: 'Dental Procedures',
+        },
+      },
+      // Clinic Navigation
+      clinic: {
+        dashboard: 'Dashboard',
+        appointments: 'Appointments',
+        patients: 'Patients',
+        staff: {
+          title: 'Staff',
+          list: 'Staff List',
+          leaves: 'Leaves',
+        },
+        laboratory: {
+          title: 'Laboratory',
+          tests: 'Lab Tests',
+        },
+        radiology: {
+          title: 'Radiology',
+          tests: 'Radiology Tests',
+        },
+        pharmacy: {
+          title: 'Pharmacy',
+          prescriptions: 'Prescriptions',
+        },
+        financial: {
+          title: 'Financial',
+          dashboard: 'Financial Dashboard',
+          servicePrices: 'Service Prices',
+          expenses: 'Expenses',
+          invoices: 'Invoices',
+          revenues: 'Revenues',
+          salaries: 'Salaries',
+          transactions: 'Transactions',
+        },
+        reports: {
+          title: 'Reports',
+          view: 'View Reports',
+          generate: 'Generate Reports',
+        },
+        settings: {
+          title: 'Settings',
+          general: 'General Settings',
+          profile: 'Clinic Profile',
+        },
+      },
+      // Doctor Navigation
+      doctor: {
+        dashboard: 'Dashboard',
+        visits: 'Visits',
+        leaves: 'Leaves',
+        profile: 'Profile',
+      },
       dashboard: 'Dashboard',
       patients: 'Patients',
       appointments: 'Appointments',
@@ -14,6 +188,18 @@ export const en = {
       settings: 'Settings',
       clinicAI: 'Clinic AI',
       medicalIntelligence: 'Medical Intelligence',
+    },
+
+    // User interface
+    user: {
+      notifications: 'Notifications',
+      profile: 'Profile',
+      logout: 'Logout',
+    },
+
+    // Settings
+    settings: {
+      settings: 'Settings',
     },
 
     // Breadcrumb routes
@@ -206,110 +392,6 @@ export const en = {
       },
     },
 
-    // Settings page
-    settings: {
-      title: 'Clinic Settings',
-      description: 'Manage clinic settings and configuration',
-
-      // Appointment Settings
-      appointments: {
-        title: 'Appointment Settings',
-        description: 'Manage appointment booking settings and policies',
-        duration: 'Appointment Duration (minutes)',
-        maxAdvanceBooking: 'Maximum Advance Booking (days)',
-        cancellationPolicy: 'Cancellation Policy (hours before appointment)',
-        onlineBooking: 'Allow Online Booking',
-        requireApproval: 'Require Appointment Approval',
-      },
-
-      // Notification Settings
-      notifications: {
-        title: 'Notification Settings',
-        description: 'Control notifications and reminders delivery',
-        emailNotifications: 'Email Notifications',
-        smsNotifications: 'SMS Notifications',
-        pushNotifications: 'Push Notifications',
-        reminderTiming: 'Reminder Timing (hours before appointment)',
-      },
-
-      // Clinic Information
-      clinicInfo: {
-        title: 'Clinic Information',
-        description: 'Manage basic clinic information',
-        name: 'Clinic Name',
-        phone: 'Phone Number',
-        email: 'Email Address',
-        address: 'Address',
-        namePlaceholder: 'Enter clinic name',
-        phonePlaceholder: 'Enter phone number',
-        emailPlaceholder: 'Enter email address',
-        addressPlaceholder: 'Enter clinic address',
-      },
-
-      // System Preferences
-      system: {
-        title: 'System Preferences',
-        description: 'Manage general system settings',
-        currency: 'Default Currency',
-        language: 'Default Language',
-        timezone: 'Timezone',
-        autoBackup: 'Auto Backup',
-        twoFactorAuth: 'Two-Factor Authentication',
-        currencies: {
-          SAR: 'Saudi Riyal (SAR)',
-          AED: 'UAE Dirham (AED)',
-          USD: 'US Dollar (USD)',
-          EUR: 'Euro (EUR)',
-        },
-        languages: {
-          ar: 'Arabic',
-          en: 'English',
-          fr: 'French',
-        },
-        timezones: {
-          'Asia/Riyadh': 'Riyadh (GMT+3)',
-          'Asia/Dubai': 'Dubai (GMT+4)',
-          'Europe/London': 'London (GMT+0)',
-          'America/New_York': 'New York (GMT-5)',
-          'Asia/Tokyo': 'Tokyo (GMT+9)',
-        },
-      },
-
-      // Booking Conditions
-      bookingConditions: {
-        title: 'Booking Conditions',
-        description: 'Enter booking conditions and requirements (one per line)',
-        patientInfoRequired: 'Require Complete Patient Information',
-        insuranceRequired: 'Require Insurance Information',
-        medicalHistoryRequired: 'Require Medical History',
-        minAge: 'Minimum Age',
-        maxAge: 'Maximum Age',
-        emergencyContactRequired: 'Require Emergency Contact',
-        sameDayBooking: 'Allow Same-Day Booking',
-        depositRequired: 'Require Booking Deposit',
-        depositAmount: 'Deposit Amount',
-        termsRequired: 'Require Terms & Conditions Acceptance',
-      },
-
-      // Clinic Rooms Management
-      rooms: {
-        title: 'Clinic Rooms & Equipment',
-        description: 'Manage clinic rooms and medical equipment',
-        enableRoomManagement: 'Enable Room Management',
-        defaultRoom: 'Default Room for Appointments',
-        roomCapacity: 'Room Capacity Management',
-        equipmentTracking: 'Equipment Tracking',
-        maintenanceScheduling: 'Maintenance Scheduling',
-        roomOptions: {
-          room1: 'Examination Room 1',
-          room2: 'Examination Room 2',
-          room3: 'Examination Room 3',
-          consultation: 'Consultation Room',
-          procedure: 'Procedure Room',
-          emergency: 'Emergency Room',
-        },
-      },
-    },
     languages: {
       ar: 'Arabic',
       en: 'English',

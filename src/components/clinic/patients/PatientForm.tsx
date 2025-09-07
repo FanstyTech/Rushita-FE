@@ -20,6 +20,7 @@ import Button from '@/components/common/Button';
 import { format } from 'date-fns';
 import { languages } from '@/middleware';
 import { getIdentificationTypeLabel } from '@/utils/textUtils';
+import { useTranslation } from 'react-i18next';
 
 interface PatientFormProps {
   onSubmit: (data: PatientFormData) => void;
@@ -32,6 +33,7 @@ export default function PatientForm({
   isSubmitting,
   initialData,
 }: PatientFormProps) {
+  const { t } = useTranslation();
   const [selectedCountry, setSelectedCountry] = useState<string>(
     initialData?.countryId || ''
   );
@@ -132,53 +134,53 @@ export default function PatientForm({
             <div className="flex items-center mb-4">
               <div className="h-8 w-1 bg-indigo-600 dark:bg-indigo-400 rounded mr-3"></div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                Personal Information
+                {t('clinic.patients.form.sections.personalInfo')}
               </h3>
             </div>
             <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg border border-gray-100 dark:border-gray-600 shadow-sm">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <Input
-                  label="First Name (Foreign)*"
+                  label={t('clinic.patients.form.fields.firstNameForeign')}
                   error={errors.fNameF?.message}
                   {...register('fNameF')}
                 />
                 <Input
-                  label="First Name (Arabic)"
+                  label={t('clinic.patients.form.fields.firstNameArabic')}
                   error={errors.fNameL?.message}
                   {...register('fNameL')}
                 />
                 <Input
-                  label="Second Name (Foreign)"
+                  label={t('clinic.patients.form.fields.secondNameForeign')}
                   error={errors.sNameF?.message}
                   {...register('sNameF')}
                 />
                 <Input
-                  label="Second Name (Arabic)"
+                  label={t('clinic.patients.form.fields.secondNameArabic')}
                   error={errors.sNameL?.message}
                   {...register('sNameL')}
                 />
                 <Input
-                  label="Third Name (Foreign)"
+                  label={t('clinic.patients.form.fields.thirdNameForeign')}
                   error={errors.tNameF?.message}
                   {...register('tNameF')}
                 />
                 <Input
-                  label="Third Name (Arabic)"
+                  label={t('clinic.patients.form.fields.thirdNameArabic')}
                   error={errors.tNameL?.message}
                   {...register('tNameL')}
                 />
                 <Input
-                  label="Last Name (Foreign)"
+                  label={t('clinic.patients.form.fields.lastNameForeign')}
                   error={errors.lNameF?.message}
                   {...register('lNameF')}
                 />
                 <Input
-                  label="Last Name (Arabic)"
+                  label={t('clinic.patients.form.fields.lastNameArabic')}
                   error={errors.lNameL?.message}
                   {...register('lNameL')}
                 />
                 <Select
-                  label="ID Type"
+                  label={t('clinic.patients.form.fields.idType')}
                   value={initialData?.idType?.toString()}
                   error={errors.idType?.message}
                   {...register('idType', { valueAsNumber: true })}
@@ -192,12 +194,12 @@ export default function PatientForm({
                     }))}
                 />
                 <Input
-                  label="ID Number"
+                  label={t('clinic.patients.form.fields.idNumber')}
                   error={errors.idNum?.message}
                   {...register('idNum')}
                 />
                 <Select
-                  label="Gender"
+                  label={t('clinic.patients.form.fields.gender')}
                   value={initialData?.gender?.toString()}
                   error={errors.gender?.message}
                   {...register('gender', { valueAsNumber: true })}
@@ -205,11 +207,14 @@ export default function PatientForm({
                     .filter(([key]) => isNaN(Number(key)))
                     .map(([key, value]) => ({
                       value: value.toString(),
-                      label: key,
+                      label:
+                        key === 'Male'
+                          ? t('clinic.patients.filters.male')
+                          : t('clinic.patients.filters.female'),
                     }))}
                 />
                 <Select
-                  label="Preferred Language"
+                  label={t('clinic.patients.form.fields.preferredLanguage')}
                   value={initialData?.preferredLanguage?.toString()}
                   error={errors.preferredLanguage?.message}
                   {...register('preferredLanguage')}
@@ -219,7 +224,7 @@ export default function PatientForm({
                   }))}
                 />
                 <Input
-                  label="Date of Birth*"
+                  label={t('clinic.patients.form.fields.dateOfBirth')}
                   type="date"
                   error={errors.dateOfBirth?.message}
                   {...register('dateOfBirth')}
@@ -233,13 +238,13 @@ export default function PatientForm({
             <div className="flex items-center mb-4">
               <div className="h-8 w-1 bg-emerald-500 dark:bg-emerald-400 rounded mr-3"></div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                Contact Information
+                {t('clinic.patients.form.sections.contactInfo')}
               </h3>
             </div>
             <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg border border-gray-100 dark:border-gray-600 shadow-sm">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <PhoneInput
-                  label="Phone Number"
+                  label={t('clinic.patients.form.fields.phoneNumber')}
                   phoneCodeOptions={phoneCodes || []}
                   selectedPhoneCode={selectedPhoneCode || ''}
                   onPhoneCodeChange={(value) => {
@@ -260,14 +265,14 @@ export default function PatientForm({
                   required
                 />
                 <Input
-                  label="Email"
+                  label={t('clinic.patients.form.fields.email')}
                   type="email"
                   error={errors.email?.message}
                   {...register('email')}
                 />
                 <Select
                   value={initialData?.countryId || ''}
-                  label="Country"
+                  label={t('clinic.patients.form.fields.country')}
                   error={errors.countryId?.message}
                   {...register('countryId')}
                   options={(countries || []).map((country) => ({
@@ -277,7 +282,7 @@ export default function PatientForm({
                   onChange={handleCountryChange}
                 />
                 <Select
-                  label="City"
+                  label={t('clinic.patients.form.fields.city')}
                   value={initialData?.cityId?.toString() || ''}
                   error={errors.cityId?.message}
                   {...register('cityId')}
@@ -288,7 +293,7 @@ export default function PatientForm({
                   disabled={!selectedCountry}
                 />
                 <Input
-                  label="Address"
+                  label={t('clinic.patients.form.fields.address')}
                   error={errors.address?.message}
                   {...register('address')}
                   className="col-span-2"
@@ -302,13 +307,13 @@ export default function PatientForm({
             <div className="flex items-center mb-4">
               <div className="h-8 w-1 bg-amber-500 dark:bg-amber-400 rounded mr-3"></div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                Medical Information
+                {t('clinic.patients.form.sections.medicalInfo')}
               </h3>
             </div>
             <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg border border-gray-100 dark:border-gray-600 shadow-sm">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <Select
-                  label="Blood Type"
+                  label={t('clinic.patients.form.fields.bloodType')}
                   value={initialData?.bloodType?.toString()}
                   error={errors.bloodType?.message}
                   {...register('bloodType', { valueAsNumber: true })}
@@ -320,7 +325,7 @@ export default function PatientForm({
                     }))}
                 />
                 <Input
-                  label="Height (cm)"
+                  label={t('clinic.patients.form.fields.height')}
                   type="number"
                   {...register('height', {
                     valueAsNumber: true,
@@ -328,7 +333,7 @@ export default function PatientForm({
                   error={errors.height?.message}
                 />
                 <Input
-                  label="Weight (kg)"
+                  label={t('clinic.patients.form.fields.weight')}
                   type="number"
                   {...register('weight', {
                     valueAsNumber: true,
@@ -341,8 +346,11 @@ export default function PatientForm({
         </div>
         <div className="flex justify-end pt-4 border-t dark:border-gray-700">
           <Button type="submit" className="gap-2" isLoading={isSubmitting}>
-            {isSubmitting ? 'Saving...' : initialData ? 'Update' : 'Save'}{' '}
-            Patient
+            {isSubmitting
+              ? t('clinic.patients.form.buttons.saving')
+              : initialData
+              ? t('clinic.patients.form.buttons.update')
+              : t('clinic.patients.form.buttons.save')}
           </Button>
         </div>
       </div>

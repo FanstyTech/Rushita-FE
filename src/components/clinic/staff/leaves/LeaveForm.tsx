@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import {
-  leaveSchema,
+  createLeaveSchema,
   LeaveFormData,
   defaultLeaveValues,
 } from '@/app/clinic/staff/leaves/validation';
@@ -34,6 +35,8 @@ export default function LeaveForm({
   isLoading,
   staffOptions = [],
 }: LeaveFormProps) {
+  const { t } = useTranslation();
+
   const {
     register,
     handleSubmit,
@@ -41,7 +44,7 @@ export default function LeaveForm({
     setValue,
     formState: { errors },
   } = useForm<LeaveFormData>({
-    resolver: zodResolver(leaveSchema),
+    resolver: zodResolver(createLeaveSchema(t)),
     defaultValues: {
       ...defaultLeaveValues,
     },
@@ -77,18 +80,24 @@ export default function LeaveForm({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={initialData ? 'Edit Leave Request' : 'New Leave Request'}
+      title={
+        initialData
+          ? t('clinic.staff.leaves.form.editTitle')
+          : t('clinic.staff.leaves.form.title')
+      }
       footer={
         <div className="flex justify-end space-x-4">
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t('clinic.staff.leaves.form.cancel')}
           </Button>
           <Button
             variant="primary"
             onClick={handleFormSubmit}
             isLoading={isLoading}
           >
-            {initialData ? 'Update' : 'Submit'}
+            {initialData
+              ? t('clinic.staff.leaves.form.update')
+              : t('clinic.staff.leaves.form.submit')}
           </Button>
         </div>
       }
@@ -96,7 +105,8 @@ export default function LeaveForm({
       <form onSubmit={handleFormSubmit} className="space-y-6">
         {staffOptions && (
           <Select
-            label="Staff Member"
+            required={true}
+            label={t('clinic.staff.leaves.form.staffMember')}
             options={staffOptions}
             error={errors.staffId?.message}
             {...register('staffId')}
@@ -104,35 +114,39 @@ export default function LeaveForm({
         )}
 
         <Input
+          required={true}
           type="datetime-local"
-          label="Start Date"
+          label={t('clinic.staff.leaves.form.startDate')}
           error={errors.startDate?.message}
           {...register('startDate')}
         />
 
         <Input
+          required={true}
           type="datetime-local"
-          label="End Date"
+          label={t('clinic.staff.leaves.form.endDate')}
           error={errors.endDate?.message}
           {...register('endDate')}
         />
 
         <Select
-          label="Leave Type"
+          required={true}
+          label={t('clinic.staff.leaves.form.leaveType')}
           value={initialData?.type?.toString()}
           {...register('type', { valueAsNumber: true })}
           error={errors.type?.message}
           options={Object.entries(LeaveType)
             .filter(([, value]) => typeof value === 'number')
             .map(([key, value]) => ({
-              label: key,
+              label: t(`clinic.staff.leaves.types.${key.toLowerCase()}`) || key,
               value: value.toString(),
             }))}
         />
 
         <TextArea
+          required={true}
           rows={3}
-          label="Reason"
+          label={t('clinic.staff.leaves.form.reason')}
           error={errors.reason?.message}
           {...register('reason')}
         />

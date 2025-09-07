@@ -54,56 +54,56 @@ interface HealthAlert {
 const notifications: Notification[] = [
   {
     id: '1',
-    title: 'تم تأكيد موعدك',
+    title: 'patientPortal.dashboard.notifications.appointmentConfirmed',
     message:
-      'تم تأكيد موعدك مع د. أحمد خالد يوم الأحد، 15 أكتوبر الساعة 10:00 صباحاً',
+      'patientPortal.dashboard.notifications.messages.appointmentConfirmed',
     type: 'appointment',
-    time: '30 دقيقة',
+    time: '30 patientPortal.dashboard.notifications.timeUnits.minutes',
     read: false,
     timestamp: new Date(2023, 9, 15, 9, 30),
     actionUrl: '/patient-portal/appointments/123',
-    actionText: 'عرض الموعد',
+    actionText: 'patientPortal.dashboard.notifications.viewAppointment',
   },
   {
     id: '2',
-    title: 'نتائج التحاليل جاهزة',
-    message: 'نتائج تحاليل الدم الخاصة بك جاهزة للاطلاع عليها',
+    title: 'patientPortal.dashboard.notifications.testResultsReady',
+    message: 'patientPortal.dashboard.notifications.messages.testResultsReady',
     type: 'test',
-    time: '3 ساعات',
+    time: '3 patientPortal.dashboard.notifications.timeUnits.hours',
     read: true,
     timestamp: new Date(2023, 9, 15, 7, 0),
     actionUrl: '/patient-portal/tests/456',
-    actionText: 'عرض النتائج',
+    actionText: 'patientPortal.dashboard.notifications.viewResults',
   },
   {
     id: '3',
-    title: 'تذكير بموعد الدواء',
-    message: 'تذكير بموعد تناول دواء الضغط (أملوديبين) الساعة 9:00 مساءً',
+    title: 'patientPortal.dashboard.notifications.medicationReminder',
+    message:
+      'patientPortal.dashboard.notifications.messages.medicationReminder',
     type: 'medication',
-    time: '12 ساعة',
+    time: '12 patientPortal.dashboard.notifications.timeUnits.hours',
     read: false,
     timestamp: new Date(2023, 9, 14, 21, 0),
     actionUrl: '/patient-portal/medications',
-    actionText: 'عرض الأدوية',
+    actionText: 'patientPortal.dashboard.notifications.viewMedications',
   },
   {
     id: '4',
-    title: 'رسالة جديدة من الطبيب',
-    message: 'لديك رسالة جديدة من د. سارة محمد بخصوص استفسارك الأخير',
+    title: 'patientPortal.dashboard.notifications.newDoctorMessage',
+    message: 'patientPortal.dashboard.notifications.messages.newDoctorMessage',
     type: 'message',
-    time: '1 يوم',
+    time: '1 patientPortal.dashboard.notifications.timeUnits.days',
     read: true,
     timestamp: new Date(2023, 9, 14, 14, 30),
     actionUrl: '/patient-portal/messages/789',
-    actionText: 'قراءة الرسالة',
+    actionText: 'patientPortal.dashboard.notifications.readMessage',
   },
   {
     id: '5',
-    title: 'تحديث في نظام المواعيد',
-    message:
-      'تم تحديث نظام حجز المواعيد، يمكنك الآن حجز المواعيد عبر تطبيق الهاتف',
+    title: 'patientPortal.dashboard.notifications.systemUpdate',
+    message: 'patientPortal.dashboard.notifications.messages.systemUpdate',
     type: 'system',
-    time: '2 يوم',
+    time: '2 patientPortal.dashboard.notifications.timeUnits.days',
     read: true,
     timestamp: new Date(2023, 9, 13, 10, 0),
     actionUrl: null,
@@ -114,58 +114,58 @@ const notifications: Notification[] = [
 const healthAlerts: HealthAlert[] = [
   {
     id: '1',
-    title: 'ارتفاع في ضغط الدم',
-    message:
-      'تم تسجيل قراءات مرتفعة لضغط الدم في آخر 3 قياسات. يرجى مراجعة طبيبك.',
+    title: 'patientPortal.dashboard.healthAlerts.highBloodPressure',
+    message: 'patientPortal.dashboard.healthAlerts.messages.highBloodPressure',
     priority: 'high',
     actionUrl: '/patient-portal/appointments/new',
-    actionText: 'حجز موعد مع الطبيب',
+    actionText:
+      'patientPortal.dashboard.healthAlerts.bookAppointmentWithDoctor',
   },
   {
     id: '2',
-    title: 'تذكير بموعد التطعيم',
+    title: 'patientPortal.dashboard.healthAlerts.vaccinationReminder',
     message:
-      'حان موعد التطعيم السنوي ضد الإنفلونزا. يرجى حجز موعد في أقرب وقت ممكن.',
+      'patientPortal.dashboard.healthAlerts.messages.vaccinationReminder',
     priority: 'medium',
     actionUrl: '/patient-portal/vaccinations',
-    actionText: 'حجز موعد التطعيم',
+    actionText:
+      'patientPortal.dashboard.healthAlerts.bookVaccinationAppointment',
   },
   {
     id: '3',
-    title: 'تحديث معلومات الصحة',
-    message:
-      'لم يتم تحديث قياسات الوزن منذ أكثر من 3 أشهر. يرجى تحديث بياناتك الصحية.',
+    title: 'patientPortal.dashboard.healthAlerts.healthDataUpdate',
+    message: 'patientPortal.dashboard.healthAlerts.messages.healthDataUpdate',
     priority: 'low',
     actionUrl: '/patient-portal/health-metrics/update',
-    actionText: 'تحديث البيانات',
+    actionText: 'patientPortal.dashboard.healthAlerts.updateHealthData',
   },
 ];
 
 const quickActions: QuickAction[] = [
   {
     id: 'action-1',
-    titleKey: 'patientPortal.quickActions.bookAppointment',
+    titleKey: 'patientPortal.dashboard.quickActions.bookAppointment',
     icon: CalendarCheck,
     url: '/patient-portal/appointments/book',
     color: 'blue',
   },
   {
     id: 'action-2',
-    titleKey: 'patientPortal.quickActions.requestConsultation',
+    titleKey: 'patientPortal.dashboard.quickActions.requestConsultation',
     icon: Stethoscope,
     url: '/patient-portal/telemedicine',
     color: 'purple',
   },
   {
     id: 'action-3',
-    titleKey: 'patientPortal.quickActions.requestPrescription',
+    titleKey: 'patientPortal.dashboard.quickActions.requestPrescription',
     icon: FilePlus2,
     url: '/patient-portal/prescriptions/request',
     color: 'green',
   },
   {
     id: 'action-4',
-    titleKey: 'patientPortal.quickActions.profile',
+    titleKey: 'patientPortal.dashboard.quickActions.profile',
     icon: User,
     url: '/patient-portal/profile',
     color: 'amber',
@@ -189,12 +189,14 @@ export default function DashboardPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <p className="text-red-500 mb-2">Failed to load dashboard data</p>
+          <p className="text-red-500 mb-2">
+            {t('patientPortal.dashboard.errors.failedToLoadDashboard')}
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Retry
+            {t('patientPortal.dashboard.errors.retry')}
           </button>
         </div>
       </div>

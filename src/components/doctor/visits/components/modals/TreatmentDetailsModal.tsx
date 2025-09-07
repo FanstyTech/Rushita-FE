@@ -16,6 +16,7 @@ import {
   Stethoscope,
   RailSymbolIcon,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface TreatmentFormData {
   patientId: string;
@@ -48,11 +49,13 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
   formData,
   selectedPatientData,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Treatment Details"
+      title={t('clinic.visits.modals.treatmentDetails.title')}
       maxWidth="4xl"
     >
       <div className="space-y-8">
@@ -61,7 +64,7 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
           <div className="bg-blue-50 px-6 py-4 border-b border-blue-100 flex items-center">
             <Stethoscope className="h-5 w-5 text-blue-600 mr-2" />
             <h3 className="text-lg font-semibold text-blue-800">
-              Patient Information
+              {t('clinic.visits.modals.treatmentDetails.patientInformation')}
             </h3>
           </div>
           <div className="p-6">
@@ -73,9 +76,12 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                   </span>
                 </div>
                 <div className="ml-4">
-                  <h4 className="text-sm font-medium text-gray-500">Name</h4>
+                  <h4 className="text-sm font-medium text-gray-500">
+                    {t('clinic.visits.modals.treatmentDetails.name')}
+                  </h4>
                   <p className="mt-1 text-base font-medium text-gray-900">
-                    {selectedPatientData?.patientName || 'N/A'}
+                    {selectedPatientData?.patientName ||
+                      t('clinic.visits.modals.treatmentDetails.notAvailable')}
                   </p>
                 </div>
               </div>
@@ -87,10 +93,11 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                 </div>
                 <div className="ml-4">
                   <h4 className="text-sm font-medium text-gray-500">
-                    Patient ID
+                    {t('clinic.visits.modals.treatmentDetails.patientId')}
                   </h4>
                   <p className="mt-1 text-base font-medium text-gray-900">
-                    {selectedPatientData?.patientNumber || 'N/A'}
+                    {selectedPatientData?.patientNumber ||
+                      t('clinic.visits.modals.treatmentDetails.notAvailable')}
                   </p>
                 </div>
               </div>
@@ -100,10 +107,11 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                 </div>
                 <div className="ml-4">
                   <h4 className="text-sm font-medium text-gray-500">
-                    Visit Type
+                    {t('clinic.visits.modals.treatmentDetails.visitType')}
                   </h4>
                   <p className="mt-1 text-base font-medium text-gray-900">
-                    {getVisitTypeLabel(formData.visitType)} Visit
+                    {getVisitTypeLabel(formData.visitType)}{' '}
+                    {t('clinic.visits.modals.treatmentDetails.visit')}
                   </p>
                 </div>
               </div>
@@ -116,28 +124,30 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
           <div className="bg-green-50 px-6 py-4 border-b border-green-100 flex items-center">
             <PenLine className="h-5 w-5 text-green-600 mr-2" />
             <h3 className="text-lg font-semibold text-green-800">
-              Treatment Information
+              {t('clinic.visits.modals.treatmentDetails.treatmentInformation')}
             </h3>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 gap-6">
               <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-2">
-                  Symptoms
+                  {t('clinic.visits.modals.treatmentDetails.symptoms')}
                 </h4>
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                   <p className="text-base text-gray-900">
-                    {formData.symptoms || 'None specified'}
+                    {formData.symptoms ||
+                      t('clinic.visits.modals.treatmentDetails.noneSpecified')}
                   </p>
                 </div>
               </div>
               <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-2">
-                  Diagnosis
+                  {t('clinic.visits.modals.treatmentDetails.diagnosis')}
                 </h4>
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                   <p className="text-base text-gray-900">
-                    {formData.diagnosis || 'None specified'}
+                    {formData.diagnosis ||
+                      t('clinic.visits.modals.treatmentDetails.noneSpecified')}
                   </p>
                 </div>
               </div>
@@ -150,7 +160,7 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
           <div className="bg-purple-50 px-6 py-4 border-b border-purple-100 flex items-center">
             <Pill className="h-5 w-5 text-purple-600 mr-2" />
             <h3 className="text-lg font-semibold text-purple-800">
-              Medications
+              {t('clinic.visits.modals.treatmentDetails.medications')}
             </h3>
           </div>
           <div className="p-6">
@@ -160,16 +170,18 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Name
+                        {t(
+                          'clinic.visits.modals.treatmentDetails.medicationName'
+                        )}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Dosage
+                        {t('clinic.visits.modals.treatmentDetails.dosage')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Frequency
+                        {t('clinic.visits.modals.treatmentDetails.frequency')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Duration
+                        {t('clinic.visits.modals.treatmentDetails.duration')}
                       </th>
                     </tr>
                   </thead>
@@ -180,17 +192,28 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                         className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                       >
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          {med.name || 'Not specified'}
+                          {med.name ||
+                            t(
+                              'clinic.visits.modals.treatmentDetails.notSpecified'
+                            )}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
-                          {med.dosage || 'Not specified'}
+                          {med.dosage ||
+                            t(
+                              'clinic.visits.modals.treatmentDetails.notSpecified'
+                            )}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
                           {getFrequencyTypeLabel(med.frequency) ||
-                            'Not specified'}
+                            t(
+                              'clinic.visits.modals.treatmentDetails.notSpecified'
+                            )}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
-                          {med.duration || 'Not specified'}
+                          {med.duration ||
+                            t(
+                              'clinic.visits.modals.treatmentDetails.notSpecified'
+                            )}
                         </td>
                       </tr>
                     ))}
@@ -201,7 +224,9 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
               <div className="bg-gray-50 rounded-lg p-6 text-center border border-dashed border-gray-300">
                 <Pill className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                 <p className="text-sm text-gray-500">
-                  No medications prescribed
+                  {t(
+                    'clinic.visits.modals.treatmentDetails.noMedicationsPrescribed'
+                  )}
                 </p>
               </div>
             )}
@@ -214,7 +239,7 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
             <div className="bg-amber-50 px-6 py-4 border-b border-amber-100 flex items-center">
               <RailSymbolIcon className="h-5 w-5 text-amber-600 mr-2" />
               <h3 className="text-lg font-semibold text-amber-800">
-                Lab Tests
+                {t('clinic.visits.modals.treatmentDetails.labTests')}
               </h3>
             </div>
             <div className="p-6">
@@ -223,10 +248,10 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Test Name
+                        {t('clinic.visits.modals.treatmentDetails.testName')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Details
+                        {t('clinic.visits.modals.treatmentDetails.details')}
                       </th>
                     </tr>
                   </thead>
@@ -237,10 +262,16 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                         className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                       >
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          {test?.testName || 'Not specified'}
+                          {test?.testName ||
+                            t(
+                              'clinic.visits.modals.treatmentDetails.notSpecified'
+                            )}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
-                          {test.notes || 'No additional details'}
+                          {test.notes ||
+                            t(
+                              'clinic.visits.modals.treatmentDetails.noAdditionalDetails'
+                            )}
                         </td>
                       </tr>
                     ))}
@@ -257,7 +288,7 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
             <div className="bg-indigo-50 px-6 py-4 border-b border-indigo-100 flex items-center">
               <RailSymbolIcon className="h-5 w-5 text-indigo-600 mr-2" />
               <h3 className="text-lg font-semibold text-indigo-800">
-                Ray Tests
+                {t('clinic.visits.modals.treatmentDetails.rayTests')}
               </h3>
             </div>
             <div className="p-6">
@@ -266,10 +297,10 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Ray Type
+                        {t('clinic.visits.modals.treatmentDetails.rayType')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Details
+                        {t('clinic.visits.modals.treatmentDetails.details')}
                       </th>
                     </tr>
                   </thead>
@@ -280,10 +311,16 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                         className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                       >
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          {ray?.testName || 'Not specified'}
+                          {ray?.testName ||
+                            t(
+                              'clinic.visits.modals.treatmentDetails.notSpecified'
+                            )}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
-                          {ray?.notes || 'No additional details'}
+                          {ray?.notes ||
+                            t(
+                              'clinic.visits.modals.treatmentDetails.noAdditionalDetails'
+                            )}
                         </td>
                       </tr>
                     ))}
@@ -300,7 +337,7 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
             <div className="bg-cyan-50 px-6 py-4 border-b border-cyan-100 flex items-center">
               <FileText className="h-5 w-5 text-cyan-600 mr-2" />
               <h3 className="text-lg font-semibold text-cyan-800">
-                Additional Notes
+                {t('clinic.visits.modals.treatmentDetails.additionalNotes')}
               </h3>
             </div>
             <div className="p-6">
@@ -331,7 +368,7 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                 />
               </svg>
               <h3 className="text-lg font-semibold text-rose-800">
-                Attachments
+                {t('clinic.visits.modals.treatmentDetails.attachments')}
               </h3>
             </div>
             <div className="p-6">
@@ -369,7 +406,7 @@ const TreatmentDetailsModal: React.FC<TreatmentDetailsModalProps> = ({
                       download={file.name}
                       className="ml-4 flex-shrink-0 px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
                     >
-                      Download
+                      {t('clinic.visits.modals.treatmentDetails.download')}
                     </a>
                   </li>
                 ))}

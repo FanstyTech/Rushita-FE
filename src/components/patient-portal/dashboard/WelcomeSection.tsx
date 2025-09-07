@@ -35,12 +35,12 @@ export function WelcomeSection({ userName, variants }: WelcomeSectionProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold tracking-tight">
-          {t('patientPortal.welcome.greeting')}
-          {userName || t('patientPortal.welcome.user')}
+          {t('patientPortal.dashboard.welcome.greeting')}
+          {userName || t('patientPortal.dashboard.welcome.user')}
         </h2>
         <Button variant="outline" size="sm" asChild>
           <Link href="/patient-portal/profile">
-            {t('patientPortal.welcome.editProfile')}
+            {t('patientPortal.dashboard.welcome.editProfile')}
             <ChevronRight
               className={`${direction === 'rtl' ? 'mr-2' : 'ml-2'} h-4 w-4`}
             />
@@ -58,10 +58,12 @@ export function WelcomeSection({ userName, variants }: WelcomeSectionProps) {
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                     <User className="h-5 w-5 text-primary" />
                   </div>
-                  <CardTitle>{t('patientPortal.welcome.title')}</CardTitle>
+                  <CardTitle>
+                    {t('patientPortal.dashboard.welcome.title')}
+                  </CardTitle>
                 </div>
                 <CardDescription className="text-base">
-                  {t('patientPortal.welcome.description')}
+                  {t('patientPortal.dashboard.welcome.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6 pt-0">
@@ -73,7 +75,7 @@ export function WelcomeSection({ userName, variants }: WelcomeSectionProps) {
                           direction === 'rtl' ? 'ml-2' : 'mr-2'
                         } h-4 w-4`}
                       />
-                      {t('patientPortal.welcome.bookAppointment')}
+                      {t('patientPortal.dashboard.welcome.bookAppointment')}
                     </Link>
                   </Button>
                   <Button variant="outline" asChild>
@@ -83,7 +85,7 @@ export function WelcomeSection({ userName, variants }: WelcomeSectionProps) {
                           direction === 'rtl' ? 'ml-2' : 'mr-2'
                         } h-4 w-4`}
                       />
-                      {t('patientPortal.welcome.prescriptions')}
+                      {t('patientPortal.dashboard.welcome.prescriptions')}
                     </Link>
                   </Button>
                   <Button variant="outline" asChild>
@@ -93,7 +95,7 @@ export function WelcomeSection({ userName, variants }: WelcomeSectionProps) {
                           direction === 'rtl' ? 'ml-2' : 'mr-2'
                         } h-4 w-4`}
                       />
-                      {t('patientPortal.welcome.visitHistory')}
+                      {t('patientPortal.dashboard.welcome.visitHistory')}
                     </Link>
                   </Button>
                 </div>
@@ -106,10 +108,10 @@ export function WelcomeSection({ userName, variants }: WelcomeSectionProps) {
                     <HeartPulse className="h-8 w-8 text-primary" />
                   </div>
                   <h3 className="font-medium text-lg mb-1">
-                    {t('patientPortal.welcome.tagline')}
+                    {t('patientPortal.dashboard.welcome.tagline')}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {t('patientPortal.welcome.subTagline')}
+                    {t('patientPortal.dashboard.welcome.subTagline')}
                   </p>
                 </div>
               </div>

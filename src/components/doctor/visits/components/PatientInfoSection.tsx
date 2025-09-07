@@ -12,6 +12,7 @@ import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { getBloodTypeLabel, getVisitTypeLabel } from '@/utils/textUtils';
 import { useCallback } from 'react';
 import { TreatmentFormData } from './validation';
+import { useTranslation } from 'react-i18next';
 
 interface PatientInfoSectionProps {
   shouldFetchPatients: boolean;
@@ -47,6 +48,8 @@ export default function PatientInfoSection({
   visitType,
   patientName,
 }: PatientInfoSectionProps) {
+  const { t } = useTranslation();
+
   // Handle staff selection
   const handlePatientSelect = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -66,7 +69,7 @@ export default function PatientInfoSection({
     <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
       <div className="border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Patient Information
+          {t('clinic.visits.form.patientInfo.title')}
         </h2>
       </div>
       <div className="p-6">
@@ -77,20 +80,21 @@ export default function PatientInfoSection({
               <>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Patient
+                    {t('clinic.visits.clinic.visits.form.patientInfo.patient')}
                   </label>
                   <div className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                    {selectedPatientData?.patientName || 'N/A'}
+                    {selectedPatientData?.patientName ||
+                      t('clinic.visits.form.patientInfo.notAvailable')}
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Visit Type
+                    {t('clinic.visits.form.patientInfo.visitType')}
                   </label>
                   <div className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                     {visitType === VisitType.New
-                      ? 'New Visit'
-                      : 'Follow-up Visit'}
+                      ? t('clinic.visits.form.patientInfo.newVisit')
+                      : t('clinic.visits.form.patientInfo.followUpVisit')}
                   </div>
                 </div>
               </>
@@ -98,8 +102,10 @@ export default function PatientInfoSection({
               <>
                 <div>
                   <Select
-                    label="Search Patient"
-                    placeholder="Search by name, ID, or phone..."
+                    label={t('clinic.visits.form.patientInfo.searchPatient')}
+                    placeholder={t(
+                      'clinic.visits.form.patientInfo.searchPlaceholder'
+                    )}
                     options={patientsData || []}
                     disabled={isPatientDisabled}
                     value={selectedPatient}
@@ -110,8 +116,8 @@ export default function PatientInfoSection({
                     error={errors?.patientId?.message as string}
                     noOptionsMessage={
                       shouldFetchPatients
-                        ? 'No patients found'
-                        : 'Type to search for patients'
+                        ? t('clinic.visits.form.patientInfo.noPatientsFound')
+                        : t('clinic.visits.form.patientInfo.typeToSearch')
                     }
                   />
                 </div>
@@ -121,7 +127,7 @@ export default function PatientInfoSection({
                     disabled={isPatientDisabled}
                     value={visitType?.toString()}
                     {...register(`visitType`)}
-                    label="Visit Type"
+                    label={t('clinic.visits.form.patientInfo.visitType')}
                     options={Object.entries(VisitType)
                       .filter(([key]) => isNaN(Number(key)))
                       .map(([, value]) => ({
@@ -168,16 +174,17 @@ export default function PatientInfoSection({
               <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
                 <div className="flex justify-between items-start">
                   <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    Patient Details
+                    {t('clinic.visits.form.patientInfo.patientDetails')}
                   </h3>
                   <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100">
-                    ID: {selectedPatientData?.patientNumber}
+                    {t('clinic.visits.form.patientInfo.id')}:{' '}
+                    {selectedPatientData?.patientNumber}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Name
+                      {t('clinic.visits.form.patientInfo.name')}
                     </p>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {selectedPatientData?.patientName}
@@ -185,15 +192,16 @@ export default function PatientInfoSection({
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Age
+                      {t('clinic.visits.form.patientInfo.age')}
                     </p>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {selectedPatientData?.age} years
+                      {selectedPatientData?.age}{' '}
+                      {t('clinic.visits.form.patientInfo.years')}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Blood Type
+                      {t('clinic.visits.form.patientInfo.bloodType')}
                     </p>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {getBloodTypeLabel(
@@ -203,7 +211,7 @@ export default function PatientInfoSection({
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Phone
+                      {t('clinic.visits.form.patientInfo.phone')}
                     </p>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {selectedPatientData?.phoneNumber}
@@ -217,7 +225,7 @@ export default function PatientInfoSection({
         {!isReadOnly && (
           <div className="flex justify-end mt-6 space-x-3">
             <Button type="button" onClick={onShowAddPatient}>
-              Add New Patient
+              {t('clinic.visits.form.patientInfo.addNewPatient')}
             </Button>
           </div>
         )}

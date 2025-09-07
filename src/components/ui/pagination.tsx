@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
@@ -32,6 +33,8 @@ export function Pagination({
   pageSizeOptions = [5, 10, 20, 50],
   className,
 }: PaginationProps) {
+  const { t } = useTranslation();
+
   // Calculate start and end items
   const startItem = (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, totalCount);
@@ -80,11 +83,16 @@ export function Pagination({
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className={cn('flex flex-col sm:flex-row items-center justify-between gap-4', className)}>
+    <div
+      className={cn(
+        'flex flex-col sm:flex-row items-center justify-between gap-4',
+        className
+      )}
+    >
       {/* Page size selector */}
       {showPageSizeSelector && onPageSizeChange && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>عرض</span>
+          <span>{t('common.pagination.show')}</span>
           <select
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
@@ -96,13 +104,18 @@ export function Pagination({
               </option>
             ))}
           </select>
-          <span>من {totalCount} عنصر</span>
+          <span>
+            {t('common.pagination.of')} {totalCount}{' '}
+            {t('common.pagination.items')}
+          </span>
         </div>
       )}
 
       {/* Items info */}
       <div className="text-sm text-muted-foreground">
-        عرض {startItem} إلى {endItem} من {totalCount} عنصر
+        {t('common.pagination.showing')} {startItem} {t('common.pagination.to')}{' '}
+        {endItem} {t('common.pagination.of')} {totalCount}{' '}
+        {t('common.pagination.items')}
       </div>
 
       {/* Pagination controls */}
@@ -116,7 +129,7 @@ export function Pagination({
           className="h-8 w-8 p-0"
         >
           <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">الصفحة السابقة</span>
+          <span className="sr-only">{t('common.pagination.previousPage')}</span>
         </Button>
 
         {/* Page numbers */}
@@ -148,7 +161,7 @@ export function Pagination({
           className="h-8 w-8 p-0"
         >
           <ChevronRight className="h-4 w-4" />
-          <span className="sr-only">الصفحة التالية</span>
+          <span className="sr-only">{t('common.pagination.nextPage')}</span>
         </Button>
       </div>
     </div>

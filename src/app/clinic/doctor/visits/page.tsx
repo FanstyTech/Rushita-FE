@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Table, type Column } from '@/components/common/Table';
 import { ActivitySquare, Eye, Pencil, Trash2 } from 'lucide-react';
@@ -18,9 +19,11 @@ import { Button } from '@/components/ui/button';
 import { ConfirmationModal } from '@/components/common';
 
 export default function VisitsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user } = useAuth();
   const clinicId = user?.clinicInfo?.id || '';
+
   // States
   const [filter, setFilter] = useState<FilterState>({
     pageNumber: 1,
@@ -44,6 +47,7 @@ export default function VisitsPage() {
     setSelectedVisit(price);
     setIsDeleteModalOpen(true);
   };
+
   const confirmDelete = async () => {
     if (selectedVisit) {
       await deleteVisit.mutateAsync(selectedVisit.id);
@@ -51,27 +55,28 @@ export default function VisitsPage() {
       setSelectedVisit(null);
     }
   };
+
   const columns: Column<VisitListDto>[] = [
     {
-      header: 'Visit #',
+      header: t('clinic.visits.table.columns.visitNumber'),
       accessor: 'visitNumber',
     },
     {
-      header: 'Patient Name',
+      header: t('clinic.visits.table.columns.patientName'),
       accessor: 'patientName',
     },
     {
-      header: 'Doctor',
+      header: t('clinic.visits.table.columns.doctor'),
       accessor: 'staffName',
     },
     {
-      header: 'Date',
+      header: t('clinic.visits.table.columns.date'),
       accessor: 'createdAt',
       cell: ({ row }) =>
         new Date(row.original.createdAt).toLocaleDateString('en-SA'),
     },
     {
-      header: 'Type',
+      header: t('clinic.visits.table.columns.type'),
       accessor: 'type',
       cell: ({ row }) => {
         const visitType = row.original.type;
@@ -79,7 +84,7 @@ export default function VisitsPage() {
       },
     },
     {
-      header: 'Status',
+      header: t('clinic.visits.table.columns.status'),
       accessor: 'currentStatus',
       cell: ({ row }) => {
         const status = row.original.currentStatus;
@@ -106,7 +111,7 @@ export default function VisitsPage() {
             }
             variant="ghost"
             className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-            title="View visit details"
+            title={t('clinic.visits.actions.view')}
           >
             <Eye className="w-4 h-4 " />
           </Button>
@@ -116,7 +121,7 @@ export default function VisitsPage() {
             }
             variant="ghost"
             className="p-1 text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300 transition-colors"
-            title="Edit visit details"
+            title={t('clinic.visits.actions.edit')}
           >
             <Pencil className="w-4 h-4" />
           </Button>
@@ -125,7 +130,7 @@ export default function VisitsPage() {
             variant="ghost"
             onClick={() => handleDelete(row.original)}
             className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
-            title="Delete"
+            title={t('clinic.visits.actions.delete')}
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -141,6 +146,7 @@ export default function VisitsPage() {
         <FilterBar
           filter={filter}
           haveStatusFilter={false}
+          searchPlaceholder={t('clinic.visits.filters.searchPlaceholder')}
           onFilterChange={(newFilter) => {
             setFilter((prev) => ({
               ...prev,
@@ -154,9 +160,9 @@ export default function VisitsPage() {
           additionalFilters={[
             {
               icon: <ActivitySquare className="w-4 h-4" />,
-              label: 'Status',
+              label: t('clinic.visits.filters.statusFilter'),
               options: [
-                { value: '', label: 'All Status' },
+                { value: '', label: t('clinic.visits.filters.allStatus') },
                 ...(Object.entries(VisitStatus)
                   .filter(([key]) => isNaN(Number(key)))
                   .map(([key, value]) => ({
@@ -180,6 +186,10 @@ export default function VisitsPage() {
           data={visits}
           columns={columns}
           isLoading={isLoading}
+          noDataMessage={{
+            subtitle: t('clinic.visits.emptyStates.noVisitsDescription'),
+            title: t('clinic.visits.emptyStates.noVisits'),
+          }}
           pagination={{
             pageSize: filter.pageSize || 5,
             pageIndex: filter.pageNumber - 1,
@@ -194,11 +204,11 @@ export default function VisitsPage() {
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={confirmDelete}
-          title="Delete visit"
-          message="Are you sure you want to delete this visit?"
-          secondaryMessage="This action cannot be undone."
+          title={t('clinic.visits.deleteModal.title')}
+          message={t('clinic.visits.deleteModal.message')}
+          secondaryMessage={t('clinic.visits.deleteModal.secondaryMessage')}
           variant="error"
-          confirmText="Delete"
+          confirmText={t('clinic.visits.deleteModal.confirmText')}
           isLoading={deleteVisit.isPending}
         />
       </div>

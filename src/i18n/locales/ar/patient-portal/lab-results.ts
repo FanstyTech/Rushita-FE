@@ -1,0 +1,118 @@
+export const labResults = {
+  list: {
+    title: 'نتائج التحاليل المخبرية',
+    description: 'عرض وإدارة نتائج التحاليل المخبرية الخاصة بك',
+    filters: {
+      search: 'البحث في النتائج',
+      searchPlaceholder: 'ابحث عن اسم التحليل، الطبيب، العيادة...',
+      description: 'يمكنك تصفية التحاليل حسب الحالة أو النوع أو البحث بالاسم',
+      status: 'الحالة',
+      statusAll: 'جميع الحالات',
+      type: 'نوع التحليل',
+      typeAll: 'جميع الأنواع',
+    },
+    actions: {
+      filter: 'تصفية النتائج',
+      reset: 'إعادة ضبط الفلاتر',
+      export: 'تصدير',
+      print: 'طباعة',
+      download: 'تنزيل',
+      viewDetails: 'عرض التفاصيل',
+    },
+    stats: {
+      total: 'إجمالي التحاليل',
+      completed: 'تحاليل مكتملة',
+      pending: 'تحاليل قيد الانتظار',
+      abnormal: 'نتائج غير طبيعية',
+    },
+    card: {
+      testNumber: 'رقم التحليل:',
+      doctor: 'الطبيب',
+      specialty: 'التخصص',
+      clinic: 'العيادة',
+      requestDate: 'تاريخ الطلب',
+      resultDate: 'تاريخ النتيجة',
+      abnormalFlags: 'نتائج غير طبيعية',
+      criticalFlags: 'نتائج حرجة',
+      notes: 'الملاحظات',
+    },
+    status: {
+      completed: 'مكتملة',
+      pending: 'قيد الانتظار',
+      inProgress: 'قيد التنفيذ',
+      cancelled: 'ملغية',
+    },
+    empty: {
+      title: 'لا توجد نتائج تحاليل',
+      description: 'لم يتم العثور على نتائج تحاليل تطابق معايير البحث',
+      action: 'مسح الفلاتر',
+    },
+    error: {
+      title: 'فشل في تحميل نتائج التحاليل',
+      description:
+        'حدث خطأ أثناء تحميل نتائج التحاليل. يرجى المحاولة مرة أخرى.',
+      retry: 'إعادة المحاولة',
+    },
+    loading: 'جاري تحميل نتائج التحاليل...',
+  },
+  details: {
+    title: 'تفاصيل نتيجة التحليل',
+    backToList: 'العودة للنتائج',
+    subtitle: 'تفاصيل نتائج التحليل المخبري والتحليل',
+    notFound: {
+      title: 'نتيجة التحليل غير موجودة',
+      description: 'لم يتم العثور على نتيجة التحليل المطلوبة',
+      backButton: 'العودة',
+      message:
+        'لم يتم العثور على نتيجة التحليل المطلوبة. قد تكون النتيجة قد تم حذفها أو أن الرابط غير صحيح.',
+      viewAllButton: 'عرض جميع نتائج التحاليل',
+    },
+    tabs: {
+      details: 'تفاصيل التحليل',
+      results: 'النتائج',
+      notes: 'الملاحظات',
+    },
+    testInfo: {
+      testCode: 'كود التحليل:',
+      requestDate: 'تاريخ الطلب:',
+      resultDate: 'تاريخ النتيجة:',
+      status: 'الحالة:',
+      testType: 'نوع التحليل:',
+      abnormalResults: 'نتائج غير طبيعية:',
+      criticalResults: 'نتائج حرجة:',
+      criteria: 'معايير',
+    },
+    sections: {
+      testInformation: 'معلومات التحليل',
+      testStatus: 'حالة التحليل',
+      testResults: 'نتائج التحليل',
+      notesRecommendations: 'الملاحظات والتوصيات',
+      visitInformation: 'معلومات الزيارة',
+    },
+    results: {
+      title: 'نتائج التحليل',
+      processing: 'النتائج قيد المعالجة',
+      processingDescription: 'النتائج التفصيلية ستكون متاحة بعد اكتمال التحليل',
+    },
+    notes: {
+      title: 'الملاحظات والتوصيات',
+      noNotes: 'لا توجد ملاحظات',
+      noNotesDescription: 'لم يتم إضافة أي ملاحظات خاصة لهذا التحليل',
+    },
+    visitInfo: {
+      visitNumber: 'رقم الزيارة',
+      clinic: 'العيادة',
+      specialty: 'التخصص',
+    },
+    error: {
+      title: 'خطأ في تحميل نتيجة التحليل',
+      description: 'فشل في تحميل تفاصيل نتيجة التحليل',
+      notFound: 'لم يتم العثور على نتيجة التحليل المطلوبة.',
+      retry: 'إعادة المحاولة',
+      backToList: 'العودة للقائمة',
+      loadingFailed:
+        'فشل في تحميل تفاصيل نتيجة التحليل. يرجى المحاولة مرة أخرى.',
+    },
+    loading: 'جاري تحميل تفاصيل نتيجة التحليل...',
+  },
+};

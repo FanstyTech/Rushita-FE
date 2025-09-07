@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { TextArea } from '@/components/common/form';
 import { AppointmentCalendar } from '@/components/ui/appointment-calendar';
 import { Calendar, CalendarDays, Clock, FileText } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface DateTimeSelectionProps {
   selectedDate: Date | undefined;
@@ -43,6 +44,8 @@ export function DateTimeSelection({
   onTimeSelect,
   onReasonChange,
 }: DateTimeSelectionProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       variants={containerVariants}
@@ -54,7 +57,7 @@ export function DateTimeSelection({
         <div className="rounded-full p-1.5 bg-amber-500/10">
           <Calendar className="h-5 w-5 text-amber-500" />
         </div>
-        اختر التاريخ والوقت
+        {t('patientPortal.appointments.booking.dateTimeSelection.title')}
       </h2>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -64,7 +67,7 @@ export function DateTimeSelection({
             <div className="rounded-full p-1 bg-blue-500/10">
               <CalendarDays className="h-4 w-4 text-blue-500" />
             </div>
-            التاريخ
+            {t('patientPortal.appointments.booking.dateTimeSelection.dateLabel')}
           </Label>
           <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200">
             <CardContent className="p-0">
@@ -90,7 +93,7 @@ export function DateTimeSelection({
             <div className="rounded-full p-1 bg-amber-500/10">
               <Clock className="h-4 w-4 text-amber-500" />
             </div>
-            الوقت
+            {t('patientPortal.appointments.booking.dateTimeSelection.timeLabel')}
           </Label>
           <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200">
             <CardContent className="p-4">
@@ -117,9 +120,9 @@ export function DateTimeSelection({
                   <div className="rounded-full p-3 bg-amber-500/10 mb-4">
                     <Clock className="h-8 w-8 text-amber-500" />
                   </div>
-                  <h3 className="text-lg font-medium">اختر تاريخ أولاً</h3>
+                  <h3 className="text-lg font-medium">{t('patientPortal.appointments.booking.dateTimeSelection.emptyTimeSlots.title')}</h3>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    يرجى اختيار تاريخ لعرض الأوقات المتاحة
+                    {t('patientPortal.appointments.booking.dateTimeSelection.emptyTimeSlots.message')}
                   </p>
                 </div>
               )}
@@ -137,13 +140,13 @@ export function DateTimeSelection({
           <div className="rounded-full p-1 bg-purple-500/10">
             <FileText className="h-4 w-4 text-purple-500" />
           </div>
-          سبب الزيارة (اختياري)
+          {t('patientPortal.appointments.booking.dateTimeSelection.reasonLabel')}
         </Label>
         <Card className="backdrop-blur-sm bg-card/80 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-4">
             <TextArea
               id="reason"
-              placeholder="اكتب سبب الزيارة هنا..."
+              placeholder={t('patientPortal.appointments.booking.dateTimeSelection.reasonPlaceholder')}
               value={appointmentReason}
               onChange={(e) => onReasonChange(e.target.value)}
               className="min-h-[100px] bg-transparent border-border/50 focus-visible:ring-amber-500"

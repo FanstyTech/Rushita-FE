@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import { Input, Select, TextArea } from '@/components/common/form';
 import { Button } from '@/components/ui/button';
 import Modal from '@/components/common/Modal';
@@ -18,7 +19,7 @@ import { SelectOption } from '@/lib/api/types/select-option';
 import {
   ServicePriceFormData,
   ParsedServicePriceData,
-  servicePriceSchema,
+  createServicePriceSchema,
 } from './validation';
 import { Pencil, Trash2, DollarSign } from 'lucide-react';
 import { FiList, FiUser } from 'react-icons/fi';
@@ -26,10 +27,11 @@ import { ConfirmationModal } from '@/components/common';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
 import { GetClinicStaffForDropdownInput } from '@/lib/api/types/clinic-staff';
 import { useAuth } from '@/lib/api/hooks/useAuth';
-import { getServiceTypeColor, getServiceTypeLabel } from '@/utils/textUtils';
+import { getServiceTypeColor } from '@/utils/textUtils';
 import ServicePriceCardsSkeleton from '@/components/skeletons/ServicePriceCardsSkeleton';
 
 export default function ServicePricesPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   // Extract clinicId and staffId directly from user
@@ -70,7 +72,7 @@ export default function ServicePricesPage() {
   const { data: doctors } = useClinicStaffForDropdown(staffFilter);
 
   const form = useForm<ServicePriceFormData>({
-    resolver: zodResolver(servicePriceSchema),
+    resolver: zodResolver(createServicePriceSchema(t)),
     defaultValues: {
       serviceType: undefined,
       serviceId: '',
@@ -151,9 +153,30 @@ export default function ServicePricesPage() {
 
   // Get service type badge color based on type
 
+  const getServiceTypeTranslatedLabel = (type: ServiceType) => {
+    const serviceTypeKeys: { [key in ServiceType]: string } = {
+      [ServiceType.Visit]: t(
+        'clinic.financial.servicePrices.serviceTypes.visit'
+      ),
+      [ServiceType.Prescription]: t(
+        'clinic.financial.servicePrices.serviceTypes.prescription'
+      ),
+      [ServiceType.LabTest]: t(
+        'clinic.financial.servicePrices.serviceTypes.labTest'
+      ),
+      [ServiceType.Radiology]: t(
+        'clinic.financial.servicePrices.serviceTypes.radiology'
+      ),
+      [ServiceType.Dental]: t(
+        'clinic.financial.servicePrices.serviceTypes.dental'
+      ),
+    };
+    return serviceTypeKeys[type] || '';
+  };
+
   const columns: Column<ServicePriceListDto>[] = [
     {
-      header: 'Service Type',
+      header: t('clinic.financial.servicePrices.table.columns.serviceType'),
       accessor: 'serviceType',
       cell: ({ row }) => {
         const type = row.original.serviceType;
@@ -163,22 +186,25 @@ export default function ServicePricesPage() {
               type
             )}`}
           >
-            {getServiceTypeLabel(type)}
+            {getServiceTypeTranslatedLabel(type)}
           </span>
         );
       },
     },
     {
-      header: 'Service',
+      header: t('clinic.financial.servicePrices.table.columns.service'),
       accessor: 'serviceName',
       cell: ({ row }) => (
         <span className="font-medium">
-          {row.original.serviceName || 'General (All Services)'}
+          {row.original.serviceName ||
+            t(
+              'clinic.financial.servicePrices.form.placeholders.generalAllServices'
+            )}
         </span>
       ),
     },
     {
-      header: 'Price',
+      header: t('clinic.financial.servicePrices.table.columns.price'),
       accessor: 'price',
       cell: ({ row }) => (
         <span className="font-medium text-emerald-600 dark:text-emerald-400">
@@ -187,15 +213,15 @@ export default function ServicePricesPage() {
       ),
     },
     {
-      header: 'Clinic',
+      header: t('clinic.financial.servicePrices.table.columns.clinic'),
       accessor: 'clinicName',
     },
     {
-      header: 'Doctor',
+      header: t('clinic.financial.servicePrices.table.columns.doctor'),
       accessor: 'doctorName',
     },
     {
-      header: 'Status',
+      header: t('clinic.financial.servicePrices.table.columns.status'),
       accessor: 'isActive',
       cell: ({ row }) => {
         const isActive = row.original.isActive;
@@ -207,13 +233,15 @@ export default function ServicePricesPage() {
                 : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
             }`}
           >
-            {isActive ? 'Active' : 'Inactive'}
+            {isActive
+              ? t('clinic.financial.servicePrices.status.active')
+              : t('clinic.financial.servicePrices.status.inactive')}
           </span>
         );
       },
     },
     {
-      header: 'Actions',
+      header: t('clinic.financial.servicePrices.table.columns.actions'),
       accessor: 'id',
       cell: ({ row }) => (
         <div className="flex gap-2">
@@ -221,7 +249,7 @@ export default function ServicePricesPage() {
             variant="ghost"
             onClick={() => handleEdit(row.original)}
             className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-            title="Edit"
+            title={t('clinic.financial.servicePrices.actions.edit')}
           >
             <Pencil className="w-4 h-4" />
           </Button>
@@ -229,7 +257,7 @@ export default function ServicePricesPage() {
             variant="ghost"
             onClick={() => handleDelete(row.original)}
             className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
-            title="Delete"
+            title={t('clinic.financial.servicePrices.actions.delete')}
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -390,12 +418,14 @@ export default function ServicePricesPage() {
                       )}
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {key}
+                      {getServiceTypeTranslatedLabel(serviceType)}
                     </span>
                     <div className="flex justify-between w-full mt-2">
                       <div className="text-center px-2">
                         <span className="text-xs text-gray-500 dark:text-gray-400 block">
-                          Count
+                          {t(
+                            'clinic.financial.servicePrices.summary.cards.count'
+                          )}
                         </span>
                         <span className="font-medium text-gray-900 dark:text-white">
                           {count}
@@ -403,7 +433,9 @@ export default function ServicePricesPage() {
                       </div>
                       <div className="text-center px-2 border-l border-gray-200 dark:border-gray-700">
                         <span className="text-xs text-gray-500 dark:text-gray-400 block">
-                          Avg Price
+                          {t(
+                            'clinic.financial.servicePrices.summary.cards.avgPrice'
+                          )}
                         </span>
                         <span className="font-medium text-emerald-600 dark:text-emerald-400">
                           {avgPrice}
@@ -429,14 +461,17 @@ export default function ServicePricesPage() {
             }));
           }}
           onAddNew={handleAdd}
+          searchPlaceholder={t(
+            'clinic.financial.servicePrices.filters.searchPlaceholder'
+          )}
           additionalFilters={[
             {
               icon: <FiUser className="w-4 h-4" />,
-              label: 'Doctor',
+              label: t('clinic.financial.servicePrices.filters.doctor'),
               options: [
                 {
                   value: '',
-                  label: 'All Doctors',
+                  label: t('clinic.financial.servicePrices.filters.allDoctors'),
                 },
                 ...(doctors?.map((doctor: SelectOption<string>) => ({
                   value: doctor.value,
@@ -457,6 +492,14 @@ export default function ServicePricesPage() {
           data={servicePrices?.items ?? []}
           columns={columns}
           isLoading={isLoading}
+          noDataMessage={{
+            title: t(
+              'clinic.financial.servicePrices.emptyStates.noServicePrices.title'
+            ),
+            subtitle: t(
+              'clinic.financial.servicePrices.emptyStates.noServicePrices.description'
+            ),
+          }}
           pagination={{
             pageSize: filter.pageSize || 10,
             pageIndex: (filter.pageNumber || 1) - 1,
@@ -474,17 +517,23 @@ export default function ServicePricesPage() {
         footer={
           <div className="flex justify-end gap-3">
             <Button variant="secondary" onClick={handleCloseModal}>
-              Cancel
+              {t('clinic.financial.servicePrices.actions.cancel')}
             </Button>
             <Button
               onClick={form.handleSubmit(onSubmit)}
               isLoading={createOrUpdateServicePrice.isPending}
             >
-              {selectedPrice ? 'Save Changes' : 'Add service Price'}
+              {selectedPrice
+                ? t('clinic.financial.servicePrices.actions.saveChanges')
+                : t('clinic.financial.servicePrices.actions.addServicePrice')}
             </Button>
           </div>
         }
-        title={selectedPrice ? 'Edit Service Price' : 'Add New Service Price'}
+        title={
+          selectedPrice
+            ? t('clinic.financial.servicePrices.form.title.edit')
+            : t('clinic.financial.servicePrices.form.title.add')
+        }
       >
         <form className="space-y-6">
           {isLoadingDetails && selectedPrice ? (
@@ -494,34 +543,43 @@ export default function ServicePricesPage() {
           ) : (
             <>
               <Select
-                label="Service Type"
+                label={t(
+                  'clinic.financial.servicePrices.form.labels.serviceType'
+                )}
                 required={true}
                 value={String(form.watch('serviceType'))}
                 {...form.register('serviceType')}
                 error={form.formState.errors.serviceType?.message}
                 options={Object.entries(ServiceType)
                   .filter(([key]) => isNaN(Number(key)))
-                  .map(([key, value]) => ({
+                  .map(([, value]) => ({
                     value: value.toString(),
-                    label: key,
+                    label: getServiceTypeTranslatedLabel(value as ServiceType),
                   }))}
               />
 
               {form.watch('serviceType') > 1 && (
                 <Select
                   value={String(form.watch('serviceId'))}
-                  label="Service"
+                  label={t(
+                    'clinic.financial.servicePrices.form.labels.service'
+                  )}
                   {...form.register('serviceId')}
                   error={form.formState.errors.serviceId?.message}
                   options={[
-                    { value: '', label: 'General (All Services)' },
+                    {
+                      value: '',
+                      label: t(
+                        'clinic.financial.servicePrices.form.placeholders.generalAllServices'
+                      ),
+                    },
                     ...serviceOptions,
                   ]}
                 />
               )}
 
               <Input
-                label="Price"
+                label={t('clinic.financial.servicePrices.form.labels.price')}
                 required={true}
                 type="number"
                 step="0.01"
@@ -532,12 +590,17 @@ export default function ServicePricesPage() {
               />
 
               <Select
-                label="Doctor"
+                label={t('clinic.financial.servicePrices.form.labels.doctor')}
                 value={String(form.watch('doctorId'))}
                 {...form.register('doctorId')}
                 error={form.formState.errors.doctorId?.message}
                 options={[
-                  { value: '', label: 'Select Doctor' },
+                  {
+                    value: '',
+                    label: t(
+                      'clinic.financial.servicePrices.form.placeholders.selectDoctor'
+                    ),
+                  },
                   ...(doctors?.map((doctor: SelectOption<string>) => ({
                     value: doctor.value,
                     label: doctor.label || '',
@@ -547,7 +610,7 @@ export default function ServicePricesPage() {
               />
 
               <TextArea
-                label="Notes"
+                label={t('clinic.financial.servicePrices.form.labels.notes')}
                 {...form.register('notes')}
                 error={form.formState.errors.notes?.message}
               />
@@ -555,12 +618,18 @@ export default function ServicePricesPage() {
               <Select
                 required={true}
                 value={String(form.watch('isActive'))}
-                label="Status"
+                label={t('clinic.financial.servicePrices.form.labels.status')}
                 {...form.register('isActive')}
                 error={form.formState.errors.isActive?.message}
                 options={[
-                  { value: 'true', label: 'Active' },
-                  { value: 'false', label: 'Inactive' },
+                  {
+                    value: 'true',
+                    label: t('clinic.financial.servicePrices.status.active'),
+                  },
+                  {
+                    value: 'false',
+                    label: t('clinic.financial.servicePrices.status.inactive'),
+                  },
                 ]}
               />
             </>
@@ -573,11 +642,15 @@ export default function ServicePricesPage() {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-        title="Delete Service Price"
-        message="Are you sure you want to delete this service price?"
-        secondaryMessage="This action cannot be undone."
+        title={t('clinic.financial.servicePrices.deleteModal.title')}
+        message={t('clinic.financial.servicePrices.deleteModal.message')}
+        secondaryMessage={t(
+          'clinic.financial.servicePrices.deleteModal.secondaryMessage'
+        )}
         variant="error"
-        confirmText="Delete"
+        confirmText={t(
+          'clinic.financial.servicePrices.deleteModal.confirmText'
+        )}
         isLoading={deleteServicePrice.isPending}
       />
     </PageLayout>

@@ -8,11 +8,12 @@ import {
 import { useForm } from 'react-hook-form';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import {
-  allergySchema,
+  createAllergySchema,
   allergyFormData,
   defaultAllergyValues,
 } from './validationAllergy';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 
 interface AddAllergyModalProps {
   isOpen: boolean;
@@ -25,10 +26,16 @@ export const AddAllergyModal = ({
   patientId,
   onClose,
 }: AddAllergyModalProps) => {
+  const { t } = useTranslation();
+
+  // Create the schema with translations
+  const allergySchema = createAllergySchema(t);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<allergyFormData>({
     resolver: zodResolver(allergySchema),
     defaultValues: defaultAllergyValues,
@@ -36,48 +43,47 @@ export const AddAllergyModal = ({
 
   const { createOrUpdateAllergy } = useClinicPatients();
   const onSubmitHandler = async (data: allergyFormData) => {
-    try {
-      const formattedData: CreateOrUpdateAllergyDto = {
-        ...data,
-        id: data.id || undefined,
-        patientId: patientId,
-      };
+    const formattedData: CreateOrUpdateAllergyDto = {
+      ...data,
+      id: data.id || undefined,
+      patientId: patientId,
+    };
 
-      await createOrUpdateAllergy.mutateAsync(formattedData);
-      onClose();
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    await createOrUpdateAllergy.mutateAsync(formattedData);
+    onClose();
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Allergy"
+      title={t('clinic.patients.modals.addAllergy.title')}
       footer={
         <div className="flex justify-end gap-3">
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t('clinic.patients.modals.addAllergy.buttons.cancel')}
           </Button>
           <Button
             onClick={handleSubmit(onSubmitHandler)}
             isLoading={createOrUpdateAllergy.isPending}
           >
-            Add Allergy
+            {t('clinic.patients.modals.addAllergy.buttons.add')}
           </Button>
         </div>
       }
     >
       <form className="space-y-4">
         <Input
-          label="Allergy Name"
+          required={true}
+          label={t('clinic.patients.modals.addAllergy.fields.allergyName')}
           error={errors.name?.message}
           {...register('name')}
         />
 
         <Select
-          label="Severity"
+          required={true}
+          label={t('clinic.patients.modals.addAllergy.fields.severity')}
+          value={watch('severity').toString()}
           error={errors.severity?.message}
           {...register('severity', { valueAsNumber: true })}
           options={Object.entries(Severity)
@@ -88,7 +94,8 @@ export const AddAllergyModal = ({
             }))}
         />
         <Input
-          label="Reaction"
+          required={true}
+          label={t('clinic.patients.modals.addAllergy.fields.reaction')}
           error={errors.reaction?.message}
           {...register('reaction')}
         />

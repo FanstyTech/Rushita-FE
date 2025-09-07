@@ -7,6 +7,7 @@ import { MedicineListDto } from '@/lib/api/types/medicine';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { FilterState } from '@/components/common/FilterBar';
 import { PaginationResponse } from '@/lib/api/types/pagination';
+import { useTranslation } from 'react-i18next';
 
 interface MedicationSearchModalProps {
   isLoading: boolean;
@@ -33,26 +34,28 @@ export default function MedicationSearchModal({
   onClose,
   onSelectMedication,
 }: MedicationSearchModalProps) {
+  const { t } = useTranslation();
+
   const columns: Column<MedicineListDto>[] = [
     {
-      header: 'Code',
+      header: t('clinic.visits.modals.medicationSearch.columns.code'),
       accessor: 'code',
     },
     {
-      header: 'Name',
+      header: t('clinic.visits.modals.medicationSearch.columns.name'),
       accessor: 'name',
     },
     {
-      header: 'Scientific Name',
+      header: t('clinic.visits.modals.medicationSearch.columns.scientificName'),
       accessor: 'scientificName',
     },
     {
-      header: 'Medication Type',
+      header: t('clinic.visits.modals.medicationSearch.columns.medicationType'),
       accessor: 'medicationTypeName',
     },
 
     {
-      header: 'Actions',
+      header: t('clinic.visits.modals.medicationSearch.columns.actions'),
       accessor: 'id',
       cell: ({ row }) => (
         <button
@@ -60,7 +63,7 @@ export default function MedicationSearchModal({
           className="text-blue-600 hover:text-blue-900 flex items-center"
         >
           <CheckCircleIcon className="h-5 w-5 mr-1" />
-          Select
+          {t('clinic.visits.modals.medicationSearch.select')}
         </button>
       ),
       className: 'text-right',
@@ -71,14 +74,16 @@ export default function MedicationSearchModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Search Medications"
+      title={t('clinic.visits.modals.medicationSearch.title')}
       maxWidth="6xl"
     >
       <div className="space-y-4">
         <div className="relative">
           <Input
             type="text"
-            placeholder="Search by medication name, category, or manufacturer..."
+            placeholder={t(
+              'clinic.visits.modals.medicationSearch.searchPlaceholder'
+            )}
             onChange={(e) => setSearchQuery(e.target.value)}
             value={searchQuery}
             startIcon={
@@ -103,8 +108,12 @@ export default function MedicationSearchModal({
           columns={columns}
           isLoading={isLoading}
           noDataMessage={{
-            title: 'No medications found',
-            subtitle: 'Try adjusting your search terms',
+            title: t(
+              'clinic.visits.modals.medicationSearch.noMedicationsFound'
+            ),
+            subtitle: t(
+              'clinic.visits.modals.medicationSearch.adjustSearchTerms'
+            ),
           }}
           pagination={{
             pageSize: filter.pageSize,

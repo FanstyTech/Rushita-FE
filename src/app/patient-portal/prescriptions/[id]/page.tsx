@@ -34,6 +34,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { motion, Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Skeleton from '@/components/ui/Skeleton';
+import { useTranslation } from 'react-i18next';
 
 // Local interfaces for mock data structure
 interface MedicationItem {
@@ -258,12 +259,15 @@ const prescriptions = [
 ];
 
 // Get prescription status badge variant and label
-const getPrescriptionStatusBadge = (status: string) => {
+const getPrescriptionStatusBadge = (
+  status: string,
+  t: (key: string) => string
+) => {
   switch (status) {
     case 'active':
       return {
         variant: 'outline',
-        label: 'سارية',
+        label: t('patientPortal.prescriptions.details.status.active'),
         color: 'text-green-500',
         bgColor: 'bg-green-500/10',
         borderColor: 'border-green-500/50',
@@ -272,7 +276,7 @@ const getPrescriptionStatusBadge = (status: string) => {
     case 'completed':
       return {
         variant: 'secondary',
-        label: 'منتهية',
+        label: t('patientPortal.prescriptions.details.status.completed'),
         color: 'text-secondary-foreground',
         bgColor: 'bg-secondary/10',
         borderColor: 'border-secondary/50',
@@ -281,7 +285,7 @@ const getPrescriptionStatusBadge = (status: string) => {
     case 'cancelled':
       return {
         variant: 'destructive',
-        label: 'ملغية',
+        label: t('patientPortal.prescriptions.details.status.cancelled'),
         color: 'text-destructive',
         bgColor: 'bg-destructive/10',
         borderColor: 'border-destructive/50',
@@ -300,10 +304,13 @@ const getPrescriptionStatusBadge = (status: string) => {
 };
 
 export default function PrescriptionDetailsPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [prescription, setPrescription] = useState<PrescriptionData | null>(null);
+  const [prescription, setPrescription] = useState<PrescriptionData | null>(
+    null
+  );
 
   // Format date to Arabic format
   const formatDate = (dateString: string) => {
@@ -411,15 +418,15 @@ export default function PrescriptionDetailsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
-              الوصفة الطبية غير موجودة
+              {t('patientPortal.prescriptions.details.notFound.title')}
             </h1>
             <p className="text-muted-foreground">
-              لم يتم العثور على الوصفة الطبية المطلوبة
+              {t('patientPortal.prescriptions.details.notFound.description')}
             </p>
           </div>
           <Button variant="outline" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            العودة
+            {t('patientPortal.prescriptions.details.actions.back')}
           </Button>
         </div>
 
@@ -429,15 +436,16 @@ export default function PrescriptionDetailsPage() {
               <FileText className="h-8 w-8 text-muted-foreground" />
             </div>
             <h3 className="font-medium text-lg mb-1">
-              الوصفة الطبية غير موجودة
+              {t('patientPortal.prescriptions.details.notFound.title')}
             </h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              لم يتم العثور على الوصفة الطبية المطلوبة. قد تكون الوصفة قد تم
-              حذفها أو أن الرابط غير صحيح.
+              {t('patientPortal.prescriptions.details.notFound.message')}
             </p>
             <Button variant="default" className="mt-6" asChild>
               <Link href="/patient-portal/prescriptions">
-                عرض جميع الوصفات الطبية
+                {t(
+                  'patientPortal.prescriptions.details.notFound.viewAllButton'
+                )}
               </Link>
             </Button>
           </CardContent>
@@ -447,7 +455,7 @@ export default function PrescriptionDetailsPage() {
   }
 
   // Get status badge
-  const statusBadge = getPrescriptionStatusBadge(prescription.status);
+  const statusBadge = getPrescriptionStatusBadge(prescription.status, t);
   const StatusIcon = statusBadge.icon;
 
   return (
@@ -461,19 +469,19 @@ export default function PrescriptionDetailsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            الوصفة الطبية{' '}
+            {t('patientPortal.prescriptions.details.title')}{' '}
             <span className="text-muted-foreground">
               #{prescription.prescriptionNumber}
             </span>
           </h1>
           <p className="text-muted-foreground">
-            تفاصيل الوصفة الطبية والأدوية الموصوفة
+            {t('patientPortal.prescriptions.details.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            العودة
+            {t('patientPortal.prescriptions.details.actions.back')}
           </Button>
         </div>
       </div>
@@ -523,21 +531,27 @@ export default function PrescriptionDetailsPage() {
                 <div className="rounded-md bg-muted/30 p-3">
                   <div className="flex items-center gap-2 text-sm font-medium mb-1">
                     <Calendar className="h-4 w-4 text-primary/70" />
-                    تاريخ الوصفة
+                    {t(
+                      'patientPortal.prescriptions.details.prescriptionInfo.prescriptionDate'
+                    )}
                   </div>
                   <p>{formatDate(prescription.date)}</p>
                 </div>
                 <div className="rounded-md bg-muted/30 p-3">
                   <div className="flex items-center gap-2 text-sm font-medium mb-1">
                     <CalendarClock className="h-4 w-4 text-primary/70" />
-                    تاريخ الإصدار
+                    {t(
+                      'patientPortal.prescriptions.details.prescriptionInfo.issuedDate'
+                    )}
                   </div>
                   <p>{formatDate(prescription.issuedDate)}</p>
                 </div>
                 <div className="rounded-md bg-muted/30 p-3">
                   <div className="flex items-center gap-2 text-sm font-medium mb-1">
                     <CalendarRange className="h-4 w-4 text-primary/70" />
-                    تاريخ الانتهاء
+                    {t(
+                      'patientPortal.prescriptions.details.prescriptionInfo.expiryDate'
+                    )}
                   </div>
                   <p>{formatDate(prescription.expiryDate)}</p>
                 </div>
@@ -549,87 +563,114 @@ export default function PrescriptionDetailsPage() {
               <div>
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <Pill className="h-5 w-5 text-primary/70" />
-                  الأدوية الموصوفة ({prescription.medications.length})
+                  {t('patientPortal.prescriptions.details.medications.title')} (
+                  {prescription.medications.length})
                 </h3>
 
                 <div className="space-y-4">
-                  {prescription.medications.map((medication: MedicationItem) => (
-                    <Card
-                      key={medication.id}
-                      className="overflow-hidden border border-border/50"
-                    >
-                      <CardHeader className="bg-muted/20 p-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-lg font-medium">
-                            {medication.name}
-                          </h4>
-                          {medication.refillable &&
-                            medication.refillsRemaining > 0 && (
-                              <Badge
-                                variant="outline"
-                                className="border-amber-500/50 text-amber-500 bg-amber-500/10"
-                              >
-                                يمكن إعادة الصرف ({medication.refillsRemaining}{' '}
-                                مرات)
-                              </Badge>
-                            )}
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-4">
-                        <div className="grid gap-4 md:grid-cols-3 mb-4">
-                          <div>
-                            <p className="text-sm font-medium mb-1">الجرعة</p>
-                            <p className="text-muted-foreground">
-                              {medication.dosage}
-                            </p>
+                  {prescription.medications.map(
+                    (medication: MedicationItem) => (
+                      <Card
+                        key={medication.id}
+                        className="overflow-hidden border border-border/50"
+                      >
+                        <CardHeader className="bg-muted/20 p-4">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-lg font-medium">
+                              {medication.name}
+                            </h4>
+                            {medication.refillable &&
+                              medication.refillsRemaining > 0 && (
+                                <Badge
+                                  variant="outline"
+                                  className="border-amber-500/50 text-amber-500 bg-amber-500/10"
+                                >
+                                  {t(
+                                    'patientPortal.prescriptions.details.medications.refillable'
+                                  )}{' '}
+                                  ({medication.refillsRemaining}{' '}
+                                  {t(
+                                    'patientPortal.prescriptions.details.medications.refillsRemaining'
+                                  )}
+                                  )
+                                </Badge>
+                              )}
                           </div>
-                          <div>
-                            <p className="text-sm font-medium mb-1">التكرار</p>
-                            <p className="text-muted-foreground">
-                              {medication.frequency}
-                            </p>
+                        </CardHeader>
+                        <CardContent className="p-4">
+                          <div className="grid gap-4 md:grid-cols-3 mb-4">
+                            <div>
+                              <p className="text-sm font-medium mb-1">
+                                {t(
+                                  'patientPortal.prescriptions.details.medications.dosage'
+                                )}
+                              </p>
+                              <p className="text-muted-foreground">
+                                {medication.dosage}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">
+                                {t(
+                                  'patientPortal.prescriptions.details.medications.frequency'
+                                )}
+                              </p>
+                              <p className="text-muted-foreground">
+                                {medication.frequency}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">
+                                {t(
+                                  'patientPortal.prescriptions.details.medications.duration'
+                                )}
+                              </p>
+                              <p className="text-muted-foreground">
+                                {medication.duration}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-sm font-medium mb-1">المدة</p>
-                            <p className="text-muted-foreground">
-                              {medication.duration}
-                            </p>
-                          </div>
-                        </div>
 
-                        <div className="space-y-3">
-                          <div>
-                            <p className="text-sm font-medium mb-1">
-                              تعليمات الاستخدام
-                            </p>
-                            <p className="text-muted-foreground bg-muted/20 p-2 rounded-md">
-                              {medication.instructions}
-                            </p>
-                          </div>
+                          <div className="space-y-3">
+                            <div>
+                              <p className="text-sm font-medium mb-1">
+                                {t(
+                                  'patientPortal.prescriptions.details.medications.instructions'
+                                )}
+                              </p>
+                              <p className="text-muted-foreground bg-muted/20 p-2 rounded-md">
+                                {medication.instructions}
+                              </p>
+                            </div>
 
-                          <div>
-                            <p className="text-sm font-medium mb-1 flex items-center gap-1">
-                              <AlertCircle className="h-3.5 w-3.5 text-amber-500" />
-                              الآثار الجانبية المحتملة
-                            </p>
-                            <p className="text-muted-foreground bg-amber-500/5 p-2 rounded-md border border-amber-500/10">
-                              {medication.sideEffects}
-                            </p>
-                          </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1 flex items-center gap-1">
+                                <AlertCircle className="h-3.5 w-3.5 text-amber-500" />
+                                {t(
+                                  'patientPortal.prescriptions.details.medications.sideEffects'
+                                )}
+                              </p>
+                              <p className="text-muted-foreground bg-amber-500/5 p-2 rounded-md border border-amber-500/10">
+                                {medication.sideEffects}
+                              </p>
+                            </div>
 
-                          <div>
-                            <p className="text-sm font-medium mb-1 flex items-center gap-1">
-                              <XCircle className="h-3.5 w-3.5 text-destructive" />
-                              موانع الاستعمال
-                            </p>
-                            <p className="text-muted-foreground bg-destructive/5 p-2 rounded-md border border-destructive/10">
-                              {medication.contraindications}
-                            </p>
+                            <div>
+                              <p className="text-sm font-medium mb-1 flex items-center gap-1">
+                                <XCircle className="h-3.5 w-3.5 text-destructive" />
+                                {t(
+                                  'patientPortal.prescriptions.details.medications.contraindications'
+                                )}
+                              </p>
+                              <p className="text-muted-foreground bg-destructive/5 p-2 rounded-md border border-destructive/10">
+                                {medication.contraindications}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </CardContent>
+                      </Card>
+                    )
+                  )}
                 </div>
               </div>
 
@@ -640,7 +681,9 @@ export default function PrescriptionDetailsPage() {
                   <div>
                     <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                       <Stethoscope className="h-5 w-5 text-primary/70" />
-                      التشخيص
+                      {t(
+                        'patientPortal.prescriptions.details.sections.diagnosis'
+                      )}
                     </h3>
                     <Card className="border border-border/50">
                       <CardContent className="p-4">
@@ -658,7 +701,7 @@ export default function PrescriptionDetailsPage() {
                   <div>
                     <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                       <Info className="h-5 w-5 text-primary/70" />
-                      ملاحظات وتعليمات
+                      {t('patientPortal.prescriptions.details.sections.notes')}
                     </h3>
                     <Card className="border border-border/50">
                       <CardContent className="p-4">
@@ -674,11 +717,13 @@ export default function PrescriptionDetailsPage() {
               <div>
                 <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-primary/70" />
-                  الزيارة المرتبطة
+                  {t(
+                    'patientPortal.prescriptions.details.sections.relatedVisit'
+                  )}
                 </h3>
                 <Button variant="outline" asChild>
                   <Link href={`/patient-portal/visits/${prescription.visitId}`}>
-                    عرض تفاصيل الزيارة
+                    {t('patientPortal.prescriptions.details.actions.viewVisit')}
                     <ChevronLeft className="mr-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -689,15 +734,15 @@ export default function PrescriptionDetailsPage() {
           <CardFooter className="p-6 bg-muted/20 flex flex-wrap gap-3">
             <Button className="gap-2">
               <Printer className="h-4 w-4" />
-              طباعة الوصفة
+              {t('patientPortal.prescriptions.details.actions.print')}
             </Button>
             <Button variant="outline" className="gap-2">
               <Download className="h-4 w-4" />
-              تنزيل PDF
+              {t('patientPortal.prescriptions.details.actions.download')}
             </Button>
             <Button variant="outline" className="gap-2">
               <Share2 className="h-4 w-4" />
-              مشاركة
+              {t('patientPortal.prescriptions.details.actions.share')}
             </Button>
           </CardFooter>
         </Card>

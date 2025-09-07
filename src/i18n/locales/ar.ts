@@ -1,7 +1,185 @@
 export const ar = {
   translation: {
+    // Common
+    common: {
+      loading: 'جاري التحميل...',
+      // Actions
+      add: 'إضافة',
+      edit: 'تعديل',
+      delete: 'حذف',
+      cancel: 'إلغاء',
+      save: 'حفظ',
+      confirm: 'تأكيد',
+      back: 'رجوع',
+      next: 'التالي',
+      submit: 'إرسال',
+      close: 'إغلاق',
+      open: 'فتح',
+      view: 'عرض',
+      create: 'إنشاء',
+      update: 'تحديث',
+      remove: 'إزالة',
+      search: 'بحث',
+      filter: 'تصفية',
+      sort: 'ترتيب',
+      export: 'تصدير',
+      import: 'استيراد',
+      print: 'طباعة',
+      download: 'تحميل',
+      upload: 'رفع',
+      refresh: 'تحديث',
+      reset: 'إعادة تعيين',
+      clear: 'مسح',
+      select: 'اختيار',
+      selectAll: 'اختيار الكل',
+      deselectAll: 'إلغاء اختيار الكل',
+      // Status
+      active: 'نشط',
+      inactive: 'غير نشط',
+      enabled: 'مفعل',
+      disabled: 'معطل',
+      pending: 'قيد الانتظار',
+      approved: 'موافق عليه',
+      rejected: 'مرفوض',
+      completed: 'مكتمل',
+      inProgress: 'قيد التنفيذ',
+      draft: 'مسودة',
+      published: 'منشور',
+      // Messages
+      success: 'نجح',
+      error: 'خطأ',
+      warning: 'تحذير',
+      info: 'معلومات',
+      noResults: 'لا توجد نتائج',
+      noData: 'لا توجد بيانات متاحة',
+      // Confirmations
+      areYouSure: 'هل أنت متأكد؟',
+      deleteConfirmation: 'هل أنت متأكد من أنك تريد حذف هذا العنصر؟',
+      unsavedChanges:
+        'لديك تغييرات غير محفوظة. هل أنت متأكد من أنك تريد المغادرة؟',
+      // Form validation
+      required: 'هذا الحقل مطلوب',
+      invalidEmail: 'يرجى إدخال عنوان بريد إلكتروني صحيح',
+      invalidPhone: 'يرجى إدخال رقم هاتف صحيح',
+      passwordTooShort: 'يجب أن تكون كلمة المرور 8 أحرف على الأقل',
+      passwordsDoNotMatch: 'كلمات المرور غير متطابقة',
+      // Time and date
+      today: 'اليوم',
+      yesterday: 'أمس',
+      tomorrow: 'غداً',
+      thisWeek: 'هذا الأسبوع',
+      thisMonth: 'هذا الشهر',
+      thisYear: 'هذا العام',
+      // Pagination
+      previous: 'السابق',
+      page: 'صفحة',
+      of: 'من',
+      showing: 'عرض',
+      to: 'إلى',
+      entries: 'إدخالات',
+      // File operations
+      file: 'ملف',
+      files: 'ملفات',
+      folder: 'مجلد',
+      folders: 'مجلدات',
+      size: 'الحجم',
+      type: 'النوع',
+      lastModified: 'آخر تعديل',
+    },
     // Navigation
     navigation: {
+      quickMenu: 'قائمة سريعة',
+      searchPlaceholder: 'البحث في التنقل...',
+      sections: {
+        admin: 'الإدارة',
+        clinic: 'العيادة',
+        doctor: 'الطبيب',
+      },
+      // Admin Navigation
+      admin: {
+        dashboard: 'لوحة التحكم',
+        users: 'المستخدمون',
+        clinics: {
+          title: 'العيادات',
+          management: {
+            title: 'إدارة العيادات',
+            list: 'قائمة العيادات',
+            add: 'إضافة عيادة',
+          },
+          reports: {
+            title: 'تقارير العيادات',
+            performance: 'تقارير الأداء',
+            analytics: 'تقارير التحليلات',
+          },
+        },
+        lookups: {
+          title: 'البيانات المرجعية',
+          specialty: 'التخصصات',
+          country: 'البلدان',
+          city: 'المدن',
+          clinicType: 'أنواع العيادات',
+          currency: 'العملات',
+          radiologyTestCategory: 'فئات فحوصات الأشعة',
+          radiologyTest: 'فحوصات الأشعة',
+          medicationType: 'أنواع الأدوية',
+          medicine: 'الأدوية',
+          labTestCategory: 'فئات الفحوصات المخبرية',
+          labTest: 'الفحوصات المخبرية',
+          diagnosisCategory: 'فئات التشخيص',
+          diagnosis: 'التشخيصات',
+          dentalProcedure: 'إجراءات الأسنان',
+        },
+      },
+      // Clinic Navigation
+      clinic: {
+        dashboard: 'لوحة التحكم',
+        appointments: 'المواعيد',
+        patients: 'المرضى',
+        staff: {
+          title: 'الموظفون',
+          list: 'قائمة الموظفين',
+          leaves: 'الإجازات',
+        },
+        laboratory: {
+          title: 'المختبر',
+          tests: 'الفحوصات المخبرية',
+        },
+        radiology: {
+          title: 'الأشعة',
+          tests: 'فحوصات الأشعة',
+        },
+        pharmacy: {
+          title: 'الصيدلية',
+          prescriptions: 'الوصفات الطبية',
+        },
+        financial: {
+          title: 'المالية',
+          dashboard: 'لوحة التحكم المالية',
+          servicePrices: 'أسعار الخدمات',
+          expenses: 'المصروفات',
+          invoices: 'الفواتير',
+          revenues: 'الإيرادات',
+          salaries: 'الرواتب',
+          transactions: 'المعاملات',
+        },
+        reports: {
+          title: 'التقارير',
+          view: 'عرض التقارير',
+          generate: 'إنشاء التقارير',
+        },
+        settings: {
+          title: 'الإعدادات',
+          general: 'الإعدادات العامة',
+          profile: 'ملف العيادة',
+        },
+      },
+      // Doctor Navigation
+      doctor: {
+        dashboard: 'لوحة التحكم',
+        visits: 'الزيارات',
+        leaves: 'الإجازات',
+        profile: 'الملف الشخصي',
+      },
       dashboard: 'لوحة التحكم',
       patients: 'المرضى',
       appointments: 'المواعيد',
@@ -10,6 +188,18 @@ export const ar = {
       settings: 'الإعدادات',
       clinicAI: 'الذكاء الاصطناعي للعيادة',
       medicalIntelligence: 'الذكاء الطبي',
+    },
+
+    // User interface
+    user: {
+      notifications: 'الإشعارات',
+      profile: 'الملف الشخصي',
+      logout: 'تسجيل الخروج',
+    },
+
+    // Settings
+    settings: {
+      settings: 'الإعدادات',
     },
 
     // Breadcrumb routes
@@ -199,141 +389,11 @@ export const ar = {
       },
     },
 
-    // Settings page
-    settings: {
-      title: 'إعدادات العيادة',
-      description: 'إدارة إعدادات وتكوين العيادة',
-
-      // Appointment Settings
-      appointments: {
-        title: 'إعدادات المواعيد',
-        description: 'إدارة إعدادات حجز المواعيد وسياساتها',
-        duration: 'مدة الموعد (بالدقائق)',
-        maxAdvanceBooking: 'الحد الأقصى لحجز المواعيد المسبقة (بالأيام)',
-        cancellationPolicy: 'سياسة الإلغاء (ساعات قبل الموعد)',
-        onlineBooking: 'السماح بالحجز عبر الإنترنت',
-        requireApproval: 'يتطلب موافقة على المواعيد',
-      },
-
-      // Notification Settings
-      notifications: {
-        title: 'إعدادات الإشعارات',
-        description: 'التحكم في تسليم الإشعارات والتذكيرات',
-        emailNotifications: 'إشعارات البريد الإلكتروني',
-        smsNotifications: 'إشعارات الرسائل النصية',
-        pushNotifications: 'الإشعارات الفورية',
-        reminderTiming: 'توقيت التذكير (ساعات قبل الموعد)',
-      },
-
-      // Clinic Information
-      clinicInfo: {
-        title: 'معلومات العيادة',
-        description: 'إدارة المعلومات الأساسية للعيادة',
-        name: 'اسم العيادة',
-        phone: 'رقم الهاتف',
-        email: 'البريد الإلكتروني',
-        address: 'العنوان',
-        namePlaceholder: 'أدخل اسم العيادة',
-        phonePlaceholder: 'أدخل رقم الهاتف',
-        emailPlaceholder: 'أدخل البريد الإلكتروني',
-        addressPlaceholder: 'أدخل عنوان العيادة',
-      },
-
-      // System Preferences
-      system: {
-        title: 'تفضيلات النظام',
-        description: 'إدارة إعدادات النظام العامة',
-        currency: 'العملة الافتراضية',
-        language: 'اللغة الافتراضية',
-        timezone: 'المنطقة الزمنية',
-        autoBackup: 'النسخ الاحتياطي التلقائي',
-        twoFactorAuth: 'المصادقة الثنائية',
-        currencies: {
-          SAR: 'ريال سعودي (SAR)',
-          AED: 'درهم إماراتي (AED)',
-          USD: 'دولار أمريكي (USD)',
-          EUR: 'يورو (EUR)',
-        },
-        languages: {
-          ar: 'العربية',
-          en: 'الإنجليزية',
-          fr: 'الفرنسية',
-        },
-        timezones: {
-          'Asia/Riyadh': 'الرياض (GMT+3)',
-          'Asia/Dubai': 'دبي (GMT+4)',
-          'Europe/London': 'لندن (GMT+0)',
-          'America/New_York': 'نيويورك (GMT-5)',
-          'Asia/Tokyo': 'طوكيو (GMT+9)',
-        },
-      },
-
-      // Booking Conditions
-      bookingConditions: {
-        title: 'شروط الحجز',
-        description: 'أدخل شروط ومتطلبات الحجز (واحد في كل سطر)',
-        patientInfoRequired: 'يتطلب معلومات المريض الكاملة',
-        insuranceRequired: 'يتطلب معلومات التأمين',
-        medicalHistoryRequired: 'يتطلب التاريخ الطبي',
-        minAge: 'الحد الأدنى للعمر',
-        maxAge: 'الحد الأقصى للعمر',
-        emergencyContactRequired: 'يتطلب جهة اتصال طوارئ',
-        sameDayBooking: 'السماح بحجز نفس اليوم',
-        depositRequired: 'يتطلب دفع عربون',
-        depositAmount: 'مبلغ العربون',
-        termsRequired: 'يتطلب قبول الشروط والأحكام',
-      },
-
-      // Clinic Rooms Management
-      rooms: {
-        title: 'غرف العيادة والمعدات',
-        description: 'إدارة غرف العيادة والمعدات الطبية',
-        enableRoomManagement: 'تفعيل إدارة الغرف',
-        defaultRoom: 'الغرفة الافتراضية للمواعيد',
-        roomCapacity: 'إدارة سعة الغرف',
-        equipmentTracking: 'تتبع المعدات',
-        maintenanceScheduling: 'جدولة الصيانة',
-        roomOptions: {
-          room1: 'غرفة الفحص 1',
-          room2: 'غرفة الفحص 2',
-          room3: 'غرفة الفحص 3',
-          consultation: 'غرفة الاستشارة',
-          procedure: 'غرفة الإجراءات',
-          emergency: 'غرفة الطوارئ',
-        },
-      },
-
-      // Actions
-      saveSettings: 'حفظ الإعدادات',
-    },
-
     // Languages
     languages: {
       en: 'الإنجليزية',
       ar: 'العربية',
       es: 'الإسبانية',
-    },
-
-    // Common
-    common: {
-      search: 'بحث',
-      filter: 'تصفية',
-      sort: 'ترتيب',
-      add: 'إضافة',
-      edit: 'تعديل',
-      delete: 'حذف',
-      cancel: 'إلغاء',
-      save: 'حفظ',
-      confirm: 'تأكيد',
-      back: 'رجوع',
-      next: 'التالي',
-      submit: 'إرسال',
-      loading: 'جاري التحميل...',
-      noResults: 'لا توجد نتائج',
-      success: 'نجح',
-      error: 'خطأ',
-      warning: 'تحذير',
-      info: 'معلومات',
     },
 
     // Messages

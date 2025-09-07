@@ -1,6 +1,7 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/common/Button';
 import { Input, Select } from '@/components/common/form';
 import Modal from '@/components/common/Modal';
@@ -11,21 +12,33 @@ import {
 import { useSpecialty } from '@/lib/api/hooks/useSpecialty';
 import { useEffect, useMemo } from 'react';
 
-const schema = z.object({
-  id: z.string().optional(),
+const createStaffSchema = (t: (key: string) => string) =>
+  z.object({
+    id: z.string().optional(),
+    fNameL: z
+      .string()
+      .min(1, t('clinic.staff.staffForm.firstNameForeignRequired')),
+    lNameL: z
+      .string()
+      .min(1, t('clinic.staff.staffForm.lastNameForeignRequired')),
+    fNameF: z
+      .string()
+      .min(1, t('clinic.staff.staffForm.firstNameArabicRequired')),
+    lNameF: z
+      .string()
+      .min(1, t('clinic.staff.staffForm.lastNameArabicRequired')),
+    email: z.string().email(t('clinic.staff.staffForm.invalidEmail')),
+    joinDate: z.string(),
+    staffType: z.coerce
+      .number()
+      .min(1, t('clinic.staff.staffForm.staffTypeRequired')),
+    specialtyId: z
+      .string()
+      .min(1, t('clinic.staff.staffForm.specialtyRequired')),
+    clinicId: z.string(),
+  });
 
-  fNameL: z.string().min(1, 'First name in Latin is required'),
-  lNameL: z.string().min(1, 'Last name in Latin is required'),
-  fNameF: z.string().min(1, 'First name in Arabic is required'),
-  lNameF: z.string().min(1, 'Last name in Arabic is required'),
-  email: z.string().email('Invalid email address'),
-  joinDate: z.string(),
-  staffType: z.coerce.number().min(1, 'Staff type is required'),
-  specialtyId: z.string().min(1, 'Specialty is required'),
-  clinicId: z.string(),
-});
-
-type FormData = z.infer<typeof schema>;
+type FormData = z.infer<ReturnType<typeof createStaffSchema>>;
 
 interface ClinicStaffFormProps {
   isOpen: boolean;
@@ -42,8 +55,12 @@ export default function ClinicStaffForm({
   clinicId,
   onSubmit,
 }: ClinicStaffFormProps) {
+  const { t } = useTranslation();
   const { useSpecialtiesDropdown } = useSpecialty();
   const { data: specialties } = useSpecialtiesDropdown();
+
+  const dynamicSchema = useMemo(() => createStaffSchema(t), [t]);
+
   const defaultValues = useMemo(
     () => ({
       id: '',
@@ -61,7 +78,7 @@ export default function ClinicStaffForm({
   );
 
   const form = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(dynamicSchema),
     defaultValues,
   });
 
@@ -72,7 +89,6 @@ export default function ClinicStaffForm({
     handleSubmit,
   } = form;
 
-  // Reset form when initialData changes or modal opens/closes
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
@@ -112,12 +128,16 @@ export default function ClinicStaffForm({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={initialData ? 'Edit Staff Member' : 'Add New Staff Member'}
+      title={
+        initialData
+          ? t('clinic.staff.staffForm.editTitle')
+          : t('clinic.staff.staffForm.addTitle')
+      }
       maxWidth="2xl"
       footer={
         <div className="flex justify-end gap-3">
           <Button variant="secondary" onClick={onClose} type="button">
-            Cancel
+            {t('clinic.staff.staffForm.cancel')}
           </Button>
           <Button
             type="button"
@@ -126,7 +146,9 @@ export default function ClinicStaffForm({
               await handleSubmit(onSubmitHandler)();
             }}
           >
-            {initialData ? 'Update' : 'Add'} Staff Member
+            {initialData
+              ? t('clinic.staff.staffForm.updateButton')
+              : t('clinic.staff.staffForm.addButton')}
           </Button>
         </div>
       }
@@ -135,28 +157,32 @@ export default function ClinicStaffForm({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Input
-              label="First Name (Foreign)"
+              required={true}
+              label={t('clinic.staff.staffForm.firstNameForeign')}
               {...register('fNameF')}
               error={errors.fNameF?.message}
             />
           </div>
           <div>
             <Input
-              label="Last Name (Foreign)"
+              required={true}
+              label={t('clinic.staff.staffForm.lastNameForeign')}
               {...register('lNameF')}
               error={errors.lNameF?.message}
             />
           </div>
           <div>
             <Input
-              label="First Name (Arabic)"
+              required={true}
+              label={t('clinic.staff.staffForm.firstNameArabic')}
               {...register('fNameL')}
               error={errors.fNameL?.message}
             />
           </div>
           <div>
             <Input
-              label="Last Name (Arabic)"
+              required={true}
+              label={t('clinic.staff.staffForm.lastNameArabic')}
               {...register('lNameL')}
               error={errors.lNameL?.message}
             />
@@ -164,13 +190,15 @@ export default function ClinicStaffForm({
         </div>
 
         <Input
-          label="Email"
+          required={true}
+          label={t('clinic.staff.staffForm.email')}
           type="email"
           {...register('email')}
           error={errors.email?.message}
         />
         <Input
-          label="Join Date"
+          required={true}
+          label={t('clinic.staff.staffForm.joinDate')}
           type="date"
           {...register('joinDate')}
           error={errors.joinDate?.message}
@@ -178,7 +206,8 @@ export default function ClinicStaffForm({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Select
-              label="Staff Type"
+              required={true}
+              label={t('clinic.staff.staffForm.staffType')}
               value={initialData?.staffType?.toString() || ''}
               {...register('staffType', { valueAsNumber: true })}
               error={errors.staffType?.message}
@@ -192,12 +221,16 @@ export default function ClinicStaffForm({
           </div>
           <div>
             <Select
-              label="Specialty"
+              required={true}
+              label={t('clinic.staff.staffForm.specialty')}
               value={initialData?.specialtyId || ''}
               {...register('specialtyId')}
               error={errors.specialtyId?.message}
               options={[
-                { value: '', label: 'All Specialties' },
+                {
+                  value: '',
+                  label: t('clinic.staff.staffForm.allSpecialties'),
+                },
                 ...(specialties?.map((specialty) => ({
                   value: specialty.value,
                   label: specialty.label || '',

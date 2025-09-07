@@ -114,6 +114,7 @@ function Footer() {
               <li>
                 <Link
                   href="http://wa.me/+970566480097"
+                  target="_blank"
                   className="text-gray-300 hover:text-blue-400 transition-colors duration-300 hover:translate-x-1 inline-block"
                 >
                   {t('landing.footer.supportResources.helpCenter')}
@@ -162,6 +163,7 @@ function Footer() {
                     <Link
                       key={index}
                       href={social.href}
+                      target="_blank"
                       className={`w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-full flex items-center justify-center transition-all duration-300 ${social.color} hover:scale-110`}
                       aria-label={social.label}
                     >

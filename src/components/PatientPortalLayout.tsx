@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Sidebar } from './patient-portal/Sidebar';
 import { Header } from './patient-portal/Header';
 import { useAuth } from '@/lib/api/hooks/useAuth';
@@ -17,14 +18,14 @@ export default function PatientPortalLayout({
   children: React.ReactNode;
   languages: string[];
 }) {
+  const { t } = useTranslation();
   const { logout, user } = useAuth();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const { direction } = useLanguage();
+  const { direction, isChangingLanguage } = useLanguage();
   const pathname = usePathname();
 
-  const { isChangingLanguage } = useLanguage();
   const isAuthPage =
     pathname?.startsWith('/auth') ||
     languages.some((lang) =>
@@ -103,7 +104,7 @@ export default function PatientPortalLayout({
         <footer className="bg-card/80 backdrop-blur-sm mx-4 md:mx-6 lg:mx-8 mb-4 p-4 border border-border/50 rounded-2xl shadow-md">
           <div className="flex justify-between items-center">
             <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} Rousheta Health Portal
+              &copy; {new Date().getFullYear()} {t('common.footer.copyright')}
             </p>
           </div>
         </footer>

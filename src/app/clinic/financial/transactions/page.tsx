@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ import {
 } from '@/lib/api/types/transaction';
 
 export default function TransactionsPage() {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<FilterState>({
     pageNumber: 1,
     pageSize: 10,
@@ -74,9 +76,33 @@ export default function TransactionsPage() {
     );
   };
 
+  const getTransactionTypeLabel = (type: TransactionType) => {
+    return type === TransactionType.Inflow
+      ? t('clinic.financial.transactions.transactionTypes.inflow')
+      : t('clinic.financial.transactions.transactionTypes.outflow');
+  };
+
+  const getReferenceTypeLabel = (type: ReferenceType) => {
+    const labels: { [key: number]: string } = {
+      [ReferenceType.Revenue]: t(
+        'clinic.financial.transactions.referenceTypes.revenue'
+      ),
+      [ReferenceType.Expense]: t(
+        'clinic.financial.transactions.referenceTypes.expense'
+      ),
+      [ReferenceType.Salary]: t(
+        'clinic.financial.transactions.referenceTypes.salary'
+      ),
+      [ReferenceType.Invoice]: t(
+        'clinic.financial.transactions.referenceTypes.invoice'
+      ),
+    };
+    return labels[type] || '';
+  };
+
   const columns: Column<ClinicTransactionListDto>[] = [
     {
-      header: 'Type',
+      header: t('clinic.financial.transactions.table.columns.type'),
       accessor: 'transactionType',
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
@@ -88,13 +114,13 @@ export default function TransactionsPage() {
           <Badge
             className={getTransactionTypeColor(row.original.transactionType)}
           >
-            {TransactionType[row.original.transactionType]}
+            {getTransactionTypeLabel(row.original.transactionType)}
           </Badge>
         </div>
       ),
     },
     {
-      header: 'Amount',
+      header: t('clinic.financial.transactions.table.columns.amount'),
       accessor: 'amount',
       cell: ({ row }) => (
         <span
@@ -110,7 +136,7 @@ export default function TransactionsPage() {
       ),
     },
     {
-      header: 'Date',
+      header: t('clinic.financial.transactions.table.columns.date'),
       accessor: 'transactionDate',
       cell: ({ row }) => (
         <span className="text-gray-600 dark:text-gray-400">
@@ -119,7 +145,7 @@ export default function TransactionsPage() {
       ),
     },
     {
-      header: 'Description',
+      header: t('clinic.financial.transactions.table.columns.description'),
       accessor: 'description',
       cell: ({ row }) => (
         <span className="font-medium text-gray-900 dark:text-white">
@@ -128,16 +154,16 @@ export default function TransactionsPage() {
       ),
     },
     {
-      header: 'Reference Type',
+      header: t('clinic.financial.transactions.table.columns.referenceType'),
       accessor: 'referenceType',
       cell: ({ row }) => (
         <Badge className={getReferenceTypeColor(row.original.referenceType)}>
-          {ReferenceType[row.original.referenceType]}
+          {getReferenceTypeLabel(row.original.referenceType)}
         </Badge>
       ),
     },
     {
-      header: 'Reference ID',
+      header: t('clinic.financial.transactions.table.columns.referenceId'),
       accessor: 'referenceId',
       cell: ({ row }) => (
         <span className="text-gray-600 dark:text-gray-400 font-mono text-sm">
@@ -156,7 +182,7 @@ export default function TransactionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Inflow
+                  {t('clinic.financial.transactions.summary.cards.totalInflow')}
                 </p>
                 <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   +{formatCurrency(summaryData?.totalInflow || 0)}
@@ -172,7 +198,9 @@ export default function TransactionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Outflow
+                  {t(
+                    'clinic.financial.transactions.summary.cards.totalOutflow'
+                  )}
                 </p>
                 <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                   -{formatCurrency(summaryData?.totalOutflow || 0)}
@@ -188,7 +216,7 @@ export default function TransactionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Net Amount
+                  {t('clinic.financial.transactions.summary.cards.netAmount')}
                 </p>
                 <p
                   className={`text-2xl font-bold ${
@@ -211,13 +239,16 @@ export default function TransactionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Transactions
+                  {t(
+                    'clinic.financial.transactions.summary.cards.totalTransactions'
+                  )}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {summaryData?.totalTransactions || 0}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {summaryData?.thisMonthTransactions || 0} this month
+                  {summaryData?.thisMonthTransactions || 0}{' '}
+                  {t('clinic.financial.transactions.summary.cards.thisMonth')}
                 </p>
               </div>
               <div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-full">
@@ -241,17 +272,23 @@ export default function TransactionsPage() {
             }));
           }}
           haveStatusFilter={false}
+          searchPlaceholder={t(
+            'clinic.financial.transactions.filters.searchPlaceholder'
+          )}
           additionalFilters={[
             {
               icon: <TrendingUp className="w-4 h-4" />,
-              label: 'Transaction Type',
+              label: t('clinic.financial.transactions.filters.transactionType'),
               options: [
-                { value: '', label: 'All Types' },
+                {
+                  value: '',
+                  label: t('clinic.financial.transactions.filters.allTypes'),
+                },
                 ...Object.entries(TransactionType)
                   .filter(([key]) => isNaN(Number(key)))
-                  .map(([key, value]) => ({
+                  .map(([, value]) => ({
                     value: value.toString(),
-                    label: key,
+                    label: getTransactionTypeLabel(value as TransactionType),
                   })),
               ],
               value: String(filter.transactionType || ''),
@@ -263,14 +300,17 @@ export default function TransactionsPage() {
             },
             {
               icon: <FileText className="w-4 h-4" />,
-              label: 'Reference Type',
+              label: t('clinic.financial.transactions.filters.referenceType'),
               options: [
-                { value: '', label: 'All Types' },
+                {
+                  value: '',
+                  label: t('clinic.financial.transactions.filters.allTypes'),
+                },
                 ...Object.entries(ReferenceType)
                   .filter(([key]) => isNaN(Number(key)))
-                  .map(([key, value]) => ({
+                  .map(([, value]) => ({
                     value: value.toString(),
-                    label: key,
+                    label: getReferenceTypeLabel(value as ReferenceType),
                   })),
               ],
               value: String(filter.referenceType || ''),
@@ -288,6 +328,14 @@ export default function TransactionsPage() {
           data={transactionsData?.items || []}
           columns={columns}
           isLoading={isLoadingTransactions}
+          noDataMessage={{
+            subtitle: t(
+              'clinic.financial.transactions.emptyStates.noTransactions.description'
+            ),
+            title: t(
+              'clinic.financial.transactions.emptyStates.noTransactions.title'
+            ),
+          }}
           pagination={{
             pageSize: filter.pageSize || 10,
             pageIndex: (filter.pageNumber || 1) - 1,

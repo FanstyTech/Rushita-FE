@@ -4,6 +4,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface BookingFooterProps {
   activeStep: number;
@@ -24,6 +25,8 @@ export function BookingFooter({
   onNextStep,
   onSubmit,
 }: BookingFooterProps) {
+  const { t } = useTranslation();
+
   return (
     <CardFooter className="flex justify-between p-6 bg-muted/30 backdrop-blur-sm">
       <Button
@@ -31,7 +34,7 @@ export function BookingFooter({
         onClick={onPrevStep}
         disabled={activeStep === 0}
       >
-        السابق
+        {t('patientPortal.appointments.booking.footer.previousButton')}
       </Button>
 
       {activeStep < totalSteps - 1 ? (
@@ -39,11 +42,11 @@ export function BookingFooter({
           onClick={onNextStep}
           disabled={!canProceed}
         >
-          التالي
+          {t('patientPortal.appointments.booking.footer.nextButton')}
         </Button>
       ) : (
         <Button onClick={onSubmit} disabled={isSubmitting}>
-          {isSubmitting ? 'جاري الحجز...' : 'تأكيد الحجز'}
+          {isSubmitting ? t('patientPortal.appointments.booking.footer.submittingButton') : t('patientPortal.appointments.booking.footer.confirmButton')}
         </Button>
       )}
     </CardFooter>

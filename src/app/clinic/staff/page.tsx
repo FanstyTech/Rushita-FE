@@ -36,6 +36,7 @@ import {
 import ChangeStaffPasswordModal from '@/components/clinic/staff/ChangeStaffPasswordModal';
 import EmptyState from '@/components/common/EmptyState';
 import ManagePermissionsModal from '@/components/clinic/staff/ManagePermissionsModal';
+import { useTranslation } from 'react-i18next';
 
 export default function ClinicStaffPage() {
   // 1. Authentication hook
@@ -86,6 +87,8 @@ export default function ClinicStaffPage() {
   const { data: specialties } = useSpecialtiesDropdown();
   const updateStaffPassword = useChangeStaffPassword();
 
+  const { t } = useTranslation();
+
   // 5. Effects
   useEffect(() => {
     if (user) {
@@ -110,7 +113,7 @@ export default function ClinicStaffPage() {
   }
 
   if (!hasAccess) {
-    return <div>Access Denied: No clinic associated with this user.</div>;
+    return <div>{t('accessDenied')}</div>;
   }
 
   // Event handlers
@@ -177,9 +180,7 @@ export default function ClinicStaffPage() {
   };
 
   const handleEndSession = () => {
-    window.confirm(
-      "Are you sure you want to end this user's session? They will be logged out immediately."
-    );
+    window.confirm(t('areYouSureYouWantToEndThisUsersSession'));
   };
 
   const handleClosePermissionsModal = () => {
@@ -210,13 +211,14 @@ export default function ClinicStaffPage() {
               sortDirection: newFilter.sortDirection ?? prev.sortDirection,
             }));
           }}
+          searchPlaceholder={t('clinic.staff.filters.searchPlaceholder')}
           onAddNew={handleAddNew}
           additionalFilters={[
             {
               icon: <LuBriefcaseMedical className="w-4 h-4" />,
-              label: 'Specialty',
+              label: t('clinic.staff.filters.specialty'),
               options: [
-                { value: '', label: 'All Specialties' },
+                { value: '', label: t('clinic.staff.filters.allSpecialties') },
                 ...(specialties?.map((specialty: SelectOption<string>) => ({
                   value: specialty.value,
                   label: specialty.label || '',
@@ -240,9 +242,9 @@ export default function ClinicStaffPage() {
           ) : staffList?.items.length === 0 ? (
             <EmptyState
               icon={Users}
-              title="No Staff Members Found"
-              description="Get started by adding your first staff member"
-              buttonText="Add Staff Member"
+              title={t('clinic.staff.emptyState.title')}
+              description={t('clinic.staff.emptyState.description')}
+              buttonText={t('clinic.staff.emptyState.buttonText')}
               onAction={handleAddNew}
               hasFilters={
                 !!(filters.searchValue || filters.role || filters.specialtyId)
@@ -295,7 +297,7 @@ export default function ClinicStaffPage() {
                                 } flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors`}
                               >
                                 <Edit2 className="w-4 h-4" />
-                                Edit Staff
+                                {t('clinic.staff.actions.editStaff')}
                               </button>
                             )}
                           </MenuItem>
@@ -310,7 +312,7 @@ export default function ClinicStaffPage() {
                                 } flex items-center gap-2 w-full px-4 py-2 text-sm text-yellow-700 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 transition-colors`}
                               >
                                 <Key className="w-4 h-4" />
-                                Change Password
+                                {t('clinic.staff.actions.changePassword')}
                               </button>
                             )}
                           </MenuItem>
@@ -329,8 +331,10 @@ export default function ClinicStaffPage() {
                               >
                                 <Mail className="w-4 h-4" />
                                 {resendActivationEmail.isPending
-                                  ? 'Sending...'
-                                  : 'Resend Activation Email'}
+                                  ? t('clinic.staff.actions.sending')
+                                  : t(
+                                      'clinic.staff.actions.resendActivationEmail'
+                                    )}
                               </button>
                             )}
                           </MenuItem>
@@ -343,7 +347,7 @@ export default function ClinicStaffPage() {
                                 } flex items-center gap-2 w-full px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors`}
                               >
                                 <ShieldCheck className="w-4 h-4" />
-                                Manage Permissions
+                                {t('clinic.staff.actions.managePermissions')}
                               </button>
                             )}
                           </MenuItem>
@@ -358,7 +362,7 @@ export default function ClinicStaffPage() {
                                 } flex items-center gap-2 w-full px-4 py-2 text-sm text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 transition-colors`}
                               >
                                 <LogOut className="w-4 h-4" />
-                                End Session
+                                {t('clinic.staff.actions.endSession')}
                               </button>
                             )}
                           </MenuItem>
@@ -371,7 +375,7 @@ export default function ClinicStaffPage() {
                                 } flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors`}
                               >
                                 <Trash2 className="w-4 h-4" />
-                                Delete Clinic Staff
+                                {t('clinic.staff.actions.deleteStaff')}
                               </button>
                             )}
                           </MenuItem>
@@ -408,29 +412,26 @@ export default function ClinicStaffPage() {
           setShowDeleteModal(false);
           setSelectedStaffId(undefined);
         }}
-        title="Delete Staff Member"
+        title={t('clinic.staff.deleteModal.title')}
         footer={
           <div className="flex justify-end gap-3">
             <Button
               variant="secondary"
               onClick={() => setShowDeleteModal(false)}
             >
-              Cancel
+              {t('clinic.staff.deleteModal.cancel')}
             </Button>
             <Button
               variant="danger"
               onClick={handleConfirmDelete}
               isLoading={deleteClinicStaff.isPending}
             >
-              Delete Staff Member
+              {t('clinic.staff.deleteModal.confirm')}
             </Button>
           </div>
         }
       >
-        <p className="text-gray-600">
-          Are you sure you want to delete this staff member? This action cannot
-          be undone.
-        </p>
+        <p className="text-gray-600">{t('clinic.staff.deleteModal.message')}</p>
       </Modal>
       {filters?.clinicId && (
         <ClinicStaffForm

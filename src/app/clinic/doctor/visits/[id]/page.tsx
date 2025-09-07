@@ -1,6 +1,7 @@
 'use client';
 
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PageLayout from '@/components/layouts/PageLayout';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -43,6 +44,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format } from 'date-fns';
 
 const VisitDetailsPage: FC = () => {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const visitId = params?.id as string;
@@ -65,12 +67,14 @@ const VisitDetailsPage: FC = () => {
       <PageLayout>
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
           <p>
-            Failed to load visit details. {error?.message || 'Visit not found.'}
+            {t('clinic.visits.messages.failedToLoad')}{' '}
+            {error?.message || t('clinic.visits.messages.visitNotFound')}
           </p>
         </div>
         <div className="mt-4">
           <Button variant="outline" onClick={() => router.back()}>
-            <ArrowLeft className="w-4 h-4 mr-2" /> Go Back
+            <ArrowLeft className="w-4 h-4 mr-2" />{' '}
+            {t('clinic.visits.actions.goBack')}
           </Button>
         </div>
       </PageLayout>
@@ -83,34 +87,20 @@ const VisitDetailsPage: FC = () => {
 
   return (
     <PageLayout>
-      {/* Breadcrumb navigation */}
-      <div className="flex items-center text-sm text-gray-500 mb-6">
-        <button
-          onClick={() => router.push('/clinic/doctor/visits')}
-          className="hover:text-blue-600 transition-colors"
-        >
-          Visits
-        </button>
-        <span className="mx-2">/</span>
-
-        <span className="font-medium text-gray-700 dark:text-gray-400">
-          Visit #{visit.visitNumber}
-        </span>
-      </div>
-
       <Card className="overflow-hidden border-none shadow-lg mb-6">
         {/* Visit Header */}
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b py-3 dark:bg-gradient-to-r dark:from-blue-900 dark:to-purple-900 dark:bg-gradient-to-r dark:from-blue-900 dark:to-purple-900 dark:bg-gradient-to-r dark:from-blue-900 dark:to-purple-900">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b py-3 dark:bg-gradient-to-r dark:from-blue-900 dark:to-purple-900">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <div className="bg-white dark:bg-gray-800 dark:bg-gray-800 dark:bg-grdark:shadow-gray-700/30 ay-800 p-3 roundedark:shadow-gray-700/30 d-full shadow-sm dark:shadow-gray-700/30 mr-4">
-                <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400 dark:text-blue-400 dark:text-blue-400" />
+              <div className="bg-white dark:bg-gray-800 p-3 rounded-full shadow-sm dark:shadow-gray-700/30 mr-4">
+                <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100 text-gray-900 dark:text-gray-100 text-gray-900 dark:text-gray-100">
-                  Visit #{visit.visitNumber}
+                <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                  {t('clinic.visits.table.columns.visitNumber')} #
+                  {visit.visitNumber}
                 </CardTitle>
-                <p className="text-gray-500 dark:text-gray-400 dark:text-gray-400 dark:text-gray-400 flex items-center mt-1">
+                <p className="text-gray-500 dark:text-gray-400 flex items-center mt-1">
                   <Clock className="w-4 h-4 mr-1" />
                   {formattedDate}
                 </p>
@@ -128,10 +118,11 @@ const VisitDetailsPage: FC = () => {
                 onClick={() =>
                   router.push(`/clinic/doctor/visits/${visitId}/edit`)
                 }
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white dark:text-gray-100 text-white dark:text-gray-100 text-white dark:text-gray-100"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
                 size="sm"
               >
-                <Edit className="w-4 h-4 mr-2" /> Edit Visit
+                <Edit className="w-4 h-4 mr-2" />{' '}
+                {t('clinic.visits.actions.editVisit')}
               </Button>
             </div>
           </div>
@@ -144,22 +135,22 @@ const VisitDetailsPage: FC = () => {
             value={activeTab}
             onValueChange={setActiveTab}
           >
-            <div className="border-b bg-gradient-to-r from-gray-50 to-gray-100 dark:bg-gradient-to-r dark:from-gray-900 dark:to-gray-700 dark:bg-gradient-to-r dark:from-gray-900 dark:to-gray-700 dark:bg-gradient-to-r dark:from-gray-900 dark:to-gray-700">
+            <div className="border-b bg-gradient-to-r from-gray-50 to-gray-100 dark:bg-gradient-to-r dark:from-gray-900 dark:to-gray-700">
               <TabsList className="bg-transparent h-14 px-6 w-full justify-start gap-2">
                 <TabsTrigger
                   value="details"
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-t-lg data-[state=active]:border-b-0 data-[state=active]:text-blue-600 data-[state=active]:font-medium px-5 py-3 transition-all hover:bg-gray-50 hover:text-blue-500 relative dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400 dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400 dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-t-lg data-[state=active]:border-b-0 data-[state=active]:text-blue-600 data-[state=active]:font-medium px-5 py-3 transition-all hover:bg-gray-50 hover:text-blue-500 relative dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400"
                 >
                   <FileText className="w-4 h-4 mr-2" />
-                  Visit Details
+                  {t('clinic.visits.details.tabs.details')}
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 scale-x-0 data-[state=active]:scale-x-100 transition-transform"></div>
                 </TabsTrigger>
                 <TabsTrigger
                   value="medications"
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-t-lg data-[state=active]:border-b-0 data-[state=active]:text-blue-600 data-[state=active]:font-medium px-5 py-3 transition-all hover:bg-gray-50 hover:text-blue-500 relative dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400 dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400 dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-t-lg data-[state=active]:border-b-0 data-[state=active]:text-blue-600 data-[state=active]:font-medium px-5 py-3 transition-all hover:bg-gray-50 hover:text-blue-500 relative dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400"
                 >
                   <Pill className="w-4 h-4 mr-2" />
-                  Medications
+                  {t('clinic.visits.details.tabs.medications')}
                   {visit.prescriptions && visit.prescriptions.length > 0 && (
                     <span className="ml-2 bg-blue-100 text-blue-700 text-xs font-medium rounded-full px-2 py-0.5">
                       {visit.prescriptions.length}
@@ -169,10 +160,10 @@ const VisitDetailsPage: FC = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value="tests"
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-t-lg data-[state=active]:border-b-0 data-[state=active]:text-blue-600 data-[state=active]:font-medium px-5 py-3 transition-all hover:bg-gray-50 hover:text-blue-500 relative dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400 dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400 dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-t-lg data-[state=active]:border-b-0 data-[state=active]:text-blue-600 data-[state=active]:font-medium px-5 py-3 transition-all hover:bg-gray-50 hover:text-blue-500 relative dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400"
                 >
                   <Microscope className="w-4 h-4 mr-2" />
-                  Tests
+                  {t('clinic.visits.details.tabs.tests')}
                   {((visit.labTests && visit.labTests.length > 0) ||
                     (visit.radiologyTests &&
                       visit.radiologyTests.length > 0)) && (
@@ -185,10 +176,10 @@ const VisitDetailsPage: FC = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value="notes"
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-t-lg data-[state=active]:border-b-0 data-[state=active]:text-blue-600 data-[state=active]:font-medium px-5 py-3 transition-all hover:bg-gray-50 hover:text-blue-500 relative dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400 dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400 dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-t-lg data-[state=active]:border-b-0 data-[state=active]:text-blue-600 data-[state=active]:font-medium px-5 py-3 transition-all hover:bg-gray-50 hover:text-blue-500 relative dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-blue-400"
                 >
                   <FileText className="w-4 h-4 mr-2" />
-                  Clinical Notes
+                  {t('clinic.visits.details.tabs.notes')}
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 scale-x-0 data-[state=active]:scale-x-100 transition-transform"></div>
                 </TabsTrigger>
               </TabsList>
@@ -201,13 +192,15 @@ const VisitDetailsPage: FC = () => {
                   <CardHeader>
                     <div className="flex items-center">
                       <User className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
-                      <CardTitle>Patient Information</CardTitle>
+                      <CardTitle>
+                        {t('clinic.visits.details.patientInfo.title')}
+                      </CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Patient Name
+                        {t('clinic.visits.details.patientInfo.patientName')}
                       </p>
                       <p className="font-medium text-gray-900 dark:text-gray-100">
                         {visit.patientName}
@@ -215,7 +208,7 @@ const VisitDetailsPage: FC = () => {
                     </div>
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Visit Type
+                        {t('clinic.visits.details.patientInfo.visitType')}
                       </p>
                       <p className="font-medium text-gray-900 dark:text-gray-100">
                         {getVisitTypeLabel(visit.type)}
@@ -223,7 +216,7 @@ const VisitDetailsPage: FC = () => {
                     </div>
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Date & Time
+                        {t('clinic.visits.details.patientInfo.dateTime')}
                       </p>
                       <p className="font-medium text-gray-900 dark:text-gray-100">
                         {format(new Date(visit.createdAt), 'MMMM d, yyyy')} at{' '}
@@ -237,21 +230,24 @@ const VisitDetailsPage: FC = () => {
                   <CardHeader>
                     <div className="flex items-center">
                       <Stethoscope className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
-                      <CardTitle>Medical Information</CardTitle>
+                      <CardTitle>
+                        {t('clinic.visits.details.medicalInfo.title')}
+                      </CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Symptoms
+                        {t('clinic.visits.details.medicalInfo.symptoms')}
                       </p>
                       <p className="font-medium text-gray-900 dark:text-gray-100">
-                        {visit.symptoms || 'Not specified'}
+                        {visit.symptoms ||
+                          t('clinic.visits.details.medicalInfo.notSpecified')}
                       </p>
                     </div>
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Doctor
+                        {t('clinic.visits.details.medicalInfo.doctor')}
                       </p>
                       <p className="font-medium text-gray-900 dark:text-gray-100">
                         {visit.staffName}
@@ -267,7 +263,9 @@ const VisitDetailsPage: FC = () => {
                   <CardHeader>
                     <div className="flex items-center">
                       <Clipboard className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
-                      <CardTitle>Diagnoses</CardTitle>
+                      <CardTitle>
+                        {t('clinic.visits.details.diagnoses.title')}
+                      </CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -306,7 +304,7 @@ const VisitDetailsPage: FC = () => {
                       </div>
                     ) : (
                       <p className="text-gray-500 dark:text-gray-400 italic">
-                        No diagnoses recorded for this visit
+                        {t('clinic.visits.details.sections.noDiagnoses')}
                       </p>
                     )}
                   </CardContent>
@@ -319,7 +317,9 @@ const VisitDetailsPage: FC = () => {
                   <CardHeader>
                     <div className="flex items-center">
                       <Activity className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
-                      <CardTitle>Visit Summary</CardTitle>
+                      <CardTitle>
+                        {t('clinic.visits.details.summary.title')}
+                      </CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -335,10 +335,14 @@ const VisitDetailsPage: FC = () => {
                             </div>
                             <div>
                               <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                                Medications
+                                {t(
+                                  'clinic.visits.details.summary.medications.title'
+                                )}
                               </h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Prescribed drugs
+                                {t(
+                                  'clinic.visits.details.summary.medications.description'
+                                )}
                               </p>
                             </div>
                           </div>
@@ -346,7 +350,10 @@ const VisitDetailsPage: FC = () => {
                             variant="outline"
                             className="bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700"
                           >
-                            {visit.prescriptions?.length || 0} Items
+                            {visit.prescriptions?.length || 0}{' '}
+                            {t(
+                              'clinic.visits.details.summary.medications.items'
+                            )}
                           </Badge>
                         </div>
                       </div>
@@ -362,10 +369,14 @@ const VisitDetailsPage: FC = () => {
                             </div>
                             <div>
                               <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                                Lab Tests
+                                {t(
+                                  'clinic.visits.details.summary.labTests.title'
+                                )}
                               </h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Ordered lab work
+                                {t(
+                                  'clinic.visits.details.summary.labTests.description'
+                                )}
                               </p>
                             </div>
                           </div>
@@ -373,7 +384,8 @@ const VisitDetailsPage: FC = () => {
                             variant="outline"
                             className="bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700"
                           >
-                            {visit.labTests?.length || 0} Tests
+                            {visit.labTests?.length || 0}{' '}
+                            {t('clinic.visits.details.summary.labTests.tests')}
                           </Badge>
                         </div>
                       </div>
@@ -389,10 +401,14 @@ const VisitDetailsPage: FC = () => {
                             </div>
                             <div>
                               <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                                Radiology
+                                {t(
+                                  'clinic.visits.details.summary.radiology.title'
+                                )}
                               </h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Imaging tests
+                                {t(
+                                  'clinic.visits.details.summary.radiology.description'
+                                )}
                               </p>
                             </div>
                           </div>
@@ -400,7 +416,8 @@ const VisitDetailsPage: FC = () => {
                             variant="outline"
                             className="bg-amber-50 dark:bg-amber-900 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700"
                           >
-                            {visit.radiologyTests?.length || 0} Tests
+                            {visit.radiologyTests?.length || 0}{' '}
+                            {t('clinic.visits.details.summary.radiology.tests')}
                           </Badge>
                         </div>
                       </div>
@@ -415,7 +432,9 @@ const VisitDetailsPage: FC = () => {
                 <CardHeader>
                   <div className="flex items-center">
                     <Pill className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
-                    <CardTitle>Medications</CardTitle>
+                    <CardTitle>
+                      {t('clinic.visits.details.summary.medications.title')}
+                    </CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -443,7 +462,10 @@ const VisitDetailsPage: FC = () => {
                             <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                               <div>
                                 <span className="text-gray-500 dark:text-gray-400">
-                                  Dosage:
+                                  {t(
+                                    'clinic.visits.details.medications.dosage'
+                                  )}
+                                  :{' '}
                                 </span>{' '}
                                 <span className="text-gray-700 dark:text-gray-300">
                                   {medication.dosage}
@@ -451,7 +473,9 @@ const VisitDetailsPage: FC = () => {
                               </div>
                               <div>
                                 <span className="text-gray-500 dark:text-gray-400">
-                                  Duration:
+                                  {t(
+                                    'clinic.visits.details.medications.duration'
+                                  )}
                                 </span>{' '}
                                 <span className="text-gray-700 dark:text-gray-300">
                                   {medication.duration}
@@ -461,7 +485,7 @@ const VisitDetailsPage: FC = () => {
                             {medication.notes && (
                               <div className="mt-2 text-sm">
                                 <span className="text-gray-500 dark:text-gray-400">
-                                  Notes:
+                                  {t('clinic.visits.details.medications.notes')}
                                 </span>{' '}
                                 <span className="text-gray-700 dark:text-gray-300">
                                   {medication.notes}
@@ -474,7 +498,7 @@ const VisitDetailsPage: FC = () => {
                     </div>
                   ) : (
                     <p className="text-gray-500 dark:text-gray-400 italic">
-                      No medications prescribed for this visit
+                      {t('clinic.visits.details.noMedications.noMedications')}
                     </p>
                   )}
                 </CardContent>
@@ -488,7 +512,9 @@ const VisitDetailsPage: FC = () => {
                   <CardHeader>
                     <div className="flex items-center">
                       <Microscope className="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" />
-                      <CardTitle>Lab Tests</CardTitle>
+                      <CardTitle>
+                        {t('clinic.visits.details.tests.labTests.title')}
+                      </CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -513,7 +539,7 @@ const VisitDetailsPage: FC = () => {
                             {test.notes && (
                               <div className="mt-2 text-sm">
                                 <span className="text-gray-500 dark:text-gray-400">
-                                  Details:
+                                  {t('clinic.visits.details.fields.details')}:{' '}
                                 </span>{' '}
                                 <span className="text-gray-700 dark:text-gray-300">
                                   {test.notes}
@@ -525,7 +551,7 @@ const VisitDetailsPage: FC = () => {
                       </div>
                     ) : (
                       <p className="text-gray-500 dark:text-gray-400 italic">
-                        No lab tests ordered for this visit
+                        {t('clinic.visits.details.sections.noLabTests')}
                       </p>
                     )}
                   </CardContent>
@@ -536,7 +562,9 @@ const VisitDetailsPage: FC = () => {
                   <CardHeader>
                     <div className="flex items-center">
                       <Waves className="w-5 h-5 mr-2 text-amber-600 dark:text-amber-400" />
-                      <CardTitle>Radiology Tests</CardTitle>
+                      <CardTitle>
+                        {t('clinic.visits.details.tests.radiologyTests.title')}
+                      </CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -561,7 +589,7 @@ const VisitDetailsPage: FC = () => {
                             {test.notes && (
                               <div className="mt-2 text-sm">
                                 <span className="text-gray-500 dark:text-gray-400">
-                                  Details:
+                                  {t('clinic.visits.details.fields.details')}:{' '}
                                 </span>{' '}
                                 <span className="text-gray-700 dark:text-gray-300">
                                   {test.notes}
@@ -573,7 +601,7 @@ const VisitDetailsPage: FC = () => {
                       </div>
                     ) : (
                       <p className="text-gray-500 dark:text-gray-400 italic">
-                        No radiology tests ordered for this visit
+                        {t('clinic.visits.details.sections.noRadiologyTests')}
                       </p>
                     )}
                   </CardContent>
@@ -586,7 +614,9 @@ const VisitDetailsPage: FC = () => {
                 <CardHeader>
                   <div className="flex items-center">
                     <FileText className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
-                    <CardTitle>Clinical Notes</CardTitle>
+                    <CardTitle>
+                      {t('clinic.visits.details.clinicalNotes.title')}
+                    </CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -611,11 +641,17 @@ const VisitDetailsPage: FC = () => {
                         >
                           {showFullNotes ? (
                             <>
-                              <ChevronUp className="w-4 h-4 mr-2" /> Show Less
+                              <ChevronUp className="w-4 h-4 mr-2" />{' '}
+                              {t(
+                                'clinic.visits.details.clinicalNotes.showLess'
+                              )}
                             </>
                           ) : (
                             <>
-                              <ChevronDown className="w-4 h-4 mr-2" /> Show More
+                              <ChevronDown className="w-4 h-4 mr-2" />{' '}
+                              {t(
+                                'clinic.visits.details.clinicalNotes.showMore'
+                              )}
                             </>
                           )}
                         </Button>
@@ -623,7 +659,7 @@ const VisitDetailsPage: FC = () => {
                     </div>
                   ) : (
                     <p className="text-gray-500 dark:text-gray-400 italic">
-                      No clinical notes recorded for this visit
+                      {t('clinic.visits.details.clinicalNotes.noNotes')}
                     </p>
                   )}
                 </CardContent>
@@ -632,17 +668,18 @@ const VisitDetailsPage: FC = () => {
           </Tabs>
         </CardContent>
 
-        <CardFooter className="bg-gray-50 dark:bg-gray-700 dark:bg-gray-700 dark:bg-gray-700 p-4 border-t">
+        <CardFooter className="bg-gray-50 dark:bg-gray-700 p-4 border-t">
           <div className="w-full flex justify-between items-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-400 dark:text-gray-400">
-              Last updated:{' '}
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {t('clinic.visits.details.footer.lastUpdated')}
               {format(
                 new Date(visit.updatedAt || visit.createdAt),
                 'MMM d, yyyy'
               )}
             </p>
             <Button variant="outline" size="sm" onClick={() => window.print()}>
-              <FileText className="w-4 h-4 mr-2" /> Print Visit Summary
+              <FileText className="w-4 h-4 mr-2" />{' '}
+              {t('clinic.visits.details.footer.printVisitSummary')}
             </Button>
           </div>
         </CardFooter>

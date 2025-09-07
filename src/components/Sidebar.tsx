@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { FiSearch } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { filterNavItemsByPermission } from '@/utils/permissions';
 import type { NavItem } from '@/types/navigation';
@@ -39,6 +40,7 @@ export function NavigationItem({
   toggleExpand: (id: string) => void;
 }) {
   const pathname = usePathname();
+  const { t } = useTranslation();
   const isExpanded = expandedItems.includes(item.id);
   const hasChildren = Boolean(item.children?.length);
 
@@ -71,13 +73,18 @@ export function NavigationItem({
         <button
           onClick={() => toggleExpand(item.id)}
           className={classNames(
-            'w-full group flex items-center px-3 py-2.5 rounded-xl transition-all duration-300 ease-in-out',
-            'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20',
+            'w-full group flex items-center transition-all duration-300 ease-in-out',
             'hover:shadow-sm hover:scale-[1.02] active:scale-[0.98]',
+            isCollapsed
+              ? 'justify-center px-2 py-2 mx-2 rounded-lg'
+              : 'px-3 py-2.5 rounded-xl justify-between',
             isActive
-              ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25'
-              : 'text-gray-700 dark:text-gray-300',
-            isCollapsed ? 'justify-center' : 'justify-between',
+              ? isCollapsed
+                ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25'
+                : 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25'
+              : isCollapsed
+              ? 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20',
             level > 0 && !isCollapsed ? 'ml-3' : ''
           )}
         >
@@ -113,7 +120,7 @@ export function NavigationItem({
                     : 'group-hover:text-blue-700 dark:group-hover:text-blue-300'
                 )}
               >
-                {item.name}
+                {t(item.name)}
               </span>
             )}
           </div>
@@ -193,7 +200,7 @@ export function NavigationItem({
               : 'group-hover:text-blue-700 dark:group-hover:text-blue-300'
           )}
         >
-          {item.name}
+          {t(item.name)}
         </span>
       )}
     </Link>
@@ -212,6 +219,7 @@ export function NavigationSection({
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const { user } = useAuth();
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   // Memoize authorized items to prevent unnecessary recalculations
   const authorizedItems = useMemo(
@@ -287,7 +295,7 @@ export function NavigationSection({
       {!isCollapsed && (
         <div className="flex items-center justify-between px-3 mb-3">
           <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            {title}
+            {t(`navigation.sections.${title.toLowerCase()}`)}
           </h3>
           <Badge variant="secondary" className="text-xs px-2 py-0.5">
             {authorizedItems.length}
@@ -314,6 +322,7 @@ export default function Sidebar() {
   const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
   const { language, open, toggolemenue } = useLanguage();
+  const { t } = useTranslation();
 
   useEffect(() => {
     setMounted(true);
@@ -452,7 +461,7 @@ export default function Sidebar() {
               <Input
                 type="text"
                 className="pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                placeholder="Search navigation..."
+                placeholder={t('navigation.searchPlaceholder')}
               />
               <FiSearch
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-300"

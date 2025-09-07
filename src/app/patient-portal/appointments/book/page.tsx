@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, Stethoscope, User, Building, FileText } from 'lucide-react';
 import {
@@ -30,6 +31,7 @@ import {
 import { GetClinicsForDropdownDto } from '@/lib/api/types/clinic';
 
 export default function BookAppointmentPage() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const [activeStep, setActiveStep] = useState(0);
@@ -79,27 +81,27 @@ export default function BookAppointmentPage() {
   // Steps for booking process
   const steps: BookingStep[] = [
     {
-      title: 'اختيار العيادة',
+      title: t('patientPortal.appointments.booking.steps.selectClinic'),
       icon: <Building className="h-5 w-5" />,
       color: 'blue',
     },
     {
-      title: 'اختيار التخصص',
+      title: t('patientPortal.appointments.booking.steps.selectSpecialty'),
       icon: <Stethoscope className="h-5 w-5" />,
       color: 'green',
     },
     {
-      title: 'اختيار الطبيب',
+      title: t('patientPortal.appointments.booking.steps.selectDoctor'),
       icon: <User className="h-5 w-5" />,
       color: 'purple',
     },
     {
-      title: 'اختيار الموعد',
+      title: t('patientPortal.appointments.booking.steps.selectDateTime'),
       icon: <Calendar className="h-5 w-5" />,
       color: 'amber',
     },
     {
-      title: 'تأكيد الحجز',
+      title: t('patientPortal.appointments.booking.steps.confirmation'),
       icon: <FileText className="h-5 w-5" />,
       color: 'blue',
     },

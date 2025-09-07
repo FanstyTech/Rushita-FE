@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -38,6 +39,7 @@ import { useRevenue } from '@/lib/api/hooks/useRevenue';
 
 export default function FinancialDashboardPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [selectedPeriod, setSelectedPeriod] = useState<
     'week' | 'month' | 'year'
   >('month');
@@ -227,18 +229,23 @@ export default function FinancialDashboardPage() {
                   <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
                     <Wallet className="w-6 h-6" />
                   </div>
-                  <h1 className="text-3xl font-bold">لوحة التحكم المالية</h1>
+                  <h1 className="text-3xl font-bold">
+                    {t('clinic.financial.dashboard.title')}
+                  </h1>
                 </div>
                 <p className="text-blue-100 text-lg">
-                  نظرة شاملة على الأداء المالي للعيادة
+                  {t('clinic.financial.dashboard.subtitle')}
                 </p>
                 <div className="flex items-center gap-4 mt-4">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                    <span className="text-sm text-blue-100">متصل مباشر</span>
+                    <span className="text-sm text-blue-100">
+                      {t('clinic.financial.dashboard.status.liveConnection')}
+                    </span>
                   </div>
                   <div className="text-sm text-blue-100">
-                    آخر تحديث: {new Date().toLocaleTimeString('ar-EG')}
+                    {t('clinic.financial.dashboard.status.lastUpdate')}
+                    {new Date().toLocaleTimeString('ar-EG')}
                   </div>
                 </div>
               </div>
@@ -252,7 +259,7 @@ export default function FinancialDashboardPage() {
                   <RefreshCw
                     className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`}
                   />
-                  تحديث البيانات
+                  {t('clinic.financial.dashboard.actions.refreshData')}
                 </Button>
                 <div className="flex gap-2 bg-white/10 p-1 rounded-lg backdrop-blur-sm">
                   {(['week', 'month', 'year'] as const).map((period) => (
@@ -269,11 +276,7 @@ export default function FinancialDashboardPage() {
                           : 'text-white hover:bg-white/20'
                       } transition-all duration-200`}
                     >
-                      {period === 'week'
-                        ? 'أسبوع'
-                        : period === 'month'
-                        ? 'شهر'
-                        : 'سنة'}
+                      {t(`clinic.financial.dashboard.periods.${period}`)}
                     </Button>
                   ))}
                 </div>
@@ -306,13 +309,17 @@ export default function FinancialDashboardPage() {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    إجمالي الإيرادات
+                    {t(
+                      'clinic.financial.dashboard.kpiCards.totalRevenue.title'
+                    )}
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                     {formatCurrency(totalRevenue)}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    مقارنة بالفترة السابقة
+                    {t(
+                      'clinic.financial.dashboard.kpiCards.totalRevenue.description'
+                    )}
                   </p>
                 </div>
                 <div className="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 p-3 shadow-lg">
@@ -324,7 +331,9 @@ export default function FinancialDashboardPage() {
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-green-500" />
                   <span className="text-sm font-semibold text-green-600">
-                    +12.5%
+                    {t(
+                      'clinic.financial.dashboard.kpiCards.totalRevenue.trend'
+                    )}
                   </span>
                 </div>
                 <div className="w-12 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -348,13 +357,17 @@ export default function FinancialDashboardPage() {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    إجمالي المصروفات
+                    {t(
+                      'clinic.financial.dashboard.kpiCards.totalExpenses.title'
+                    )}
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                     {formatCurrency(totalExpenses)}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    انخفاض في المصروفات
+                    {t(
+                      'clinic.financial.dashboard.kpiCards.totalExpenses.description'
+                    )}
                   </p>
                 </div>
                 <div className="rounded-xl bg-red-50 dark:bg-red-900/20 p-3 shadow-lg">
@@ -366,7 +379,9 @@ export default function FinancialDashboardPage() {
                 <div className="flex items-center gap-2">
                   <TrendingDown className="w-4 h-4 text-red-500" />
                   <span className="text-sm font-semibold text-red-600">
-                    -3.2%
+                    {t(
+                      'clinic.financial.dashboard.kpiCards.totalExpenses.trend'
+                    )}
                   </span>
                 </div>
                 <div className="w-12 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -390,13 +405,15 @@ export default function FinancialDashboardPage() {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    صافي الربح
+                    {t('clinic.financial.dashboard.kpiCards.netProfit.title')}
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                     {formatCurrency(netProfit)}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    نمو مستمر في الأرباح
+                    {t(
+                      'clinic.financial.dashboard.kpiCards.netProfit.description'
+                    )}
                   </p>
                 </div>
                 <div className="rounded-xl bg-blue-50 dark:bg-blue-900/20 p-3 shadow-lg">
@@ -408,7 +425,7 @@ export default function FinancialDashboardPage() {
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-blue-500" />
                   <span className="text-sm font-semibold text-blue-600">
-                    +8.1%
+                    {t('clinic.financial.dashboard.kpiCards.netProfit.trend')}
                   </span>
                 </div>
                 <div className="w-12 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -432,13 +449,17 @@ export default function FinancialDashboardPage() {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    إجمالي الفواتير
+                    {t(
+                      'clinic.financial.dashboard.kpiCards.totalInvoices.title'
+                    )}
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                     {invoiceDashboard?.totalInvoices || 0}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    إدارة الفواتير
+                    {t(
+                      'clinic.financial.dashboard.kpiCards.totalInvoices.description'
+                    )}
                   </p>
                 </div>
                 <div className="rounded-xl bg-purple-50 dark:bg-purple-900/20 p-3 shadow-lg">
@@ -450,7 +471,10 @@ export default function FinancialDashboardPage() {
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-purple-500" />
                   <span className="text-sm font-semibold text-purple-600">
-                    {invoiceDashboard?.totalPaid || 0} مدفوعة
+                    {invoiceDashboard?.totalPaid || 0}{' '}
+                    {t(
+                      'clinic.financial.dashboard.kpiCards.totalInvoices.paidLabel'
+                    )}
                   </span>
                 </div>
                 <div className="w-12 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -467,7 +491,7 @@ export default function FinancialDashboardPage() {
           <Card className="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
             <CardHeader className="p-0 mb-4">
               <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
-                الإيرادات مقابل المصروفات
+                {t('clinic.financial.dashboard.charts.revenueVsExpenses.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -490,20 +514,24 @@ export default function FinancialDashboardPage() {
                       dataKey="revenue"
                       stroke="#10B981"
                       strokeWidth={2}
-                      name="الإيرادات"
+                      name={t(
+                        'clinic.financial.dashboard.charts.revenueVsExpenses.revenueLabel'
+                      )}
                     />
                     <Line
                       type="monotone"
                       dataKey="expenses"
                       stroke="#EF4444"
                       strokeWidth={2}
-                      name="المصروفات"
+                      name={t(
+                        'clinic.financial.dashboard.charts.revenueVsExpenses.expensesLabel'
+                      )}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
                 <div className="flex items-center justify-center h-64 text-gray-500">
-                  لا توجد بيانات متوفرة
+                  {t('clinic.financial.dashboard.emptyStates.noData')}
                 </div>
               )}
             </CardContent>
@@ -513,7 +541,7 @@ export default function FinancialDashboardPage() {
           <Card className="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
             <CardHeader className="p-0 mb-4">
               <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
-                حالة الفواتير
+                {t('clinic.financial.dashboard.charts.invoiceStatus.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -523,15 +551,21 @@ export default function FinancialDashboardPage() {
                     <Pie
                       data={[
                         {
-                          name: 'مدفوعة',
+                          name: t(
+                            'clinic.financial.dashboard.charts.invoiceStatus.paid'
+                          ),
                           value: invoiceDashboard?.totalPaid || 0,
                         },
                         {
-                          name: 'معلقة',
+                          name: t(
+                            'clinic.financial.dashboard.charts.invoiceStatus.pending'
+                          ),
                           value: invoiceDashboard?.totalUnpaid || 0,
                         },
                         {
-                          name: 'متأخرة',
+                          name: t(
+                            'clinic.financial.dashboard.charts.invoiceStatus.overdue'
+                          ),
                           value: invoiceDashboard?.overdueInvoices || 0,
                         },
                       ].filter((item) => item.value > 0)}
@@ -552,7 +586,7 @@ export default function FinancialDashboardPage() {
                 </ResponsiveContainer>
               ) : (
                 <div className="flex items-center justify-center h-64 text-gray-500">
-                  لا توجد بيانات متوفرة
+                  {t('clinic.financial.dashboard.emptyStates.noData')}
                 </div>
               )}
             </CardContent>
@@ -574,10 +608,12 @@ export default function FinancialDashboardPage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                    المعاملات الأخيرة
+                    {t('clinic.financial.dashboard.recentTransactions.title')}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    آخر العمليات المالية
+                    {t(
+                      'clinic.financial.dashboard.recentTransactions.subtitle'
+                    )}
                   </p>
                 </div>
               </div>
@@ -588,7 +624,7 @@ export default function FinancialDashboardPage() {
                 className="flex items-center gap-2 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all duration-200"
               >
                 <Eye className="w-4 h-4" />
-                عرض الكل
+                {t('clinic.financial.dashboard.recentTransactions.viewAll')}
               </Button>
             </div>
           </div>
@@ -599,7 +635,9 @@ export default function FinancialDashboardPage() {
                 {
                   id: 1,
                   date: '2024-08-23',
-                  description: 'فاتورة زيارة - أحمد محمد',
+                  description: `${t(
+                    'clinic.financial.dashboard.recentTransactions.sampleTransactions.visitInvoice'
+                  )} - أحمد محمد`,
                   type: 'revenue',
                   amount: 250,
                   status: 'completed',
@@ -607,7 +645,9 @@ export default function FinancialDashboardPage() {
                 {
                   id: 2,
                   date: '2024-08-22',
-                  description: 'شراء مستلزمات طبية',
+                  description: t(
+                    'clinic.financial.dashboard.recentTransactions.sampleTransactions.medicalSupplies'
+                  ),
                   type: 'expense',
                   amount: -450,
                   status: 'completed',
@@ -615,7 +655,9 @@ export default function FinancialDashboardPage() {
                 {
                   id: 3,
                   date: '2024-08-22',
-                  description: 'فاتورة زيارة - فاطمة علي',
+                  description: `${t(
+                    'clinic.financial.dashboard.recentTransactions.sampleTransactions.visitInvoice'
+                  )} - فاطمة علي`,
                   type: 'revenue',
                   amount: 180,
                   status: 'pending',
@@ -623,7 +665,9 @@ export default function FinancialDashboardPage() {
                 {
                   id: 4,
                   date: '2024-08-21',
-                  description: 'دفع إيجار العيادة',
+                  description: t(
+                    'clinic.financial.dashboard.recentTransactions.sampleTransactions.clinicRent'
+                  ),
                   type: 'expense',
                   amount: -2000,
                   status: 'completed',
@@ -677,7 +721,13 @@ export default function FinancialDashboardPage() {
                           : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
                       }`}
                     >
-                      {transaction.status === 'completed' ? 'مكتمل' : 'معلق'}
+                      {transaction.status === 'completed'
+                        ? t(
+                            'clinic.financial.dashboard.recentTransactions.status.completed'
+                          )
+                        : t(
+                            'clinic.financial.dashboard.recentTransactions.status.pending'
+                          )}
                     </Badge>
                   </div>
                 </motion.div>
@@ -698,7 +748,7 @@ export default function FinancialDashboardPage() {
               <BarChart3 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             </div>
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-              هامش الربح
+              {t('clinic.financial.dashboard.keyMetrics.profitMargin.title')}
             </p>
             <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
               {calculateProfitMargin().toFixed(1)}%
@@ -716,14 +766,16 @@ export default function FinancialDashboardPage() {
               <DollarSign className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
             </div>
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-              متوسط الزيارة
+              {t('clinic.financial.dashboard.keyMetrics.averageVisit.title')}
             </p>
             <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
               {formatCurrency(285)}
             </p>
             <div className="flex items-center justify-center gap-1 text-sm">
               <TrendingUp className="w-4 h-4 text-emerald-500" />
-              <span className="text-emerald-600 font-medium">+15.3%</span>
+              <span className="text-emerald-600 font-medium">
+                {t('clinic.financial.dashboard.keyMetrics.averageVisit.trend')}
+              </span>
             </div>
           </div>
 
@@ -732,7 +784,7 @@ export default function FinancialDashboardPage() {
               <Receipt className="w-8 h-8 text-purple-600 dark:text-purple-400" />
             </div>
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-              معدل التحصيل
+              {t('clinic.financial.dashboard.keyMetrics.collectionRate.title')}
             </p>
             <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
               94.2%

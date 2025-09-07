@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import {
   Building2,
   Mail,
@@ -34,7 +35,7 @@ import {
   WorkingHours,
 } from '@/lib/api/types/clinic';
 import ClinicProfileSkeleton from '@/components/skeletons/ClinicProfileSkeleton';
-import { ClinicProfileFormData, clinicProfileSchema } from './validation';
+import { ClinicProfileFormData, createClinicProfileSchema } from './validation';
 import { getDayLabel } from '@/utils/textUtils';
 
 const defaultHours: WorkingHours[] = [
@@ -83,6 +84,7 @@ const defaultHours: WorkingHours[] = [
 ];
 
 export default function ClinicProfile() {
+  const { t } = useTranslation();
   const { useClinicForEdit, createOrUpdateClinic } = useClinic();
   const [isEditing, setIsEditing] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<string>('');
@@ -111,7 +113,7 @@ export default function ClinicProfile() {
     formState: { errors, isSubmitting },
     reset,
   } = useForm<ClinicProfileFormData>({
-    resolver: zodResolver(clinicProfileSchema),
+    resolver: zodResolver(createClinicProfileSchema(t)),
     defaultValues: {
       nameL: '',
       nameF: '',
@@ -267,10 +269,10 @@ export default function ClinicProfile() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  ملف العيادة الشخصي
+                  {t('clinic.profile.title')}
                 </h1>
                 <p className="text-red-600 dark:text-red-400">
-                  Error loading clinic data: {error.message}
+                  {t('clinic.profile.errors.loadingProfile')}: {error.message}
                 </p>
               </div>
             </div>
@@ -292,10 +294,10 @@ export default function ClinicProfile() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  ملف العيادة الشخصي
+                  {t('clinic.profile.title')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  إدارة معلومات العيادة والإعدادات الأساسية
+                  {t('clinic.profile.description')}
                 </p>
               </div>
             </div>
@@ -308,7 +310,7 @@ export default function ClinicProfile() {
                     onClick={() => setIsEditing(false)}
                     className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
                   >
-                    إلغاء
+                    {t('clinic.profile.buttons.cancel')}
                   </Button>
                   <Button
                     type="submit"
@@ -316,7 +318,7 @@ export default function ClinicProfile() {
                     className="flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
-                    حفظ التغييرات
+                    {t('clinic.profile.buttons.save')}
                   </Button>
                 </>
               ) : (
@@ -326,7 +328,7 @@ export default function ClinicProfile() {
                   className="flex items-center gap-2"
                 >
                   <Edit className="w-4 h-4" />
-                  تعديل الملف
+                  {t('clinic.profile.buttons.edit')}
                 </Button>
               )}
             </div>
@@ -341,10 +343,10 @@ export default function ClinicProfile() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                المعلومات الأساسية
+                {t('clinic.profile.sections.basicInfo.title')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                معلومات العيادة الأساسية والتواصل
+                {t('clinic.profile.sections.basicInfo.description')}
               </p>
             </div>
           </div>
@@ -352,7 +354,7 @@ export default function ClinicProfile() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Input
-                label="اسم العيادة (العربية)"
+                label={t('clinic.profile.form.labels.nameArabic')}
                 {...register('nameL')}
                 disabled={!isEditing}
                 startIcon={<Building2 className="w-4 h-4" />}
@@ -362,7 +364,7 @@ export default function ClinicProfile() {
 
             <div>
               <Input
-                label="اسم العيادة (الإنجليزية)"
+                label={t('clinic.profile.form.labels.nameEnglish')}
                 {...register('nameF')}
                 disabled={!isEditing}
                 startIcon={<Building2 className="w-4 h-4" />}
@@ -372,7 +374,7 @@ export default function ClinicProfile() {
 
             <div>
               <Input
-                label="البريد الإلكتروني"
+                label={t('clinic.profile.form.labels.email')}
                 type="email"
                 {...register('email')}
                 disabled={!isEditing}
@@ -383,7 +385,7 @@ export default function ClinicProfile() {
 
             <div>
               <Input
-                label="رقم الهاتف"
+                label={t('clinic.profile.form.labels.phoneNumber')}
                 {...register('phoneNumber')}
                 disabled={!isEditing}
                 startIcon={<Phone className="w-4 h-4" />}
@@ -393,7 +395,7 @@ export default function ClinicProfile() {
 
             <div className="md:col-span-2">
               <TextArea
-                label="نبذة عن العيادة"
+                label={t('clinic.profile.form.labels.bio')}
                 {...register('bio')}
                 disabled={!isEditing}
                 rows={3}
@@ -411,10 +413,10 @@ export default function ClinicProfile() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                معلومات الموقع
+                {t('clinic.profile.sections.location.title')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                عنوان العيادة والموقع الجغرافي
+                {t('clinic.profile.sections.location.description')}
               </p>
             </div>
           </div>
@@ -422,12 +424,15 @@ export default function ClinicProfile() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Select
-                label="الدولة"
+                label={t('clinic.profile.form.labels.country')}
                 value={selectedCountry}
                 {...register('countryId')}
                 disabled={!isEditing}
                 options={[
-                  { value: '', label: 'اختر الدولة' },
+                  {
+                    value: '',
+                    label: t('clinic.profile.form.placeholders.selectCountry'),
+                  },
                   ...(countries || []).map((country: SelectOption<string>) => ({
                     value: country.value,
                     label: country.label || '',
@@ -440,12 +445,15 @@ export default function ClinicProfile() {
 
             <div>
               <Select
-                label="المدينة"
+                label={t('clinic.profile.form.labels.city')}
                 value={watchedValues.cityId}
                 {...register('cityId')}
                 disabled={!isEditing}
                 options={[
-                  { value: '', label: 'اختر المدينة' },
+                  {
+                    value: '',
+                    label: t('clinic.profile.form.placeholders.selectCity'),
+                  },
                   ...(cities || []).map((city: SelectOption<string>) => ({
                     value: city.value,
                     label: city.label || '',
@@ -457,7 +465,7 @@ export default function ClinicProfile() {
 
             <div className="md:col-span-2">
               <TextArea
-                label="العنوان الكامل"
+                label={t('clinic.profile.form.labels.address')}
                 {...register('address')}
                 disabled={!isEditing}
                 rows={2}
@@ -475,10 +483,10 @@ export default function ClinicProfile() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                ساعات العمل
+                {t('clinic.profile.sections.workingHours.title')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                تحديد أوقات عمل العيادة خلال الأسبوع
+                {t('clinic.profile.sections.workingHours.description')}
               </p>
             </div>
           </div>
@@ -511,7 +519,9 @@ export default function ClinicProfile() {
                       disabled={!isEditing}
                       className="w-40"
                     />
-                    <span className="text-gray-500">إلى</span>
+                    <span className="text-gray-500">
+                      {t('clinic.profile.workingHours.to')}
+                    </span>
                     <Input
                       type="time"
                       value={hour.closeTime}
@@ -525,7 +535,9 @@ export default function ClinicProfile() {
                 )}
 
                 {!hour.isOpen && (
-                  <span className="text-gray-500 dark:text-gray-400">مغلق</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    {t('clinic.profile.workingHours.closed')}
+                  </span>
                 )}
               </div>
             ))}
@@ -543,10 +555,10 @@ export default function ClinicProfile() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                التخصصات
+                {t('clinic.profile.sections.specialties.title')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                التخصصات الطبية المتوفرة في العيادة
+                {t('clinic.profile.sections.specialties.description')}
               </p>
             </div>
           </div>
@@ -585,10 +597,10 @@ export default function ClinicProfile() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                وسائل التواصل الاجتماعي
+                {t('clinic.profile.sections.socialMedia.title')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                روابط المواقع الاجتماعية والموقع الإلكتروني
+                {t('clinic.profile.sections.socialMedia.description')}
               </p>
             </div>
           </div>
@@ -596,66 +608,66 @@ export default function ClinicProfile() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Input
-                label="الموقع الإلكتروني"
+                label={t('clinic.profile.form.labels.website')}
                 {...register('social.website')}
                 disabled={!isEditing}
                 startIcon={<Globe className="w-4 h-4" />}
-                placeholder="https://www.example.com"
+                placeholder={t('clinic.profile.form.placeholders.website')}
                 error={errors.social?.website?.message}
               />
             </div>
 
             <div>
               <Input
-                label="فيسبوك"
+                label={t('clinic.profile.form.labels.facebook')}
                 {...register('social.facebook')}
                 disabled={!isEditing}
                 startIcon={<Facebook className="w-4 h-4" />}
-                placeholder="https://facebook.com/clinic"
+                placeholder={t('clinic.profile.form.placeholders.facebook')}
                 error={errors.social?.facebook?.message}
               />
             </div>
 
             <div>
               <Input
-                label="تويتر"
+                label={t('clinic.profile.form.labels.twitter')}
                 {...register('social.twitter')}
                 disabled={!isEditing}
                 startIcon={<Twitter className="w-4 h-4" />}
-                placeholder="https://twitter.com/clinic"
+                placeholder={t('clinic.profile.form.placeholders.twitter')}
                 error={errors.social?.twitter?.message}
               />
             </div>
 
             <div>
               <Input
-                label="إنستغرام"
+                label={t('clinic.profile.form.labels.instagram')}
                 {...register('social.instagram')}
                 disabled={!isEditing}
                 startIcon={<Instagram className="w-4 h-4" />}
-                placeholder="https://instagram.com/clinic"
+                placeholder={t('clinic.profile.form.placeholders.instagram')}
                 error={errors.social?.instagram?.message}
               />
             </div>
 
             <div>
               <Input
-                label="لينكد إن"
+                label={t('clinic.profile.form.labels.linkedin')}
                 {...register('social.linkedin')}
                 disabled={!isEditing}
                 startIcon={<Linkedin className="w-4 h-4" />}
-                placeholder="https://linkedin.com/company/clinic"
+                placeholder={t('clinic.profile.form.placeholders.linkedin')}
                 error={errors.social?.linkedin?.message}
               />
             </div>
 
             <div>
               <Input
-                label="يوتيوب"
+                label={t('clinic.profile.form.labels.youtube')}
                 {...register('social.youtube')}
                 disabled={!isEditing}
                 startIcon={<Youtube className="w-4 h-4" />}
-                placeholder="https://youtube.com/clinic"
+                placeholder={t('clinic.profile.form.placeholders.youtube')}
                 error={errors.social?.youtube?.message}
               />
             </div>

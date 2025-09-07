@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
 import PageLayout from '@/components/layouts/PageLayout';
@@ -33,6 +34,7 @@ import LabTestsSkeleton from '@/components/skeletons/LabTestsSkeleton';
 import { formatDate, formatTime } from '@/utils/dateTimeUtils';
 
 export default function RadiologyTestsPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const clinicId = user?.clinicInfo?.id || '';
 
@@ -164,116 +166,233 @@ export default function RadiologyTestsPage() {
     <PageLayout>
       <div className="space-y-6">
         {/* Dashboard Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {/* Total Tests Card */}
           <Card
             className={cn(
-              'cursor-pointer transition-all duration-200 hover:shadow-md hover:border-blue-300',
-              !filter.testStatus ? 'ring-2 ring-blue-500 shadow-md' : ''
+              'group cursor-pointer transition-all duration-300 ease-out hover:shadow-lg border border-gray-200/60 dark:border-gray-700/60 bg-white dark:bg-gray-800/50 backdrop-blur-sm',
+              !filter.testStatus
+                ? 'ring-1 ring-blue-500/30 shadow-md border-blue-200 dark:border-blue-700/50'
+                : 'hover:border-blue-300/60 dark:hover:border-blue-600/60'
             )}
             onClick={() => setFilter((prev) => ({ ...prev, testStatus: '' }))}
           >
-            <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-              <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full mb-3">
-                <TestTube className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {isSummaryLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin mx-auto" />
-                ) : (
-                  summaryStats.totalTests
+            <CardContent className="p-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-100 dark:border-blue-800/50">
+                      <TestTube className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
+                        {t('clinic.radiology.summary.cards.totalTests')}
+                      </p>
+                      <div className="h-0.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                          style={{ width: '100%' }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {isSummaryLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+                      ) : (
+                        summaryStats.totalTests.toLocaleString()
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {t('clinic.radiology.summary.cards.totalTests')}
+                    </p>
+                  </div>
+                </div>
+                {!filter.testStatus && (
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse mt-1" />
                 )}
-              </CardTitle>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Total Tests
-              </p>
+              </div>
             </CardContent>
           </Card>
 
           {/* Completed Tests Card */}
           <Card
             className={cn(
-              'cursor-pointer transition-all duration-200 hover:shadow-md hover:border-green-300',
+              'group cursor-pointer transition-all duration-300 ease-out hover:shadow-lg border border-gray-200/60 dark:border-gray-700/60 bg-white dark:bg-gray-800/50 backdrop-blur-sm',
               filter.testStatus === 'completed'
-                ? 'ring-2 ring-green-500 shadow-md'
-                : ''
+                ? 'ring-1 ring-emerald-500/30 shadow-md border-emerald-200 dark:border-emerald-700/50'
+                : 'hover:border-emerald-300/60 dark:hover:border-emerald-600/60'
             )}
             onClick={() =>
               setFilter((prev) => ({ ...prev, testStatus: 'completed' }))
             }
           >
-            <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-              <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full mb-3">
-                <ClipboardCheck className="h-6 w-6 text-green-600 dark:text-green-400" />
-              </div>
-              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {isSummaryLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin mx-auto" />
-                ) : (
-                  summaryStats.completedTests
+            <CardContent className="p-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg flex items-center justify-center border border-emerald-100 dark:border-emerald-800/50">
+                      <ClipboardCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
+                        {t('clinic.radiology.summary.cards.completed')}
+                      </p>
+                      <div className="h-0.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                          style={{
+                            width:
+                              summaryStats.totalTests > 0
+                                ? `${
+                                    (summaryStats.completedTests /
+                                      summaryStats.totalTests) *
+                                    100
+                                  }%`
+                                : '0%',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {isSummaryLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin text-emerald-500" />
+                      ) : (
+                        summaryStats.completedTests.toLocaleString()
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {t('clinic.radiology.summary.cards.completed')}
+                    </p>
+                  </div>
+                </div>
+                {filter.testStatus === 'completed' && (
+                  <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse mt-1" />
                 )}
-              </CardTitle>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Completed
-              </p>
+              </div>
             </CardContent>
           </Card>
 
           {/* In Progress Tests Card */}
           <Card
             className={cn(
-              'cursor-pointer transition-all duration-200 hover:shadow-md hover:border-blue-300',
+              'group cursor-pointer transition-all duration-300 ease-out hover:shadow-lg border border-gray-200/60 dark:border-gray-700/60 bg-white dark:bg-gray-800/50 backdrop-blur-sm',
               filter.testStatus === 'inprogress'
-                ? 'ring-2 ring-blue-500 shadow-md'
-                : ''
+                ? 'ring-1 ring-amber-500/30 shadow-md border-amber-200 dark:border-amber-700/50'
+                : 'hover:border-amber-300/60 dark:hover:border-amber-600/60'
             )}
             onClick={() =>
               setFilter((prev) => ({ ...prev, testStatus: 'inprogress' }))
             }
           >
-            <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-              <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full mb-3">
-                <Loader2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {isSummaryLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin mx-auto" />
-                ) : (
-                  summaryStats.inProgressTests
+            <CardContent className="p-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-center justify-center border border-amber-100 dark:border-amber-800/50">
+                      <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
+                        {t('clinic.radiology.summary.cards.inProgress')}
+                      </p>
+                      <div className="h-0.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-amber-500 rounded-full transition-all duration-500"
+                          style={{
+                            width:
+                              summaryStats.totalTests > 0
+                                ? `${
+                                    (summaryStats.inProgressTests /
+                                      summaryStats.totalTests) *
+                                    100
+                                  }%`
+                                : '0%',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {isSummaryLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
+                      ) : (
+                        summaryStats.inProgressTests.toLocaleString()
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {t('clinic.radiology.summary.cards.inProgress')}
+                    </p>
+                  </div>
+                </div>
+                {filter.testStatus === 'inprogress' && (
+                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse mt-1" />
                 )}
-              </CardTitle>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                In Progress
-              </p>
+              </div>
             </CardContent>
           </Card>
 
           {/* Pending Tests Card */}
           <Card
             className={cn(
-              'cursor-pointer transition-all duration-200 hover:shadow-md hover:border-amber-300',
+              'group cursor-pointer transition-all duration-300 ease-out hover:shadow-lg border border-gray-200/60 dark:border-gray-700/60 bg-white dark:bg-gray-800/50 backdrop-blur-sm',
               filter.testStatus === 'pending'
-                ? 'ring-2 ring-amber-500 shadow-md'
-                : ''
+                ? 'ring-1 ring-rose-500/30 shadow-md border-rose-200 dark:border-rose-700/50'
+                : 'hover:border-rose-300/60 dark:hover:border-rose-600/60'
             )}
             onClick={() =>
               setFilter((prev) => ({ ...prev, testStatus: 'pending' }))
             }
           >
-            <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-              <div className="bg-amber-100 dark:bg-amber-900/30 p-3 rounded-full mb-3">
-                <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-              </div>
-              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {isSummaryLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin mx-auto" />
-                ) : (
-                  summaryStats.pendingTests
+            <CardContent className="p-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 bg-rose-50 dark:bg-rose-900/20 rounded-lg flex items-center justify-center border border-rose-100 dark:border-rose-800/50">
+                      <AlertCircle className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
+                        {t('clinic.radiology.summary.cards.pending')}
+                      </p>
+                      <div className="h-0.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-rose-500 rounded-full transition-all duration-500"
+                          style={{
+                            width:
+                              summaryStats.totalTests > 0
+                                ? `${
+                                    (summaryStats.pendingTests /
+                                      summaryStats.totalTests) *
+                                    100
+                                  }%`
+                                : '0%',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {isSummaryLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin text-rose-500" />
+                      ) : (
+                        summaryStats.pendingTests.toLocaleString()
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {t('clinic.radiology.summary.cards.pending')}
+                    </p>
+                  </div>
+                </div>
+                {filter.testStatus === 'pending' && (
+                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse mt-1" />
                 )}
-              </CardTitle>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Pending
-              </p>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -291,14 +410,14 @@ export default function RadiologyTestsPage() {
               sortDirection: newFilter.sortDirection ?? prev.sortDirection,
             }));
           }}
-          searchPlaceholder="Search by patient name or test..."
+          searchPlaceholder={t('clinic.radiology.filters.searchPlaceholder')}
           haveStatusFilter={false}
           additionalFilters={[
             {
               icon: <User className="w-4 h-4" />,
-              label: 'Doctor',
+              label: t('clinic.radiology.filters.doctor'),
               options: [
-                { value: '', label: 'All Doctors' },
+                { value: '', label: t('clinic.radiology.filters.allDoctors') },
                 ...(doctors?.map((doctor: SelectOption<string>) => ({
                   value: doctor.value,
                   label: doctor.label || '',
@@ -314,7 +433,7 @@ export default function RadiologyTestsPage() {
             },
             {
               icon: <TestTube className="w-4 h-4" />,
-              label: 'Status',
+              label: t('clinic.radiology.filters.status'),
               options: Object.entries(TestStatus)
                 .filter(([key]) => isNaN(Number(key)))
                 .map(([key, value]) => ({
@@ -366,7 +485,7 @@ export default function RadiologyTestsPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-medium px-2.5 py-1 rounded-full">
-                            {visit.tests.length} Tests
+                            {visit.tests.length} {t('clinic.radiology.tests')}
                           </div>
                           <div
                             className={cn(
@@ -385,7 +504,7 @@ export default function RadiologyTestsPage() {
                         {visit.tests.map((test: RadiologyTestItemDto) => (
                           <div
                             key={test.id}
-                            className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/30 dark:hover:bg-blue-900/10 hover:shadow-sm transition-all duration-200 relative overflow-hidden"
+                            className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition-all duration-200 relative overflow-hidden"
                           >
                             <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500 dark:bg-blue-600"></div>
 
@@ -423,7 +542,7 @@ export default function RadiologyTestsPage() {
                                   onClick={() => handleViewTestDetails(test)}
                                 >
                                   <Eye className="h-3.5 w-3.5" />
-                                  View
+                                  {t('clinic.radiology.actions.view')}
                                 </Button>
                                 <Button
                                   variant="outline"
@@ -434,7 +553,7 @@ export default function RadiologyTestsPage() {
                                   }
                                 >
                                   <RefreshCw className="h-3.5 w-3.5" />
-                                  Update Status
+                                  {t('clinic.radiology.actions.updateStatus')}
                                 </Button>
                                 {test.status !== TestStatus.Completed &&
                                   test.status !== TestStatus.Cancelled && (
@@ -447,7 +566,9 @@ export default function RadiologyTestsPage() {
                                       }
                                     >
                                       <Upload className="h-3.5 w-3.5" />
-                                      Upload Results
+                                      {t(
+                                        'clinic.radiology.actions.uploadResults'
+                                      )}
                                     </Button>
                                   )}
                               </div>
@@ -466,10 +587,10 @@ export default function RadiologyTestsPage() {
                     <AlertCircle className="h-8 w-8 text-blue-400 dark:text-blue-300" />
                   </div>
                   <CardTitle className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                    No Visits Found
+                    {t('clinic.radiology.noVisitsFound.title')}
                   </CardTitle>
                   <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-                    No visits match the selected filters
+                    {t('clinic.radiology.noVisitsFound.message')}
                   </p>
                 </CardContent>
               </Card>

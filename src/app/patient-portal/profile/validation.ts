@@ -1,8 +1,143 @@
 import { FieldErrors } from 'react-hook-form';
 import * as z from 'zod';
+import { TFunction } from 'i18next';
 
-// Personal Information Schema
-export const personalInfoSchema = z.object({
+// Create dynamic validation schemas that accept translation function
+export const createPersonalInfoSchema = (t: TFunction) =>
+  z.object({
+    fNameF: z.string().min(1, {
+      message: t('patientPortal.profile.validation.firstNameRequired'),
+    }),
+    sNameF: z.string().min(1, {
+      message: t('patientPortal.profile.validation.fatherNameRequired'),
+    }),
+    tNameF: z.string().optional(),
+    lNameF: z.string().min(1, {
+      message: t('patientPortal.profile.validation.familyNameRequired'),
+    }),
+    fNameL: z.string().min(1, {
+      message: t('patientPortal.profile.validation.firstNameRequired'),
+    }),
+    sNameL: z.string().min(1, {
+      message: t('patientPortal.profile.validation.fatherNameRequired'),
+    }),
+    tNameL: z.string().optional(),
+    lNameL: z.string().min(1, {
+      message: t('patientPortal.profile.validation.familyNameRequired'),
+    }),
+    dateOfBirth: z.string().min(1, {
+      message: t('patientPortal.profile.validation.dateOfBirthRequired'),
+    }),
+    gender: z.coerce
+      .number()
+      .min(1, t('patientPortal.profile.validation.genderRequired')),
+    email: z
+      .string()
+      .email({ message: t('patientPortal.profile.validation.invalidEmail') }),
+    countryCodeId: z.string().min(1, {
+      message: t('patientPortal.profile.validation.countryCodeRequired'),
+    }),
+    phone: z.string().max(9, {
+      message: t('patientPortal.profile.validation.phoneMaxLength'),
+    }),
+    countryId: z.string().min(1, {
+      message: t('patientPortal.profile.validation.countryRequired'),
+    }),
+    cityId: z
+      .string()
+      .min(1, { message: t('patientPortal.profile.validation.cityRequired') }),
+    address: z.string().min(1, {
+      message: t('patientPortal.profile.validation.addressRequired'),
+    }),
+    preferredLanguage: z.string().min(1, {
+      message: t('patientPortal.profile.validation.preferredLanguageRequired'),
+    }),
+    idType: z.coerce.number().min(1, {
+      message: t('patientPortal.profile.validation.idTypeRequired'),
+    }),
+    idNum: z.string().min(1, {
+      message: t('patientPortal.profile.validation.idNumberRequired'),
+    }),
+    attachmentId: z.string().optional(),
+  });
+
+export const createEmergencyContactSchema = (t: TFunction) =>
+  z.object({
+    emergencyContactName: z.string().min(1, {
+      message: t(
+        'patientPortal.profile.validation.emergencyContactNameRequired'
+      ),
+    }),
+    emergencyContactRelation: z.coerce.number().min(1, {
+      message: t(
+        'patientPortal.profile.validation.emergencyContactRelationRequired'
+      ),
+    }),
+    emergencyContactPhone: z.string().min(9, {
+      message: t(
+        'patientPortal.profile.validation.emergencyContactPhoneMinLength'
+      ),
+    }),
+  });
+
+export const createMedicalInfoSchema = (t: TFunction) =>
+  z.object({
+    bloodType: z.coerce.number().min(1, {
+      message: t('patientPortal.profile.validation.bloodTypeRequired'),
+    }),
+    height: z.number().min(1, {
+      message: t('patientPortal.profile.validation.heightRequired'),
+    }),
+    weight: z.number().min(1, {
+      message: t('patientPortal.profile.validation.weightRequired'),
+    }),
+    allergies: z.string().optional(),
+    chronicDiseases: z.string().optional(),
+    medications: z.string().optional(),
+  });
+
+export const createInsuranceInfoSchema = () =>
+  z.object({
+    insuranceProvider: z.string().optional(),
+    insurancePolicyNumber: z.string().optional(),
+    insuranceExpiryDate: z.string().optional(),
+    insuranceCoverage: z.string().optional(),
+  });
+
+export const createHealthIndicatorsSchema = () =>
+  z.object({
+    bloodPressureSystolic: z.number().optional(),
+    bloodPressureDiastolic: z.number().optional(),
+    bloodPressureStatus: z.string().optional(),
+    bloodSugarValue: z.number().optional(),
+    bloodSugarStatus: z.string().optional(),
+    heartRateValue: z.number().optional(),
+    heartRateStatus: z.string().optional(),
+    cholesterolTotal: z.number().optional(),
+    cholesterolHDL: z.number().optional(),
+    cholesterolLDL: z.number().optional(),
+    cholesterolStatus: z.string().optional(),
+  });
+
+// Create dynamic profile schema
+export const createProfileSchema = (t: TFunction) => {
+  const personalInfoSchema = createPersonalInfoSchema(t);
+  const emergencyContactSchema = createEmergencyContactSchema(t);
+  const medicalInfoSchema = createMedicalInfoSchema(t);
+  const insuranceInfoSchema = createInsuranceInfoSchema();
+  const healthIndicatorsSchema = createHealthIndicatorsSchema();
+
+  return z.object({
+    ...personalInfoSchema.shape,
+    ...emergencyContactSchema.shape,
+    ...medicalInfoSchema.shape,
+    ...insuranceInfoSchema.shape,
+    ...healthIndicatorsSchema.shape,
+  });
+};
+
+// Static schemas for backward compatibility (using hardcoded Arabic messages)
+const personalInfoSchema = z.object({
   fNameF: z.string().min(1, { message: 'الاسم الأول مطلوب' }),
   sNameF: z.string().min(1, { message: 'اسم الأب مطلوب' }),
   tNameF: z.string().optional(),
@@ -27,8 +162,7 @@ export const personalInfoSchema = z.object({
   attachmentId: z.string().optional(),
 });
 
-// Emergency Contact Schema
-export const emergencyContactSchema = z.object({
+const emergencyContactSchema = z.object({
   emergencyContactName: z.string().min(1, { message: 'اسم جهة الاتصال مطلوب' }),
   emergencyContactRelation: z.coerce
     .number()
@@ -38,8 +172,7 @@ export const emergencyContactSchema = z.object({
     .min(9, { message: 'رقم الهاتف يجب أن يكون 9 أرقام على الأقل' }),
 });
 
-// Medical Information Schema
-export const medicalInfoSchema = z.object({
+const medicalInfoSchema = z.object({
   bloodType: z.coerce.number().min(1, { message: 'فصيلة الدم مطلوبة' }),
   height: z.number().min(1, { message: 'الطول مطلوب' }),
   weight: z.number().min(1, { message: 'الوزن مطلوب' }),
@@ -48,16 +181,14 @@ export const medicalInfoSchema = z.object({
   medications: z.string().optional(),
 });
 
-// Insurance Information Schema
-export const insuranceInfoSchema = z.object({
+const insuranceInfoSchema = z.object({
   insuranceProvider: z.string().optional(),
   insurancePolicyNumber: z.string().optional(),
   insuranceExpiryDate: z.string().optional(),
   insuranceCoverage: z.string().optional(),
 });
 
-// Health Indicators Schema
-export const healthIndicatorsSchema = z.object({
+const healthIndicatorsSchema = z.object({
   bloodPressureSystolic: z.number().optional(),
   bloodPressureDiastolic: z.number().optional(),
   bloodPressureStatus: z.string().optional(),
@@ -71,7 +202,7 @@ export const healthIndicatorsSchema = z.object({
   cholesterolStatus: z.string().optional(),
 });
 
-// Combined Profile Schema
+// Static profile schema for backward compatibility
 export const profileSchema = z.object({
   ...personalInfoSchema.shape,
   ...emergencyContactSchema.shape,

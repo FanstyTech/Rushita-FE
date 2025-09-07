@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   Receipt,
@@ -25,7 +27,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input, Select } from '@/components/common/form/index';
-import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useInvoice } from '@/lib/api/hooks/useInvoice';
 import { InvoiceStatus, InvoiceFilterDto } from '@/lib/api/types/invoice';
@@ -53,6 +54,7 @@ const itemVariants = {
 };
 
 export default function BillingPage() {
+  const { t } = useTranslation();
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<InvoiceStatus | ''>('');
@@ -130,12 +132,14 @@ export default function BillingPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-          <p className="text-red-500 mb-2">فشل في تحميل الفواتير</p>
+          <p className="text-red-500 mb-2">
+            {t('patientPortal.billing.list.error.title')}
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            إعادة المحاولة
+            {t('patientPortal.billing.list.error.retry')}
           </button>
         </div>
       </div>
@@ -147,22 +151,22 @@ export default function BillingPage() {
       {/* Page header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          الفواتير والمدفوعات
+          {t('patientPortal.billing.list.title')}
         </h1>
         <p className="text-muted-foreground">
-          عرض وإدارة فواتيرك الطبية والمدفوعات
+          {t('patientPortal.billing.list.description')}
         </p>
       </div>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {/* إجمالي الفواتير */}
+        {/* Total Invoices */}
         <Card className="backdrop-blur-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  إجمالي الفواتير
+                  {t('patientPortal.billing.list.stats.totalInvoices')}
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {totalInvoices}
@@ -175,13 +179,13 @@ export default function BillingPage() {
           </CardContent>
         </Card>
 
-        {/* إجمالي المبلغ */}
+        {/* Total Amount */}
         <Card className="backdrop-blur-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  إجمالي المبلغ
+                  {t('patientPortal.billing.list.stats.totalAmount')}
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {formatCurrency(totalAmount)}
@@ -194,13 +198,13 @@ export default function BillingPage() {
           </CardContent>
         </Card>
 
-        {/* المدفوع */}
+        {/* Paid */}
         <Card className="backdrop-blur-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  المدفوع
+                  {t('patientPortal.billing.list.stats.totalPaid')}
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {formatCurrency(totalPaid)}
@@ -213,13 +217,13 @@ export default function BillingPage() {
           </CardContent>
         </Card>
 
-        {/* المتبقي */}
+        {/* Unpaid */}
         <Card className="backdrop-blur-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  المتبقي
+                  {t('patientPortal.billing.list.stats.totalUnpaid')}
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {formatCurrency(totalUnpaid)}
@@ -241,11 +245,10 @@ export default function BillingPage() {
               <div>
                 <CardTitle className="text-lg font-semibold flex items-center gap-2">
                   <Filter className="h-5 w-5 text-primary" />
-                  تصفية النتائج
+                  {t('patientPortal.billing.list.filters.filter')}
                 </CardTitle>
                 <CardDescription className="mt-1">
-                  يمكنك تصفية الفواتير حسب الحالة أو التاريخ أو البحث برقم
-                  الفاتورة
+                  {t('patientPortal.billing.list.filters.description')}
                 </CardDescription>
               </div>
               <Button
@@ -255,7 +258,7 @@ export default function BillingPage() {
                 onClick={handleResetFilters}
               >
                 <X className="h-3 w-3" />
-                إعادة ضبط الفلاتر
+                {t('patientPortal.billing.list.filters.reset')}
               </Button>
             </div>
           </CardHeader>
@@ -265,8 +268,10 @@ export default function BillingPage() {
               {/* Search input */}
               <div className="space-y-2">
                 <Input
-                  label="بحث"
-                  placeholder="ابحث برقم الفاتورة..."
+                  label={t('patientPortal.billing.list.filters.search')}
+                  placeholder={t(
+                    'patientPortal.billing.list.filters.searchPlaceholder'
+                  )}
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   startIcon={<Search className="h-4 w-4" />}
@@ -277,13 +282,16 @@ export default function BillingPage() {
               {/* Status filter */}
               <div className="space-y-2">
                 <Select
-                  label="حالة الفاتورة"
+                  label={t('patientPortal.billing.list.filters.status')}
                   value={selectedStatus}
                   onChange={(e) =>
                     handleStatusFilter(e.target.value as InvoiceStatus | '')
                   }
                   options={[
-                    { value: '', label: 'جميع الحالات' },
+                    {
+                      value: '',
+                      label: t('patientPortal.billing.list.filters.statusAll'),
+                    },
                     ...Object.entries(InvoiceStatus)
                       .filter(([key]) => isNaN(Number(key)))
                       .map(([, value]) => ({
@@ -329,7 +337,8 @@ export default function BillingPage() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <h3 className="text-lg font-semibold">
-                            فاتورة رقم: {invoice.invoiceNumber}
+                            {t('patientPortal.billing.list.card.invoiceNumber')}
+                            : {invoice.invoiceNumber}
                           </h3>
                           <Badge
                             variant="outline"
@@ -343,18 +352,22 @@ export default function BillingPage() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
                           <div>
-                            <span className="font-medium">تاريخ الفاتورة:</span>
+                            <span className="font-medium">
+                              {t('patientPortal.billing.list.card.invoiceDate')}
+                              :
+                            </span>
                             <p>{formatDate(invoice.invoiceDate)}</p>
                           </div>
                           <div>
                             <span className="font-medium">
-                              تاريخ الاستحقاق:
+                              {t('patientPortal.billing.list.card.dueDate')}:
                             </span>
                             <p>{formatDate(invoice.dueDate)}</p>
                           </div>
                           <div>
                             <span className="font-medium">
-                              المبلغ الإجمالي:
+                              {t('patientPortal.billing.list.card.totalAmount')}
+                              :
                             </span>
                             <p className="font-semibold text-foreground">
                               {formatCurrency(invoice.totalAmount)}
@@ -373,7 +386,7 @@ export default function BillingPage() {
                       >
                         <Link href={`/patient-portal/billing/${invoice.id}`}>
                           <Eye className="h-4 w-4 mr-1" />
-                          عرض التفاصيل
+                          {t('patientPortal.billing.list.card.viewDetails')}
                         </Link>
                       </Button>
                       <Button
@@ -382,7 +395,7 @@ export default function BillingPage() {
                         className="border-green-500/20 text-green-500 hover:bg-green-500/10"
                       >
                         <Download className="h-4 w-4 mr-1" />
-                        تحميل PDF
+                        {t('patientPortal.billing.list.card.downloadPDF')}
                       </Button>
                     </div>
                   </div>
@@ -393,13 +406,15 @@ export default function BillingPage() {
                       <div className="flex items-center gap-2">
                         <DollarSign className="h-4 w-4 text-green-500" />
                         <span>
-                          المدفوع: {formatCurrency(invoice.paidAmount)}
+                          {t('patientPortal.billing.list.card.paidAmount')}:{' '}
+                          {formatCurrency(invoice.paidAmount)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <AlertCircle className="h-4 w-4 text-red-500" />
                         <span>
-                          المتبقي:{' '}
+                          {t('patientPortal.billing.list.card.remainingAmount')}
+                          :{' '}
                           {formatCurrency(
                             invoice.totalAmount - invoice.paidAmount
                           )}
@@ -408,15 +423,18 @@ export default function BillingPage() {
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-blue-500" />
                         <span>
-                          آخر دفعة:{' '}
+                          {t('patientPortal.billing.list.card.lastPayment')}:{' '}
                           {invoice.lastPaymentDate
                             ? formatDate(invoice.lastPaymentDate)
-                            : 'لا توجد'}
+                            : t('patientPortal.billing.list.card.noPayment')}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-purple-500" />
-                        <span>عدد الخدمات: {invoice.itemsCount || 0}</span>
+                        <span>
+                          {t('patientPortal.billing.list.card.servicesCount')}:{' '}
+                          {invoice.itemsCount || 0}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -430,9 +448,11 @@ export default function BillingPage() {
               <div className="rounded-full p-3 bg-muted/50 mx-auto mb-3 w-fit">
                 <Receipt className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-medium">لا توجد فواتير</h3>
+              <h3 className="text-lg font-medium">
+                {t('patientPortal.billing.list.empty.title')}
+              </h3>
               <p className="text-muted-foreground">
-                لم يتم العثور على فواتير تطابق معايير البحث
+                {t('patientPortal.billing.list.empty.description')}
               </p>
             </CardContent>
           </Card>

@@ -402,7 +402,7 @@ export function Sidebar({
                     >
                       <Calendar className="h-4 w-4 flex-shrink-0" />
                     </div>
-                    <span className="flex-1">
+                    <span className="flex-1 text-start">
                       {t('patientPortal.sidebar.calendar')}
                     </span>
                     <ChevronDown

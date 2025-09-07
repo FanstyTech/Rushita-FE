@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 
 interface OtpInputProps {
@@ -12,8 +11,6 @@ interface OtpInputProps {
 export function OtpInput({ value, onChange, error }: OtpInputProps) {
   const [otp, setOtp] = useState<string[]>(value.split('').slice(0, 6));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  // Default test code - 123456
-  const defaultTestCode = '123456';
 
   useEffect(() => {
     // Initialize refs array
@@ -89,18 +86,15 @@ export function OtpInput({ value, onChange, error }: OtpInputProps) {
     }
   };
 
-  // Function to fill with test code
-  const fillTestCode = () => {
-    setOtp(defaultTestCode.split(''));
-  };
-
   return (
     <div className="space-y-2">
       <div className="flex justify-center gap-2 md:gap-4 dir-ltr">
         {[0, 1, 2, 3, 4, 5].map((index) => (
           <input
             key={index}
-            ref={(el) => { inputRefs.current[index] = el; }}
+            ref={(el) => {
+              inputRefs.current[index] = el;
+            }}
             type="text"
             inputMode="numeric"
             maxLength={1}
@@ -115,16 +109,7 @@ export function OtpInput({ value, onChange, error }: OtpInputProps) {
           />
         ))}
       </div>
-      <motion.button
-        type="button"
-        className="text-primary text-xs hover:underline focus:outline-none"
-        onClick={fillTestCode}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-      >
-        استخدام رمز اختبار (123456)
-      </motion.button>
+
       {error && <p className="text-destructive text-xs text-center">{error}</p>}
     </div>
   );

@@ -9,11 +9,12 @@ import {
 } from '@/lib/api/types/clinic-patient';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
 import {
+  createFamilyHistorySchema,
   familyHistoryFormData,
-  familyHistorySchema,
   defaultfamilyHistoryValues,
 } from './validationFamilyHistory';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 
 interface AddFamilyHistoryModalProps {
   isOpen: boolean;
@@ -26,10 +27,16 @@ export const AddFamilyHistoryModal = ({
   patientId,
   onClose,
 }: AddFamilyHistoryModalProps) => {
+  const { t } = useTranslation();
+
+  // Create the schema with translations
+  const familyHistorySchema = createFamilyHistorySchema(t);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<familyHistoryFormData>({
     resolver: zodResolver(familyHistorySchema),
     defaultValues: defaultfamilyHistoryValues,
@@ -38,53 +45,56 @@ export const AddFamilyHistoryModal = ({
   const { createOrUpdateFamilyHistory } = useClinicPatients();
 
   const onSubmitHandler = async (data: familyHistoryFormData) => {
-    try {
-      const formattedData: CreateOrUpdateFamilyHistoryDto = {
-        ...data,
-        id: data.id || undefined,
-        patientId: patientId,
-      };
+    const formattedData: CreateOrUpdateFamilyHistoryDto = {
+      ...data,
+      id: data.id || undefined,
+      patientId: patientId,
+    };
 
-      await createOrUpdateFamilyHistory.mutateAsync(formattedData);
-      onClose();
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    await createOrUpdateFamilyHistory.mutateAsync(formattedData);
+    onClose();
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Family History"
+      title={t('clinic.patients.modals.addFamilyHistory.title')}
       footer={
         <div className="flex justify-end gap-3">
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t('clinic.patients.modals.addFamilyHistory.buttons.cancel')}
           </Button>
           <Button
             onClick={handleSubmit(onSubmitHandler)}
             isLoading={createOrUpdateFamilyHistory.isPending}
           >
-            Add Family History
+            {t('clinic.patients.modals.addFamilyHistory.buttons.add')}
           </Button>
         </div>
       }
     >
       <form className="space-y-4">
         <Input
-          label="Condition"
+          required={true}
+          label={t('clinic.patients.modals.addFamilyHistory.fields.condition')}
           error={errors.condition?.message}
           {...register('condition')}
         />
         <Input
-          label="AgeOfOnset"
+          type="date"
+          required={true}
+          label={t('clinic.patients.modals.addFamilyHistory.fields.ageOfOnset')}
           error={errors.ageOfOnset?.message}
           {...register('ageOfOnset')}
         />
         <Select
-          label="Relationship"
-          error={errors.status?.message}
+          required={true}
+          label={t(
+            'clinic.patients.modals.addFamilyHistory.fields.relationship'
+          )}
+          value={watch('relationship').toString()}
+          error={errors.relationship?.message}
           {...register('relationship', { valueAsNumber: true })}
           options={Object.entries(Relationship)
             .filter(([key]) => isNaN(Number(key)))
@@ -94,8 +104,10 @@ export const AddFamilyHistoryModal = ({
             }))}
         />{' '}
         <Select
-          label="Status"
+          required={true}
+          label={t('clinic.patients.modals.addFamilyHistory.fields.status')}
           error={errors.status?.message}
+          value={watch('relationship').toString()}
           {...register('status', { valueAsNumber: true })}
           options={Object.entries(FamilyHistoryStatus)
             .filter(([key]) => isNaN(Number(key)))
@@ -106,7 +118,7 @@ export const AddFamilyHistoryModal = ({
         />
         <TextArea
           rows={3}
-          label="Notes"
+          label={t('clinic.patients.modals.addFamilyHistory.fields.notes')}
           error={errors.notes?.message}
           {...register('notes')}
         />

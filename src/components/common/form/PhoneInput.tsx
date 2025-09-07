@@ -92,8 +92,10 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
                     {showFlags && option.flag && (
                       <div className="w-6 h-4 overflow-hidden rounded-sm flex items-center justify-center shadow-sm">
                         <Image
-                          src={`https://flagcdn.com/w20/${option.flag.toLocaleLowerCase()}.png`}
+                          src={`https://flagcdn.com/w20/${option.flag.toLowerCase()}.png`}
                           alt={option.label || ''}
+                          width={20}
+                          height={15}
                           className="max-w-full max-h-full object-cover"
                         />
                       </div>

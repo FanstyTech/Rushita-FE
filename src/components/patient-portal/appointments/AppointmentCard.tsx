@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,8 @@ export function AppointmentCard({
   appointment,
   variants,
 }: AppointmentCardProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div variants={variants}>
       <Card
@@ -93,7 +96,10 @@ export function AppointmentCard({
                   {appointment.notes && (
                     <div className="mt-3 text-sm flex items-start p-2 bg-muted/30 rounded-md">
                       <AlertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 text-muted-foreground" />
-                      <span>ملاحظات: {appointment.notes}</span>
+                      <span>
+                        {t('patientPortal.appointments.list.card.notes')}:{' '}
+                        {appointment.notes}
+                      </span>
                     </div>
                   )}
                 </>
@@ -110,7 +116,9 @@ export function AppointmentCard({
                   className="flex items-center gap-1.5"
                 >
                   <Calendar className="h-3 w-3" />
-                  <span>التفاصيل</span>
+                  <span>
+                    {t('patientPortal.appointments.list.card.details')}
+                  </span>
                 </Link>
               </Button>
 
@@ -121,7 +129,9 @@ export function AppointmentCard({
                   className="border-destructive/20 bg-destructive/5 hover:bg-destructive/10 text-destructive h-7 px-3 text-xs rounded-md flex items-center gap-1.5"
                 >
                   <X className="h-3 w-3" />
-                  <span>إلغاء</span>
+                  <span>
+                    {t('patientPortal.appointments.list.card.cancel')}
+                  </span>
                 </Button>
               )}
               {appointment.status === AppointmentStatus.Completed && (
@@ -131,7 +141,9 @@ export function AppointmentCard({
                   className="flex items-center gap-1.5 border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300 rounded-md px-4 py-2 h-9"
                 >
                   <Calendar className="h-3.5 w-3.5" />
-                  <span>طلب موعد متابعة</span>
+                  <span>
+                    {t('patientPortal.appointments.list.card.requestFollowUp')}
+                  </span>
                 </Button>
               )}
             </div>

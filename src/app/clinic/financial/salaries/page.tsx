@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input, Select, TextArea } from '@/components/common/form';
@@ -14,7 +15,7 @@ import { Pencil, Trash2, DollarSign, Users, Calendar } from 'lucide-react';
 import { ConfirmationModal } from '@/components/common';
 import FilterBar, { FilterState } from '@/components/common/FilterBar';
 import { useSalary } from '@/lib/api/hooks/useSalary';
-import { salarySchema, type SalaryFormData } from './validation';
+import { createSalarySchema, type SalaryFormData } from './validation';
 import { SalaryStatus, StaffSalaryListDto } from '@/lib/api/types/salary';
 import { GetClinicStaffForDropdownInput } from '@/lib/api/types/clinic-staff';
 import { useClinicStaff } from '@/lib/api/hooks/useClinicStaff';
@@ -27,6 +28,7 @@ import {
 } from '@/utils/textUtils';
 
 export default function SalariesPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const clinicId = user?.clinicInfo?.id || '';
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,7 +48,7 @@ export default function SalariesPage() {
   });
 
   const form = useForm<SalaryFormData>({
-    resolver: zodResolver(salarySchema),
+    resolver: zodResolver(createSalarySchema(t)),
     defaultValues: {
       staffId: '',
       amount: 0,
@@ -92,9 +94,20 @@ export default function SalariesPage() {
     }).format(amount);
   };
 
+  const getSalaryStatusLabel = (status: SalaryStatus) => {
+    const labels: { [key: number]: string } = {
+      [SalaryStatus.Pending]: t('clinic.financial.salaries.statuses.pending'),
+      [SalaryStatus.Paid]: t('clinic.financial.salaries.statuses.paid'),
+      [SalaryStatus.Cancelled]: t(
+        'clinic.financial.salaries.statuses.cancelled'
+      ),
+    };
+    return labels[status] || t('clinic.financial.salaries.statuses.pending');
+  };
+
   const columns: Column<StaffSalaryListDto>[] = [
     {
-      header: 'Staff Name',
+      header: t('clinic.financial.salaries.table.columns.staffName'),
       accessor: 'staffName',
       cell: ({ row }) => (
         <div>
@@ -110,7 +123,7 @@ export default function SalariesPage() {
       ),
     },
     {
-      header: 'Amount',
+      header: t('clinic.financial.salaries.table.columns.amount'),
       accessor: 'amount',
       cell: ({ row }) => (
         <span className="font-semibold text-gray-900 dark:text-white">
@@ -119,7 +132,7 @@ export default function SalariesPage() {
       ),
     },
     {
-      header: 'Salary Month',
+      header: t('clinic.financial.salaries.table.columns.salaryMonth'),
       accessor: 'salaryMonth',
       cell: ({ row }) => (
         <span className="text-gray-600 dark:text-gray-400">
@@ -128,16 +141,16 @@ export default function SalariesPage() {
       ),
     },
     {
-      header: 'Status',
+      header: t('clinic.financial.salaries.table.columns.status'),
       accessor: 'status',
       cell: ({ row }) => (
         <Badge className={getSalaryStatusColor(row.original.status)}>
-          {SalaryStatus[row.original.status]}
+          {getSalaryStatusLabel(row.original.status)}
         </Badge>
       ),
     },
     {
-      header: 'Paid Date',
+      header: t('clinic.financial.salaries.table.columns.paidDate'),
       accessor: 'paidDate',
       cell: ({ row }) => (
         <span className="text-gray-600 dark:text-gray-400">
@@ -148,7 +161,7 @@ export default function SalariesPage() {
       ),
     },
     {
-      header: 'Notes',
+      header: t('clinic.financial.salaries.table.columns.notes'),
       accessor: 'notes',
       cell: ({ row }) => (
         <span className="text-gray-600 dark:text-gray-400">
@@ -157,7 +170,7 @@ export default function SalariesPage() {
       ),
     },
     {
-      header: 'Actions',
+      header: t('clinic.financial.salaries.table.columns.actions'),
       accessor: 'id',
       cell: ({ row }) => (
         <div className="flex gap-2">
@@ -165,7 +178,7 @@ export default function SalariesPage() {
             variant="ghost"
             onClick={() => handleEdit(row.original)}
             className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-            title="Edit"
+            title={t('clinic.financial.salaries.actions.edit')}
           >
             <Pencil className="w-4 h-4" />
           </Button>
@@ -173,7 +186,7 @@ export default function SalariesPage() {
             variant="ghost"
             onClick={() => handleDelete(row.original)}
             className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-            title="Delete"
+            title={t('clinic.financial.salaries.actions.delete')}
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -254,7 +267,7 @@ export default function SalariesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Salaries
+                  {t('clinic.financial.salaries.summary.cards.totalSalaries')}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {summaryData?.totalSalaries || 0}
@@ -270,7 +283,7 @@ export default function SalariesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Amount
+                  {t('clinic.financial.salaries.summary.cards.totalAmount')}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(summaryData?.totalAmount || 0)}
@@ -286,7 +299,7 @@ export default function SalariesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Total Paid
+                  {t('clinic.financial.salaries.summary.cards.totalPaid')}
                 </p>
                 <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {formatCurrency(summaryData?.totalPaid || 0)}
@@ -302,13 +315,14 @@ export default function SalariesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Pending Salaries
+                  {t('clinic.financial.salaries.summary.cards.pendingSalaries')}
                 </p>
                 <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                   {summaryData?.pendingSalaries || 0}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {formatCurrency(summaryData?.pendingAmount || 0)} pending
+                  {formatCurrency(summaryData?.pendingAmount || 0)}{' '}
+                  {t('clinic.financial.salaries.summary.cards.pending')}
                 </p>
               </div>
               <div className="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
@@ -336,14 +350,19 @@ export default function SalariesPage() {
           additionalFilters={[
             {
               icon: <Users className="w-4 h-4" />,
-              label: 'Status',
+              label: t('clinic.financial.salaries.filters.status'),
               options: [
-                { value: '', label: 'All Statuses' },
+                {
+                  value: '',
+                  label: t('clinic.financial.salaries.filters.allStatuses'),
+                },
                 ...Object.entries(SalaryStatus)
                   .filter(([key]) => isNaN(Number(key)))
                   .map(([key, value]) => ({
                     value: value.toString(),
-                    label: key,
+                    label: t(
+                      `clinic.financial.salaries.statuses.${key.toLowerCase()}`
+                    ),
                   })),
               ],
 
@@ -379,21 +398,27 @@ export default function SalariesPage() {
         footer={
           <div className="flex justify-end gap-3">
             <Button variant="secondary" onClick={handleCloseModal}>
-              Cancel
+              {t('clinic.financial.salaries.actions.cancel')}
             </Button>
             <Button
               onClick={form.handleSubmit(onSubmit)}
               isLoading={createUpdateSalaryMutation.isPending}
             >
-              {selectedSalary ? 'Update Salary' : 'Add Salary'}
+              {selectedSalary
+                ? t('clinic.financial.salaries.actions.updateSalary')
+                : t('clinic.financial.salaries.actions.addSalary')}
             </Button>
           </div>
         }
-        title={selectedSalary ? 'Edit Salary' : 'Add New Salary'}
+        title={
+          selectedSalary
+            ? t('clinic.financial.salaries.form.title.edit')
+            : t('clinic.financial.salaries.form.title.add')
+        }
       >
         <form className="space-y-6">
           <Select
-            label="Staff Member"
+            label={t('clinic.financial.salaries.form.labels.staffMember')}
             required={true}
             value={form.watch('staffId')}
             {...form.register('staffId')}
@@ -402,7 +427,7 @@ export default function SalariesPage() {
           />
 
           <Input
-            label="Amount"
+            label={t('clinic.financial.salaries.form.labels.amount')}
             required={true}
             type="number"
             step="0.01"
@@ -413,7 +438,7 @@ export default function SalariesPage() {
           />
 
           <Input
-            label="Salary Month"
+            label={t('clinic.financial.salaries.form.labels.salaryMonth')}
             required={true}
             type="date"
             {...form.register('salaryMonth')}
@@ -421,7 +446,7 @@ export default function SalariesPage() {
           />
 
           <Select
-            label="Status"
+            label={t('clinic.financial.salaries.form.labels.status')}
             required={true}
             value={form.watch('status').toString()}
             {...form.register('status')}
@@ -430,19 +455,21 @@ export default function SalariesPage() {
               .filter(([key]) => isNaN(Number(key)))
               .map(([key, value]) => ({
                 value: value.toString(),
-                label: key,
+                label: t(
+                  `clinic.financial.salaries.statuses.${key.toLowerCase()}`
+                ),
               }))}
           />
 
           <Input
-            label="Paid Date"
+            label={t('clinic.financial.salaries.form.labels.paidDate')}
             type="date"
             {...form.register('paidDate')}
             error={form.formState.errors.paidDate?.message}
           />
 
           <TextArea
-            label="Notes"
+            label={t('clinic.financial.salaries.form.labels.notes')}
             {...form.register('notes')}
             error={form.formState.errors.notes?.message}
           />
@@ -454,11 +481,13 @@ export default function SalariesPage() {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-        title="Delete Salary"
-        message="Are you sure you want to delete this salary record?"
-        secondaryMessage="This action cannot be undone."
+        title={t('clinic.financial.salaries.deleteModal.title')}
+        message={t('clinic.financial.salaries.deleteModal.message')}
+        secondaryMessage={t(
+          'clinic.financial.salaries.deleteModal.secondaryMessage'
+        )}
         variant="error"
-        confirmText="Delete"
+        confirmText={t('clinic.financial.salaries.deleteModal.confirmText')}
         isLoading={deleteSalaryMutation.isPending}
       />
     </PageLayout>

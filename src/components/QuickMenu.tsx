@@ -10,8 +10,11 @@ import { adminNav, clinicNav, doctorNav } from '@/config/navigation';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 import { filterNavItemsByPermission } from '@/utils/permissions';
 import type { NavItem } from '@/types/navigation';
+import { useTranslation } from 'react-i18next';
 
 export default function QuickMenu() {
+  const { t } = useTranslation();
+
   const [isOpen, setIsOpen] = useState(false);
   const [navigationStack, setNavigationStack] = useState<NavItem[]>([]);
   const { user } = useAuth();
@@ -66,11 +69,11 @@ export default function QuickMenu() {
                 </div>
               </div>
               <span className="text-base font-medium text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white text-center transition-colors">
-                {item.name}
+                {t(item.name)}
               </span>
               {item.description && (
                 <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
-                  {item.description}
+                  {t(item.description)}
                 </span>
               )}
             </div>
@@ -88,7 +91,7 @@ export default function QuickMenu() {
                 </div>
               </div>
               <span className="text-base font-medium text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white text-center transition-colors">
-                {item.name}
+                {t(item.name)}
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 {item.children?.length} items
@@ -147,8 +150,8 @@ export default function QuickMenu() {
                     )}
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
                       {navigationStack.length > 0
-                        ? navigationStack[navigationStack.length - 1].name
-                        : 'Quick Menu'}
+                        ? t(navigationStack[navigationStack.length - 1].name)
+                        : t('navigation.quickMenu')}
                     </h2>
                   </div>
                   <button

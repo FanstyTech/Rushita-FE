@@ -435,7 +435,247 @@ const schema = z.object({
 });
 ```
 
-### 3. Multi-language Validation
+### 3. Multilingual Form Validation
+
+For forms that need to support multiple languages, validation messages should be dynamically translated using the `useTranslation` hook. This ensures that validation errors appear in the user's selected language.
+
+#### Step 1: Create Translation Keys
+
+First, add validation message translations to your locale files:
+
+```typescript
+// src/i18n/locales/en/clinic/financial.ts
+export const financial = {
+  expenses: {
+    validation: {
+      expenseTypeRequired: 'Expense type is required',
+      expenseTypeInvalid: 'Invalid expense type',
+      amountRequired: 'Amount is required',
+      amountMinimum: 'Amount must be greater than 0',
+      dateRequired: 'Date is required',
+    },
+  },
+};
+
+// src/i18n/locales/ar/clinic/financial.ts
+export const financial = {
+  expenses: {
+    validation: {
+      expenseTypeRequired: 'نوع المصروف مطلوب',
+      expenseTypeInvalid: 'نوع المصروف غير صحيح',
+      amountRequired: 'المبلغ مطلوب',
+      amountMinimum: 'يجب أن يكون المبلغ أكبر من 0',
+      dateRequired: 'التاريخ مطلوب',
+    },
+  },
+};
+
+// src/i18n/locales/es/clinic/financial.ts
+export const financial = {
+  expenses: {
+    validation: {
+      expenseTypeRequired: 'El tipo de gasto es requerido',
+      expenseTypeInvalid: 'Tipo de gasto inválido',
+      amountRequired: 'La cantidad es requerida',
+      amountMinimum: 'La cantidad debe ser mayor que 0',
+      dateRequired: 'La fecha es requerida',
+    },
+  },
+};
+```
+
+#### Step 2: Create Dynamic Validation Schema
+
+Create a function that generates the validation schema using the translation function:
+
+```typescript
+// validation.ts
+import { z } from 'zod';
+import { TFunction } from 'i18next';
+import { ExpenseType } from '@/lib/api/types/expense';
+
+export const createExpenseSchema = (t: TFunction) =>
+  z.object({
+    expenseType: z.coerce
+      .number({
+        required_error: t(
+          'clinic.financial.expenses.validation.expenseTypeRequired'
+        ),
+        invalid_type_error: t(
+          'clinic.financial.expenses.validation.expenseTypeInvalid'
+        ),
+      })
+      .refine(
+        (val) => Object.values(ExpenseType).includes(val as ExpenseType),
+        {
+          message: t('clinic.financial.expenses.validation.expenseTypeInvalid'),
+        }
+      ),
+    amount: z
+      .number()
+      .min(0.01, t('clinic.financial.expenses.validation.amountMinimum')),
+    expenseDate: z
+      .string()
+      .min(1, t('clinic.financial.expenses.validation.dateRequired')),
+    description: z.string().optional(),
+  });
+
+// Legacy export for backward compatibility (optional)
+export const expenseSchema = z.object({
+  expenseType: z.coerce
+    .number({
+      required_error: 'Expense type is required',
+      invalid_type_error: 'Expense type must be a number',
+    })
+    .refine((val) => Object.values(ExpenseType).includes(val as ExpenseType), {
+      message: 'Invalid expense type',
+    }),
+  amount: z.number().min(0.01, 'Amount must be greater than 0'),
+  expenseDate: z.string().min(1, 'Date is required'),
+  description: z.string().optional(),
+});
+
+export type ExpenseFormData = z.infer<typeof expenseSchema>;
+```
+
+#### Step 3: Use Dynamic Schema in Form Component
+
+Use the dynamic schema function in your form component:
+
+```typescript
+// ExpenseForm.tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
+import { createExpenseSchema, ExpenseFormData } from './validation';
+
+export default function ExpenseForm() {
+  const { t } = useTranslation();
+
+  const form = useForm<ExpenseFormData>({
+    resolver: zodResolver(createExpenseSchema(t)), // Pass translation function
+    defaultValues: {
+      expenseType: ExpenseType.Rent,
+      amount: 0,
+      expenseDate: '',
+      description: '',
+    },
+  });
+
+  // Rest of component...
+}
+```
+
+#### Step 4: Best Practices for Multilingual Validation
+
+1. **Consistent Translation Keys**: Use a consistent naming pattern for validation keys:
+
+   ```typescript
+   // Pattern: [module].[submodule].[form].validation.[fieldName][ValidationRule]
+   'clinic.financial.expenses.validation.expenseTypeRequired';
+   'clinic.financial.expenses.validation.amountMinimum';
+   'clinic.patients.allergies.validation.nameRequired';
+   ```
+
+2. **Function-based Schema Creation**: Always create schemas using functions that accept the translation function:
+
+   ```typescript
+   // ✅ Good - Dynamic translation
+   export const createSchema = (t: TFunction) =>
+     z.object({
+       name: z.string().min(1, t('validation.nameRequired')),
+     });
+
+   // ❌ Bad - Static translation keys
+   export const schema = z.object({
+     name: z.string().min(1, 'validation.nameRequired'),
+   });
+   ```
+
+3. **Validation Message Structure**: Organize validation messages in a clear hierarchy:
+
+   ```typescript
+   export const module = {
+     submodule: {
+       validation: {
+         fieldNameRequired: 'Field name is required',
+         fieldNameMinLength: 'Field name must be at least {min} characters',
+         fieldNameMaxLength: 'Field name must be at most {max} characters',
+         fieldNameInvalid: 'Invalid field name format',
+       },
+     },
+   };
+   ```
+
+4. **Parameterized Messages**: For validation messages that need dynamic values:
+
+   ```typescript
+   // In translation files
+   validation: {
+     minLength: 'Must be at least {{min}} characters',
+     maxLength: 'Must be at most {{max}} characters',
+     between: 'Must be between {{min}} and {{max}}',
+   }
+
+   // In validation schema
+   export const createSchema = (t: TFunction) => z.object({
+     name: z.string()
+       .min(3, t('validation.minLength', { min: 3 }))
+       .max(50, t('validation.maxLength', { max: 50 })),
+     age: z.number()
+       .min(18, t('validation.between', { min: 18, max: 120 }))
+       .max(120, t('validation.between', { min: 18, max: 120 })),
+   });
+   ```
+
+5. **Error Display**: Ensure error messages are properly displayed in forms:
+
+   ```typescript
+   // Form component
+   const {
+     register,
+     formState: { errors },
+   } = useForm({
+     resolver: zodResolver(createSchema(t)),
+   });
+
+   return (
+     <Input
+       label={t('form.labels.name')}
+       {...register('name')}
+       error={errors.name?.message} // This will show translated error
+     />
+   );
+   ```
+
+6. **Testing Multilingual Validation**: Test validation in all supported languages:
+   ```typescript
+   // Test example
+   describe('Expense Form Validation', () => {
+     it('should show Arabic validation messages', () => {
+       // Change language to Arabic
+       i18n.changeLanguage('ar');
+
+       // Test validation
+       const schema = createExpenseSchema(i18n.t);
+       const result = schema.safeParse({ amount: 0 });
+
+       expect(result.error?.issues[0].message).toBe(
+         'يجب أن يكون المبلغ أكبر من 0'
+       );
+     });
+   });
+   ```
+
+#### Common Pitfalls to Avoid
+
+1. **Using Static Translation Keys**: Don't use translation keys directly in Zod schemas
+2. **Forgetting to Pass Translation Function**: Always pass `t` to schema creation functions
+3. **Inconsistent Key Naming**: Use consistent patterns for translation keys
+4. **Missing Translations**: Ensure all validation messages are translated in all supported languages
+5. **Not Testing Different Languages**: Test validation in all supported languages
+
+### 4. Multi-language Validation (Legacy Pattern)
 
 ```typescript
 const schema = z.object({

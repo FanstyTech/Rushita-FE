@@ -3,7 +3,39 @@ import {
   Relationship,
   FamilyHistoryStatus,
 } from '@/lib/api/types/clinic-patient';
+import { TFunction } from 'i18next';
 
+export const createFamilyHistorySchema = (t: TFunction) =>
+  z.object({
+    id: z.string().optional(),
+    condition: z.string().min(1, {
+      message: t(
+        'clinic.patients.modals.addFamilyHistory.validation.conditionRequired'
+      ),
+    }),
+    ageOfOnset: z.string().min(1, {
+      message: t(
+        'clinic.patients.modals.addFamilyHistory.validation.ageOfOnsetRequired'
+      ),
+    }),
+    relationship: z
+      .number()
+      .min(
+        1,
+        t(
+          'clinic.patients.modals.addFamilyHistory.validation.relationshipRequired'
+        )
+      ),
+    status: z
+      .number()
+      .min(
+        1,
+        t('clinic.patients.modals.addFamilyHistory.validation.statusRequired')
+      ),
+    notes: z.string().optional(),
+  });
+
+// Legacy export for backward compatibility
 export const familyHistorySchema = z.object({
   id: z.string().optional(),
   condition: z.string().min(1, {

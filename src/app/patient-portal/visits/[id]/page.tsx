@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import {
   Calendar,
   Clock,
@@ -247,6 +248,7 @@ function VisitDetailsSkeleton() {
 }
 
 export default function VisitDetailsPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const visitId = params?.id as string;
 
@@ -281,17 +283,21 @@ export default function VisitDetailsPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
         <AlertCircle className="h-16 w-16 text-destructive mb-4" />
-        <h1 className="text-2xl font-bold mb-2">خطأ في تحميل البيانات</h1>
+        <h1 className="text-2xl font-bold mb-2">
+          {t('patientPortal.visits.details.error.title')}
+        </h1>
         <p className="text-muted-foreground mb-6">
-          حدث خطأ أثناء تحميل تفاصيل الزيارة. يرجى المحاولة مرة أخرى.
+          {t('patientPortal.visits.details.error.message')}
         </p>
         <div className="flex gap-2">
           <Button onClick={() => window.location.reload()}>
             <Loader2 className="h-4 w-4 mr-2" />
-            إعادة المحاولة
+            {t('patientPortal.visits.details.error.retry')}
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/patient-portal/visits">العودة إلى الزيارات</Link>
+            <Link href="/patient-portal/visits">
+              {t('patientPortal.visits.details.error.backToVisits')}
+            </Link>
           </Button>
         </div>
       </div>
@@ -308,13 +314,16 @@ export default function VisitDetailsPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
         <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-        <h1 className="text-2xl font-bold mb-2">الزيارة غير موجودة</h1>
+        <h1 className="text-2xl font-bold mb-2">
+          {t('patientPortal.visits.details.notFound.title')}
+        </h1>
         <p className="text-muted-foreground mb-6">
-          لم يتم العثور على الزيارة المطلوبة. قد تكون تم حذفها أو أن الرابط غير
-          صحيح.
+          {t('patientPortal.visits.details.notFound.message')}
         </p>
         <Button asChild>
-          <Link href="/patient-portal/visits">العودة إلى الزيارات</Link>
+          <Link href="/patient-portal/visits">
+            {t('patientPortal.visits.details.notFound.backToVisits')}
+          </Link>
         </Button>
       </div>
     );
@@ -337,15 +346,17 @@ export default function VisitDetailsPage() {
         >
           <Link href="/patient-portal/visits">
             <ArrowLeft className="h-4 w-4" />
-            <span className="sr-only">العودة</span>
+            <span className="sr-only">
+              {t('patientPortal.visits.details.backButton')}
+            </span>
           </Link>
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            تفاصيل الزيارة الطبية
+            {t('patientPortal.visits.details.title')}
           </h1>
           <p className="text-muted-foreground">
-            عرض تفاصيل الزيارة والتشخيص والوصفات الطبية
+            {t('patientPortal.visits.details.subtitle')}
           </p>
         </div>
       </motion.div>
@@ -358,16 +369,16 @@ export default function VisitDetailsPage() {
             className="grid grid-cols-4 mb-5 w-full sm:w-auto h-full"
           >
             <TabsTrigger value="details" className="py-4">
-              التفاصيل
+              {t('patientPortal.visits.details.tabs.details')}
             </TabsTrigger>
             <TabsTrigger value="medications" className="py-4">
-              الأدوية
+              {t('patientPortal.visits.details.tabs.medications')}
             </TabsTrigger>
             <TabsTrigger value="lab-tests" className="py-4">
-              الفحوصات المخبريه
+              {t('patientPortal.visits.details.tabs.labTests')}
             </TabsTrigger>
             <TabsTrigger value="ray-tests" className="py-4">
-              فحوصات الاشعه
+              {t('patientPortal.visits.details.tabs.rayTests')}
             </TabsTrigger>
           </TabsList>
 
@@ -377,7 +388,7 @@ export default function VisitDetailsPage() {
               <CardHeader className="bg-muted/30 backdrop-blur-sm">
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-primary" />
-                  معلومات الزيارة
+                  {t('patientPortal.visits.details.tabs.detailsTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -385,7 +396,7 @@ export default function VisitDetailsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-muted/20 backdrop-blur-sm rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200">
                     <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                      معلومات الزيارة
+                      {t('patientPortal.visits.details.visitInfo')}
                     </h3>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
@@ -393,7 +404,9 @@ export default function VisitDetailsPage() {
                           <Calendar className="h-5 w-5 text-blue-500" />
                         </div>
                         <div>
-                          <p className="font-medium">التاريخ</p>
+                          <p className="font-medium">
+                            {t('patientPortal.visits.details.date')}
+                          </p>
                           <p className="text-muted-foreground">
                             {formatDate(visit.createdAt)}
                           </p>
@@ -405,7 +418,9 @@ export default function VisitDetailsPage() {
                           <Clock className="h-5 w-5 text-blue-500" />
                         </div>
                         <div>
-                          <p className="font-medium">الوقت</p>
+                          <p className="font-medium">
+                            {t('patientPortal.visits.details.time')}
+                          </p>
                           <p className="text-muted-foreground">
                             {formatTime(visit.createdAt)}
                           </p>
@@ -417,7 +432,9 @@ export default function VisitDetailsPage() {
                           <FileText className="h-5 w-5 text-blue-500" />
                         </div>
                         <div>
-                          <p className="font-medium">رقم الزيارة</p>
+                          <p className="font-medium">
+                            {t('patientPortal.visits.details.visitNumber')}
+                          </p>
                           <p className="text-muted-foreground">
                             {visit.visitNumber}
                           </p>
@@ -429,7 +446,7 @@ export default function VisitDetailsPage() {
                   {/* Doctor and clinic info */}
                   <div className="bg-muted/20 backdrop-blur-sm rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200">
                     <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                      معلومات الطبيب والعيادة
+                      {t('patientPortal.visits.details.doctorInfo')}
                     </h3>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
@@ -437,7 +454,9 @@ export default function VisitDetailsPage() {
                           <User className="h-5 w-5 text-blue-500" />
                         </div>
                         <div>
-                          <p className="font-medium">الطبيب</p>
+                          <p className="font-medium">
+                            {t('patientPortal.visits.details.doctor')}
+                          </p>
                           <p className="text-muted-foreground">
                             {visit.doctorName}
                             {visit.doctorSpecialization &&
@@ -451,7 +470,9 @@ export default function VisitDetailsPage() {
                           <Building className="h-5 w-5 text-blue-500" />
                         </div>
                         <div>
-                          <p className="font-medium">العيادة</p>
+                          <p className="font-medium">
+                            {t('patientPortal.visits.details.clinic')}
+                          </p>
                           <p className="text-muted-foreground">
                             {visit.clinicName}
                           </p>
@@ -464,7 +485,11 @@ export default function VisitDetailsPage() {
                             <Calendar className="h-5 w-5 text-blue-500" />
                           </div>
                           <div>
-                            <p className="font-medium">رقم الموعد</p>
+                            <p className="font-medium">
+                              {t(
+                                'patientPortal.visits.details.appointmentNumber'
+                              )}
+                            </p>
                             <p className="text-muted-foreground">
                               {visit.appointmentNumber}
                             </p>
@@ -479,7 +504,7 @@ export default function VisitDetailsPage() {
                 <div className="my-6">
                   <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
                     <div className="h-6 w-1 bg-primary rounded-full"></div>
-                    الأعراض والملاحظات
+                    {t('patientPortal.visits.details.symptomsAndNotes')}
                   </h3>
 
                   <div className="grid grid-cols-1 gap-4">
@@ -489,7 +514,9 @@ export default function VisitDetailsPage() {
                           <div className="rounded-full p-1.5 bg-amber-500/10">
                             <Activity className="h-4 w-4 text-amber-500" />
                           </div>
-                          <p className="font-medium">الأعراض</p>
+                          <p className="font-medium">
+                            {t('patientPortal.visits.details.symptoms')}
+                          </p>
                         </div>
                         <p className="text-muted-foreground">
                           {visit.symptoms}
@@ -503,7 +530,9 @@ export default function VisitDetailsPage() {
                           <div className="rounded-full p-1.5 bg-blue-500/10">
                             <FileText className="h-4 w-4 text-blue-500" />
                           </div>
-                          <p className="font-medium">ملاحظات الطبيب</p>
+                          <p className="font-medium">
+                            {t('patientPortal.visits.details.notes')}
+                          </p>
                         </div>
                         <p className="text-muted-foreground">{visit.notes}</p>
                       </div>
@@ -515,7 +544,11 @@ export default function VisitDetailsPage() {
                           <div className="rounded-full p-1.5 bg-green-500/10">
                             <Calendar className="h-4 w-4 text-green-500" />
                           </div>
-                          <p className="font-medium">تعليمات المتابعة</p>
+                          <p className="font-medium">
+                            {t(
+                              'patientPortal.visits.details.followUpInstructions'
+                            )}
+                          </p>
                         </div>
                         <p className="text-muted-foreground">
                           {visit.followUpInstructions}
@@ -530,7 +563,7 @@ export default function VisitDetailsPage() {
                   <div className="mb-6">
                     <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
                       <div className="h-6 w-1 bg-primary rounded-full"></div>
-                      التشخيصات
+                      {t('patientPortal.visits.details.diagnoses')}
                     </h3>
                     <div className="grid grid-cols-1 gap-4">
                       {visit.diagnoses.map((diagnosis) => (
@@ -557,7 +590,7 @@ export default function VisitDetailsPage() {
                   <div>
                     <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
                       <div className="h-6 w-1 bg-primary rounded-full"></div>
-                      موعد المتابعة
+                      {t('patientPortal.visits.details.followUp')}
                     </h3>
                     <div className="bg-muted/20 backdrop-blur-sm rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 border border-border/30">
                       <div className="flex items-center gap-3 mb-3">
@@ -586,7 +619,7 @@ export default function VisitDetailsPage() {
               <CardHeader className="bg-muted/30 backdrop-blur-sm">
                 <CardTitle className="flex items-center gap-2">
                   <Pill className="h-5 w-5 text-primary" />
-                  الأدوية الموصوفة
+                  {t('patientPortal.visits.details.medicationsTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -632,7 +665,9 @@ export default function VisitDetailsPage() {
                               <div className="rounded-full p-1 bg-amber-500/10">
                                 <Info className="h-3.5 w-3.5 text-amber-500" />
                               </div>
-                              <p className="text-sm font-medium">ملاحظات</p>
+                              <p className="text-sm font-medium">
+                                {t('patientPortal.visits.details.notes')}
+                              </p>
                             </div>
                             <p className="text-sm text-muted-foreground">
                               {med.notes}
@@ -648,10 +683,10 @@ export default function VisitDetailsPage() {
                       <Pill className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <h3 className="font-medium text-lg mb-1">
-                      لا توجد أدوية موصوفة
+                      {t('patientPortal.visits.details.noMedications')}
                     </h3>
                     <p className="text-muted-foreground">
-                      لم يتم وصف أي أدوية في هذه الزيارة
+                      {t('patientPortal.visits.details.noMedicationsMessage')}
                     </p>
                   </div>
                 )}
@@ -659,7 +694,7 @@ export default function VisitDetailsPage() {
               <CardFooter className="bg-muted/30 backdrop-blur-sm border-t border-border/50 flex justify-end">
                 <Button variant="outline" size="sm" className="gap-1">
                   <Printer className="h-4 w-4" />
-                  طباعة الوصفة الطبية
+                  {t('patientPortal.visits.details.printPrescription')}
                 </Button>
               </CardFooter>
             </Card>
@@ -671,7 +706,7 @@ export default function VisitDetailsPage() {
               <CardHeader className="bg-muted/30 backdrop-blur-sm">
                 <CardTitle className="flex items-center gap-2">
                   <FlaskConical className="h-5 w-5 text-primary" />
-                  الفحوصات المخبريه
+                  {t('patientPortal.visits.details.labTestsTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -717,7 +752,7 @@ export default function VisitDetailsPage() {
                                   <Calendar className="h-3.5 w-3.5 text-amber-500" />
                                 </div>
                                 <p className="text-sm font-medium">
-                                  تاريخ الفحص
+                                  {t('patientPortal.visits.details.testDate')}
                                 </p>
                               </div>
                               <p className="text-sm text-muted-foreground">
@@ -732,7 +767,7 @@ export default function VisitDetailsPage() {
                                 <div className="rounded-full p-1 bg-green-500/10">
                                   <FileText className="h-3.5 w-3.5 text-green-500" />
                                 </div>
-                                <p className="text-sm font-medium">النتائج</p>
+                                <p className="text-sm font-medium">{t('patientPortal.visits.details.results')}</p>
                               </div>
                               <p className="text-sm text-muted-foreground">
                                 {test.results}
@@ -748,7 +783,9 @@ export default function VisitDetailsPage() {
                                 <div className="rounded-full p-1 bg-amber-500/10">
                                   <Info className="h-3.5 w-3.5 text-amber-500" />
                                 </div>
-                                <p className="text-sm font-medium">ملاحظات</p>
+                                <p className="text-sm font-medium">
+                                  {t('patientPortal.visits.details.notes')}
+                                </p>
                               </div>
                               <p className="text-sm text-muted-foreground">
                                 {test.notes}
@@ -765,7 +802,7 @@ export default function VisitDetailsPage() {
                               className="gap-1"
                             >
                               <Download className="h-3.5 w-3.5" />
-                              تحميل التقرير
+                              {t('patientPortal.visits.details.downloadReport')}
                             </Button>
                           </div>
                         )}
@@ -778,10 +815,10 @@ export default function VisitDetailsPage() {
                       <FlaskConical className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <h3 className="font-medium text-lg mb-1">
-                      لا توجد فحوصات مطلوبة
+                      {t('patientPortal.visits.details.noLabTests')}
                     </h3>
                     <p className="text-muted-foreground">
-                      لم يتم طلب أي فحوصات في هذه الزيارة
+                      {t('patientPortal.visits.details.noLabTestsMessage')}
                     </p>
                   </div>
                 )}
@@ -795,7 +832,7 @@ export default function VisitDetailsPage() {
               <CardHeader className="bg-muted/30 backdrop-blur-sm">
                 <CardTitle className="flex items-center gap-2">
                   <Scan className="h-5 w-5 text-primary" />
-                  فحوصات الاشعه
+                  {t('patientPortal.visits.details.rayTestsTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -839,7 +876,9 @@ export default function VisitDetailsPage() {
                                 <div className="rounded-full p-1 bg-amber-500/10">
                                   <Info className="h-3.5 w-3.5 text-amber-500" />
                                 </div>
-                                <p className="text-sm font-medium">ملاحظات</p>
+                                <p className="text-sm font-medium">
+                                  {t('patientPortal.visits.details.notes')}
+                                </p>
                               </div>
                               <p className="text-sm text-muted-foreground">
                                 {test.notes}
@@ -856,7 +895,7 @@ export default function VisitDetailsPage() {
                               className="gap-1"
                             >
                               <Download className="h-3.5 w-3.5" />
-                              تحميل التقرير
+                              {t('patientPortal.visits.details.downloadReport')}
                             </Button>
                           </div>
                         )}
@@ -869,10 +908,10 @@ export default function VisitDetailsPage() {
                       <FlaskConical className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <h3 className="font-medium text-lg mb-1">
-                      لا توجد صور اشعه مطلوبة
+                      {t('patientPortal.visits.details.noRayTests')}
                     </h3>
                     <p className="text-muted-foreground">
-                      لم يتم طلب أي صور اشعه في هذه الزيارة
+                      {t('patientPortal.visits.details.noRayTestsMessage')}
                     </p>
                   </div>
                 )}
@@ -887,18 +926,18 @@ export default function VisitDetailsPage() {
         <Button variant="outline" asChild>
           <Link href="/patient-portal/visits">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            العودة إلى الزيارات
+            {t('patientPortal.visits.details.backToVisits')}
           </Link>
         </Button>
 
         <div className="flex gap-2">
           <Button variant="outline">
             <Share2 className="h-4 w-4 mr-2" />
-            مشاركة
+            {t('patientPortal.visits.details.share')}
           </Button>
           <Button variant="outline">
             <Printer className="h-4 w-4 mr-2" />
-            طباعة
+            {t('patientPortal.visits.details.print')}
           </Button>
         </div>
       </div>

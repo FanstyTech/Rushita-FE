@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Table, type Column } from '@/components/common/Table';
 import { ActivitySquare, Eye, MoreVertical } from 'lucide-react';
@@ -16,6 +17,7 @@ import FilterBar, { FilterState } from '@/components/common/FilterBar';
 import { useAuth } from '@/lib/api/hooks/useAuth';
 
 export default function PharmacyPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const clinicId = user?.clinicInfo?.id || '';
   // States
@@ -38,25 +40,25 @@ export default function PharmacyPage() {
 
   const columns: Column<VisitListDto>[] = [
     {
-      header: 'Visit #',
+      header: t('clinic.pharmacy.table.visitNumber'),
       accessor: 'visitNumber',
     },
     {
-      header: 'Patient Name',
+      header: t('clinic.pharmacy.table.patientName'),
       accessor: 'patientName',
     },
     {
-      header: 'Doctor',
+      header: t('clinic.pharmacy.table.doctor'),
       accessor: 'staffName',
     },
     {
-      header: 'Date',
+      header: t('clinic.pharmacy.table.date'),
       accessor: 'createdAt',
       cell: ({ row }) =>
         new Date(row.original.createdAt).toLocaleDateString('en-SA'),
     },
     {
-      header: 'Type',
+      header: t('clinic.pharmacy.table.type'),
       accessor: 'type',
       cell: ({ row }) => {
         const visitType = row.original.type;
@@ -64,7 +66,7 @@ export default function PharmacyPage() {
       },
     },
     {
-      header: 'Status',
+      header: t('clinic.pharmacy.table.status'),
       accessor: 'currentStatus',
       cell: ({ row }) => {
         const status = row.original.currentStatus;
@@ -88,14 +90,14 @@ export default function PharmacyPage() {
           <Link
             href={`/clinic/doctor/visits/${row.original.id}`}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
-            title="View details"
+            title={t('clinic.pharmacy.actions.viewDetails')}
           >
             <Eye className="w-4 h-4 text-gray-600" />
           </Link>
           <Link
             href={`/clinic/doctor/visits/${row.original.id}/edit`}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
-            title="Edit visit"
+            title={t('clinic.pharmacy.actions.editVisit')}
           >
             <MoreVertical className="w-4 h-4 text-gray-600" />
           </Link>
@@ -124,9 +126,9 @@ export default function PharmacyPage() {
           additionalFilters={[
             {
               icon: <ActivitySquare className="w-4 h-4" />,
-              label: 'Status',
+              label: t('clinic.pharmacy.filters.status'),
               options: [
-                { value: '', label: 'All Status' },
+                { value: '', label: t('clinic.pharmacy.filters.allStatus') },
                 ...(Object.entries(VisitStatus)
                   .filter(([key]) => isNaN(Number(key)))
                   .map(([key, value]) => ({

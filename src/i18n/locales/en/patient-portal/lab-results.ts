@@ -1,0 +1,118 @@
+export const labResults = {
+  list: {
+    title: 'Lab Results',
+    description: 'View and manage your laboratory test results',
+    filters: {
+      search: 'Search Results',
+      searchPlaceholder: 'Search for test name, doctor, clinic...',
+      description: 'You can filter results by status, type or search by name',
+      status: 'Status',
+      statusAll: 'All Statuses',
+      type: 'Test Type',
+      typeAll: 'All Types',
+    },
+    actions: {
+      filter: 'Filter',
+      reset: 'Reset Filters',
+      export: 'Export',
+      print: 'Print',
+      download: 'Download',
+      viewDetails: 'View Details',
+    },
+    stats: {
+      total: 'Total Tests',
+      completed: 'Completed Tests',
+      pending: 'Pending Tests',
+      abnormal: 'Abnormal Results',
+    },
+    card: {
+      testNumber: 'Test #',
+      doctor: 'Doctor',
+      specialty: 'Specialty',
+      clinic: 'Clinic',
+      requestDate: 'Request Date',
+      resultDate: 'Result Date',
+      abnormalFlags: 'abnormal results',
+      criticalFlags: 'critical results',
+      notes: 'Notes',
+    },
+    status: {
+      completed: 'Completed',
+      pending: 'Pending',
+      inProgress: 'In Progress',
+      cancelled: 'Cancelled',
+    },
+    empty: {
+      title: 'No Lab Results Found',
+      description: 'No lab results were found matching your search criteria.',
+      action: 'Clear Filters',
+    },
+    error: {
+      title: 'Failed to Load Lab Results',
+      description:
+        'An error occurred while loading lab results. Please try again.',
+      retry: 'Retry',
+    },
+    loading: 'Loading lab results...',
+  },
+  details: {
+    title: 'Lab Result Details',
+    backToList: 'Back to Results',
+    subtitle: 'Detailed laboratory test results and analysis',
+    notFound: {
+      title: 'Lab Result Not Found',
+      description: 'The requested lab result was not found',
+      backButton: 'Back',
+      message:
+        'The requested lab result was not found. The result may have been deleted or the link is incorrect.',
+      viewAllButton: 'View All Lab Results',
+    },
+    tabs: {
+      details: 'Test Details',
+      results: 'Results',
+      notes: 'Notes',
+    },
+    testInfo: {
+      testCode: 'Test Code:',
+      requestDate: 'Request Date:',
+      resultDate: 'Result Date:',
+      status: 'Status:',
+      testType: 'Test Type:',
+      abnormalResults: 'Abnormal Results:',
+      criticalResults: 'Critical Results:',
+      criteria: 'criteria',
+    },
+    sections: {
+      testInformation: 'Test Information',
+      testStatus: 'Test Status',
+      testResults: 'Test Results',
+      notesRecommendations: 'Notes and Recommendations',
+      visitInformation: 'Visit Information',
+    },
+    results: {
+      title: 'Test Results',
+      processing: 'Results Processing',
+      processingDescription:
+        'Detailed results will be available after test completion',
+    },
+    notes: {
+      title: 'Notes and Recommendations',
+      noNotes: 'No Notes Available',
+      noNotesDescription: 'No special notes have been added for this test',
+    },
+    visitInfo: {
+      visitNumber: 'Visit Number',
+      clinic: 'Clinic',
+      specialty: 'Specialty',
+    },
+    error: {
+      title: 'Error Loading Lab Result',
+      description: 'Failed to load lab result details',
+      notFound: 'The requested lab result was not found.',
+      retry: 'Retry',
+      backToList: 'Back to List',
+      loadingFailed: 'Failed to load lab result details. Please try again.',
+    },
+    loading: 'Loading lab result details...',
+  },
+};

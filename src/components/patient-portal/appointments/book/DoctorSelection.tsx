@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User } from 'lucide-react';
 import { SelectOption } from '@/lib/api/types/select-option';
+import { useTranslation } from 'react-i18next';
 
 interface DoctorSelectionProps {
   doctors: SelectOption<string>[];
@@ -39,6 +40,8 @@ export function DoctorSelection({
   onDoctorSelect,
   onPrevStep,
 }: DoctorSelectionProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       variants={containerVariants}
@@ -46,7 +49,9 @@ export function DoctorSelection({
       animate="show"
       className="space-y-4"
     >
-      <h2 className="text-xl font-semibold">اختر الطبيب</h2>
+      <h2 className="text-xl font-semibold">
+        {t('patientPortal.appointments.booking.doctorSelection.title')}
+      </h2>
       {doctors.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {doctors.map((doctor) => (
@@ -82,12 +87,20 @@ export function DoctorSelection({
         <Card className="backdrop-blur-sm bg-card/80 border border-border/50">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <User className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium">لم يتم العثور على أطباء</h3>
+            <h3 className="text-lg font-medium">
+              {t(
+                'patientPortal.appointments.booking.doctorSelection.emptyState.title'
+              )}
+            </h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              لم يتم العثور على أطباء في هذا التخصص، يرجى اختيار تخصص آخر
+              {t(
+                'patientPortal.appointments.booking.doctorSelection.emptyState.message'
+              )}
             </p>
             <Button className="mt-4" onClick={onPrevStep}>
-              العودة لاختيار التخصص
+              {t(
+                'patientPortal.appointments.booking.doctorSelection.emptyState.backButton'
+              )}
             </Button>
           </CardContent>
         </Card>

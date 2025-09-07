@@ -97,7 +97,7 @@ export function Table<T>({
                 <th
                   key={index}
                   scope="col"
-                  className={`px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-gray-800/80 ${
+                  className={`px-6 py-4 text-start text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-gray-800/80 ${
                     column.className || ''
                   }`}
                 >

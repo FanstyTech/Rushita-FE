@@ -1,8 +1,10 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
+import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import {
   User2,
   Phone,
@@ -21,14 +23,20 @@ import {
   Eye,
   Share2,
   Upload,
-  ActivitySquare,
   Plus,
+  ActivitySquare,
+  ArrowLeft,
 } from 'lucide-react';
-import { format } from 'date-fns';
-import Avatar from '@/components/common/Avatar';
-import Button from '@/components/common/Button';
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
+
 import PageLayout from '@/components/layouts/PageLayout';
 import { useClinicPatients } from '@/lib/api/hooks/useClinicPatients';
+import {
+  AddConditionModal,
+  AddAllergyModal,
+  AddFamilyHistoryModal,
+} from '@/components/clinic/patients/modals';
+
 import {
   getAppointmentStatusClass,
   getAppointmentStatusLabel,
@@ -38,56 +46,61 @@ import {
   getSeverityClass,
   getSeverityLabel,
 } from '@/utils/textUtils';
-import PatientProfileSkeleton from '@/components/skeletons/PatientProfileSkeleton';
-import { useState } from 'react';
-import {
-  AddConditionModal,
-  AddAllergyModal,
-  AddFamilyHistoryModal,
-} from '@/components/clinic/patients/modals';
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
+import PatientProfileSkeleton from '@/components/skeletons/PatientProfileSkeleton';
+import { twMerge } from 'tailwind-merge';
 
 export default function PatientProfilePage() {
-  const { id } = useParams();
+  const params = useParams();
+  const router = useRouter();
+  const { t } = useTranslation();
+  const { id } = params;
+
   const { usePatientProfile } = useClinicPatients();
   const { data: patient, isLoading, error } = usePatientProfile(id as string);
 
   const tabs = [
-    { name: 'Overview', icon: Activity },
-    { name: 'Medical History', icon: Heart },
-    { name: 'Appointments', icon: Calendar },
-    { name: 'Documents', icon: FileText },
+    { name: t('clinic.patients.profile.tabs.overview'), icon: Activity },
+    { name: t('clinic.patients.profile.tabs.medicalHistory'), icon: Heart },
+    { name: t('clinic.patients.profile.tabs.appointments'), icon: Calendar },
+    { name: t('clinic.patients.profile.tabs.documents'), icon: FileText },
   ];
 
+  // Modal states
   const [isAddConditionOpen, setIsAddConditionOpen] = useState(false);
   const [isAddAllergyOpen, setIsAddAllergyOpen] = useState(false);
   const [isAddFamilyHistoryOpen, setIsAddFamilyHistoryOpen] = useState(false);
 
   if (isLoading) {
-    return (
-      <PageLayout>
-        <div className="container mx-auto px-4 py-8">
-          <PatientProfileSkeleton />
-        </div>
-      </PageLayout>
-    );
+    return <PatientProfileSkeleton />;
   }
 
   if (error) {
     return (
-      <PageLayout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900">
-              Error Loading Profile
-            </h3>
-            <p className="text-sm text-gray-500 mt-2">
-              Failed to load patient profile. Please try again.
-            </p>
+      <PageLayout
+        title={t('clinic.patients.profile.errors.loadingProfile')}
+        description={t(
+          'clinic.patients.profile.errors.loadingProfileDescription'
+        )}
+      >
+        <div className="text-center py-12">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <AlertCircle className="w-16 h-16 text-red-500" />
+            <div>
+              <h3 className="text-lg font-medium text-gray-900">
+                {t('clinic.patients.profile.errors.loadingProfile')}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {t('clinic.patients.profile.errors.loadingProfileDescription')}
+              </p>
+            </div>
+            <button
+              onClick={() => router.push('/clinic/patients')}
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {t('clinic.patients.actions.view')}
+            </button>
           </div>
         </div>
       </PageLayout>
@@ -96,15 +109,30 @@ export default function PatientProfilePage() {
 
   if (!patient) {
     return (
-      <PageLayout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h3 className="text-lg font-medium text-gray-900">
-              Patient Not Found
-            </h3>
-            <p className="text-sm text-gray-500 mt-2">
-              The requested patient profile could not be found.
-            </p>
+      <PageLayout
+        title={t('clinic.patients.profile.errors.patientNotFound')}
+        description={t(
+          'clinic.patients.profile.errors.patientNotFoundDescription'
+        )}
+      >
+        <div className="text-center py-12">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <User2 className="w-16 h-16 text-gray-300" />
+            <div>
+              <h3 className="text-lg font-medium text-gray-900">
+                {t('clinic.patients.profile.errors.patientNotFound')}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {t('clinic.patients.profile.errors.patientNotFoundDescription')}
+              </p>
+            </div>
+            <button
+              onClick={() => router.push('/clinic/patients')}
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {t('clinic.patients.actions.view')}
+            </button>
           </div>
         </div>
       </PageLayout>
@@ -114,78 +142,49 @@ export default function PatientProfilePage() {
   return (
     <PageLayout>
       <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row items-start gap-6">
-          {/* Avatar Section */}
-          <div className="relative">
-            <Avatar
-              name={patient.fullName ?? ''}
-              className="ring-4 ring-white shadow-xl"
-            />
-          </div>
-
-          {/* Patient Info */}
-          <div className="flex-1">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {patient.fullName}
-                </h1>
-                <div className="mt-1 flex items-center gap-4 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <User2 className="w-4 h-4" />
-                    {patient.gender}
-                  </span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {patient.dateOfBirth
-                      ? format(new Date(patient.dateOfBirth), 'MMM d, yyyy')
-                      : '-'}
-                  </span>
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-8">
+          <div className="flex items-start gap-6">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="relative"
+            >
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                <User2 className="w-10 h-10 text-white" />
+              </div>
+              <motion.div
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [1, 0.6, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center"
+              >
+                <Activity className="w-3 h-3 text-white" />
+              </motion.div>
+            </motion.div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {patient.fullName}
+              </h1>
+              <div className="mt-2 space-y-1">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Phone className="w-4 h-4" />
+                  <span>{patient.phoneNumber}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Mail className="w-4 h-4" />
+                  <span>{patient.email}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <MapPin className="w-4 h-4" />
+                  <span>{patient.address}</span>
                 </div>
               </div>
-              <div className="flex gap-3">
-                <Button className=" px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm">
-                  New Appointment
-                </Button>
-              </div>
-            </div>
-
-            {/* Contact Grid */}
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {patient.phoneNumber && (
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Phone className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-xs text-gray-500">Phone</p>
-                    <p className="text-sm font-medium text-gray-900">
-                      {patient.phoneNumber}
-                    </p>
-                  </div>
-                </div>
-              )}
-              {patient.email && (
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Mail className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-xs text-gray-500">Email</p>
-                    <p className="text-sm font-medium text-gray-900">
-                      {patient.email}
-                    </p>
-                  </div>
-                </div>
-              )}
-              {patient.address && (
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <MapPin className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-xs text-gray-500">Address</p>
-                    <p className="text-sm font-medium text-gray-900">
-                      {patient.address}
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -198,7 +197,7 @@ export default function PatientProfilePage() {
                 <Tab
                   key={tab.name}
                   className={({ selected }) =>
-                    classNames(
+                    twMerge(
                       'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
                       'flex items-center justify-center gap-2',
                       selected
@@ -217,16 +216,22 @@ export default function PatientProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Quick Stats */}
                   <div className="space-y-4">
-                    <h3 className="font-medium text-gray-900">Quick Stats</h3>
+                    <h3 className="font-medium text-gray-900">
+                      {t('clinic.patients.profile.overview.quickStats')}
+                    </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-gray-50 rounded-lg p-4">
-                        <p className="text-sm text-gray-500">Total Visits</p>
+                        <p className="text-sm text-gray-500">
+                          {t('clinic.patients.profile.overview.totalVisits')}
+                        </p>
                         <p className="text-2xl font-semibold text-gray-900">
                           {patient.stats?.totalVisits}
                         </p>
                       </div>
                       <div className="bg-gray-50 rounded-lg p-4">
-                        <p className="text-sm text-gray-500">Last Visit</p>
+                        <p className="text-sm text-gray-500">
+                          {t('clinic.patients.profile.overview.lastVisit')}
+                        </p>
                         <p className="text-sm font-medium text-gray-900">
                           {patient.stats?.lastVisit
                             ? format(
@@ -242,7 +247,7 @@ export default function PatientProfilePage() {
                   {/* Recent Activity */}
                   <div className="space-y-4">
                     <h3 className="font-medium text-gray-900">
-                      Recent Activity
+                      {t('clinic.patients.profile.overview.recentActivity')}
                     </h3>
                     <div className="space-y-3">
                       {patient.recentActivity?.map((activity) => (
@@ -271,10 +276,14 @@ export default function PatientProfilePage() {
                             <Clock className="w-12 h-12 text-gray-300" />
                             <div>
                               <p className="text-gray-600 font-medium">
-                                No Recent Activity
+                                {t(
+                                  'clinic.patients.profile.overview.noRecentActivity'
+                                )}
                               </p>
                               <p className="text-sm text-gray-400">
-                                Patient has no recorded activities yet
+                                {t(
+                                  'clinic.patients.profile.overview.noRecentActivityDescription'
+                                )}
                               </p>
                             </div>
                           </div>
@@ -304,7 +313,9 @@ export default function PatientProfilePage() {
                           <Activity className="w-5 h-5 text-blue-600" />
                         </motion.div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          Medical Conditions
+                          {t(
+                            'clinic.patients.profile.medicalHistory.conditions'
+                          )}
                         </h3>
                       </div>
                       <motion.button
@@ -329,7 +340,9 @@ export default function PatientProfilePage() {
                         >
                           <Plus className="w-5 h-5 stroke-[3]" />
                         </motion.div>
-                        <span className="sr-only">Add Condition</span>
+                        <span className="sr-only">
+                          {t('clinic.patients.profile.buttons.addCondition')}
+                        </span>
                       </motion.button>
                     </div>
                     <div className="space-y-3">
@@ -382,10 +395,14 @@ export default function PatientProfilePage() {
                             <ActivitySquare className="w-12 h-12 text-gray-300" />
                             <div>
                               <p className="text-gray-600 font-medium">
-                                No Medical Conditions
+                                {t(
+                                  'clinic.patients.profile.medicalHistory.noConditions'
+                                )}
                               </p>
                               <p className="text-sm text-gray-400">
-                                No medical conditions have been recorded
+                                {t(
+                                  'clinic.patients.profile.medicalHistory.noConditionsDescription'
+                                )}
                               </p>
                             </div>
                           </div>
@@ -409,7 +426,9 @@ export default function PatientProfilePage() {
                           <AlertTriangle className="w-5 h-5 text-red-600" />
                         </motion.div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          Allergies
+                          {t(
+                            'clinic.patients.profile.medicalHistory.allergies'
+                          )}
                         </h3>
                       </div>
                       <motion.button
@@ -434,7 +453,9 @@ export default function PatientProfilePage() {
                         >
                           <Plus className="w-5 h-5 stroke-[3]" />
                         </motion.div>
-                        <span className="sr-only">Add Allergy</span>
+                        <span className="sr-only">
+                          {t('clinic.patients.profile.buttons.addAllergy')}
+                        </span>
                       </motion.button>
                     </div>
                     <div className="space-y-3">
@@ -477,10 +498,14 @@ export default function PatientProfilePage() {
                             <AlertCircle className="w-12 h-12 text-gray-300" />
                             <div>
                               <p className="text-gray-600 font-medium">
-                                No Allergies
+                                {t(
+                                  'clinic.patients.profile.medicalHistory.noAllergies'
+                                )}
                               </p>
                               <p className="text-sm text-gray-400">
-                                No allergies have been recorded
+                                {t(
+                                  'clinic.patients.profile.medicalHistory.noAllergiesDescription'
+                                )}
                               </p>
                             </div>
                           </div>
@@ -506,7 +531,9 @@ export default function PatientProfilePage() {
                         <Pill className="w-5 h-5 text-purple-600" />
                       </motion.div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        Current Medications
+                        {t(
+                          'clinic.patients.profile.medicalHistory.medications'
+                        )}
                       </h3>
                     </div>
                     <div className="space-y-3">
@@ -516,27 +543,35 @@ export default function PatientProfilePage() {
                             <tr className="bg-gray-50">
                               <th
                                 scope="col"
-                                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900"
+                                className="py-3.5 pl-4 pr-3 text-start text-sm font-semibold text-gray-900"
                               >
-                                Medication
+                                {t(
+                                  'clinic.patients.profile.medicalHistory.medicationHeaders.medication'
+                                )}
                               </th>
                               <th
                                 scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                className="px-3 py-3.5 text-start text-sm font-semibold text-gray-900"
                               >
-                                Dosage
+                                {t(
+                                  'clinic.patients.profile.medicalHistory.medicationHeaders.dosage'
+                                )}
                               </th>
                               <th
                                 scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                className="px-3 py-3.5 text-start text-sm font-semibold text-gray-900"
                               >
-                                Frequency
+                                {t(
+                                  'clinic.patients.profile.medicalHistory.medicationHeaders.frequency'
+                                )}
                               </th>
                               <th
                                 scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                className="px-3 py-3.5 text-start text-sm font-semibold text-gray-900"
                               >
-                                Started
+                                {t(
+                                  'clinic.patients.profile.medicalHistory.medicationHeaders.started'
+                                )}
                               </th>
                             </tr>
                           </thead>
@@ -579,10 +614,14 @@ export default function PatientProfilePage() {
                               <Pill className="w-12 h-12 text-gray-300" />
                               <div>
                                 <p className="text-gray-600 font-medium">
-                                  No Medications
+                                  {t(
+                                    'clinic.patients.profile.medicalHistory.noMedications'
+                                  )}
                                 </p>
                                 <p className="text-sm text-gray-400">
-                                  No medications have been prescribed
+                                  {t(
+                                    'clinic.patients.profile.medicalHistory.noMedicationsDescription'
+                                  )}
                                 </p>
                               </div>
                             </div>
@@ -607,7 +646,9 @@ export default function PatientProfilePage() {
                           <Users className="w-5 h-5 text-green-600" />
                         </motion.div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          Family History
+                          {t(
+                            'clinic.patients.profile.medicalHistory.familyHistory'
+                          )}
                         </h3>
                       </div>
                       <motion.button
@@ -632,7 +673,11 @@ export default function PatientProfilePage() {
                         >
                           <Plus className="w-5 h-5 stroke-[3]" />
                         </motion.div>
-                        <span className="sr-only">Add Family History</span>
+                        <span className="sr-only">
+                          {t(
+                            'clinic.patients.profile.buttons.addFamilyHistory'
+                          )}
+                        </span>
                       </motion.button>
                     </div>
                     <div className="space-y-3">
@@ -661,10 +706,14 @@ export default function PatientProfilePage() {
                             <Users className="w-12 h-12 text-gray-300" />
                             <div>
                               <p className="text-gray-600 font-medium">
-                                No Family History
+                                {t(
+                                  'clinic.patients.profile.medicalHistory.noFamilyHistory'
+                                )}
                               </p>
                               <p className="text-sm text-gray-400">
-                                No family medical history recorded
+                                {t(
+                                  'clinic.patients.profile.medicalHistory.noFamilyHistoryDescription'
+                                )}
                               </p>
                             </div>
                           </div>
@@ -695,28 +744,38 @@ export default function PatientProfilePage() {
                           <Calendar className="w-5 h-5 text-blue-600" />
                         </motion.div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          Upcoming Appointments
+                          {t('clinic.patients.profile.appointments.upcoming')}
                         </h3>
                       </div>
                       <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200">
                           <thead className="bg-gray-50">
                             <tr>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Date & Time
+                              <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {t(
+                                  'clinic.patients.profile.appointments.headers.dateTime'
+                                )}
                               </th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Type
+                              <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {t(
+                                  'clinic.patients.profile.appointments.headers.type'
+                                )}
                               </th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Doctor
+                              <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {t(
+                                  'clinic.patients.profile.appointments.headers.doctor'
+                                )}
                               </th>
 
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status
+                              <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {t(
+                                  'clinic.patients.profile.appointments.headers.status'
+                                )}
                               </th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Notes
+                              <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {t(
+                                  'clinic.patients.profile.appointments.headers.notes'
+                                )}
                               </th>
                             </tr>
                           </thead>
@@ -764,10 +823,14 @@ export default function PatientProfilePage() {
                               <Calendar className="w-12 h-12 text-gray-300" />
                               <div>
                                 <p className="text-gray-600 font-medium">
-                                  No Appointments
+                                  {t(
+                                    'clinic.patients.profile.appointments.noAppointments'
+                                  )}
                                 </p>
                                 <p className="text-sm text-gray-400">
-                                  No upcoming appointments scheduled
+                                  {t(
+                                    'clinic.patients.profile.appointments.noAppointmentsDescription'
+                                  )}
                                 </p>
                               </div>
                             </div>
@@ -799,7 +862,7 @@ export default function PatientProfilePage() {
                           <FileText className="w-5 h-5 text-blue-600" />
                         </motion.div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          Medical Documents
+                          {t('clinic.patients.profile.documents.title')}
                         </h3>
                       </div>
                       <div className="grid grid-cols-1 gap-4">
@@ -872,10 +935,14 @@ export default function PatientProfilePage() {
                               <FileText className="w-12 h-12 text-gray-300" />
                               <div>
                                 <p className="text-gray-600 font-medium">
-                                  No Documents
+                                  {t(
+                                    'clinic.patients.profile.documents.noDocuments'
+                                  )}
                                 </p>
                                 <p className="text-sm text-gray-400">
-                                  No medical documents have been uploaded
+                                  {t(
+                                    'clinic.patients.profile.documents.noDocumentsDescription'
+                                  )}
                                 </p>
                               </div>
                               <button
@@ -883,7 +950,7 @@ export default function PatientProfilePage() {
                                 className="mt-2 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                               >
                                 <Upload className="w-4 h-4 mr-2" />
-                                Upload Document
+                                {t('clinic.patients.profile.buttons.uploaded')}
                               </button>
                             </div>
                           </div>

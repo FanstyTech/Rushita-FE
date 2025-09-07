@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -49,6 +50,8 @@ export function AppointmentsFilters({
   onTabChange,
   onResetFilters,
 }: AppointmentsFiltersProps) {
+  const { t } = useTranslation();
+
   return (
     <Card className="border-primary/10 shadow-sm">
       <CardHeader className="bg-primary/5 pb-4">
@@ -56,10 +59,10 @@ export function AppointmentsFilters({
           <div>
             <CardTitle className="text-lg font-semibold flex items-center gap-2">
               <Filter className="h-5 w-5 text-primary" />
-              تصفية المواعيد
+              {t('patientPortal.appointments.list.filters.title')}
             </CardTitle>
             <CardDescription className="mt-1">
-              يمكنك تصفية المواعيد حسب التخصص والحالة
+              {t('patientPortal.appointments.list.filters.subtitle')}
             </CardDescription>
           </div>
           <Button
@@ -69,7 +72,7 @@ export function AppointmentsFilters({
             onClick={onResetFilters}
           >
             <X className="h-3 w-3" />
-            إعادة ضبط الفلاتر
+            {t('patientPortal.appointments.list.filters.resetFilters')}
           </Button>
         </div>
       </CardHeader>
@@ -81,11 +84,13 @@ export function AppointmentsFilters({
               className="flex items-center gap-1 text-sm font-medium"
             >
               <Search className="h-3.5 w-3.5 text-primary" />
-              بحث
+              {t('patientPortal.appointments.list.filters.search')}
             </Label>
             <Input
               id="search"
-              placeholder="ابحث عن طبيب أو تخصص..."
+              placeholder={t(
+                'patientPortal.appointments.list.filters.searchPlaceholder'
+              )}
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               startIcon={<Search className="h-4 w-4 text-muted-foreground" />}
@@ -95,11 +100,18 @@ export function AppointmentsFilters({
 
           <div className="space-y-2">
             <Select
-              label="Specialty"
+              label={t(
+                'patientPortal.appointments.list.filters.specialtyLabel'
+              )}
               value={selectedSpecialty}
               onChange={(e) => onSpecialtyChange(e.target.value)}
               options={[
-                { value: '', label: 'Select Specialty' },
+                {
+                  value: '',
+                  label: t(
+                    'patientPortal.appointments.list.filters.selectSpecialty'
+                  ),
+                },
                 ...(specialties?.map((specialty: SelectOption<string>) => ({
                   value: specialty.value,
                   label: specialty.label || '',
@@ -110,9 +122,14 @@ export function AppointmentsFilters({
           <div className="space-y-2">
             <Select
               value={selectedStatus}
-              label="Appointment status "
+              label={t('patientPortal.appointments.list.filters.statusLabel')}
               options={[
-                { value: 'all', label: 'All' },
+                {
+                  value: 'all',
+                  label: t(
+                    'patientPortal.appointments.list.filters.allStatuses'
+                  ),
+                },
                 ...Object.entries(AppointmentStatus)
                   .filter(([key]) => isNaN(Number(key)))
                   .map(([, value]) => ({
@@ -131,8 +148,13 @@ export function AppointmentsFilters({
           <div className="flex items-center gap-1">
             <Calendar className="h-4 w-4" />
             <span>
-              {filteredAppointmentsCount} موعد{' '}
-              {activeTab === 'upcoming' ? 'قادم' : 'سابق'}
+              {t('patientPortal.appointments.list.filters.appointmentCount', {
+                count: filteredAppointmentsCount,
+                type:
+                  activeTab === 'upcoming'
+                    ? t('patientPortal.appointments.list.filters.upcoming')
+                    : t('patientPortal.appointments.list.filters.past'),
+              })}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -143,7 +165,7 @@ export function AppointmentsFilters({
               onClick={() => onTabChange('upcoming')}
             >
               <ChevronLeft className="h-3 w-3" />
-              المواعيد القادمة
+              {t('patientPortal.appointments.list.filters.upcomingTab')}
             </Button>
             <Button
               variant="outline"
@@ -152,7 +174,7 @@ export function AppointmentsFilters({
               onClick={() => onTabChange('past')}
             >
               <ChevronRight className="h-3 w-3" />
-              المواعيد السابقة
+              {t('patientPortal.appointments.list.filters.pastTab')}
             </Button>
           </div>
         </div>

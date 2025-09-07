@@ -46,6 +46,7 @@ import { Pagination, usePagination } from '@/components/ui/pagination';
 import { getTestStatusColor, getTestStatusLabel } from '@/utils/textUtils';
 import { useLabTestCategory } from '@/lib/api/hooks/useLabTestCategory';
 import { SelectOption } from '@/lib/api/types/select-option';
+import { useTranslation } from 'react-i18next';
 
 // Animation variants for staggered animations
 const containerVariants = {
@@ -64,6 +65,8 @@ const itemVariants = {
 };
 
 export default function LabResultsPage() {
+  const { t } = useTranslation();
+
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<TestStatus | ''>('');
@@ -151,12 +154,14 @@ export default function LabResultsPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-          <p className="text-red-500 mb-2">فشل في تحميل نتائج التحاليل</p>
+          <p className="text-red-500 mb-2">
+            {t('patientPortal.labResults.list.error.title')}
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            إعادة المحاولة
+            {t('patientPortal.labResults.list.error.retry')}
           </button>
         </div>
       </div>
@@ -168,10 +173,10 @@ export default function LabResultsPage() {
       {/* Page header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          نتائج التحاليل المخبرية
+          {t('patientPortal.labResults.list.title')}
         </h1>
         <p className="text-muted-foreground">
-          عرض وإدارة نتائج التحاليل المخبرية الخاصة بك
+          {t('patientPortal.labResults.list.description')}
         </p>
       </div>
 
@@ -181,7 +186,9 @@ export default function LabResultsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي التحاليل</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('patientPortal.labResults.list.stats.total')}
+                </p>
                 <h3 className="text-2xl font-bold">{totalResults}</h3>
               </div>
               <div className="p-3 bg-primary/10 rounded-full">
@@ -195,7 +202,9 @@ export default function LabResultsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">تحاليل مكتملة</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('patientPortal.labResults.list.stats.completed')}
+                </p>
                 <h3 className="text-2xl font-bold">{completedResults}</h3>
               </div>
               <div className="p-3 bg-green-500/10 rounded-full">
@@ -210,7 +219,7 @@ export default function LabResultsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  تحاليل قيد الانتظار
+                  {t('patientPortal.labResults.list.stats.pending')}
                 </p>
                 <h3 className="text-2xl font-bold">{pendingResults}</h3>
               </div>
@@ -226,7 +235,7 @@ export default function LabResultsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  نتائج غير طبيعية
+                  {t('patientPortal.labResults.list.stats.abnormal')}
                 </p>
                 <h3 className="text-2xl font-bold">{abnormalResults}</h3>
               </div>
@@ -246,10 +255,10 @@ export default function LabResultsPage() {
               <div>
                 <CardTitle className="text-lg font-semibold flex items-center gap-2">
                   <Filter className="h-5 w-5 text-primary" />
-                  تصفية النتائج
+                  {t('patientPortal.labResults.list.actions.filter')}
                 </CardTitle>
                 <CardDescription className="mt-1">
-                  يمكنك تصفية التحاليل حسب الحالة أو النوع أو البحث بالاسم
+                  {t('patientPortal.labResults.list.filters.description')}
                 </CardDescription>
               </div>
               <Button
@@ -259,7 +268,7 @@ export default function LabResultsPage() {
                 onClick={handleResetFilters}
               >
                 <X className="h-3 w-3" />
-                إعادة ضبط الفلاتر
+                {t('patientPortal.labResults.list.actions.reset')}
               </Button>
             </div>
           </CardHeader>
@@ -269,8 +278,10 @@ export default function LabResultsPage() {
               {/* Search input */}
               <div className="space-y-2">
                 <Input
-                  label="بحث"
-                  placeholder="ابحث عن اسم التحليل، الطبيب، العيادة..."
+                  label={t('patientPortal.labResults.list.filters.search')}
+                  placeholder={t(
+                    'patientPortal.labResults.list.filters.searchPlaceholder'
+                  )}
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   startIcon={<Search className="h-4 w-4" />}
@@ -281,7 +292,7 @@ export default function LabResultsPage() {
               {/* Status filter */}
               <div className="space-y-2">
                 <Select
-                  label="الحالة"
+                  label={t('patientPortal.labResults.list.filters.status')}
                   value={statusFilter}
                   onChange={(e) =>
                     handleStatusFilter(e.target.value as TestStatus | '')
@@ -301,7 +312,7 @@ export default function LabResultsPage() {
               {/* Type filter */}
               <div className="space-y-2">
                 <Select
-                  label="نوع التحليل"
+                  label={t('patientPortal.labResults.list.filters.type')}
                   value={typeFilter}
                   onChange={(e) => handleTypeFilter(e.target.value)}
                   options={[
@@ -418,7 +429,9 @@ export default function LabResultsPage() {
                                 </div>
                                 <div>
                                   <p className="text-xs text-muted-foreground">
-                                    الطبيب
+                                    {t(
+                                      'patientPortal.labResults.list.card.doctor'
+                                    )}
                                   </p>
                                   <p className="font-medium">
                                     {result.doctorName}
@@ -434,7 +447,9 @@ export default function LabResultsPage() {
                                 </div>
                                 <div>
                                   <p className="text-xs text-muted-foreground">
-                                    العيادة
+                                    {t(
+                                      'patientPortal.labResults.list.card.clinic'
+                                    )}
                                   </p>
                                   <p className="font-medium">
                                     {result.clinicName}
@@ -451,7 +466,9 @@ export default function LabResultsPage() {
                                 </div>
                                 <div>
                                   <p className="text-xs text-muted-foreground">
-                                    تاريخ الطلب
+                                    {t(
+                                      'patientPortal.labResults.list.card.requestDate'
+                                    )}
                                   </p>
                                   <p className="font-medium">
                                     {formatDate(result.requestDate)}
@@ -469,7 +486,9 @@ export default function LabResultsPage() {
                                   </div>
                                   <div>
                                     <p className="text-xs text-muted-foreground">
-                                      تاريخ النتيجة
+                                      {t(
+                                        'patientPortal.labResults.list.card.resultDate'
+                                      )}
                                     </p>
                                     <p className="font-medium">
                                       {formatDate(result.resultDate)}
@@ -484,7 +503,10 @@ export default function LabResultsPage() {
                                   <div className="flex items-center gap-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded-md text-xs">
                                     <AlertTriangle className="h-3 w-3" />
                                     <span>
-                                      {result.abnormalFlags} نتائج غير طبيعية
+                                      {result.abnormalFlags}{' '}
+                                      {t(
+                                        'patientPortal.labResults.list.card.abnormalFlags'
+                                      )}
                                     </span>
                                   </div>
                                 )}
@@ -492,7 +514,10 @@ export default function LabResultsPage() {
                                   <div className="flex items-center gap-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-2 py-1 rounded-md text-xs">
                                     <AlertOctagon className="h-3 w-3" />
                                     <span>
-                                      {result.criticalFlags} نتائج حرجة
+                                      {result.criticalFlags}{' '}
+                                      {t(
+                                        'patientPortal.labResults.list.card.criticalFlags'
+                                      )}
                                     </span>
                                   </div>
                                 )}
@@ -515,7 +540,7 @@ export default function LabResultsPage() {
                       {/* Actions footer */}
                       <div className="border-t border-border/40 p-4 bg-muted/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div className="text-sm text-muted-foreground">
-                          رقم التحليل:{' '}
+                          {t('patientPortal.labResults.list.card.testNumber')}{' '}
                           <span className="font-mono">
                             {result.labTestCode}
                           </span>
@@ -529,11 +554,19 @@ export default function LabResultsPage() {
                                 className="flex items-center gap-2"
                                 onClick={() => {
                                   // Handle download functionality
-                                  alert('تنزيل التقرير');
+                                  alert(
+                                    t(
+                                      'patientPortal.labResults.list.actions.download'
+                                    )
+                                  );
                                 }}
                               >
                                 <Download className="h-4 w-4" />
-                                <span>تنزيل</span>
+                                <span>
+                                  {t(
+                                    'patientPortal.labResults.list.actions.download'
+                                  )}
+                                </span>
                               </Button>
                               <Button
                                 variant="outline"
@@ -541,11 +574,19 @@ export default function LabResultsPage() {
                                 className="flex items-center gap-2"
                                 onClick={() => {
                                   // Handle print functionality
-                                  alert('طباعة التقرير');
+                                  alert(
+                                    t(
+                                      'patientPortal.labResults.list.actions.print'
+                                    )
+                                  );
                                 }}
                               >
                                 <Printer className="h-4 w-4" />
-                                <span>طباعة</span>
+                                <span>
+                                  {t(
+                                    'patientPortal.labResults.list.actions.print'
+                                  )}
+                                </span>
                               </Button>
                             </>
                           )}
@@ -554,7 +595,9 @@ export default function LabResultsPage() {
                               href={`/patient-portal/lab-results/${result.id}`}
                             >
                               <Eye className="h-4 w-4 mr-2" />
-                              عرض التفاصيل
+                              {t(
+                                'patientPortal.labResults.list.actions.viewDetails'
+                              )}
                             </Link>
                           </Button>
                         </div>
@@ -570,9 +613,11 @@ export default function LabResultsPage() {
             <CardContent className="p-6 text-center">
               <div className="flex flex-col items-center justify-center py-10 space-y-4">
                 <AlertCircle className="h-12 w-12 text-muted-foreground" />
-                <h3 className="text-xl font-semibold">لا توجد نتائج تحاليل</h3>
+                <h3 className="text-xl font-semibold">
+                  {t('patientPortal.labResults.list.empty.title')}
+                </h3>
                 <p className="text-muted-foreground">
-                  لم يتم العثور على نتائج تحاليل تطابق معايير البحث
+                  {t('patientPortal.labResults.list.empty.description')}
                 </p>
               </div>
             </CardContent>

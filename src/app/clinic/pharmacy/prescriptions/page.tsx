@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PageLayout from '@/components/layouts/PageLayout';
 import { Table, type Column } from '@/components/common/Table';
 import { ActivitySquare, Eye } from 'lucide-react';
@@ -17,6 +18,7 @@ import { useAuth } from '@/lib/api/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 
 export default function VisitsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user } = useAuth();
   const clinicId = user?.clinicInfo?.id || '';
@@ -40,25 +42,25 @@ export default function VisitsPage() {
 
   const columns: Column<VisitListDto>[] = [
     {
-      header: 'Visit #',
+      header: t('clinic.pharmacy.prescriptions.table.visitNumber'),
       accessor: 'visitNumber',
     },
     {
-      header: 'Patient Name',
+      header: t('clinic.pharmacy.prescriptions.table.patientName'),
       accessor: 'patientName',
     },
     {
-      header: 'Doctor',
+      header: t('clinic.pharmacy.prescriptions.table.doctor'),
       accessor: 'staffName',
     },
     {
-      header: 'Date',
+      header: t('clinic.pharmacy.prescriptions.table.date'),
       accessor: 'createdAt',
       cell: ({ row }) =>
         new Date(row.original.createdAt).toLocaleDateString('en-SA'),
     },
     {
-      header: 'Type',
+      header: t('clinic.pharmacy.prescriptions.table.type'),
       accessor: 'type',
       cell: ({ row }) => {
         const visitType = row.original.type;
@@ -66,7 +68,7 @@ export default function VisitsPage() {
       },
     },
     {
-      header: 'Status',
+      header: t('clinic.pharmacy.prescriptions.table.status'),
       accessor: 'currentStatus',
       cell: ({ row }) => {
         const status = row.original.currentStatus;
@@ -93,7 +95,9 @@ export default function VisitsPage() {
             }
             variant="ghost"
             className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-            title="View Prescriptions details"
+            title={t(
+              'clinic.pharmacy.prescriptions.actions.viewPrescriptionDetails'
+            )}
           >
             <Eye className="w-4 h-4 " />
           </Button>
@@ -122,9 +126,12 @@ export default function VisitsPage() {
           additionalFilters={[
             {
               icon: <ActivitySquare className="w-4 h-4" />,
-              label: 'Status',
+              label: t('clinic.pharmacy.prescriptions.filters.status'),
               options: [
-                { value: '', label: 'All Status' },
+                {
+                  value: '',
+                  label: t('clinic.pharmacy.prescriptions.filters.allStatus'),
+                },
                 ...(Object.entries(VisitStatus)
                   .filter(([key]) => isNaN(Number(key)))
                   .map(([key, value]) => ({

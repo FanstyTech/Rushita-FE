@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from '@/components/common/Modal';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -51,6 +52,7 @@ export default function DispenseMedicationModal({
   prescription,
   onDispenseMedication,
 }: DispenseMedicationModalProps) {
+  const { t } = useTranslation();
   const [quantity, setQuantity] = useState<number>(1);
   const [notes, setNotes] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
@@ -68,13 +70,17 @@ export default function DispenseMedicationModal({
   const validateInput = (value: string) => {
     const numValue = parseInt(value);
     if (isNaN(numValue) || numValue <= 0) {
-      setError('Please enter a positive number');
+      setError(
+        t('clinic.pharmacy.modal.dispenseMedication.errors.positiveNumber')
+      );
       return false;
     }
 
     if (numValue > prescription.remainingQuantity) {
       setError(
-        `Available quantity for dispensing is only ${prescription.remainingQuantity}`
+        `${t(
+          'clinic.pharmacy.modal.dispenseMedication.errors.availableQuantity'
+        )} ${prescription.remainingQuantity}`
       );
       return false;
     }
@@ -144,19 +150,19 @@ export default function DispenseMedicationModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Dispense Medication"
+      title={t('clinic.pharmacy.modal.dispenseMedication.title')}
       maxWidth="3xl"
       footer={
         <div className="space-x-2">
           <Button variant="outline" onClick={onClose} disabled={isDispensing}>
-            Cancel
+            {t('clinic.pharmacy.modal.dispenseMedication.buttons.cancel')}
           </Button>
           <Button
             isLoading={isDispensing}
             onClick={handleDispense}
             disabled={isDisabled}
           >
-            Dispense Medication
+            {t('clinic.pharmacy.modal.dispenseMedication.buttons.dispense')}
           </Button>
         </div>
       }
@@ -169,11 +175,21 @@ export default function DispenseMedicationModal({
               <h2 className="text-lg font-bold">{prescription.patientName}</h2>
               <div className="flex items-center text-sm mt-1">
                 <User className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
-                <span>Patient Number: {prescription.patientNumber}</span>
+                <span>
+                  {t(
+                    'clinic.pharmacy.modal.dispenseMedication.sections.patientInfo.labels.patientNumber'
+                  )}{' '}
+                  {prescription.patientNumber}
+                </span>
               </div>
               <div className="flex items-center text-sm mt-1">
                 <Clipboard className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
-                <span>Visit Number: {prescription.visitNumber}</span>
+                <span>
+                  {t(
+                    'clinic.pharmacy.modal.dispenseMedication.sections.patientInfo.labels.visitNumber'
+                  )}{' '}
+                  {prescription.visitNumber}
+                </span>
               </div>
             </div>
             {renderStatusBadge(prescription.status)}
@@ -184,31 +200,49 @@ export default function DispenseMedicationModal({
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md space-y-3 border border-gray-200 dark:border-gray-700">
               <h3 className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                 <Pill className="h-4 w-4 mr-2 text-primary" />
-                Medication Information
+                {t(
+                  'clinic.pharmacy.modal.dispenseMedication.sections.medicationInfo.title'
+                )}
               </h3>
 
               <div className="space-y-2">
                 <div className="flex items-center text-sm">
-                  <span className="font-medium w-32">Name:</span>
+                  <span className="font-medium w-32">
+                    {t(
+                      'clinic.pharmacy.modal.dispenseMedication.sections.medicationInfo.labels.name'
+                    )}
+                  </span>
                   <span>{prescription.medication.name}</span>
                 </div>
 
                 {prescription.medication.scientificName && (
                   <div className="flex items-center text-sm">
-                    <span className="font-medium w-32">Scientific Name:</span>
+                    <span className="font-medium w-32">
+                      {t(
+                        'clinic.pharmacy.modal.dispenseMedication.sections.medicationInfo.labels.scientificName'
+                      )}
+                    </span>
                     <span>{prescription.medication.scientificName}</span>
                   </div>
                 )}
 
                 {prescription.medication.name && (
                   <div className="flex items-center text-sm">
-                    <span className="font-medium w-32">Arabic Name:</span>
+                    <span className="font-medium w-32">
+                      {t(
+                        'clinic.pharmacy.modal.dispenseMedication.sections.medicationInfo.labels.arabicName'
+                      )}
+                    </span>
                     <span>{prescription.medication.name}</span>
                   </div>
                 )}
 
                 <div className="flex items-center text-sm">
-                  <span className="font-medium w-32">Strength:</span>
+                  <span className="font-medium w-32">
+                    {t(
+                      'clinic.pharmacy.modal.dispenseMedication.sections.medicationInfo.labels.strength'
+                    )}
+                  </span>
                   <span>{prescription.medication.strength}</span>
                 </div>
               </div>
@@ -218,27 +252,45 @@ export default function DispenseMedicationModal({
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md space-y-3 border border-gray-200 dark:border-gray-700">
               <h3 className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                 <FileText className="h-4 w-4 mr-2 text-primary" />
-                Prescription Details
+                {t(
+                  'clinic.pharmacy.modal.dispenseMedication.sections.prescriptionDetails.title'
+                )}
               </h3>
 
               <div className="space-y-2">
                 <div className="flex items-center text-sm">
-                  <span className="font-medium w-32">Dosage:</span>
+                  <span className="font-medium w-32">
+                    {t(
+                      'clinic.pharmacy.modal.dispenseMedication.sections.prescriptionDetails.labels.dosage'
+                    )}
+                  </span>
                   <span>{prescription.dosage}</span>
                 </div>
 
                 <div className="flex items-center text-sm">
-                  <span className="font-medium w-32">Frequency:</span>
+                  <span className="font-medium w-32">
+                    {t(
+                      'clinic.pharmacy.modal.dispenseMedication.sections.prescriptionDetails.labels.frequency'
+                    )}
+                  </span>
                   <span>{prescription.frequency}</span>
                 </div>
 
                 <div className="flex items-center text-sm">
-                  <span className="font-medium w-32">Duration:</span>
+                  <span className="font-medium w-32">
+                    {t(
+                      'clinic.pharmacy.modal.dispenseMedication.sections.prescriptionDetails.labels.duration'
+                    )}
+                  </span>
                   <span>{prescription.duration}</span>
                 </div>
 
                 <div className="flex items-center text-sm">
-                  <span className="font-medium w-32">Prescribed Date:</span>
+                  <span className="font-medium w-32">
+                    {t(
+                      'clinic.pharmacy.modal.dispenseMedication.sections.prescriptionDetails.labels.prescribedDate'
+                    )}
+                  </span>
                   <span>
                     {(prescription.prescribedDate &&
                       format(
@@ -250,7 +302,11 @@ export default function DispenseMedicationModal({
                 </div>
 
                 <div className="flex items-center text-sm">
-                  <span className="font-medium w-32">Expiry Date:</span>
+                  <span className="font-medium w-32">
+                    {t(
+                      'clinic.pharmacy.modal.dispenseMedication.sections.prescriptionDetails.labels.expiryDate'
+                    )}
+                  </span>
                   <span>
                     {(prescription.expiryDate &&
                       format(
@@ -272,11 +328,19 @@ export default function DispenseMedicationModal({
             <div className="flex justify-between items-center mb-2">
               <h3 className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                 <Package className="h-4 w-4 mr-2 text-primary" />
-                Quantity Information
+                {t(
+                  'clinic.pharmacy.modal.dispenseMedication.sections.quantityInfo.title'
+                )}
               </h3>
               <span className="text-sm font-medium">
-                {prescription.remainingQuantity} of {prescription.quantity}{' '}
-                remaining
+                {prescription.remainingQuantity}{' '}
+                {t(
+                  'clinic.pharmacy.modal.dispenseMedication.sections.quantityInfo.of'
+                )}{' '}
+                {prescription.quantity}{' '}
+                {t(
+                  'clinic.pharmacy.modal.dispenseMedication.sections.quantityInfo.remaining'
+                )}
               </span>
             </div>
 
@@ -291,7 +355,12 @@ export default function DispenseMedicationModal({
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="quantity" className="text-base">
-              Quantity to Dispense <span className="text-red-500">*</span>
+              {t(
+                'clinic.pharmacy.modal.dispenseMedication.form.quantityToDispense'
+              )}{' '}
+              <span className="text-red-500">
+                {t('clinic.pharmacy.modal.dispenseMedication.form.required')}
+              </span>
             </Label>
             <Input
               id="quantity"
@@ -313,14 +382,16 @@ export default function DispenseMedicationModal({
 
           <div className="space-y-2">
             <Label htmlFor="notes" className="text-base">
-              Notes
+              {t('clinic.pharmacy.modal.dispenseMedication.form.notes')}
             </Label>
             <TextArea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="min-h-[100px]"
-              placeholder="Enter any additional notes here..."
+              placeholder={t(
+                'clinic.pharmacy.modal.dispenseMedication.form.notesPlaceholder'
+              )}
               disabled={isDisabled}
             />
           </div>

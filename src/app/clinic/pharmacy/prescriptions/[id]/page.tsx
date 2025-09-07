@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import PageLayout from '@/components/layouts/PageLayout';
@@ -42,6 +43,7 @@ import {
 import PrescriptionDetailsSkeleton from '@/components/skeletons/PrescriptionDetailsSkeleton';
 
 export default function PrescribedMedicationsPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const visitId = params?.id as string;
 
@@ -135,7 +137,9 @@ export default function PrescribedMedicationsPage() {
             onClick={() => handleOpenDispenseModal(prescription)}
           >
             <RefreshCw className="h-4 w-4 ml-1" />
-            Dispense Medication
+            {t(
+              'clinic.pharmacy.prescriptions.details.actions.dispenseMedication'
+            )}
           </Button>
         );
       case PrescriptionStatus.FullyDispensed:
@@ -205,21 +209,36 @@ export default function PrescribedMedicationsPage() {
                       <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mt-2">
                         <div className="flex items-center">
                           <FileText className="h-4 w-4 mr-1.5 text-gray-400 dark:text-gray-500" />
-                          <span className="font-medium">Visit:</span>{' '}
+                          <span className="font-medium">
+                            {t(
+                              'clinic.pharmacy.prescriptions.details.visitInfo.visit'
+                            )}
+                            :
+                          </span>{' '}
                           <span className="ml-1 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-gray-700 dark:text-gray-300">
                             {visitGroup.visitNumber}
                           </span>
                         </div>
                         <div className="flex items-center">
                           <User className="h-4 w-4 mr-1.5 text-gray-400 dark:text-gray-500" />
-                          <span className="font-medium">Patient:</span>{' '}
+                          <span className="font-medium">
+                            {t(
+                              'clinic.pharmacy.prescriptions.details.visitInfo.patient'
+                            )}
+                            :
+                          </span>{' '}
                           <span className="ml-1 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-gray-700 dark:text-gray-300">
                             {visitGroup.patientNumber}
                           </span>
                         </div>
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1.5 text-gray-400 dark:text-gray-500" />
-                          <span className="font-medium">Date:</span>{' '}
+                          <span className="font-medium">
+                            {t(
+                              'clinic.pharmacy.prescriptions.details.visitInfo.date'
+                            )}
+                            :
+                          </span>{' '}
                           <span className="ml-1">
                             {format(
                               new Date(visitGroup.createdAt),
@@ -231,8 +250,14 @@ export default function PrescribedMedicationsPage() {
                     </div>
                     <div className="text-sm bg-primary/10 text-primary px-3 py-1.5 rounded-full font-medium flex items-center">
                       <Package className="h-4 w-4 mr-1.5" />
-                      {visitGroup.prescriptions.length} Medication
-                      {visitGroup.prescriptions.length > 1 ? 's' : ''}
+                      {visitGroup.prescriptions.length}{' '}
+                      {visitGroup.prescriptions.length === 1
+                        ? t(
+                            'clinic.pharmacy.prescriptions.details.visitInfo.medication'
+                          )
+                        : t(
+                            'clinic.pharmacy.prescriptions.details.visitInfo.medications'
+                          )}
                     </div>
                   </div>
                 </CardHeader>
@@ -288,14 +313,20 @@ export default function PrescribedMedicationsPage() {
                             <p className="text-sm flex items-center">
                               <Clock className="h-4 w-4 mr-2 text-gray-400" />
                               <span className="font-medium mr-1">
-                                Dosage:
+                                {t(
+                                  'clinic.pharmacy.prescriptions.details.medicationCard.dosage'
+                                )}
+                                :
                               </span>{' '}
                               {prescription.dosage}
                             </p>
                             <p className="text-sm flex items-center">
                               <RefreshCw className="h-4 w-4 mr-2 text-gray-400" />
                               <span className="font-medium mr-1">
-                                Frequency:
+                                {t(
+                                  'clinic.pharmacy.prescriptions.details.medicationCard.frequency'
+                                )}
+                                :
                               </span>{' '}
                               <Badge
                                 variant="outline"
@@ -313,7 +344,10 @@ export default function PrescribedMedicationsPage() {
                                 <p className="text-sm flex items-center">
                                   <Package className="h-4 w-4 mr-2 text-gray-400" />
                                   <span className="font-medium mr-1">
-                                    Quantity:
+                                    {t(
+                                      'clinic.pharmacy.prescriptions.details.medicationCard.quantity'
+                                    )}
+                                    :
                                   </span>
                                   <span className="flex items-center">
                                     <span className="font-medium text-primary">
@@ -353,7 +387,10 @@ export default function PrescribedMedicationsPage() {
                             <p className="text-sm flex items-center">
                               <Calendar className="h-4 w-4 mr-2 text-gray-400" />
                               <span className="font-medium mr-1">
-                                Duration:
+                                {t(
+                                  'clinic.pharmacy.prescriptions.details.medicationCard.duration'
+                                )}
+                                :
                               </span>{' '}
                               {prescription.duration}
                             </p>
@@ -373,13 +410,18 @@ export default function PrescribedMedicationsPage() {
                               <div className="bg-white dark:bg-gray-800/50 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
                                 <h4 className="font-medium mb-3 text-primary flex items-center">
                                   <FileText className="h-4 w-4 mr-2" />
-                                  Prescription Details
+                                  {t(
+                                    'clinic.pharmacy.prescriptions.details.expandedDetails.prescriptionDetails'
+                                  )}
                                 </h4>
                                 <div className="space-y-3">
                                   <p className="text-sm flex items-center">
                                     <User className="h-4 w-4 mr-2 text-gray-500" />
                                     <span className="font-medium mr-1 w-28">
-                                      Prescribed By:
+                                      {t(
+                                        'clinic.pharmacy.prescriptions.details.expandedDetails.prescribedBy'
+                                      )}
+                                      :
                                     </span>{' '}
                                     <span className="text-gray-700 dark:text-gray-300">
                                       {prescription.prescribedByName}
@@ -388,7 +430,10 @@ export default function PrescribedMedicationsPage() {
                                   <p className="text-sm flex items-center">
                                     <Calendar className="h-4 w-4 mr-2 text-gray-500" />
                                     <span className="font-medium mr-1 w-28">
-                                      Prescribed Date:
+                                      {t(
+                                        'clinic.pharmacy.prescriptions.details.expandedDetails.prescribedDate'
+                                      )}
+                                      :
                                     </span>{' '}
                                     <span className="text-gray-700 dark:text-gray-300">
                                       {(prescription.prescribedDate &&
@@ -402,7 +447,10 @@ export default function PrescribedMedicationsPage() {
                                   <p className="text-sm flex items-center">
                                     <Calendar className="h-4 w-4 mr-2 text-gray-500" />
                                     <span className="font-medium mr-1 w-28">
-                                      Expiry Date:
+                                      {t(
+                                        'clinic.pharmacy.prescriptions.details.expandedDetails.expiryDate'
+                                      )}
+                                      :
                                     </span>{' '}
                                     <span className="text-gray-700 dark:text-gray-300">
                                       {(prescription.expiryDate &&
@@ -418,7 +466,10 @@ export default function PrescribedMedicationsPage() {
                                       <Info className="h-4 w-4 mr-2 mt-0.5 text-primary" />
                                       <div>
                                         <span className="font-medium block mb-1">
-                                          Notes:
+                                          {t(
+                                            'clinic.pharmacy.prescriptions.details.expandedDetails.notes'
+                                          )}
+                                          :
                                         </span>
                                         <span className="text-gray-700 dark:text-gray-300">
                                           {prescription.notes}
@@ -431,12 +482,17 @@ export default function PrescribedMedicationsPage() {
                               <div className="bg-white dark:bg-gray-800/50 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
                                 <h4 className="font-medium mb-3 text-primary flex items-center">
                                   <Pill className="h-4 w-4 mr-2" />
-                                  Medication Information
+                                  {t(
+                                    'clinic.pharmacy.prescriptions.details.expandedDetails.medicationInformation'
+                                  )}
                                 </h4>
                                 <div className="space-y-3">
                                   <p className="text-sm flex items-center">
                                     <span className="font-medium mr-1 w-28">
-                                      Name:
+                                      {t(
+                                        'clinic.pharmacy.prescriptions.details.expandedDetails.name'
+                                      )}
+                                      :
                                     </span>{' '}
                                     <span className="text-gray-700 dark:text-gray-300">
                                       {prescription.medication.name}
@@ -444,7 +500,10 @@ export default function PrescribedMedicationsPage() {
                                   </p>
                                   <p className="text-sm flex items-center">
                                     <span className="font-medium mr-1 w-28">
-                                      Scientific Name:
+                                      {t(
+                                        'clinic.pharmacy.prescriptions.details.expandedDetails.scientificName'
+                                      )}
+                                      :
                                     </span>{' '}
                                     <span className="text-gray-700 dark:text-gray-300">
                                       {prescription.medication.scientificName}
@@ -453,7 +512,10 @@ export default function PrescribedMedicationsPage() {
                                   {prescription.medication.name && (
                                     <p className="text-sm flex items-center">
                                       <span className="font-medium mr-1 w-28">
-                                        Arabic Name:
+                                        {t(
+                                          'clinic.pharmacy.prescriptions.details.expandedDetails.arabicName'
+                                        )}
+                                        :
                                       </span>{' '}
                                       <span className="text-gray-700 dark:text-gray-300">
                                         {prescription.medication.name}
@@ -462,7 +524,10 @@ export default function PrescribedMedicationsPage() {
                                   )}
                                   <p className="text-sm flex items-center">
                                     <span className="font-medium mr-1 w-28">
-                                      Strength:
+                                      {t(
+                                        'clinic.pharmacy.prescriptions.details.expandedDetails.strength'
+                                      )}
+                                      :
                                     </span>{' '}
                                     <span className="text-gray-700 dark:text-gray-300">
                                       {getMedicineStrengthLabel(
@@ -472,7 +537,10 @@ export default function PrescribedMedicationsPage() {
                                   </p>
                                   <p className="text-sm flex items-center">
                                     <span className="font-medium mr-1 w-28">
-                                      Dosage Form:
+                                      {t(
+                                        'clinic.pharmacy.prescriptions.details.expandedDetails.dosageForm'
+                                      )}
+                                      :
                                     </span>{' '}
                                     <span className="text-gray-700 dark:text-gray-300">
                                       {getDosageFormLabel(

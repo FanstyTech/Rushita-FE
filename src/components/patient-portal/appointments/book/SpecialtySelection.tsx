@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Stethoscope } from 'lucide-react';
 import { SelectOption } from '@/lib/api/types/select-option';
+import { useTranslation } from 'react-i18next';
 
 interface SpecialtySelectionProps {
   specialties: SelectOption<string>[];
@@ -35,6 +36,8 @@ export function SpecialtySelection({
   onSpecialtySelect,
   onPrevStep,
 }: SpecialtySelectionProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       variants={containerVariants}
@@ -42,7 +45,7 @@ export function SpecialtySelection({
       animate="show"
       className="space-y-4"
     >
-      <h2 className="text-xl font-semibold">اختر التخصص الطبي</h2>
+      <h2 className="text-xl font-semibold">{t('patientPortal.appointments.booking.specialtySelection.title')}</h2>
       {specialties.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {specialties.map((specialty) => (
@@ -70,12 +73,14 @@ export function SpecialtySelection({
         <Card className="backdrop-blur-sm bg-card/80 border border-border/50">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <Stethoscope className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium">لم يتم العثور على تخصصات</h3>
+            <h3 className="text-lg font-medium">
+              {t('patientPortal.appointments.booking.specialtySelection.emptyState.title')}
+            </h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              يرجى اختيار عيادة أولاً لعرض التخصصات المتاحة
+              {t('patientPortal.appointments.booking.specialtySelection.emptyState.message')}
             </p>
             <Button className="mt-4" onClick={onPrevStep}>
-              العودة لاختيار العيادة
+              {t('patientPortal.appointments.booking.specialtySelection.emptyState.backButton')}
             </Button>
           </CardContent>
         </Card>
